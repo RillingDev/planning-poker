@@ -1,0 +1,13 @@
+# IDE metadata
+/.idea
+/*.iml
+
+# Temp files
+/dependency-reduced-pom.xml
+/target
+*.dtmp
+*.bkp
+
+# Project files
+
+# Build files
