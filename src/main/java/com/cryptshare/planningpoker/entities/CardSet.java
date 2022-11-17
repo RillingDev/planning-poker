@@ -39,7 +39,7 @@ public class CardSet extends BaseEntity {
 		return cards;
 	}
 
-	public void setCards(Set<Card> cards) {
+	protected void setCards(Set<Card> cards) {
 		this.cards = cards;
 	}
 
