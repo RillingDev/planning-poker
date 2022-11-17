@@ -29,37 +29,36 @@ CREATE TABLE app_user
 	username VARCHAR NOT NULL UNIQUE
 );
 
-CREATE TABLE room_user
+CREATE TABLE room_member
 (
 	id        UUID    NOT NULL PRIMARY KEY,
 	user_role TINYINT NOT NULL,
 	room_id   UUID    NOT NULL,
 	user_id   UUID    NOT NULL,
-	CONSTRAINT fk_room_user_room FOREIGN KEY (room_id) REFERENCES room (id)
+	CONSTRAINT fk_room_member_room FOREIGN KEY (room_id) REFERENCES room (id)
 		ON DELETE CASCADE,
-	CONSTRAINT fk_room_user_user FOREIGN KEY (user_id) REFERENCES app_user (id)
+	CONSTRAINT fk_room_member_user FOREIGN KEY (user_id) REFERENCES app_user (id)
 		ON DELETE CASCADE,
-	CONSTRAINT uq_room_user UNIQUE (room_id, user_id)
+	CONSTRAINT uq_room_member UNIQUE (room_id, user_id)
 );
 
 
 
 CREATE TABLE vote
 (
-	id           UUID NOT NULL PRIMARY KEY,
-	instance_id  UUID NOT NULL UNIQUE,
-	room_user_id UUID NOT NULL,
-	card_id      UUID NOT NULL,
-	CONSTRAINT fk_vote_room_user_id FOREIGN KEY (room_user_id) REFERENCES room_user (id)
+	id             UUID NOT NULL PRIMARY KEY,
+	room_member_id UUID NOT NULL,
+	card_id        UUID NOT NULL,
+	CONSTRAINT fk_vote_room_member_id FOREIGN KEY (room_member_id) REFERENCES room_member (id)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_vote_card_id FOREIGN KEY (card_id) REFERENCES card (id)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_vote_card_set CHECK (
 		// Enforce that card is from the set that is the configured card set for this room
 			(SELECT r.card_set_id
-			 FROM room_user ru
+			 FROM room_member ru
 					  LEFT JOIN room r ON r.id = ru.room_id
-			 WHERE ru.id = vote.room_user_id) = (
+			 WHERE ru.id = vote.room_member_id) = (
 				SELECT cs.id
 				FROM card c
 						 LEFT JOIN card_set cs ON c.card_set_id = cs.id

@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RoomRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
+
 	@Autowired
 	CardSetRepository cardSetRepository;
 
@@ -30,6 +31,6 @@ class RoomRepositoryIT {
 
 		final Room loaded = all.get(0);
 		assertThat(loaded.getName()).isEqualTo("My Room");
-		assertThat(loaded.getCardSet().getName()).isEqualTo("Set #1");
+		assertThat(loaded.getCardSet()).isEqualTo(cardSet);
 	}
 }

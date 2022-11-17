@@ -1,0 +1,66 @@
+package com.cryptshare.planningpoker.entities;
+
+import javax.persistence.*;
+import java.util.StringJoiner;
+
+@Entity
+@Table(name = "room_member")
+public class RoomMember extends BaseEntity {
+	enum Role {
+		MODERATOR,
+		USER,
+		OBSERVER
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "room_id", nullable = false)
+	private Room room;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "user_role", nullable = false)
+	private Role role;
+
+	protected RoomMember() {
+	}
+
+	public RoomMember(Room room, User user) {
+		this.room = room;
+		this.user = user;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room name) {
+		this.room = name;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	@Override
+	public String toString() {
+		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("name=" + room)
+				.add("user=" + user)
+				.add("role=" + role)
+				.toString();
+	}
+}
