@@ -1,9 +1,10 @@
 package com.cryptshare.planningpoker.entities;
 
-import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,32 +12,28 @@ import java.util.UUID;
  * Adapted version of {@link org.springframework.data.jpa.domain.AbstractPersistable}.
  */
 @MappedSuperclass
-public abstract class BaseEntity implements Persistable<Long> {
+public abstract class BaseEntity {
+	// UUID instead of auto-increment to always have an ID for equality checks.
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private @Nullable Long id;
-
-	@Column(name = "instance_id", nullable = false)
-	private UUID instanceId = UUID.randomUUID();
+	@Column(name = "id", nullable = false)
+	private @Nullable UUID id = UUID.randomUUID();
 
 	@Nullable
-	@Override
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(@Nullable Long id) {
+	public void setId(@Nullable UUID id) {
 		this.id = id;
 	}
 
-	@Override
 	public boolean isNew() {
 		return null == getId();
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(instanceId);
+		return Objects.hash(id);
 	}
 
 	@Override
@@ -48,14 +45,6 @@ public abstract class BaseEntity implements Persistable<Long> {
 			return false;
 		}
 		BaseEntity that = (BaseEntity) o;
-		return Objects.equals(instanceId, that.instanceId);
-	}
-
-	public UUID getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(UUID uuid) {
-		this.instanceId = uuid;
+		return Objects.equals(id, that.id);
 	}
 }

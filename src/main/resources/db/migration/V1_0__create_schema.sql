@@ -1,15 +1,13 @@
 CREATE TABLE card_set
 (
-	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	instance_id UUID    NOT NULL UNIQUE,
-	set_name    VARCHAR NOT NULL UNIQUE
+	id       UUID    NOT NULL PRIMARY KEY,
+	set_name VARCHAR NOT NULL UNIQUE
 );
 
 CREATE TABLE card
 (
-	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	instance_id UUID    NOT NULL UNIQUE,
-	card_set_id BIGINT  NOT NULL,
+	id          UUID    NOT NULL PRIMARY KEY,
+	card_set_id UUID    NOT NULL,
 	card_name   VARCHAR NOT NULL,
 	card_value  DOUBLE  NULL, // Optional if it does not affect score
 	CONSTRAINT fk_card_card_set_id FOREIGN KEY (card_set_id) REFERENCES card_set (id)
@@ -19,27 +17,24 @@ CREATE TABLE card
 
 CREATE TABLE room
 (
-	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	instance_id UUID    NOT NULL UNIQUE,
-	card_set_id BIGINT  NOT NULL,
+	id          UUID    NOT NULL PRIMARY KEY,
+	card_set_id UUID    NOT NULL,
 	room_name   VARCHAR NOT NULL UNIQUE,
 	CONSTRAINT fk_room_card_set FOREIGN KEY (card_set_id) REFERENCES card_set (id)
 );
 
 CREATE TABLE app_user
 (
-	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	instance_id UUID    NOT NULL UNIQUE,
-	username    VARCHAR NOT NULL UNIQUE
+	id       UUID    NOT NULL PRIMARY KEY,
+	username VARCHAR NOT NULL UNIQUE
 );
 
 CREATE TABLE room_user
 (
-	id          BIGINT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	instance_id UUID    NOT NULL UNIQUE,
-	user_role   TINYINT NOT NULL,
-	room_id     BIGINT  NOT NULL,
-	user_id     BIGINT  NOT NULL,
+	id        UUID    NOT NULL PRIMARY KEY,
+	user_role TINYINT NOT NULL,
+	room_id   UUID    NOT NULL,
+	user_id   UUID    NOT NULL,
 	CONSTRAINT fk_room_user_room FOREIGN KEY (room_id) REFERENCES room (id)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_room_user_user FOREIGN KEY (user_id) REFERENCES app_user (id)
@@ -51,10 +46,10 @@ CREATE TABLE room_user
 
 CREATE TABLE vote
 (
-	id           BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	instance_id  UUID   NOT NULL UNIQUE,
-	room_user_id BIGINT NOT NULL,
-	card_id      BIGINT NOT NULL,
+	id           UUID NOT NULL PRIMARY KEY,
+	instance_id  UUID NOT NULL UNIQUE,
+	room_user_id UUID NOT NULL,
+	card_id      UUID NOT NULL,
 	CONSTRAINT fk_vote_room_user_id FOREIGN KEY (room_user_id) REFERENCES room_user (id)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_vote_card_id FOREIGN KEY (card_id) REFERENCES card (id)
