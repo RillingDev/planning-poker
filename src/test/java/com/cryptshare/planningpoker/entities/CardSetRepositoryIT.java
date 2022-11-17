@@ -1,10 +1,14 @@
 package com.cryptshare.planningpoker.entities;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +20,12 @@ class CardSetRepositoryIT {
 	@Autowired
 	CardSetRepository cardSetRepository;
 
+	@PersistenceContext
+	EntityManager em;
+
 	@Test
+	@DisplayName("can be saved and loaded")
+	@DirtiesContext
 	void saveAndLoad() {
 		final CardSet cardSet = new CardSet("Set #1");
 		cardSet.getCards().add(new Card("1", 1.0));

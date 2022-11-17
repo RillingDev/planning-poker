@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
-class RoomMemberRepositoryTest {
+class VoteRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
 
@@ -27,11 +27,17 @@ class RoomMemberRepositoryTest {
 	@Autowired
 	RoomMemberRepository roomMemberRepository;
 
+	@Autowired
+	VoteRepository voteRepository;
+
 	@Test
 	@DisplayName("can be saved and loaded")
 	@DirtiesContext
 	void saveAndLoad() {
-		final CardSet cardSet = prepareCardSet("Set #1");
+		final CardSet cardSet = new CardSet("Set #1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		cardSetRepository.save(cardSet);
 
 		final Room room = prepareRoom("My Room", cardSet);
 
@@ -41,55 +47,45 @@ class RoomMemberRepositoryTest {
 		roomMember.setRole(RoomMember.Role.MODERATOR);
 		roomMemberRepository.save(roomMember);
 
-		final List<RoomMember> all = roomMemberRepository.findAll();
+		final Vote vote = new Vote(roomMember, card);
+		voteRepository.save(vote);
+
+		final List<Vote> all = voteRepository.findAll();
 		assertThat(all).hasSize(1);
 
-		final RoomMember loaded = all.get(0);
-		assertThat(loaded.getUser()).isEqualTo(user);
-		assertThat(loaded.getRoom()).isEqualTo(room);
-		assertThat(loaded.getRole()).isEqualTo(RoomMember.Role.MODERATOR);
+		final Vote loaded = all.get(0);
+		assertThat(loaded.getCard()).isEqualTo(card);
+		assertThat(loaded.getRoomMember()).isEqualTo(roomMember);
 	}
 
 	@Test
 	@DisplayName("finds by room")
 	@DirtiesContext
 	void findByRoom() {
-		final CardSet cardSet = prepareCardSet("Set #1");
+		final CardSet cardSet = new CardSet("Set #1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		cardSetRepository.save(cardSet);
 
-		final Room room1 = prepareRoom("My Room #1", cardSet);
+		final Room room = prepareRoom("My Room", cardSet);
 
-		final Room room2 = prepareRoom("My Room #2", cardSet);
+		final User user = prepareUser("Alice");
 
-		final User user1 = prepareUser("Alice");
-		final User user2 = prepareUser("Bob");
-		final User user3 = prepareUser("John");
+		final RoomMember roomMember = new RoomMember(room, user);
+		roomMember.setRole(RoomMember.Role.MODERATOR);
+		roomMemberRepository.save(roomMember);
 
-		final RoomMember roomMember1 = new RoomMember(room1, user1);
-		roomMember1.setRole(RoomMember.Role.MODERATOR);
-		roomMemberRepository.save(roomMember1);
+		final Vote vote = new Vote(roomMember, card);
+		voteRepository.save(vote);
 
-		final RoomMember roomMember2 = new RoomMember(room1, user2);
-		roomMember2.setRole(RoomMember.Role.USER);
-		roomMemberRepository.save(roomMember2);
-
-		final RoomMember roomMember3 = new RoomMember(room2, user3);
-		roomMember3.setRole(RoomMember.Role.USER);
-		roomMemberRepository.save(roomMember3);
-
-		final Set<RoomMember> all = roomMemberRepository.findByRoom(room1);
-		assertThat(all).hasSize(2).containsExactlyInAnyOrder(roomMember1, roomMember2);
+		final Set<Vote> byRoom = voteRepository.findByRoom(room);
+		assertThat(byRoom).containsExactlyInAnyOrder(vote);
 	}
 
 	private User prepareUser(String username) {
 		final User user = new User(username);
 		userRepository.save(user);
 		return user;
-	}
-
-	private CardSet prepareCardSet(String name) {
-		final CardSet cardSet = new CardSet(name);
-		cardSetRepository.save(cardSet);
-		return cardSet;
 	}
 
 	private Room prepareRoom(String name, CardSet cardSet) {

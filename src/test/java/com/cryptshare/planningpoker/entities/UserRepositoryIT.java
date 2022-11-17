@@ -1,8 +1,10 @@
 package com.cryptshare.planningpoker.entities;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -16,6 +18,8 @@ class UserRepositoryIT {
 	UserRepository userRepository;
 
 	@Test
+	@DisplayName("can be saved and loaded")
+	@DirtiesContext
 	void saveAndLoad() {
 		final User user = new User("Alice");
 		userRepository.save(user);
