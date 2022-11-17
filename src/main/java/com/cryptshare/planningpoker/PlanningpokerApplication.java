@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PlanungspokertoolApplication {
+public class PlanningpokerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PlanungspokertoolApplication.class, args);
+		SpringApplication.run(PlanningpokerApplication.class, args);
 	}
 
 }
