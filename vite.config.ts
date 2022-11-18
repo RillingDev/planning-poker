@@ -5,7 +5,17 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
 	plugins: [react()],
 	build: {
-		outDir: "src/main/resources/static/"
+		outDir: "target/classes/static/",
+		// https://vitejs.dev/guide/backend-integration.html
+		rollupOptions: {
+			input: "src/main/react/main.tsx",
+			output: {
+				// Remove hashes from file name so we have an easier time including them
+				entryFileNames: "[name].js",
+				assetFileNames: "[name][extname]"
+			}
+		},
+		emptyOutDir: false
 	},
 	server: {
 		host: "127.0.0.1"

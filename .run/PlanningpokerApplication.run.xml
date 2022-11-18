@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+	<configuration default="false" name="PlanningpokerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+		<option name="ACTIVE_PROFILES" value="development"/>
+		<module name="planungspokertool"/>
+		<option name="SPRING_BOOT_MAIN_CLASS" value="com.cryptshare.planningpoker.PlanningpokerApplication"/>
+		<method v="2">
+			<option name="Make" enabled="true"/>
+		</method>
+	</configuration>
+</component>
