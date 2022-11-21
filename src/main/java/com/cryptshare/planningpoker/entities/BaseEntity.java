@@ -27,10 +27,6 @@ public abstract class BaseEntity {
 		this.id = id;
 	}
 
-	public boolean isNew() {
-		return null == getId();
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
