@@ -10,6 +10,7 @@
 		"lint": "eslint src/main/react/ --ext tsx --ext ts"
 	},
 	"dependencies": {
+		"modern-normalize": "^1.1.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-router": "^6.4.3",
