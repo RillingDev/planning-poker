@@ -1,26 +1,41 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { FC } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loadRooms, Room } from "../api";
 import "./RoomList.css";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import { CreateRoom } from "../components/CreateRoom";
 
-export async function loader() {
-	const rooms = await loadRooms();
-	return {rooms};
-}
 
 export const RoomList: FC = () => {
-	const {rooms} = useLoaderData() as { rooms: ReadonlyArray<Room> };
+	const [rooms, setRooms] = useState<Room[]>([]);
 
-	const [showCreateModal, setShowCreateModal] = useState(false);
+	const updateRooms = () => loadRooms().then(rooms => setRooms(rooms));
+
+	useEffect(() => {
+		updateRooms().catch(console.error);
+	}, []);
+
+	const [modalVisible, setModalVisible] = useState(false);
+	const showModal = () => setModalVisible(true);
+	const hideModal = () => setModalVisible(false);
+
+	// TODO: show toast or similar for errors
+	const handleSubmit = () => {
+		updateRooms().catch(console.error);
+		hideModal();
+	};
+	const handleError = (e: Error) => {
+		console.error(e);
+		hideModal();
+	};
 
 	return (
 		<>
 			<header className="room-list__header">
 				<h2>Rooms</h2>
-				<Button variant="primary" onClick={() => setShowCreateModal(true)}>Create Room</Button>
+				<Button variant="primary" onClick={showModal}>Create Room</Button>
 			</header>
 			<nav>
 				<ul className="room-list">
@@ -33,16 +48,13 @@ export const RoomList: FC = () => {
 				</ul>
 			</nav>
 
-			<Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
+			<Modal show={modalVisible} onHide={hideModal}>
 				<Modal.Header closeButton>
-					<Modal.Title>Modal heading</Modal.Title>
+					<Modal.Title>Create Room</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-				<Modal.Footer>
-					<Button variant="primary" onClick={() => setShowCreateModal(false)}>
-						Save Changes
-					</Button>
-				</Modal.Footer>
+				<Modal.Body>
+					<CreateRoom onSubmit={handleSubmit} onError={handleError}></CreateRoom>
+				</Modal.Body>
 			</Modal>
 		</>
 	);

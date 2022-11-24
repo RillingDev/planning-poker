@@ -5,6 +5,8 @@ import com.cryptshare.planningpoker.entities.CardSetRepository;
 import com.cryptshare.planningpoker.entities.Room;
 import com.cryptshare.planningpoker.entities.RoomRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 class RoomController {
+	private static final Logger logger = LoggerFactory.getLogger(RoomController.class);
 
 	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
@@ -44,7 +47,9 @@ class RoomController {
 		}
 		final CardSet cardSet = cardSetOptional.get();
 
-		roomRepository.save(new Room(newRoom.name(), cardSet));
+		final Room room = new Room(newRoom.name(), cardSet);
+		roomRepository.save(room);
+		logger.info("Created room '{}'.", room);
 		return ResponseEntity.accepted().body("Created room.");
 	}
 

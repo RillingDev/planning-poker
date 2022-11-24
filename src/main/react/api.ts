@@ -31,6 +31,14 @@ export async function loadRooms() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room[]>);
 }
 
+export async function createRoom(name: string, cardSetName: string) {
+	return fetch("/api/rooms", {
+		method: "POST",
+		headers: {"Content-Type": MEDIA_TYPE_JSON},
+		body: JSON.stringify({name, cardSetName})
+	}).then(assertStatusOk);
+}
+
 export async function loadCardSets() {
 	return fetch("/api/card-sets", {
 		method: "GET",

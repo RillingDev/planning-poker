@@ -66,3 +66,39 @@ CREATE TABLE vote
 				)
 		)
 );
+
+
+// Initial data
+
+INSERT INTO CARD_SET (id, set_name)
+VALUES ('947dddcf-e093-4726-b070-fce668365edc', 'Adjusted Fibonacci Scale');
+INSERT INTO CARD (id, card_set_id, card_name, card_value)
+VALUES (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '0', 0.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '1', 1.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '2', 2.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '3', 3.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '5', 5.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '8', 8.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '13', 13.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '20', 20.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '40', 40.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '100', 100.0),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '?', NULL),
+	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', 'Coffee', 0);
+
+INSERT INTO CARD_SET (id, set_name)
+VALUES ('148b39a9-2868-4ae6-ac2f-018347892f48', 'Increments of 10');
+INSERT INTO CARD (id, card_set_id, card_name, card_value)
+VALUES (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '0', 0.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '10', 10.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '20', 20.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '30', 30.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '40', 40.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '50', 50.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '60', 60.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '70', 70.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '80', 80.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '90', 90.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '100', 100.0),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '?', NULL),
+	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', 'Coffee', 0);
