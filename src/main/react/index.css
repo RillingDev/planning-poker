@@ -1,0 +1,9 @@
+@import "bootstrap";
+
+#root {
+	display: grid;
+	justify-content: center;
+	grid-template-rows: min-content 1fr;
+	grid-auto-columns: minmax(auto, 960px);
+	gap: 1rem;
+}
