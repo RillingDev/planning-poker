@@ -1,6 +1,7 @@
 package com.cryptshare.planningpoker.entities;
 
 import jakarta.persistence.*;
+import org.springframework.lang.Nullable;
 
 import java.util.StringJoiner;
 
@@ -20,6 +21,10 @@ public class RoomMember extends BaseEntity {
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "user_role", nullable = false)
 	private Role role;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "roomMember")
+	@Nullable
+	private Vote vote;
 
 	protected RoomMember() {
 	}
@@ -43,6 +48,15 @@ public class RoomMember extends BaseEntity {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	@Nullable
+	public Vote getVote() {
+		return vote;
+	}
+
+	public void setVote(@Nullable Vote vote) {
+		this.vote = vote;
 	}
 
 	@Override

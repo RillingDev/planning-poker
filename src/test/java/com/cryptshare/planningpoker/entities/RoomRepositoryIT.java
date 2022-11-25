@@ -31,11 +31,18 @@ class RoomRepositoryIT {
 		userRepository.save(user);
 
 		final CardSet cardSet = new CardSet("Set #1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
 		cardSetRepository.save(cardSet);
 
 		final Room room = new Room("My Room", cardSet);
+
 		final RoomMember member = new RoomMember(user, RoomMember.Role.MODERATOR);
 		room.getMembers().add(member);
+
+		final Vote vote = new Vote(member, card);
+		member.setVote(vote);
+
 		roomRepository.save(room);
 
 		final List<Room> all = roomRepository.findAll();
