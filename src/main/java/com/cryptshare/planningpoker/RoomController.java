@@ -20,14 +20,11 @@ class RoomController {
 
 	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
-	private final RoomMemberRepository roomMemberRepository;
 	private final UserRepository userRepository;
 
-	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, RoomMemberRepository roomMemberRepository,
-			UserRepository userRepository) {
+	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, UserRepository userRepository) {
 		this.roomRepository = roomRepository;
 		this.cardSetRepository = cardSetRepository;
-		this.roomMemberRepository = roomMemberRepository;
 		this.userRepository = userRepository;
 	}
 
@@ -44,8 +41,7 @@ class RoomController {
 			return ResponseEntity.badRequest().body("Already exists.");
 		}
 
-		// FIXME
-		final User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+		final User user = getUser(userDetails);
 
 		final Optional<CardSet> cardSetOptional = cardSetRepository.findByName(newRoom.cardSetName());
 		if (cardSetOptional.isEmpty()) {
@@ -54,13 +50,16 @@ class RoomController {
 		final CardSet cardSet = cardSetOptional.get();
 
 		final Room room = new Room(newRoom.name(), cardSet);
+		room.getMembers().add(new RoomMember(user, RoomMember.Role.MODERATOR));
 		roomRepository.save(room);
 
-		final RoomMember roomMember = new RoomMember(room, user, RoomMember.Role.MODERATOR);
-		roomMemberRepository.save(roomMember);
-
-		logger.info("Created room '{}' by user '{}'.", room, null);
+		logger.info("Created room '{}' by user '{}'.", room, user);
 		return ResponseEntity.accepted().body("Created room.");
+	}
+
+	private User getUser(UserDetails userDetails) {
+		// TODO find more ergonomic way to load user
+		return userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
 	}
 
 	private record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSetName") String cardSetName) {

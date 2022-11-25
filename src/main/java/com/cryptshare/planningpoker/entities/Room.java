@@ -2,6 +2,8 @@ package com.cryptshare.planningpoker.entities;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringJoiner;
 
 @Entity
@@ -13,6 +15,10 @@ public class Room extends BaseEntity {
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private CardSet cardSet;
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "room_id", nullable = false)
+	private Set<RoomMember> members = new HashSet<>(16);
 
 	protected Room() {
 	}
@@ -38,8 +44,19 @@ public class Room extends BaseEntity {
 		this.cardSet = cardSet;
 	}
 
+	public Set<RoomMember> getMembers() {
+		return members;
+	}
+
+	protected void setMembers(Set<RoomMember> members) {
+		this.members = members;
+	}
+
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'").add("cardSet=" + cardSet).toString();
+		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
+				.add("cardSet=" + cardSet)
+				.add("members=" + members)
+				.toString();
 	}
 }

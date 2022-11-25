@@ -53,7 +53,7 @@ CREATE TABLE vote
 		ON DELETE CASCADE,
 	CONSTRAINT fk_vote_card_id FOREIGN KEY (card_id) REFERENCES card (id)
 		ON DELETE CASCADE,
-	CONSTRAINT fk_vote_card_set CHECK (
+	CONSTRAINT ck_vote_card_set CHECK (
 		// Enforce that card is from the set that is the configured card set for this room
 			(SELECT r.card_set_id
 			 FROM room_member ru

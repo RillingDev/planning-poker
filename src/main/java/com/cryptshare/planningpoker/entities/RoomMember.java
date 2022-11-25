@@ -14,10 +14,6 @@ public class RoomMember extends BaseEntity {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "room_id", nullable = false)
-	private Room room;
-
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
@@ -28,18 +24,9 @@ public class RoomMember extends BaseEntity {
 	protected RoomMember() {
 	}
 
-	public RoomMember(Room room, User user, Role role) {
-		this.room = room;
+	public RoomMember(User user, Role role) {
 		this.user = user;
 		this.role = role;
-	}
-
-	public Room getRoom() {
-		return room;
-	}
-
-	public void setRoom(Room name) {
-		this.room = name;
 	}
 
 	public User getUser() {
@@ -60,9 +47,6 @@ public class RoomMember extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("name=" + room)
-				.add("user=" + user)
-				.add("role=" + role)
-				.toString();
+		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("user=" + user).add("role=" + role).toString();
 	}
 }
