@@ -9,8 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -32,10 +30,7 @@ class CardSetRepositoryIT {
 		cardSet.getCards().add(new Card("Coffee", null));
 		cardSetRepository.save(cardSet);
 
-		final List<CardSet> all = cardSetRepository.findAll();
-		assertThat(all).hasSize(1);
-
-		final CardSet loaded = all.get(0);
+		final CardSet loaded = cardSetRepository.findByName("Set #1").orElseThrow();
 		assertThat(loaded.getName()).isEqualTo("Set #1");
 
 		assertThat(loaded.getCards()).hasSize(2);
