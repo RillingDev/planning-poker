@@ -47,6 +47,8 @@ public class RoomMember extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("user=" + user).add("role=" + role).toString();
+		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("user='" + user.getUsername() + "'")
+				.add("role=" + role)
+				.toString();
 	}
 }

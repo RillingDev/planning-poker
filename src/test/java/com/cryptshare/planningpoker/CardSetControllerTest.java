@@ -5,6 +5,7 @@ import com.cryptshare.planningpoker.entities.CardSet;
 import com.cryptshare.planningpoker.entities.CardSetRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CardSetController.class)
+@WebMvcTest(value = CardSetController.class, excludeAutoConfiguration = { SecurityAutoConfiguration.class })
 class CardSetControllerTest {
 
 	@MockBean

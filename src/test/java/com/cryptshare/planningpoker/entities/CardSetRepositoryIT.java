@@ -1,7 +1,5 @@
 package com.cryptshare.planningpoker.entities;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +15,6 @@ class CardSetRepositoryIT {
 
 	@Autowired
 	CardSetRepository cardSetRepository;
-
-	@PersistenceContext
-	EntityManager em;
 
 	@Test
 	@DisplayName("can be saved and loaded")

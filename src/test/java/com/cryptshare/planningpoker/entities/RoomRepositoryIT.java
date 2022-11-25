@@ -13,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
-
 class RoomRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
@@ -21,14 +20,22 @@ class RoomRepositoryIT {
 	@Autowired
 	CardSetRepository cardSetRepository;
 
+	@Autowired
+	UserRepository userRepository;
+
 	@Test
 	@DisplayName("can be saved and loaded")
 	@DirtiesContext
 	void saveAndLoad() {
+		final User user = new User("John Doe");
+		userRepository.save(user);
+
 		final CardSet cardSet = new CardSet("Set #1");
 		cardSetRepository.save(cardSet);
 
 		final Room room = new Room("My Room", cardSet);
+		final RoomMember member = new RoomMember(user, RoomMember.Role.MODERATOR);
+		room.getMembers().add(member);
 		roomRepository.save(room);
 
 		final List<Room> all = roomRepository.findAll();
@@ -36,6 +43,7 @@ class RoomRepositoryIT {
 
 		final Room loaded = all.get(0);
 		assertThat(loaded.getName()).isEqualTo("My Room");
+		assertThat(loaded.getMembers()).containsExactly(member);
 		assertThat(loaded.getCardSet()).isEqualTo(cardSet);
 	}
 }
