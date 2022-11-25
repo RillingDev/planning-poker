@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { loadRooms, Room } from "../api";
@@ -6,15 +5,18 @@ import "./RoomList.css";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { CreateRoom } from "../components/CreateRoom";
+import { RoomItem } from "../components/RoomItem";
 
 
 export const RoomList: FC = () => {
 	const [rooms, setRooms] = useState<Room[]>([]);
 
-	const updateRooms = () => loadRooms().then(rooms => setRooms(rooms));
+	const updateRooms = () => {
+		loadRooms().then(rooms => setRooms(rooms)).catch(console.error);
+	};
 
 	useEffect(() => {
-		updateRooms().catch(console.error);
+		updateRooms();
 	}, []);
 
 	const [modalVisible, setModalVisible] = useState(false);
@@ -23,7 +25,7 @@ export const RoomList: FC = () => {
 
 	// TODO: show toast or similar for errors
 	const handleSubmit = () => {
-		updateRooms().catch(console.error);
+		updateRooms();
 		hideModal();
 	};
 	const handleError = (e: Error) => {
@@ -41,8 +43,7 @@ export const RoomList: FC = () => {
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name} className="room-list__room">
-							{room.name}
-							<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>
+							<RoomItem room={room} onDelete={updateRooms}></RoomItem>
 						</li>
 					)}
 				</ul>
