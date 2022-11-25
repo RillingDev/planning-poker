@@ -54,8 +54,7 @@ public class Room extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
-				.add("cardSet=" + cardSet)
+		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'").add("cardSet=" + cardSet.getName())
 				.add("members=" + members)
 				.toString();
 	}

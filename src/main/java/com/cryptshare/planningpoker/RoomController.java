@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,31 +20,33 @@ import java.util.Optional;
 class RoomController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomController.class);
 
+	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(roomMember -> roomMember.getUser().getUsername());
+
 	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
-	private final UserRepository userRepository;
+	private final UserService userService;
 
-	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, UserRepository userRepository) {
+	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, UserService userService) {
 		this.roomRepository = roomRepository;
 		this.cardSetRepository = cardSetRepository;
-		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	List<RoomJson> get() {
+	List<RoomJson> loadRooms() {
 		return roomRepository.findAll().stream().map(RoomJson::convert).toList();
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	ResponseEntity<String> create(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
+	ResponseEntity<String> createRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
 			@AuthenticationPrincipal UserDetails userDetails) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			return ResponseEntity.badRequest().body("Already exists.");
 		}
 
-		final User user = getUser(userDetails);
+		final User user = userService.getUser(userDetails);
 
 		final Optional<CardSet> cardSetOptional = cardSetRepository.findByName(cardSetName);
 		if (cardSetOptional.isEmpty()) {
@@ -61,14 +64,14 @@ class RoomController {
 
 	@DeleteMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	ResponseEntity<String> delete(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+	ResponseEntity<String> deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
 		final Optional<Room> roomOpt = roomRepository.findByName(roomName);
 		if (roomOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 		final Room room = roomOpt.get();
 
-		final User user = getUser(userDetails);
+		final User user = userService.getUser(userDetails);
 
 		if (room.getMembers()
 				.stream()
@@ -82,14 +85,19 @@ class RoomController {
 		return ResponseEntity.ok().body("Deleted room.");
 	}
 
-	private User getUser(UserDetails userDetails) {
-		// TODO find more ergonomic way to load user
-		return userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+	private record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSetName") String cardSetName,
+							@JsonProperty("members") List<RoomMemberJson> isModerator) {
+		static RoomJson convert(Room room) {
+			return new RoomJson(
+					room.getName(),
+					room.getCardSet().getName(),
+					room.getMembers().stream().sorted(MEMBER_COMPARATOR).map(RoomMemberJson::convert).toList());
+		}
 	}
 
-	private record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSetName") String cardSetName) {
-		static RoomJson convert(Room room) {
-			return new RoomJson(room.getName(), room.getCardSet().getName());
+	private record RoomMemberJson(@JsonProperty("username") String name, @JsonProperty("role") int role) {
+		static RoomMemberJson convert(RoomMember roomMember) {
+			return new RoomMemberJson(roomMember.getUser().getUsername(), roomMember.getRole().ordinal());
 		}
 	}
 }

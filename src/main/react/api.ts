@@ -1,6 +1,22 @@
+enum Role {
+	MODERATOR = 0,
+	USER = 1,
+	OBSERVER = 2,
+}
+
+interface User {
+	readonly username: string,
+}
+
+interface RoomMember {
+	readonly username: string,
+	readonly role: Role
+}
+
 export interface Room {
 	readonly name: string;
 	readonly cardSetName: string;
+	readonly members: ReadonlyArray<RoomMember>;
 }
 
 export interface Card {
@@ -24,6 +40,13 @@ function assertStatusOk(res: Response): Response {
 
 const MEDIA_TYPE_JSON = "application/json";
 
+export async function loadIdentity() {
+	return fetch("/api/identity", {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
+	}).then(assertStatusOk).then(res => res.json() as Promise<User>);
+}
+
 export async function loadRooms() {
 	return fetch("/api/rooms", {
 		method: "GET",
@@ -36,6 +59,13 @@ export async function createRoom(roomName: string, cardSetName: string) {
 	url.searchParams.set("card-set-name", cardSetName);
 	return fetch(url, {
 		method: "POST"
+	}).then(assertStatusOk);
+}
+
+export async function deleteRoom(roomName: string) {
+	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
+	return fetch(url, {
+		method: "DELETE"
 	}).then(assertStatusOk);
 }
 
