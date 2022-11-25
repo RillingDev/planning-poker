@@ -1,10 +1,10 @@
 package com.cryptshare.planningpoker.entities;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import org.springframework.lang.Nullable;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 import java.util.UUID;
 

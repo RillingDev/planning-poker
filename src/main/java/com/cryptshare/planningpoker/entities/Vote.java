@@ -1,6 +1,7 @@
 package com.cryptshare.planningpoker.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.util.StringJoiner;
 
 @Entity
