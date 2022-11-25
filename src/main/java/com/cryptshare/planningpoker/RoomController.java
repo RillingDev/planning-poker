@@ -1,14 +1,13 @@
 package com.cryptshare.planningpoker;
 
-import com.cryptshare.planningpoker.entities.CardSet;
-import com.cryptshare.planningpoker.entities.CardSetRepository;
-import com.cryptshare.planningpoker.entities.Room;
-import com.cryptshare.planningpoker.entities.RoomRepository;
+import com.cryptshare.planningpoker.entities.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +20,15 @@ class RoomController {
 
 	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
+	private final RoomMemberRepository roomMemberRepository;
+	private final UserRepository userRepository;
 
-	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository) {
+	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, RoomMemberRepository roomMemberRepository,
+			UserRepository userRepository) {
 		this.roomRepository = roomRepository;
 		this.cardSetRepository = cardSetRepository;
+		this.roomMemberRepository = roomMemberRepository;
+		this.userRepository = userRepository;
 	}
 
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,13 +37,15 @@ class RoomController {
 		return roomRepository.findAll().stream().map(RoomJson::convert).toList();
 	}
 
-	// TODO: add auth and add user as member
 	@PostMapping(value = "/api/rooms", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Transactional
-	ResponseEntity<String> create(@RequestBody RoomJson newRoom) {
+	ResponseEntity<String> create(@RequestBody RoomJson newRoom, @AuthenticationPrincipal UserDetails userDetails) {
 		if (roomRepository.existsByName(newRoom.name())) {
 			return ResponseEntity.badRequest().body("Already exists.");
 		}
+
+		// FIXME
+		final User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
 
 		final Optional<CardSet> cardSetOptional = cardSetRepository.findByName(newRoom.cardSetName());
 		if (cardSetOptional.isEmpty()) {
@@ -49,7 +55,11 @@ class RoomController {
 
 		final Room room = new Room(newRoom.name(), cardSet);
 		roomRepository.save(room);
-		logger.info("Created room '{}'.", room);
+
+		final RoomMember roomMember = new RoomMember(room, user, RoomMember.Role.MODERATOR);
+		roomMemberRepository.save(roomMember);
+
+		logger.info("Created room '{}' by user '{}'.", room, null);
 		return ResponseEntity.accepted().body("Created room.");
 	}
 

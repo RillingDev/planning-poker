@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
-	enum Role {
+	public enum Role {
 		MODERATOR,
 		USER,
 		OBSERVER
@@ -28,9 +28,10 @@ public class RoomMember extends BaseEntity {
 	protected RoomMember() {
 	}
 
-	public RoomMember(Room room, User user) {
+	public RoomMember(Room room, User user, Role role) {
 		this.room = room;
 		this.user = user;
+		this.role = role;
 	}
 
 	public Room getRoom() {

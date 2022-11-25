@@ -43,8 +43,7 @@ class VoteRepositoryIT {
 
 		final User user = prepareUser("Alice");
 
-		final RoomMember roomMember = new RoomMember(room, user);
-		roomMember.setRole(RoomMember.Role.MODERATOR);
+		final RoomMember roomMember = new RoomMember(room, user, RoomMember.Role.MODERATOR);
 		roomMemberRepository.save(roomMember);
 
 		final Vote vote = new Vote(roomMember, card);
@@ -71,8 +70,7 @@ class VoteRepositoryIT {
 
 		final User user = prepareUser("Alice");
 
-		final RoomMember roomMember = new RoomMember(room, user);
-		roomMember.setRole(RoomMember.Role.MODERATOR);
+		final RoomMember roomMember = new RoomMember(room, user, RoomMember.Role.MODERATOR);
 		roomMemberRepository.save(roomMember);
 
 		final Vote vote = new Vote(roomMember, card);

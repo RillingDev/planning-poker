@@ -37,8 +37,7 @@ class RoomMemberRepositoryTest {
 
 		final User user = prepareUser("Alice");
 
-		final RoomMember roomMember = new RoomMember(room, user);
-		roomMember.setRole(RoomMember.Role.MODERATOR);
+		final RoomMember roomMember = new RoomMember(room, user, RoomMember.Role.MODERATOR);
 		roomMemberRepository.save(roomMember);
 
 		final List<RoomMember> all = roomMemberRepository.findAll();
@@ -64,16 +63,13 @@ class RoomMemberRepositoryTest {
 		final User user2 = prepareUser("Bob");
 		final User user3 = prepareUser("John");
 
-		final RoomMember roomMember1 = new RoomMember(room1, user1);
-		roomMember1.setRole(RoomMember.Role.MODERATOR);
+		final RoomMember roomMember1 = new RoomMember(room1, user1, RoomMember.Role.MODERATOR);
 		roomMemberRepository.save(roomMember1);
 
-		final RoomMember roomMember2 = new RoomMember(room1, user2);
-		roomMember2.setRole(RoomMember.Role.USER);
+		final RoomMember roomMember2 = new RoomMember(room1, user2, RoomMember.Role.USER);
 		roomMemberRepository.save(roomMember2);
 
-		final RoomMember roomMember3 = new RoomMember(room2, user3);
-		roomMember3.setRole(RoomMember.Role.USER);
+		final RoomMember roomMember3 = new RoomMember(room2, user3, RoomMember.Role.USER);
 		roomMemberRepository.save(roomMember3);
 
 		final Set<RoomMember> all = roomMemberRepository.findByRoom(room1);
