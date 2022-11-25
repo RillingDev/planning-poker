@@ -4,6 +4,7 @@ import com.cryptshare.planningpoker.entities.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,27 +35,51 @@ class RoomController {
 		return roomRepository.findAll().stream().map(RoomJson::convert).toList();
 	}
 
-	@PostMapping(value = "/api/rooms", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	ResponseEntity<String> create(@RequestBody RoomJson newRoom, @AuthenticationPrincipal UserDetails userDetails) {
-		if (roomRepository.existsByName(newRoom.name())) {
+	ResponseEntity<String> create(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
+			@AuthenticationPrincipal UserDetails userDetails) {
+		if (roomRepository.findByName(roomName).isPresent()) {
 			return ResponseEntity.badRequest().body("Already exists.");
 		}
 
 		final User user = getUser(userDetails);
 
-		final Optional<CardSet> cardSetOptional = cardSetRepository.findByName(newRoom.cardSetName());
+		final Optional<CardSet> cardSetOptional = cardSetRepository.findByName(cardSetName);
 		if (cardSetOptional.isEmpty()) {
 			return ResponseEntity.badRequest().body("Card-set does not exist.");
 		}
 		final CardSet cardSet = cardSetOptional.get();
 
-		final Room room = new Room(newRoom.name(), cardSet);
+		final Room room = new Room(roomName, cardSet);
 		room.getMembers().add(new RoomMember(user, RoomMember.Role.MODERATOR));
 		roomRepository.save(room);
 
 		logger.info("Created room '{}' by user '{}'.", room, user);
 		return ResponseEntity.accepted().body("Created room.");
+	}
+
+	@DeleteMapping(value = "/api/rooms/{room-name}")
+	@Transactional
+	ResponseEntity<String> delete(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+		final Optional<Room> roomOpt = roomRepository.findByName(roomName);
+		if (roomOpt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		final Room room = roomOpt.get();
+
+		final User user = getUser(userDetails);
+
+		if (room.getMembers()
+				.stream()
+				.noneMatch(roomMember -> roomMember.getUser().equals(user) && roomMember.getRole() == RoomMember.Role.MODERATOR)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only a moderator of this room may delete it.");
+		}
+
+		roomRepository.delete(room);
+
+		logger.info("Deleted room '{}' by user '{}'.", room, user);
+		return ResponseEntity.ok().body("Deleted room.");
 	}
 
 	private User getUser(UserDetails userDetails) {

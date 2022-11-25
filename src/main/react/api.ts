@@ -31,11 +31,11 @@ export async function loadRooms() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room[]>);
 }
 
-export async function createRoom(name: string, cardSetName: string) {
-	return fetch("/api/rooms", {
-		method: "POST",
-		headers: {"Content-Type": MEDIA_TYPE_JSON},
-		body: JSON.stringify({name, cardSetName})
+export async function createRoom(roomName: string, cardSetName: string) {
+	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
+	url.searchParams.set("card-set-name", cardSetName);
+	return fetch(url, {
+		method: "POST"
 	}).then(assertStatusOk);
 }
 
