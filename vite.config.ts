@@ -1,3 +1,6 @@
+/// <reference types="vitest" />
+/// <reference types="vite/client" />
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -12,12 +15,17 @@ export default defineConfig({
 			output: {
 				// Remove hashes from file name so we have an easier time including them
 				entryFileNames: "[name].js",
-				assetFileNames: "[name][extname]"
-			}
+				assetFileNames: "[name][extname]",
+			},
 		},
-		emptyOutDir: false
+		emptyOutDir: false,
 	},
 	server: {
-		host: "127.0.0.1"
-	}
+		host: "127.0.0.1",
+	},
+	test: {
+		globals: true,
+		environment: "jsdom",
+		setupFiles: "./src/test/react/setup.ts",
+	},
 });
