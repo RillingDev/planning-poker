@@ -12,11 +12,12 @@ import java.util.UUID;
  * Adapted version of {@link org.springframework.data.jpa.domain.AbstractPersistable}.
  */
 @MappedSuperclass
-public abstract class BaseEntity {
+abstract class BaseEntity {
 	// UUID instead of auto-increment to always have an ID for equality checks.
 	@Id
 	@Column(name = "id", nullable = false)
-	private @Nullable UUID id = UUID.randomUUID();
+	@Nullable
+	private UUID id = UUID.randomUUID();
 
 	@Nullable
 	public UUID getId() {
