@@ -38,25 +38,24 @@ export const RoomList: FC = () => {
 			<header className="room-list__header">
 				<h2>Rooms</h2>
 				<Button variant="primary" onClick={showModal}>Create Room</Button>
+				<Modal show={modalVisible} onHide={hideModal}>
+					<Modal.Header closeButton>
+						<Modal.Title>Create Room</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<CreateRoom onSubmit={handleSubmit} onError={handleError}></CreateRoom>
+					</Modal.Body>
+				</Modal>
 			</header>
 			<nav>
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name} className="room-list__room">
-							<RoomItem room={room} onDelete={updateRooms}></RoomItem>
-						</li>
+							<RoomItem room={room} onChange={updateRooms} onError={console.error}></RoomItem>
+						</li>,
 					)}
 				</ul>
 			</nav>
-
-			<Modal show={modalVisible} onHide={hideModal}>
-				<Modal.Header closeButton>
-					<Modal.Title>Create Room</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<CreateRoom onSubmit={handleSubmit} onError={handleError}></CreateRoom>
-				</Modal.Body>
-			</Modal>
 		</>
 	);
 };

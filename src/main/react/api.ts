@@ -29,12 +29,12 @@ export interface CardSet {
 	readonly cards: ReadonlyArray<Card>;
 }
 
-function assertStatusOk(res: Response): Response {
+async function assertStatusOk(res: Response): Promise<Response> {
 	if (res.status >= 200 && res.status <= 299) {
 		return res;
 	}
 	throw new Error(
-		`Unexpected status code: ${res.status} - ${res.statusText}.`
+		`Unexpected status code: ${res.status}:\n${await res.text()}.`,
 	);
 }
 
@@ -65,13 +65,22 @@ export async function createRoom(roomName: string, cardSetName: string) {
 export async function deleteRoom(roomName: string) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
 	return fetch(url, {
-		method: "DELETE"
+		method: "DELETE",
 	}).then(assertStatusOk);
 }
+
+export async function editRoom(roomName: string, cardSetName: string) {
+	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
+	url.searchParams.set("card-set-name", cardSetName);
+	return fetch(url, {
+		method: "PATCH",
+	}).then(assertStatusOk);
+}
+
 
 export async function loadCardSets() {
 	return fetch("/api/card-sets", {
 		method: "GET",
-		headers: {"Accept": MEDIA_TYPE_JSON}
+		headers: {"Accept": MEDIA_TYPE_JSON},
 	}).then(assertStatusOk).then(res => res.json() as Promise<CardSet[]>);
 }

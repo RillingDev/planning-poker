@@ -16,7 +16,6 @@ export const Room: FC = () => {
 			</header>
 			<main>
 			</main>
-
 		</>
 	);
 };

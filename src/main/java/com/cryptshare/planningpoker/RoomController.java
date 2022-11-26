@@ -75,7 +75,8 @@ class RoomController {
 
 		if (room.getMembers()
 				.stream()
-				.noneMatch(roomMember -> roomMember.getUser().equals(user) && roomMember.getRole() == RoomMember.Role.MODERATOR)) {
+				.noneMatch(roomMember -> roomMember.getUser().equals(user) &&
+						roomMember.getRole() == RoomMember.Role.MODERATOR)) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only a moderator of this room may delete it.");
 		}
 
@@ -85,11 +86,40 @@ class RoomController {
 		return ResponseEntity.ok().body("Deleted room.");
 	}
 
+	@PatchMapping(value = "/api/rooms/{room-name}")
+	@Transactional
+	ResponseEntity<String> deleteRoom(@PathVariable("room-name") String roomName,
+									  @RequestParam("card-set-name") String cardSetName,
+									  @AuthenticationPrincipal UserDetails userDetails) {
+		final Optional<Room> roomOpt = roomRepository.findByName(roomName);
+		if (roomOpt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		final Room room = roomOpt.get();
+
+		final User user = userService.getUser(userDetails);
+
+		if (room.getMembers()
+				.stream()
+				.noneMatch(roomMember -> roomMember.getUser().equals(user) &&
+						roomMember.getRole() == RoomMember.Role.MODERATOR)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only a moderator of this room may edit it.");
+		}
+		final Optional<CardSet> cardSetOptional = cardSetRepository.findByName(cardSetName);
+		if (cardSetOptional.isEmpty()) {
+			return ResponseEntity.badRequest().body("Card-set does not exist.");
+		}
+		room.setCardSet(cardSetOptional.get());
+		roomRepository.save(room);
+
+		logger.info("Edited room '{}' by user '{}'.", room, user);
+		return ResponseEntity.ok().body("Edited room.");
+	}
+
 	private record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSetName") String cardSetName,
 							@JsonProperty("members") List<RoomMemberJson> isModerator) {
 		static RoomJson convert(Room room) {
-			return new RoomJson(
-					room.getName(),
+			return new RoomJson(room.getName(),
 					room.getCardSet().getName(),
 					room.getMembers().stream().sorted(MEMBER_COMPARATOR).map(RoomMemberJson::convert).toList());
 		}
