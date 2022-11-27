@@ -11,11 +11,11 @@
 
 ### Development Mode
 
-Use the run config 'PlanningpokerApplication' and go to http://localhost:8080
+Start the run config `backend:dev` and `frontend:dev` and go to <http://localhost:8080>.
 
 ### Build for Production
 
-Run `mvn package`.
+Start the run config `package`.
 This will:
 
 1) compile the backend.
