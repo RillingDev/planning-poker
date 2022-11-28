@@ -15,7 +15,7 @@ export const CreateRoom: FC<{
 
 	useEffect(() => {
 		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
-	}, []);
+	}, [onError]);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();

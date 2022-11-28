@@ -1,9 +1,9 @@
-import React, { FC, useContext } from "react";
+import { FC, useContext } from "react";
 import { AppContext } from "../AppContext";
 import "./Header.css";
 
 export const Header: FC = () => {
-	let {user} = useContext(AppContext);
+	const {user} = useContext(AppContext);
 
 	return (
 		<header className="header">

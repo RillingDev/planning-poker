@@ -17,9 +17,11 @@ export const RoomItem: FC<{
 		onChange();
 	};
 
-	const handleDelete = () => deleteRoom(room.name).then(() => onChange()).catch(onError);
+	const handleDelete = () => {
+		deleteRoom(room.name).then(() => onChange()).catch(onError);
+	};
 
-	let {user} = useContext(AppContext);
+	const {user} = useContext(AppContext);
 	const mayModerate = () => room.members.some(member => member.username == user.username && member.role == Role.MODERATOR);
 
 	return (
@@ -29,7 +31,7 @@ export const RoomItem: FC<{
 			<Button variant="warning" onClick={() => setEditModalVisible(true)} hidden={!mayModerate()}>Edit</Button>
 			<Modal show={editModalVisible} onHide={() => setEditModalVisible(false)}>
 				<Modal.Header closeButton>
-					<Modal.Title>Edit Room '{room.name}'</Modal.Title>
+					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<EditRoom onSubmit={handleEdit} onError={onError} room={room}></EditRoom>
