@@ -30,13 +30,6 @@ class RoomController {
 		this.userService = userService;
 	}
 
-	private static void assertModeratorPermissions(Room room, User user) {
-		if (room.getMembers()
-				.stream()
-				.noneMatch(roomMember -> roomMember.getUser().equals(user) && roomMember.getRole() == RoomMember.Role.MODERATOR)) {
-			throw new NotModeratorException();
-		}
-	}
 
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -56,7 +49,7 @@ class RoomController {
 		final CardSet cardSet = cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new);
 
 		final Room room = new Room(roomName, cardSet);
-		room.getMembers().add(new RoomMember(user, RoomMember.Role.MODERATOR));
+		room.getMembers().add(new RoomMember(user, RoomMember.Role.USER));
 		roomRepository.save(room);
 		logger.info("Created room '{}' by user '{}'.", room, user);
 	}
@@ -66,8 +59,6 @@ class RoomController {
 	void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
 		final User user = userService.getUser(userDetails);
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		assertModeratorPermissions(room, user);
 
 		roomRepository.delete(room);
 		logger.info("Deleted room '{}' by user '{}'.", room, user);
@@ -79,8 +70,6 @@ class RoomController {
 			@AuthenticationPrincipal UserDetails userDetails) {
 		final User user = userService.getUser(userDetails);
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		assertModeratorPermissions(room, user);
 
 		room.setCardSet(cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new));
 		roomRepository.save(room);

@@ -9,7 +9,6 @@ import java.util.StringJoiner;
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
 	public enum Role {
-		MODERATOR,
 		USER,
 		OBSERVER
 	}

@@ -37,7 +37,7 @@ class RoomRepositoryIT {
 
 		final Room room = new Room("My Room", cardSet);
 
-		final RoomMember member = new RoomMember(user, RoomMember.Role.MODERATOR);
+		final RoomMember member = new RoomMember(user, RoomMember.Role.USER);
 		room.getMembers().add(member);
 
 		final Vote vote = new Vote(member, card);

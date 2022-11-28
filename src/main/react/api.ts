@@ -1,5 +1,4 @@
 export const enum Role {
-	MODERATOR = 0,
 	USER = 1,
 	OBSERVER = 2,
 }

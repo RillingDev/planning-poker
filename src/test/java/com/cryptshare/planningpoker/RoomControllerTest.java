@@ -101,7 +101,7 @@ class RoomControllerTest {
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
 		assertThat(members).extracting(RoomMember::getUser).containsExactly(user);
-		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.MODERATOR);
+		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.USER);
 	}
 
 	@Test
@@ -116,22 +116,6 @@ class RoomControllerTest {
 	}
 
 	@Test
-	@DisplayName("DELETE `/api/rooms/{room-name}` throws for lacking permissions")
-	@WithMockUser
-	void deleteRoomPermissions() throws Exception {
-		final User alice = new User("Alice");
-		final User johnDoe = new User("John Doe");
-		given(userService.getUser(any())).willReturn(johnDoe);
-
-		final Room room = new Room("my-room", new CardSet("Card Set"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.MODERATOR));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-
-		mockMvc.perform(delete("/api/rooms/my-room").with(csrf())).andExpect(status().isForbidden());
-	}
-
-	@Test
 	@DisplayName("DELETE `/api/rooms/{room-name}` deletes")
 	@WithMockUser
 	void deleteRoomDeletes() throws Exception {
@@ -141,7 +125,7 @@ class RoomControllerTest {
 
 		final Room room = new Room("my-room", new CardSet("Card Set"));
 		room.getMembers().add(new RoomMember(alice, RoomMember.Role.USER));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.MODERATOR));
+		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(delete("/api/rooms/my-room").with(csrf())).andExpect(status().isOk());
@@ -165,26 +149,6 @@ class RoomControllerTest {
 	}
 
 	@Test
-	@DisplayName("PATCH `/api/rooms/{room-name}` throws for lacking permissions")
-	@WithMockUser
-	void editRoomPermissions() throws Exception {
-		final User alice = new User("Alice");
-		final User johnDoe = new User("John Doe");
-		given(userService.getUser(any())).willReturn(johnDoe);
-
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.MODERATOR));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-
-		final CardSet cardSet = new CardSet("My Set 1");
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
-
-		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", cardSet.getName()))
-				.andExpect(status().isForbidden());
-	}
-
-	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}` throws for unknown card set")
 	@WithMockUser
 	void editRoomUnknownCardSet() throws Exception {
@@ -193,7 +157,7 @@ class RoomControllerTest {
 		given(userService.getUser(any())).willReturn(johnDoe);
 
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.MODERATOR));
+		room.getMembers().add(new RoomMember(alice, RoomMember.Role.USER));
 		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -206,13 +170,11 @@ class RoomControllerTest {
 	@DisplayName("PATCH `/api/rooms/{room-name}` edits")
 	@WithMockUser
 	void editRoomEdits() throws Exception {
-		final User alice = new User("Alice");
 		final User johnDoe = new User("John Doe");
 		given(userService.getUser(any())).willReturn(johnDoe);
 
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.USER));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.MODERATOR));
+		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final CardSet cardSet = new CardSet("My Set 1");

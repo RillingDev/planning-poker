@@ -1,8 +1,7 @@
-import { FC, useContext, useState } from "react";
-import { deleteRoom, Role, Room } from "../api";
+import { FC, useState } from "react";
+import { deleteRoom, Room } from "../api";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
-import { AppContext } from "../AppContext";
 import Modal from "react-bootstrap/Modal";
 import { EditRoom } from "./EditRoom";
 
@@ -21,14 +20,11 @@ export const RoomItem: FC<{
 		deleteRoom(room.name).then(() => onChange()).catch(onError);
 	};
 
-	const {user} = useContext(AppContext);
-	const mayModerate = () => room.members.some(member => member.username == user.username && member.role == Role.MODERATOR);
-
 	return (
 		<>
 			<span>{room.name}</span>
 
-			<Button variant="warning" onClick={() => setEditModalVisible(true)} hidden={!mayModerate()}>Edit</Button>
+			<Button variant="warning" onClick={() => setEditModalVisible(true)}>Edit</Button>
 			<Modal show={editModalVisible} onHide={() => setEditModalVisible(false)}>
 				<Modal.Header closeButton>
 					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
@@ -38,7 +34,7 @@ export const RoomItem: FC<{
 				</Modal.Body>
 			</Modal>
 
-			<Button variant="danger" onClick={handleDelete} hidden={!mayModerate()}>Delete</Button>
+			<Button variant="danger" onClick={handleDelete}>Delete</Button>
 
 			<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>
 		</>
