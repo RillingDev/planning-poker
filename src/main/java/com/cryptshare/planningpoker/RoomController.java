@@ -18,8 +18,7 @@ import java.util.List;
 class RoomController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomController.class);
 
-	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(roomMember -> roomMember.getUser()
-			.getUsername());
+	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(roomMember -> roomMember.getUser().getUsername());
 
 	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
@@ -34,8 +33,7 @@ class RoomController {
 	private static void assertModeratorPermissions(Room room, User user) {
 		if (room.getMembers()
 				.stream()
-				.noneMatch(roomMember -> roomMember.getUser().equals(user) &&
-						roomMember.getRole() == RoomMember.Role.MODERATOR)) {
+				.noneMatch(roomMember -> roomMember.getUser().equals(user) && roomMember.getRole() == RoomMember.Role.MODERATOR)) {
 			throw new NotModeratorException();
 		}
 	}
@@ -48,34 +46,30 @@ class RoomController {
 
 	@PostMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	void createRoom(@PathVariable("room-name") String roomName,
-					@RequestParam("card-set-name") String cardSetName,
-					@AuthenticationPrincipal UserDetails userDetails) {
+	void createRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
+			@AuthenticationPrincipal UserDetails userDetails) {
+		final User user = userService.getUser(userDetails);
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
-
-		final User user = userService.getUser(userDetails);
 
 		final CardSet cardSet = cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new);
 
 		final Room room = new Room(roomName, cardSet);
 		room.getMembers().add(new RoomMember(user, RoomMember.Role.MODERATOR));
 		roomRepository.save(room);
-
 		logger.info("Created room '{}' by user '{}'.", room, user);
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}")
 	@Transactional
 	void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+		final User user = userService.getUser(userDetails);
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		final User user = userService.getUser(userDetails);
 		assertModeratorPermissions(room, user);
 
 		roomRepository.delete(room);
-
 		logger.info("Deleted room '{}' by user '{}'.", room, user);
 	}
 
@@ -83,21 +77,60 @@ class RoomController {
 	@Transactional
 	void editRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
 			@AuthenticationPrincipal UserDetails userDetails) {
+		final User user = userService.getUser(userDetails);
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		final User user = userService.getUser(userDetails);
 		assertModeratorPermissions(room, user);
 
 		room.setCardSet(cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new));
 		roomRepository.save(room);
-
 		logger.info("Edited room '{}' by user '{}'.", room, user);
+	}
+
+	@PostMapping(value = "/api/rooms/{room-name}/session")
+	@Transactional
+	void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+		final User user = userService.getUser(userDetails);
+
+		if (room.getMembers().stream().anyMatch(roomMember -> roomMember.getUser().equals(user))) {
+			logger.warn("User '{}' is already in room '{}'.", user, room);
+			return;
+		}
+
+		room.getMembers().add(new RoomMember(user, RoomMember.Role.USER));
+		roomRepository.save(room);
+		logger.info("User '{}' joined room '{}'.", user, room);
+	}
+
+	@DeleteMapping(value = "/api/rooms/{room-name}/session")
+	@Transactional
+	void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+		final User user = userService.getUser(userDetails);
+
+		boolean removed = false;
+		for (RoomMember roomMember : List.copyOf(room.getMembers())) {
+			if (roomMember.getUser().equals(user)) {
+				room.getMembers().remove(roomMember);
+				removed = true;
+				break;
+			}
+		}
+		if (!removed) {
+			logger.warn("User '{}' is not part of room '{}'.", user, room);
+			return;
+		}
+
+		roomRepository.save(room);
+		logger.info("User '{}' left room '{}'.", user, room);
 	}
 
 	private record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSetName") String cardSetName,
 							@JsonProperty("members") List<RoomMemberJson> isModerator) {
 		static RoomJson convert(Room room) {
-			return new RoomJson(room.getName(),
+			return new RoomJson(
+					room.getName(),
 					room.getCardSet().getName(),
 					room.getMembers().stream().sorted(MEMBER_COMPARATOR).map(RoomMemberJson::convert).toList());
 		}

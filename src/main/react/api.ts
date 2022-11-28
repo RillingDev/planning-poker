@@ -47,6 +47,7 @@ export async function loadIdentity() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<User>);
 }
 
+
 export async function loadRooms() {
 	return fetch("/api/rooms", {
 		method: "GET",
@@ -63,8 +64,7 @@ export async function createRoom(roomName: string, cardSetName: string) {
 }
 
 export async function deleteRoom(roomName: string) {
-	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
-	return fetch(url, {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
 }
@@ -74,6 +74,18 @@ export async function editRoom(roomName: string, cardSetName: string) {
 	url.searchParams.set("card-set-name", cardSetName);
 	return fetch(url, {
 		method: "PATCH",
+	}).then(assertStatusOk);
+}
+
+export async function joinRoom(roomName: string) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
+		method: "POST",
+	}).then(assertStatusOk);
+}
+
+export async function leaveRoom(roomName: string) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
+		method: "DELETE",
 	}).then(assertStatusOk);
 }
 
