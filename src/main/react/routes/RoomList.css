@@ -12,11 +12,3 @@
 	flex-direction: column;
 	gap: 0.75rem;
 }
-
-.room-list__room {
-	padding: 1rem;
-	border: 1px solid var(--bs-gray-500);
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}

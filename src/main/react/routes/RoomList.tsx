@@ -50,7 +50,7 @@ export const RoomList: FC = () => {
 			<nav>
 				<ul className="room-list">
 					{rooms.map(room =>
-						<li key={room.name} className="room-list__room">
+						<li key={room.name}>
 							<RoomItem room={room} onChange={updateRooms} onError={console.error}></RoomItem>
 						</li>,
 					)}

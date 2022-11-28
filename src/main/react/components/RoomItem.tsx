@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { EditRoom } from "./EditRoom";
+import "./RoomItem.css";
 
 export const RoomItem: FC<{
 	room: Room;
@@ -16,13 +17,16 @@ export const RoomItem: FC<{
 		onChange();
 	};
 
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 	const handleDelete = () => {
-		deleteRoom(room.name).then(() => onChange()).catch(onError);
+		deleteRoom(room.name).then(() => setDeleteModalVisible(false)).then(() => onChange()).catch(onError);
 	};
 
 	return (
-		<>
+		<div className="room-item">
 			<span>{room.name}</span>
+
+			<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>
 
 			<Button variant="warning" onClick={() => setEditModalVisible(true)}>Edit</Button>
 			<Modal show={editModalVisible} onHide={() => setEditModalVisible(false)}>
@@ -34,9 +38,18 @@ export const RoomItem: FC<{
 				</Modal.Body>
 			</Modal>
 
-			<Button variant="danger" onClick={handleDelete}>Delete</Button>
-
-			<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>
-		</>
+			<Button variant="danger" onClick={() => setDeleteModalVisible(true)}>Delete</Button>
+			<Modal show={deleteModalVisible} onHide={() => setDeleteModalVisible(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>Delete Room &apos;{room.name}&apos;</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					Are you sure you want to delete this room?
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="danger" onClick={handleDelete}>Permanently Delete This Room</Button>
+				</Modal.Footer>
+			</Modal>
+		</div>
 	);
 };
