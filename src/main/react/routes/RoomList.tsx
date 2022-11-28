@@ -2,9 +2,8 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { loadRooms, Room } from "../api";
 import "./RoomList.css";
-import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import { CreateRoom } from "../components/CreateRoom";
+import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
 
 
@@ -38,14 +37,7 @@ export const RoomList: FC = () => {
 			<header className="room-list__header">
 				<h2>Rooms</h2>
 				<Button variant="primary" onClick={showModal}>Create Room</Button>
-				<Modal show={modalVisible} onHide={hideModal}>
-					<Modal.Header closeButton>
-						<Modal.Title>Create Room</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<CreateRoom onSubmit={handleSubmit} onError={handleError}></CreateRoom>
-					</Modal.Body>
-				</Modal>
+				<CreateRoomModal onSubmit={handleSubmit} onError={handleError} show={modalVisible} onHide={hideModal}></CreateRoomModal>
 			</header>
 			<nav>
 				<ul className="room-list">
