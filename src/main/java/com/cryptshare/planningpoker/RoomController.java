@@ -81,9 +81,8 @@ class RoomController {
 
 	@PatchMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	void deleteRoom(@PathVariable("room-name") String roomName,
-					@RequestParam("card-set-name") String cardSetName,
-					@AuthenticationPrincipal UserDetails userDetails) {
+	void editRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
+			@AuthenticationPrincipal UserDetails userDetails) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		final User user = userService.getUser(userDetails);
@@ -118,7 +117,7 @@ class RoomController {
 	private static class RoomNotFoundException extends RuntimeException {
 	}
 
-	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such card-set.")
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card-set.")
 	private static class CardSetNotFoundException extends RuntimeException {
 	}
 
