@@ -1,6 +1,6 @@
 package com.cryptshare.planningpoker;
 
-import com.cryptshare.planningpoker.entities.UserRepository;
+import com.cryptshare.planningpoker.data.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,7 +28,7 @@ class SecurityConfig {
 		// FIXME for testing purposes only
 		final String username = "John Doe";
 		if (userRepository.findByUsername(username).isEmpty()) {
-			userRepository.save(new com.cryptshare.planningpoker.entities.User(username));
+			userRepository.save(new com.cryptshare.planningpoker.data.User(username));
 		}
 		final UserDetails user = User.withDefaultPasswordEncoder().username(username).password("changeme").roles("USER").build();
 		return new InMemoryUserDetailsManager(user);

@@ -1,6 +1,7 @@
-package com.cryptshare.planningpoker;
+package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.entities.*;
+import com.cryptshare.planningpoker.UserService;
+import com.cryptshare.planningpoker.data.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,8 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = RoomController.class)
-class RoomControllerSessionTest {
+@WebMvcTest(value = RoomMemberController.class)
+class RoomMemberControllerTest {
 
 	@MockBean
 	RoomRepository roomRepository;
@@ -76,7 +77,7 @@ class RoomControllerSessionTest {
 	}
 
 	@Test
-	@DisplayName("POST `/api/rooms/{room-name}/session` joins room")
+	@DisplayName("DELETE `/api/rooms/{room-name}/session` joins room")
 	@WithMockUser
 	void leaveRoomLeaves() throws Exception {
 		final User user = new User("John Doe");

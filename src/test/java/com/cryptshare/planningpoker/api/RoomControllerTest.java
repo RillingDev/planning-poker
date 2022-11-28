@@ -1,6 +1,7 @@
-package com.cryptshare.planningpoker;
+package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.entities.*;
+import com.cryptshare.planningpoker.UserService;
+import com.cryptshare.planningpoker.data.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

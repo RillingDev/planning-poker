@@ -1,4 +1,4 @@
-package com.cryptshare.planningpoker.entities;
+package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.*;
 import org.springframework.lang.Nullable;

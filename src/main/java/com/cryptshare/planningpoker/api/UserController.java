@@ -1,7 +1,7 @@
-package com.cryptshare.planningpoker;
+package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.entities.User;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.cryptshare.planningpoker.UserService;
+import com.cryptshare.planningpoker.api.projection.UserJson;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,9 +23,4 @@ class UserController {
 		return UserJson.convert(userService.getUser(userDetails));
 	}
 
-	private record UserJson(@JsonProperty("username") String name) {
-		static UserJson convert(User user) {
-			return new UserJson(user.getUsername());
-		}
-	}
 }

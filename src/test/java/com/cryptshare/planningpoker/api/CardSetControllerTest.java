@@ -1,8 +1,8 @@
-package com.cryptshare.planningpoker;
+package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.entities.Card;
-import com.cryptshare.planningpoker.entities.CardSet;
-import com.cryptshare.planningpoker.entities.CardSetRepository;
+import com.cryptshare.planningpoker.data.Card;
+import com.cryptshare.planningpoker.data.CardSet;
+import com.cryptshare.planningpoker.data.CardSetRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

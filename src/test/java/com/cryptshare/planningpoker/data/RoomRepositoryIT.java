@@ -1,4 +1,4 @@
-package com.cryptshare.planningpoker.entities;
+package com.cryptshare.planningpoker.data;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

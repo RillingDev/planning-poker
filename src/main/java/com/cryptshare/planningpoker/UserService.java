@@ -1,7 +1,7 @@
 package com.cryptshare.planningpoker;
 
-import com.cryptshare.planningpoker.entities.User;
-import com.cryptshare.planningpoker.entities.UserRepository;
+import com.cryptshare.planningpoker.data.User;
+import com.cryptshare.planningpoker.data.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 

@@ -76,6 +76,7 @@ export async function editRoom(roomName: string, cardSetName: string) {
 	}).then(assertStatusOk);
 }
 
+
 export async function joinRoom(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
 		method: "POST",
