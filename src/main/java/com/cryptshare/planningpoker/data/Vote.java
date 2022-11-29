@@ -42,6 +42,6 @@ public class Vote extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", Vote.class.getSimpleName() + "[", "]").add("roomMember=" + roomMember).add("card=" + card).toString();
+		return new StringJoiner(", ", Vote.class.getSimpleName() + "[", "]").add("card=" + card).toString();
 	}
 }

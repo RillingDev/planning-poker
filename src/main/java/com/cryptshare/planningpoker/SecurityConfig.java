@@ -17,7 +17,7 @@ class SecurityConfig {
 	// https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html#mvc-enablewebmvcsecurity
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		// TODO
+		// TODO is disabling CSRF safe here?
 		http.authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated()).httpBasic(withDefaults()).csrf().disable();
 		return http.build();
 	}
