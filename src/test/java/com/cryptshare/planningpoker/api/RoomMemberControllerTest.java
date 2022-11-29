@@ -186,4 +186,97 @@ class RoomMemberControllerTest {
 				.andExpect(jsonPath("$.members[1].vote.value").value(1.0));
 	}
 
+	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/session/vote` throws for unknown name")
+	@WithMockUser
+	void createVoteUnknownName() throws Exception {
+		given(userService.getUser(any())).willReturn(new User("John Doe"));
+
+		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
+
+		mockMvc.perform(post("/api/rooms/my-room/session/vote").with(csrf()).queryParam("card-name", "1")).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/session/vote` throws when not a member")
+	@WithMockUser
+	void createVoteNotMember() throws Exception {
+		final User johnDoe = new User("John Doe");
+		given(userService.getUser(any())).willReturn(johnDoe);
+
+		final CardSet cardSet = new CardSet("My Set 1");
+		cardSet.getCards().add(new Card("1", 1.0));
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember(new User("Alice"), RoomMember.Role.VOTER);
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(post("/api/rooms/my-room/session/vote").with(csrf()).queryParam("card-name", "1")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/session/vote` throws when an illegal card is specified")
+	@WithMockUser
+	void createVoteWrongCard() throws Exception {
+		final User johnDoe = new User("John Doe");
+		given(userService.getUser(any())).willReturn(johnDoe);
+
+		final CardSet cardSet = new CardSet("My Set 1");
+		cardSet.getCards().add(new Card("1", 1.0));
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember(johnDoe, RoomMember.Role.VOTER);
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(post("/api/rooms/my-room/session/vote").with(csrf()).queryParam("card-name", "99")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/session/vote` sets vote")
+	@WithMockUser
+	void createVotePutsVote() throws Exception {
+		final User johnDoe = new User("John Doe");
+		given(userService.getUser(any())).willReturn(johnDoe);
+
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember(johnDoe, RoomMember.Role.VOTER);
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(post("/api/rooms/my-room/session/vote").with(csrf()).queryParam("card-name", "1")).andExpect(status().isOk());
+
+		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
+		verify(roomRepository).save(captor.capture());
+		final Vote vote = captor.getValue().findMemberByUser(johnDoe).orElseThrow().getVote();
+		assertThat(vote).isNotNull().extracting(Vote::getCard).isEqualTo(card);
+	}
+
+	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/session/vote` updates vote")
+	@WithMockUser
+	void createVoteUpdateVote() throws Exception {
+		final User johnDoe = new User("John Doe");
+		given(userService.getUser(any())).willReturn(johnDoe);
+
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card1 = new Card("1", 1.0);
+		final Card card2 = new Card("2", 2.0);
+		cardSet.getCards().add(card1);
+		cardSet.getCards().add(card2);
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember(johnDoe, RoomMember.Role.VOTER);
+		roomMember.setVote(new Vote(roomMember, card1));
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(post("/api/rooms/my-room/session/vote").with(csrf()).queryParam("card-name", "2")).andExpect(status().isOk());
+
+		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
+		verify(roomRepository).save(captor.capture());
+		final Vote vote = captor.getValue().findMemberByUser(johnDoe).orElseThrow().getVote();
+		assertThat(vote).isNotNull().extracting(Vote::getCard).isEqualTo(card2);
+	}
 }

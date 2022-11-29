@@ -47,6 +47,13 @@ export async function loadIdentity() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<User>);
 }
 
+export async function loadCardSets() {
+	return fetch("/api/card-sets", {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON},
+	}).then(assertStatusOk).then(res => res.json() as Promise<CardSet[]>);
+}
+
 
 export async function loadRooms() {
 	return fetch("/api/rooms", {
@@ -96,10 +103,11 @@ export async function getRoom(roomName: string) {
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room>);
 }
 
-
-export async function loadCardSets() {
-	return fetch("/api/card-sets", {
-		method: "GET",
-		headers: {"Accept": MEDIA_TYPE_JSON},
-	}).then(assertStatusOk).then(res => res.json() as Promise<CardSet[]>);
+export async function createVote(roomName: string, cardName: string) {
+	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/session/vote`, location.href);
+	url.searchParams.set("card-name", cardName);
+	return fetch(url, {
+		method: "POST",
+	}).then(assertStatusOk);
 }
+

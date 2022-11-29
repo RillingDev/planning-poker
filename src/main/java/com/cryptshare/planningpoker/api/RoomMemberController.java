@@ -4,10 +4,7 @@ import com.cryptshare.planningpoker.UserService;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.api.projection.RoomMemberJson;
-import com.cryptshare.planningpoker.data.Room;
-import com.cryptshare.planningpoker.data.RoomMember;
-import com.cryptshare.planningpoker.data.RoomRepository;
-import com.cryptshare.planningpoker.data.User;
+import com.cryptshare.planningpoker.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -73,8 +70,33 @@ class RoomMemberController {
 		return RoomJson.convert(room, roomMember -> RoomMemberJson.convertToDetailed(roomMember, !room.isVotingComplete()));
 	}
 
+	@PostMapping(value = "/api/rooms/{room-name}/session/vote")
+	@Transactional
+	void createVote(@PathVariable("room-name") String roomName, @RequestParam("card-name") String cardName,
+			@AuthenticationPrincipal UserDetails userDetails) {
+		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+		final User user = userService.getUser(userDetails);
+
+		final RoomMember roomMember = room.findMemberByUser(user).orElseThrow(NotAMemberException::new);
+
+		final Card card = room.getCardSet()
+				.getCards()
+				.stream()
+				.filter(c -> c.getName().equals(cardName))
+				.findFirst()
+				.orElseThrow(CardNotFoundException::new);
+
+		roomMember.setVote(new Vote(roomMember, card));
+		roomRepository.save(room);
+		logger.info("User '{}' voted with '{}'.", user, card);
+	}
+
 	@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "You must be a member of this room to perform this action.")
 	private static class NotAMemberException extends RuntimeException {
+	}
+
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card in this rooms card-set.")
+	private static class CardNotFoundException extends RuntimeException {
 	}
 
 }
