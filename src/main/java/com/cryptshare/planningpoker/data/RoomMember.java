@@ -13,13 +13,12 @@ public class RoomMember extends BaseEntity {
 		OBSERVER
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	@Column(name = "username", nullable = false)
+	private String username;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "user_role", nullable = false)
-	private Role role;
+	private Role role = Role.VOTER;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "roomMember")
 	@Nullable
@@ -28,17 +27,19 @@ public class RoomMember extends BaseEntity {
 	protected RoomMember() {
 	}
 
-	public RoomMember(User user, Role role) {
-		this.user = user;
-		this.role = role;
+	/**
+	 * @param username Must be derived from a valid {@link org.springframework.security.core.userdetails.UserDetails}.
+	 */
+	public RoomMember(String username) {
+		this.username = username;
 	}
 
-	public User getUser() {
-		return user;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public Role getRole() {
@@ -60,8 +61,9 @@ public class RoomMember extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("user='" + user.getUsername() + "'")
+		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'")
 				.add("role=" + role)
+				.add("vote=" + vote)
 				.toString();
 	}
 }

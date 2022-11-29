@@ -1,6 +1,5 @@
 package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.UserService;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.api.projection.RoomMemberJson;
@@ -22,12 +21,10 @@ class RoomController {
 
 	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
-	private final UserService userService;
 
-	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, UserService userService) {
+	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository) {
 		this.roomRepository = roomRepository;
 		this.cardSetRepository = cardSetRepository;
-		this.userService = userService;
 	}
 
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,8 +36,7 @@ class RoomController {
 	@PostMapping(value = "/api/rooms/{room-name}")
 	@Transactional
 	void createRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
-			@AuthenticationPrincipal UserDetails userDetails) {
-		final User user = userService.getUser(userDetails);
+			@AuthenticationPrincipal UserDetails user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
@@ -48,15 +44,14 @@ class RoomController {
 		final CardSet cardSet = cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new);
 
 		final Room room = new Room(roomName, cardSet);
-		room.getMembers().add(new RoomMember(user, RoomMember.Role.VOTER));
+		room.getMembers().add(new RoomMember(user.getUsername()));
 		roomRepository.save(room);
 		logger.info("Created room '{}' by user '{}'.", room, user);
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
-		final User user = userService.getUser(userDetails);
+	void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		roomRepository.delete(room);
@@ -66,8 +61,7 @@ class RoomController {
 	@PatchMapping(value = "/api/rooms/{room-name}")
 	@Transactional
 	void editRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
-			@AuthenticationPrincipal UserDetails userDetails) {
-		final User user = userService.getUser(userDetails);
+			@AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		room.setCardSet(cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new));

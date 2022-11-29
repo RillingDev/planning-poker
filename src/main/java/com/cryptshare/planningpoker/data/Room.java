@@ -53,8 +53,8 @@ public class Room extends BaseEntity {
 		this.members = members;
 	}
 
-	public Optional<RoomMember> findMemberByUser(User user) {
-		return members.stream().filter(roomMember -> roomMember.getUser().equals(user)).findFirst();
+	public Optional<RoomMember> findMemberByUser(String username) {
+		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
 	}
 
 	public boolean isVotingComplete() {

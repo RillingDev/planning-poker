@@ -1,10 +1,8 @@
 package com.cryptshare.planningpoker;
 
-import com.cryptshare.planningpoker.data.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,13 +23,9 @@ class SecurityConfig {
 	}
 
 	@Bean
-	UserDetailsManager userDetailsService(UserRepository userRepository, DataSource dataSource) {
+	UserDetailsManager userDetailsService(DataSource dataSource) {
 		final JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
 		userDetailsManager.setEnableGroups(false);
-
-		userDetailsManager.createUser(User.withDefaultPasswordEncoder().username("John Doe").password("changeme").roles("USER").build());
-		userDetailsManager.createUser(User.withDefaultPasswordEncoder().username("Alice").password("changeme").roles("USER").build());
-
 		return userDetailsManager;
 	}
 

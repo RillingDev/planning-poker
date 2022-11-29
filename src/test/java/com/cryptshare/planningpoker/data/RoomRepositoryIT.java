@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -19,14 +21,14 @@ class RoomRepositoryIT {
 	CardSetRepository cardSetRepository;
 
 	@Autowired
-	UserRepository userRepository;
+	UserDetailsManager jdbcUserDetailsManager;
 
 	@Test
 	@DisplayName("can be saved and loaded")
 	@DirtiesContext
 	void saveAndLoad() {
-		final User user = new User("Alice");
-		userRepository.save(user);
+		// Ensure user table is filled.
+		jdbcUserDetailsManager.createUser(User.withUsername("John Doe").build());
 
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -35,7 +37,7 @@ class RoomRepositoryIT {
 
 		final Room room = new Room("My Room", cardSet);
 
-		final RoomMember member = new RoomMember(user, RoomMember.Role.VOTER);
+		final RoomMember member = new RoomMember("John Doe");
 		room.getMembers().add(member);
 
 		final Vote vote = new Vote(member, card);

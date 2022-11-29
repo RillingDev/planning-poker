@@ -1,6 +1,5 @@
 package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.UserService;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.api.projection.RoomMemberJson;
@@ -19,39 +18,35 @@ import java.util.Comparator;
 class RoomMemberController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomMemberController.class);
 
-	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(roomMember -> roomMember.getUser().getUsername());
+	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(RoomMember::getUsername);
 
 	private final RoomRepository roomRepository;
-	private final UserService userService;
 
-	RoomMemberController(RoomRepository roomRepository, UserService userService) {
+	RoomMemberController(RoomRepository roomRepository) {
 		this.roomRepository = roomRepository;
-		this.userService = userService;
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/session")
 	@Transactional
-	void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+	void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-		final User user = userService.getUser(userDetails);
 
-		if (room.findMemberByUser(user).isPresent()) {
+		if (room.findMemberByUser(user.getUsername()).isPresent()) {
 			logger.debug("User '{}' is already in room '{}'.", user, room);
 			return;
 		}
 
-		room.getMembers().add(new RoomMember(user, RoomMember.Role.VOTER));
+		room.getMembers().add(new RoomMember(user.getUsername()));
 		roomRepository.save(room);
 		logger.info("User '{}' joined room '{}'.", user, room);
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/session")
 	@Transactional
-	void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+	void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-		final User user = userService.getUser(userDetails);
 
-		room.findMemberByUser(user).ifPresentOrElse(roomMember -> {
+		room.findMemberByUser(user.getUsername()).ifPresentOrElse(roomMember -> {
 			room.getMembers().remove(roomMember);
 			roomRepository.save(room);
 			logger.info("User '{}' left room '{}'.", user, room);
@@ -61,11 +56,10 @@ class RoomMemberController {
 	@GetMapping(value = "/api/rooms/{room-name}/session")
 	@Transactional
 	@ResponseBody
-	RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+	RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-		final User user = userService.getUser(userDetails);
 
-		room.findMemberByUser(user).orElseThrow(NotAMemberException::new);
+		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		return RoomJson.convert(room, roomMember -> RoomMemberJson.convertToDetailed(roomMember, !room.isVotingComplete()));
 	}
@@ -73,11 +67,10 @@ class RoomMemberController {
 	@PostMapping(value = "/api/rooms/{room-name}/session/vote")
 	@Transactional
 	void createVote(@PathVariable("room-name") String roomName, @RequestParam("card-name") String cardName,
-			@AuthenticationPrincipal UserDetails userDetails) {
+			@AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-		final User user = userService.getUser(userDetails);
 
-		final RoomMember roomMember = room.findMemberByUser(user).orElseThrow(NotAMemberException::new);
+		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		final Card card = room.getCardSet()
 				.getCards()

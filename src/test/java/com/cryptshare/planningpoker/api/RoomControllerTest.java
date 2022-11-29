@@ -1,6 +1,5 @@
 package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.UserService;
 import com.cryptshare.planningpoker.data.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -33,9 +31,6 @@ class RoomControllerTest {
 	@MockBean
 	CardSetRepository cardSetRepository;
 
-	@MockBean
-	UserService userService;
-
 	@Autowired
 	MockMvc mockMvc;
 
@@ -43,11 +38,9 @@ class RoomControllerTest {
 	@DisplayName("GET `/api/rooms` loads rooms")
 	@WithMockUser
 	void loadRooms() throws Exception {
-		final User johnDoe = new User("John Doe");
-
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Room room1 = new Room("Room #1", cardSet);
-		room1.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
+		room1.getMembers().add(new RoomMember("John Doe"));
 		final Room room2 = new Room("Room #2", cardSet);
 		given(roomRepository.findAll()).willReturn(List.of(room1, room2));
 
@@ -68,8 +61,6 @@ class RoomControllerTest {
 	@DisplayName("POST `/api/rooms/{room-name}` throws for duplicate name")
 	@WithMockUser
 	void createRoomDuplicateName() throws Exception {
-		given(userService.getUser(any())).willReturn(new User("John Doe"));
-
 		final CardSet cardSet = new CardSet("My Set 1");
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(new Room("my-room", cardSet)));
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
@@ -82,8 +73,6 @@ class RoomControllerTest {
 	@DisplayName("POST `/api/rooms/{room-name}` throws for unknown card set")
 	@WithMockUser
 	void createRoomUnknownCardSet() throws Exception {
-		given(userService.getUser(any())).willReturn(new User("John Doe"));
-
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.empty());
 
@@ -92,11 +81,8 @@ class RoomControllerTest {
 
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}` creates room")
-	@WithMockUser
+	@WithMockUser("John Doe")
 	void createRoomCreatesRoom() throws Exception {
-		final User user = new User("John Doe");
-		given(userService.getUser(any())).willReturn(user);
-
 		final CardSet cardSet = new CardSet("My Set 1");
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
@@ -108,7 +94,7 @@ class RoomControllerTest {
 		assertThat(captor.getValue().getName()).isEqualTo("my-room");
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
-		assertThat(members).extracting(RoomMember::getUser).containsExactly(user);
+		assertThat(members).extracting(RoomMember::getUsername).containsExactly("John Doe");
 		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.VOTER);
 	}
 
@@ -116,8 +102,6 @@ class RoomControllerTest {
 	@DisplayName("DELETE `/api/rooms/{room-name}` throws for unknown name")
 	@WithMockUser
 	void deleteRoomUnknownName() throws Exception {
-		given(userService.getUser(any())).willReturn(new User("John Doe"));
-
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 
 		mockMvc.perform(delete("/api/rooms/my-room").with(csrf())).andExpect(status().isNotFound());
@@ -127,13 +111,9 @@ class RoomControllerTest {
 	@DisplayName("DELETE `/api/rooms/{room-name}` deletes")
 	@WithMockUser
 	void deleteRoomDeletes() throws Exception {
-		final User alice = new User("Alice");
-		final User johnDoe = new User("John Doe");
-		given(userService.getUser(any())).willReturn(johnDoe);
-
 		final Room room = new Room("my-room", new CardSet("Card Set"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.VOTER));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
+		room.getMembers().add(new RoomMember("Alice"));
+		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(delete("/api/rooms/my-room").with(csrf())).andExpect(status().isOk());
@@ -145,8 +125,6 @@ class RoomControllerTest {
 	@DisplayName("PATCH `/api/rooms/{room-name}` throws for unknown name")
 	@WithMockUser
 	void editRoomUnknownName() throws Exception {
-		given(userService.getUser(any())).willReturn(new User("John Doe"));
-
 		final CardSet cardSet = new CardSet("My Set 1");
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
 
@@ -160,13 +138,8 @@ class RoomControllerTest {
 	@DisplayName("PATCH `/api/rooms/{room-name}` throws for unknown card set")
 	@WithMockUser
 	void editRoomUnknownCardSet() throws Exception {
-		final User alice = new User("Alice");
-		final User johnDoe = new User("John Doe");
-		given(userService.getUser(any())).willReturn(johnDoe);
-
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.VOTER));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
+		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.empty());
@@ -178,11 +151,8 @@ class RoomControllerTest {
 	@DisplayName("PATCH `/api/rooms/{room-name}` edits")
 	@WithMockUser
 	void editRoomEdits() throws Exception {
-		final User johnDoe = new User("John Doe");
-		given(userService.getUser(any())).willReturn(johnDoe);
-
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
+		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final CardSet cardSet = new CardSet("My Set 1");
