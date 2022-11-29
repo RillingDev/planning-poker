@@ -43,7 +43,7 @@ class RoomMemberController {
 			return;
 		}
 
-		room.getMembers().add(new RoomMember(user, RoomMember.Role.USER));
+		room.getMembers().add(new RoomMember(user, RoomMember.Role.VOTER));
 		roomRepository.save(room);
 		logger.info("User '{}' joined room '{}'.", user, room);
 	}

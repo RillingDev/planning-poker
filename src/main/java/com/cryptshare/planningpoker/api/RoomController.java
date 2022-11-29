@@ -48,7 +48,7 @@ class RoomController {
 		final CardSet cardSet = cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new);
 
 		final Room room = new Room(roomName, cardSet);
-		room.getMembers().add(new RoomMember(user, RoomMember.Role.USER));
+		room.getMembers().add(new RoomMember(user, RoomMember.Role.VOTER));
 		roomRepository.save(room);
 		logger.info("Created room '{}' by user '{}'.", room, user);
 	}

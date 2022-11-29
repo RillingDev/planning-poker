@@ -31,10 +31,10 @@ CREATE TABLE app_user
 
 CREATE TABLE room_member
 (
-	id        UUID    NOT NULL PRIMARY KEY,
-	user_role TINYINT NOT NULL,
-	room_id   UUID    NOT NULL,
-	user_id   UUID    NOT NULL,
+	id        UUID                       NOT NULL PRIMARY KEY,
+	user_role ENUM ('VOTER', 'OBSERVER') NOT NULL,
+	room_id   UUID                       NOT NULL,
+	user_id   UUID                       NOT NULL,
 	CONSTRAINT fk_room_member_room FOREIGN KEY (room_id) REFERENCES room (id)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_room_member_user FOREIGN KEY (user_id) REFERENCES app_user (id)
@@ -43,7 +43,7 @@ CREATE TABLE room_member
 );
 
 
-
+// Note: It is not enforced in the schema that 'observer' members cannot have votes. This must be ensured manually.
 CREATE TABLE vote
 (
 	id             UUID NOT NULL PRIMARY KEY,
@@ -53,6 +53,12 @@ CREATE TABLE vote
 		ON DELETE CASCADE,
 	CONSTRAINT fk_vote_card_id FOREIGN KEY (card_id) REFERENCES card (id)
 		ON DELETE CASCADE,
+	CONSTRAINT ck_vote_room_member_role CHECK (
+		// Enforce that observers do not have votes
+			(SELECT ru.user_role
+			 FROM room_member ru
+			 WHERE ru.id = vote.room_member_id) != 'OBSERVER'
+		),
 	CONSTRAINT ck_vote_card_set CHECK (
 		// Enforce that card is from the set that is the configured card set for this room
 			(SELECT r.card_set_id

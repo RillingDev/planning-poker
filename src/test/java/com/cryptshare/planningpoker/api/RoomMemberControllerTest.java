@@ -81,7 +81,7 @@ class RoomMemberControllerTest {
 		given(userService.getUser(any())).willReturn(user);
 
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(user, RoomMember.Role.USER));
+		room.getMembers().add(new RoomMember(user, RoomMember.Role.VOTER));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(delete("/api/rooms/my-room/session").with(csrf())).andExpect(status().isOk());
@@ -103,17 +103,15 @@ class RoomMemberControllerTest {
 	}
 
 	@Test
-	@DisplayName("GET `/api/rooms/{room-name}/session` throws when not a member.")
+	@DisplayName("GET `/api/rooms/{room-name}/session` throws when not a member")
 	@WithMockUser
 	void loadRoomsNotMember() throws Exception {
-		final User alice = new User("Alice");
-
 		final User johnDoe = new User("John Doe");
 		given(userService.getUser(any())).willReturn(johnDoe);
 
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Room room = new Room("my-room", cardSet);
-		final RoomMember roomMember = new RoomMember(alice, RoomMember.Role.USER);
+		final RoomMember roomMember = new RoomMember(new User("Alice"), RoomMember.Role.VOTER);
 		room.getMembers().add(roomMember);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -132,9 +130,9 @@ class RoomMemberControllerTest {
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
-		final RoomMember roomMember1 = new RoomMember(johnDoe, RoomMember.Role.USER);
+		final RoomMember roomMember1 = new RoomMember(johnDoe, RoomMember.Role.VOTER);
 		roomMember1.setVote(new Vote(roomMember1, card));
-		final RoomMember roomMember2 = new RoomMember(alice, RoomMember.Role.USER);
+		final RoomMember roomMember2 = new RoomMember(alice, RoomMember.Role.VOTER);
 		room.getMembers().add(roomMember1);
 		room.getMembers().add(roomMember2);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -145,10 +143,10 @@ class RoomMemberControllerTest {
 				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
 				.andExpect(jsonPath("$.members.length()").value(2))
 				.andExpect(jsonPath("$.members[0].username").value("Alice"))
-				.andExpect(jsonPath("$.members[0].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$.members[0].vote").value((Vote) null))
 				.andExpect(jsonPath("$.members[1].username").value("John Doe"))
-				.andExpect(jsonPath("$.members[1].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[1].role").value("VOTER"))
 				.andExpect(jsonPath("$.members[1].vote.name").value("Voted"))
 				.andExpect(jsonPath("$.members[1].vote.value").value((Double) null));
 	}
@@ -165,9 +163,9 @@ class RoomMemberControllerTest {
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
-		final RoomMember roomMember1 = new RoomMember(johnDoe, RoomMember.Role.USER);
+		final RoomMember roomMember1 = new RoomMember(johnDoe, RoomMember.Role.VOTER);
 		roomMember1.setVote(new Vote(roomMember1, card));
-		final RoomMember roomMember2 = new RoomMember(alice, RoomMember.Role.USER);
+		final RoomMember roomMember2 = new RoomMember(alice, RoomMember.Role.VOTER);
 		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember1);
 		room.getMembers().add(roomMember2);
@@ -179,11 +177,11 @@ class RoomMemberControllerTest {
 				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
 				.andExpect(jsonPath("$.members.length()").value(2))
 				.andExpect(jsonPath("$.members[0].username").value("Alice"))
-				.andExpect(jsonPath("$.members[0].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$.members[0].vote.name").value("1"))
 				.andExpect(jsonPath("$.members[0].vote.value").value(1.0))
 				.andExpect(jsonPath("$.members[1].username").value("John Doe"))
-				.andExpect(jsonPath("$.members[1].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[1].role").value("VOTER"))
 				.andExpect(jsonPath("$.members[1].vote.name").value("1"))
 				.andExpect(jsonPath("$.members[1].vote.value").value(1.0));
 	}

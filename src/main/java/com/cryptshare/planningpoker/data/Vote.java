@@ -7,6 +7,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "vote")
 public class Vote extends BaseEntity {
+	// TODO: resolve this two-way-relationship
 	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "room_member_id", nullable = false)
 	private RoomMember roomMember;

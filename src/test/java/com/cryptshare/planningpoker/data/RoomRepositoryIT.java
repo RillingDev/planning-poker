@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -27,7 +25,7 @@ class RoomRepositoryIT {
 	@DisplayName("can be saved and loaded")
 	@DirtiesContext
 	void saveAndLoad() {
-		final User user = new User("John Doe");
+		final User user = new User("Alice");
 		userRepository.save(user);
 
 		final CardSet cardSet = new CardSet("Set #1");
@@ -37,7 +35,7 @@ class RoomRepositoryIT {
 
 		final Room room = new Room("My Room", cardSet);
 
-		final RoomMember member = new RoomMember(user, RoomMember.Role.USER);
+		final RoomMember member = new RoomMember(user, RoomMember.Role.VOTER);
 		room.getMembers().add(member);
 
 		final Vote vote = new Vote(member, card);
@@ -45,10 +43,7 @@ class RoomRepositoryIT {
 
 		roomRepository.save(room);
 
-		final List<Room> all = roomRepository.findAll();
-		assertThat(all).hasSize(1);
-
-		final Room loaded = all.get(0);
+		final Room loaded = roomRepository.findByName("My Room").orElseThrow();
 		assertThat(loaded.getName()).isEqualTo("My Room");
 		assertThat(loaded.getMembers()).containsExactly(member);
 		assertThat(loaded.getCardSet()).isEqualTo(cardSet);

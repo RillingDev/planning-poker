@@ -1,6 +1,6 @@
 export const enum Role {
-	USER = 1,
-	OBSERVER = 2,
+	VOTER = "VOTER",
+	OBSERVER = "OBSERVER",
 }
 
 export interface User {

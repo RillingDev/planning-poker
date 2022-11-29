@@ -47,7 +47,7 @@ class RoomControllerTest {
 
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Room room1 = new Room("Room #1", cardSet);
-		room1.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
+		room1.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
 		final Room room2 = new Room("Room #2", cardSet);
 		given(roomRepository.findAll()).willReturn(List.of(room1, room2));
 
@@ -58,7 +58,7 @@ class RoomControllerTest {
 				.andExpect(jsonPath("$[0].cardSetName").value("My Set 1"))
 				.andExpect(jsonPath("$[0].members.length()").value(1))
 				.andExpect(jsonPath("$[0].members[0].username").value("John Doe"))
-				.andExpect(jsonPath("$[0].members[0].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$[0].members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$[1].name").value("Room #2"))
 				.andExpect(jsonPath("$[1].cardSetName").value("My Set 1"))
 				.andExpect(jsonPath("$[1].members.length()").value(0));
@@ -109,7 +109,7 @@ class RoomControllerTest {
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
 		assertThat(members).extracting(RoomMember::getUser).containsExactly(user);
-		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.USER);
+		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.VOTER);
 	}
 
 	@Test
@@ -132,8 +132,8 @@ class RoomControllerTest {
 		given(userService.getUser(any())).willReturn(johnDoe);
 
 		final Room room = new Room("my-room", new CardSet("Card Set"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.USER));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
+		room.getMembers().add(new RoomMember(alice, RoomMember.Role.VOTER));
+		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(delete("/api/rooms/my-room").with(csrf())).andExpect(status().isOk());
@@ -165,8 +165,8 @@ class RoomControllerTest {
 		given(userService.getUser(any())).willReturn(johnDoe);
 
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(alice, RoomMember.Role.USER));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
+		room.getMembers().add(new RoomMember(alice, RoomMember.Role.VOTER));
+		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.empty());
@@ -182,7 +182,7 @@ class RoomControllerTest {
 		given(userService.getUser(any())).willReturn(johnDoe);
 
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
+		room.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.VOTER));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final CardSet cardSet = new CardSet("My Set 1");

@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
 	public enum Role {
-		USER,
+		VOTER,
 		OBSERVER
 	}
 
@@ -17,7 +17,7 @@ public class RoomMember extends BaseEntity {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	@Column(name = "user_role", nullable = false)
 	private Role role;
 

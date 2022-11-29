@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -24,10 +22,7 @@ class UserRepositoryIT {
 		final User user = new User("Alice");
 		userRepository.save(user);
 
-		final List<User> all = userRepository.findAll();
-		assertThat(all).hasSize(1);
-
-		final User loaded = all.get(0);
+		final User loaded = userRepository.findByUsername("Alice").orElseThrow();
 		assertThat(loaded.getUsername()).isEqualTo("Alice");
 	}
 }
