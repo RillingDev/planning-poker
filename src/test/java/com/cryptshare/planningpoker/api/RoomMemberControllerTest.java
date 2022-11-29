@@ -29,9 +29,6 @@ class RoomMemberControllerTest {
 	RoomRepository roomRepository;
 
 	@MockBean
-	CardSetRepository cardSetRepository;
-
-	@MockBean
 	UserService userService;
 
 	@Autowired

@@ -2,7 +2,10 @@ package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.UserService;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
-import com.cryptshare.planningpoker.data.*;
+import com.cryptshare.planningpoker.data.Room;
+import com.cryptshare.planningpoker.data.RoomMember;
+import com.cryptshare.planningpoker.data.RoomRepository;
+import com.cryptshare.planningpoker.data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
-import java.util.List;
 
 @RestController
 class RoomMemberController {
@@ -23,12 +25,10 @@ class RoomMemberController {
 	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(roomMember -> roomMember.getUser().getUsername());
 
 	private final RoomRepository roomRepository;
-	private final CardSetRepository cardSetRepository;
 	private final UserService userService;
 
-	RoomMemberController(RoomRepository roomRepository, CardSetRepository cardSetRepository, UserService userService) {
+	RoomMemberController(RoomRepository roomRepository, UserService userService) {
 		this.roomRepository = roomRepository;
-		this.cardSetRepository = cardSetRepository;
 		this.userService = userService;
 	}
 
@@ -39,7 +39,7 @@ class RoomMemberController {
 		final User user = userService.getUser(userDetails);
 
 		if (room.getMembers().stream().anyMatch(roomMember -> roomMember.getUser().equals(user))) {
-			logger.warn("User '{}' is already in room '{}'.", user, room);
+			logger.debug("User '{}' is already in room '{}'.", user, room);
 			return;
 		}
 
@@ -54,20 +54,11 @@ class RoomMemberController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		final User user = userService.getUser(userDetails);
 
-		boolean removed = false;
-		for (RoomMember roomMember : List.copyOf(room.getMembers())) {
-			if (roomMember.getUser().equals(user)) {
-				room.getMembers().remove(roomMember);
-				removed = true;
-				break;
-			}
-		}
-		if (!removed) {
-			logger.warn("User '{}' is not part of room '{}'.", user, room);
-			return;
-		}
+		room.getMembers().stream().filter(roomMember -> roomMember.getUser().equals(user)).findFirst().ifPresentOrElse(roomMember -> {
+			room.getMembers().remove(roomMember);
+			roomRepository.save(room);
+			logger.info("User '{}' left room '{}'.", user, room);
+		}, () -> logger.debug("User '{}' is not part of room '{}'.", user, room));
 
-		roomRepository.save(room);
-		logger.info("User '{}' left room '{}'.", user, room);
 	}
 }
