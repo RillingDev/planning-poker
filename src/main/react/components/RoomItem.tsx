@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Room } from "../api";
+import { CardSet, deleteRoom, editRoom, loadCardSets, Room } from "../api";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { EditRoomModal } from "./modal/EditRoomModal";
@@ -12,15 +12,20 @@ export const RoomItem: FC<{
 	onError: (e: Error) => void;
 }> = ({room, onChange, onError}) => {
 	const [editModalVisible, setEditModalVisible] = useState(false);
-	const handleEdit = () => {
+	const handleEdit = (newCardSet: CardSet) => {
 		setEditModalVisible(false);
-		onChange();
+		editRoom(room.name, newCardSet.name).then(() => onChange()).catch(onError);
 	};
 
 	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+	const [cardSets, setCardSets] = useState<CardSet[]>([]);
+	const showEditModal = () => {
+		setEditModalVisible(true);
+		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
+	};
 	const handleDelete = () => {
 		setDeleteModalVisible(false);
-		onChange();
+		deleteRoom(room.name).then(() => onChange()).catch(onError);
 	};
 
 	return (
@@ -29,12 +34,12 @@ export const RoomItem: FC<{
 
 			<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>
 
-			<Button variant="warning" onClick={() => setEditModalVisible(true)}>Edit</Button>
-			<EditRoomModal onSubmit={handleEdit} onError={onError} room={room} show={editModalVisible}
-						   onHide={() => setEditModalVisible(false)}/>
+			<Button variant="warning" onClick={showEditModal}>Edit</Button>
+			<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible}
+						   onHide={() => setEditModalVisible(false)} cardSets={cardSets}/>
 
 			<Button variant="danger" onClick={() => setDeleteModalVisible(true)}>Delete</Button>
-			<DeleteRoomModal onSubmit={handleDelete} onError={onError} room={room} show={deleteModalVisible}
+			<DeleteRoomModal onSubmit={handleDelete} room={room} show={deleteModalVisible}
 							 onHide={() => setDeleteModalVisible(false)}/>
 		</div>
 	);

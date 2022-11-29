@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useState } from "react";
-import { loadRooms, Room } from "../api";
+import { CardSet, createRoom, loadCardSets, loadRooms, Room } from "../api";
 import "./RoomListView.css";
 import Button from "react-bootstrap/Button";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
@@ -24,21 +24,24 @@ export const RoomListView: FC = () => {
 
 	const [rooms, setRooms] = useState<Room[]>(loaderData.rooms);
 
-	const updateRooms = () => {
+	const handleRoomUpdate = () => {
 		loadRooms().then(rooms => setRooms(rooms)).catch(handleError);
 	};
 
+	const [cardSets, setCardSets] = useState<CardSet[]>([]);
 	const [modalVisible, setModalVisible] = useState(false);
-	const showModal = () => setModalVisible(true);
+	const showModal = () => {
+		setModalVisible(true);
+		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(handleError);
+	};
 	const hideModal = () => setModalVisible(false);
 
-	const handleCreationSubmit = () => {
-		updateRooms();
+	const handleCreationSubmit = (newRoomName: string, newRoomCardSet: CardSet) => {
 		hideModal();
-	};
-	const handleCreationError = (e: Error) => {
-		handleError(e);
-		hideModal();
+		createRoom(newRoomName, newRoomCardSet.name)
+			.then(loadRooms)
+			.then(rooms => setRooms(rooms))
+			.catch(handleError);
 	};
 
 	return (
@@ -46,14 +49,14 @@ export const RoomListView: FC = () => {
 			<header className="room-list__header">
 				<h2>Rooms</h2>
 				<Button variant="primary" onClick={showModal}>Create Room</Button>
-				<CreateRoomModal onSubmit={handleCreationSubmit} onError={handleCreationError} show={modalVisible}
-								 onHide={hideModal}></CreateRoomModal>
+				<CreateRoomModal onSubmit={handleCreationSubmit} show={modalVisible}
+								 onHide={hideModal} cardSets={cardSets}></CreateRoomModal>
 			</header>
 			<nav>
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name}>
-							<RoomItem room={room} onChange={updateRooms} onError={handleError}></RoomItem>
+							<RoomItem room={room} onChange={handleRoomUpdate} onError={handleError}></RoomItem>
 						</li>,
 					)}
 				</ul>

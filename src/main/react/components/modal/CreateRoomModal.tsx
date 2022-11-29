@@ -1,33 +1,25 @@
 import { FC, FormEvent, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { CardSet, createRoom, loadCardSets } from "../../api";
+import { CardSet } from "../../api";
 import Modal from "react-bootstrap/Modal";
 
-/**
- * @param onSubmit Room object must be reloaded after this is fired to get latest state.
- */
 export const CreateRoomModal: FC<{
+	cardSets: ReadonlyArray<CardSet>,
 	show: boolean;
 	onHide: () => void;
-	onSubmit: () => void;
-	onError: (e: Error) => void;
-}> = ({show, onHide, onError, onSubmit}) => {
-	const [cardSets, setCardSets] = useState<CardSet[]>([]);
-	const handleShow = () => {
-		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
-	};
-
-	const [newRoomName, setNewRoomName] = useState<string>("");
-	const [newRoomCardSetName, setNewRoomCardSetName] = useState<string>("");
+	onSubmit: (roomName: string, cardSet: CardSet) => void;
+}> = ({show, onHide, onSubmit, cardSets}) => {
+	const [roomName, setRoomName] = useState<string>("");
+	const [roomCardSetName, setRoomCardSetName] = useState<string>("");
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		createRoom(newRoomName, newRoomCardSetName).then(() => onSubmit()).catch(onError);
+		onSubmit(roomName, cardSets.find(cardSet => cardSet.name == roomCardSetName)!);
 	};
 
 	return (
-		<Modal show={show} onHide={onHide} onShow={() => handleShow()}>
+		<Modal show={show} onHide={onHide}>
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Create Room</Modal.Title>
@@ -35,11 +27,11 @@ export const CreateRoomModal: FC<{
 				<Modal.Body>
 					<Form.Group className="mb-3" controlId="formCreateRoomName">
 						<Form.Label>Room Name</Form.Label>
-						<Form.Control required type="text" value={newRoomName} onChange={(e) => setNewRoomName(e.target.value)}/>
+						<Form.Control required type="text" value={roomName} onChange={(e) => setRoomName(e.target.value)}/>
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formCreateRoomCardSet">
 						<Form.Label>Card Set</Form.Label>
-						<Form.Select required value={newRoomCardSetName} onChange={(e) => setNewRoomCardSetName(e.target.value)}>
+						<Form.Select required value={roomCardSetName} onChange={(e) => setRoomCardSetName(e.target.value)}>
 							<option disabled value=""></option>
 							{cardSets.map(cardSet => <option key={cardSet.name}>{cardSet.name}</option>)}
 						</Form.Select>

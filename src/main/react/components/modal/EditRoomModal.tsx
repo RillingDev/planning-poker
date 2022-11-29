@@ -1,7 +1,7 @@
 import { FC, FormEvent, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { CardSet, editRoom, loadCardSets, Room } from "../../api";
+import { CardSet, Room } from "../../api";
 import Modal from "react-bootstrap/Modal";
 
 
@@ -10,25 +10,20 @@ import Modal from "react-bootstrap/Modal";
  */
 export const EditRoomModal: FC<{
 	room: Room;
+	cardSets: ReadonlyArray<CardSet>;
 	show: boolean;
 	onHide: () => void;
-	onSubmit: () => void;
-	onError: (e: Error) => void;
-}> = ({room, show, onHide, onError, onSubmit}) => {
-	const [cardSets, setCardSets] = useState<CardSet[]>([]);
-	const handleShow = () => {
-		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
-	};
-
+	onSubmit: (cardSet: CardSet) => void;
+}> = ({room, show, onHide, onSubmit, cardSets}) => {
 	const [newCardSetName, setNewCardSetName] = useState<string>("");
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		editRoom(room.name, newCardSetName).then(() => onSubmit()).catch(onError);
+		onSubmit(cardSets.find(cardSet => cardSet.name == newCardSetName)!);
 	};
 
 	return (
-		<Modal show={show} onHide={onHide} onShow={() => handleShow()}>
+		<Modal show={show} onHide={onHide}>
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
