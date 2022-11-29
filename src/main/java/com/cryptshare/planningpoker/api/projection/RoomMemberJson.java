@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Comparator;
 
-public record RoomMemberJson(@JsonProperty("user") UserJson user, @JsonProperty("role") String role, @JsonProperty("vote") CardJson vote) {
+public record RoomMemberJson(@JsonProperty("username") String username, @JsonProperty("role") String role, @JsonProperty("vote") CardJson vote) {
 	public static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(RoomMember::getUsername);
 
 	private static final CardJson HIDDEN_CARD = new CardJson("Voted", null);
@@ -27,7 +27,7 @@ public record RoomMemberJson(@JsonProperty("user") UserJson user, @JsonProperty(
 	}
 
 	private static RoomMemberJson convert(RoomMember roomMember, CardJson vote) {
-		return new RoomMemberJson(new UserJson(roomMember.getUsername()), roomMember.getRole().name(), vote);
+		return new RoomMemberJson(roomMember.getUsername(), roomMember.getRole().name(), vote);
 	}
 
 }

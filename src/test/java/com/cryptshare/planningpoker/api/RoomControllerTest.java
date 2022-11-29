@@ -48,12 +48,12 @@ class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("Room #1"))
-				.andExpect(jsonPath("$[0].cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$[0].cardSet.name").value("My Set 1"))
 				.andExpect(jsonPath("$[0].members.length()").value(1))
 				.andExpect(jsonPath("$[0].members[0].username").value("John Doe"))
 				.andExpect(jsonPath("$[0].members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$[1].name").value("Room #2"))
-				.andExpect(jsonPath("$[1].cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$[1].cardSet.name").value("My Set 1"))
 				.andExpect(jsonPath("$[1].members.length()").value(0));
 	}
 

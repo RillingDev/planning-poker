@@ -10,11 +10,19 @@ import java.util.function.Function;
 public record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSet") CardSetJson cardSet,
 					   @JsonProperty("members") List<RoomMemberJson> members, @JsonProperty("votingComplete") boolean votingComplete) {
 
-	public static RoomJson convert(Room room, Function<RoomMember, RoomMemberJson> memberConverter) {
+	public static RoomJson convertToBasic(Room room) {
+		return convert(room, RoomMemberJson::convertToBasic);
+	}
+
+	public static RoomJson convertToDetailed(Room room, boolean showVotes) {
+		return convert(room, roomMember -> RoomMemberJson.convertToDetailed(roomMember, showVotes));
+	}
+
+	private static RoomJson convert(Room room, Function<RoomMember, RoomMemberJson> roomMemberMapper) {
 		return new RoomJson(
 				room.getName(),
 				CardSetJson.convert(room.getCardSet()),
-				room.getMembers().stream().sorted(RoomMemberJson.MEMBER_COMPARATOR).map(memberConverter).toList(),
+				room.getMembers().stream().sorted(RoomMemberJson.MEMBER_COMPARATOR).map(roomMemberMapper).toList(),
 				room.isVotingComplete());
 	}
 }

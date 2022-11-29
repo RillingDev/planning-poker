@@ -20,7 +20,7 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 	return {room};
 }
 
-const findMemberForUser = (room: Room, user: User): RoomMember | null => room.members.find(member => member.user.username == user.username) ?? null;
+const findMemberForUser = (room: Room, user: User): RoomMember | null => room.members.find(member => member.username == user.username) ?? null;
 
 const useInterval = (callback: () => void, timeout: number) => {
 	useEffect(() => {

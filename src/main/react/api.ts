@@ -8,7 +8,7 @@ export interface User {
 }
 
 export interface RoomMember {
-	readonly user: User;
+	readonly username: string;
 	readonly role: Role;
 	readonly vote: Card | null;
 }

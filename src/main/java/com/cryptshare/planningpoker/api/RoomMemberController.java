@@ -2,7 +2,6 @@ package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
-import com.cryptshare.planningpoker.api.projection.RoomMemberJson;
 import com.cryptshare.planningpoker.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,7 @@ class RoomMemberController {
 
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
-		return RoomJson.convert(room, roomMember -> RoomMemberJson.convertToDetailed(roomMember, !room.isVotingComplete()));
+		return RoomJson.convertToDetailed(room, !room.isVotingComplete());
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/session/vote")
