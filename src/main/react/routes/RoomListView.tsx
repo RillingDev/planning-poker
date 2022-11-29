@@ -8,10 +8,13 @@ import { RoomItem } from "../components/RoomItem";
 
 
 export const RoomListView: FC = () => {
+	// TODO: show toast or similar for errors
+	const handleError = console.error;
+
 	const [rooms, setRooms] = useState<Room[]>([]);
 
 	const updateRooms = () => {
-		loadRooms().then(rooms => setRooms(rooms)).catch(console.error);
+		loadRooms().then(rooms => setRooms(rooms)).catch(handleError);
 	};
 
 	useEffect(() => {
@@ -22,13 +25,12 @@ export const RoomListView: FC = () => {
 	const showModal = () => setModalVisible(true);
 	const hideModal = () => setModalVisible(false);
 
-	// TODO: show toast or similar for errors
-	const handleSubmit = () => {
+	const handleCreationSubmit = () => {
 		updateRooms();
 		hideModal();
 	};
-	const handleError = (e: Error) => {
-		console.error(e);
+	const handleCreationError = (e: Error) => {
+		handleError(e);
 		hideModal();
 	};
 
@@ -37,13 +39,14 @@ export const RoomListView: FC = () => {
 			<header className="room-list__header">
 				<h2>Rooms</h2>
 				<Button variant="primary" onClick={showModal}>Create Room</Button>
-				<CreateRoomModal onSubmit={handleSubmit} onError={handleError} show={modalVisible} onHide={hideModal}></CreateRoomModal>
+				<CreateRoomModal onSubmit={handleCreationSubmit} onError={handleCreationError} show={modalVisible}
+								 onHide={hideModal}></CreateRoomModal>
 			</header>
 			<nav>
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name}>
-							<RoomItem room={room} onChange={updateRooms} onError={console.error}></RoomItem>
+							<RoomItem room={room} onChange={updateRooms} onError={handleError}></RoomItem>
 						</li>,
 					)}
 				</ul>

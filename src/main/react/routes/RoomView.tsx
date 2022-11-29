@@ -1,10 +1,13 @@
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import type { FC } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./RoomView.css";
-import type { Room } from "../api";
-import { getRoom, joinRoom, leaveRoom } from "../api";
+import type { Card, Room, RoomMember, User } from "../api";
+import { createVote, getRoom, joinRoom, leaveRoom } from "../api";
 import { MemberList } from "../components/MemberList";
+import { CardList } from "../components/CardList";
+import { AppContext } from "../AppContext";
 
 interface LoaderResult {
 	room: Room;
@@ -17,11 +20,37 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 	return {room};
 }
 
+const findMemberForUser = (room: Room, user: User): RoomMember | null => room.members.find(member => member.user.username == user.username) ?? null;
+
+const useInterval = (callback: () => void, timeout: number) => {
+	useEffect(() => {
+		const interval = setInterval(callback, timeout);
+		return () => clearInterval(interval);
+	}, [callback, timeout]);
+};
+
 export const RoomView: FC = () => {
-	const {room} = useLoaderData() as LoaderResult;
+	const handleError = console.error;
+
+	const {user} = useContext(AppContext);
+	const loaderData = useLoaderData() as LoaderResult;
+	const [room, setRoom] = useState<Room>(loaderData.room);
 
 	const handleLeave = () => {
-		leaveRoom(room.name).catch(console.error);
+		leaveRoom(room.name).catch(handleError);
+	};
+
+	const updateRoom = () => {
+		getRoom(room.name).then(room => {
+			setRoom(room);
+			setActiveCard(findMemberForUser(room, user)!.vote);
+		}).catch(handleError);
+	};
+	useInterval(updateRoom, 3000); // Poll for other votes
+
+	const [activeCard, setActiveCard] = useState<Card | null>(null);
+	const handleCardClick = (card: Card) => {
+		createVote(room.name, card.name).then(updateRoom).catch(handleError);
 	};
 
 	return (
@@ -32,8 +61,15 @@ export const RoomView: FC = () => {
 			<header>
 				<h2>{room.name}</h2>
 			</header>
-			<main>
-				<MemberList members={room?.members ?? []}></MemberList>
+			<main className="room-view">
+				<div>
+					<h3>Vote</h3>
+					<CardList cardSet={room?.cardSet ?? {name: "None", cards: []}} activeCard={activeCard} onClick={handleCardClick}></CardList>
+				</div>
+				<div>
+					<h3>Members</h3>
+					<MemberList members={room?.members ?? []}></MemberList>
+				</div>
 			</main>
 		</>
 	);

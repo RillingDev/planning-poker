@@ -1,3 +1,5 @@
-.room__meta {
-
+.room-view {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: 1fr 350px;
 }
