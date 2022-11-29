@@ -8,15 +8,16 @@ export interface User {
 }
 
 export interface RoomMember {
-	readonly username: string;
+	readonly user: User;
 	readonly role: Role;
 	readonly vote: Card | null;
 }
 
 export interface Room {
 	readonly name: string;
-	readonly cardSetName: string;
+	readonly cardSet: CardSet;
 	readonly members: ReadonlyArray<RoomMember>;
+	readonly votingComplete: boolean;
 }
 
 export interface Card {

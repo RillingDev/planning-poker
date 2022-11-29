@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Comparator;
 
-public record RoomMemberJson(@JsonProperty("username") String name, @JsonProperty("role") String role, @JsonProperty("vote") CardJson vote) {
+public record RoomMemberJson(@JsonProperty("user") UserJson user, @JsonProperty("role") String role, @JsonProperty("vote") CardJson vote) {
 	public static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(roomMember -> roomMember.getUser().getUsername());
 
 	private static final CardJson HIDDEN_CARD = new CardJson("Voted", null);
 
 	public static RoomMemberJson convertToBasic(RoomMember roomMember) {
-		return new RoomMemberJson(convertUser(roomMember), convertRole(roomMember), null);
+		return convert(roomMember, null);
 	}
 
 	public static RoomMemberJson convertToDetailed(RoomMember roomMember, boolean hideVotes) {
@@ -23,14 +23,11 @@ public record RoomMemberJson(@JsonProperty("username") String name, @JsonPropert
 				vote = CardJson.convert(roomMember.getVote().getCard());
 			}
 		}
-		return new RoomMemberJson(convertUser(roomMember), convertRole(roomMember), vote);
+		return convert(roomMember, vote);
 	}
 
-	private static String convertUser(RoomMember roomMember) {
-		return roomMember.getUser().getUsername();
+	private static RoomMemberJson convert(RoomMember roomMember, CardJson vote) {
+		return new RoomMemberJson(UserJson.convert(roomMember.getUser()), roomMember.getRole().name(), vote);
 	}
 
-	private static String convertRole(RoomMember roomMember) {
-		return roomMember.getRole().name();
-	}
 }
