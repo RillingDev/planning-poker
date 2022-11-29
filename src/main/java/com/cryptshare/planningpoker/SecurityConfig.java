@@ -5,10 +5,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -24,14 +25,14 @@ class SecurityConfig {
 	}
 
 	@Bean
-	UserDetailsManager userDetailsService(UserRepository userRepository) {
-		// FIXME for testing purposes only
-		final String username = "John Doe";
-		if (userRepository.findByUsername(username).isEmpty()) {
-			userRepository.save(new com.cryptshare.planningpoker.data.User(username));
-		}
-		final UserDetails user = User.withDefaultPasswordEncoder().username(username).password("changeme").roles("USER").build();
-		return new InMemoryUserDetailsManager(user);
+	UserDetailsManager userDetailsService(UserRepository userRepository, DataSource dataSource) {
+		final JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
+		userDetailsManager.setEnableGroups(false);
+
+		userDetailsManager.createUser(User.withDefaultPasswordEncoder().username("John Doe").password("changeme").roles("USER").build());
+		userDetailsManager.createUser(User.withDefaultPasswordEncoder().username("Alice").password("changeme").roles("USER").build());
+
+		return userDetailsManager;
 	}
 
 }

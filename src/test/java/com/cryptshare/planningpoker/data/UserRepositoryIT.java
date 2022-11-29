@@ -20,6 +20,8 @@ class UserRepositoryIT {
 	@DirtiesContext
 	void saveAndLoad() {
 		final User user = new User("Alice");
+		user.setPassword("{noop}foo");
+		user.setEnabled(true);
 		userRepository.save(user);
 
 		final User loaded = userRepository.findByUsername("Alice").orElseThrow();

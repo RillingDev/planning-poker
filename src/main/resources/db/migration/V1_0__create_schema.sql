@@ -1,15 +1,32 @@
+// Special tables used for spring security
+CREATE TABLE users
+(
+	username VARCHAR_IGNORECASE(50)  NOT NULL PRIMARY KEY,
+	password VARCHAR_IGNORECASE(500) NOT NULL,
+	enabled  BOOLEAN                 NOT NULL
+);
+CREATE TABLE authorities
+(
+	username  VARCHAR_IGNORECASE(50) NOT NULL,
+	authority VARCHAR_IGNORECASE(50) NOT NULL,
+	CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users (username)
+);
+CREATE UNIQUE INDEX ix_auth_username ON authorities (username, authority);
+
+// Planning-poker entities
+
 CREATE TABLE card_set
 (
-	id       UUID    NOT NULL PRIMARY KEY,
-	set_name VARCHAR NOT NULL UNIQUE
+	id       UUID               NOT NULL PRIMARY KEY,
+	set_name VARCHAR_IGNORECASE NOT NULL UNIQUE
 );
 
 CREATE TABLE card
 (
-	id          UUID    NOT NULL PRIMARY KEY,
-	card_set_id UUID    NOT NULL,
-	card_name   VARCHAR NOT NULL,
-	card_value  DOUBLE  NULL, // Optional if it does not affect score
+	id          UUID               NOT NULL PRIMARY KEY,
+	card_set_id UUID               NOT NULL,
+	card_name   VARCHAR_IGNORECASE NOT NULL,
+	card_value  DOUBLE             NULL, // Optional if it does not affect score
 	CONSTRAINT fk_card_card_set_id FOREIGN KEY (card_set_id) REFERENCES card_set (id)
 		ON DELETE CASCADE,
 	CONSTRAINT uq_card_set_card_name UNIQUE (card_set_id, card_name)
@@ -17,16 +34,10 @@ CREATE TABLE card
 
 CREATE TABLE room
 (
-	id          UUID    NOT NULL PRIMARY KEY,
-	card_set_id UUID    NOT NULL,
-	room_name   VARCHAR NOT NULL UNIQUE,
+	id          UUID               NOT NULL PRIMARY KEY,
+	card_set_id UUID               NOT NULL,
+	room_name   VARCHAR_IGNORECASE NOT NULL UNIQUE,
 	CONSTRAINT fk_room_card_set FOREIGN KEY (card_set_id) REFERENCES card_set (id)
-);
-
-CREATE TABLE app_user
-(
-	id       UUID    NOT NULL PRIMARY KEY,
-	username VARCHAR NOT NULL UNIQUE
 );
 
 CREATE TABLE room_member
@@ -34,14 +45,13 @@ CREATE TABLE room_member
 	id        UUID                       NOT NULL PRIMARY KEY,
 	user_role ENUM ('VOTER', 'OBSERVER') NOT NULL,
 	room_id   UUID                       NOT NULL,
-	user_id   UUID                       NOT NULL,
+	username  VARCHAR_IGNORECASE         NOT NULL,
 	CONSTRAINT fk_room_member_room FOREIGN KEY (room_id) REFERENCES room (id)
 		ON DELETE CASCADE,
-	CONSTRAINT fk_room_member_user FOREIGN KEY (user_id) REFERENCES app_user (id)
+	CONSTRAINT fk_room_member_user FOREIGN KEY (username) REFERENCES users (username)
 		ON DELETE CASCADE,
-	CONSTRAINT uq_room_member UNIQUE (room_id, user_id)
+	CONSTRAINT uq_room_member UNIQUE (room_id, username)
 );
-
 
 // Note: It is not enforced in the schema that 'observer' members cannot have votes. This must be ensured manually.
 CREATE TABLE vote
