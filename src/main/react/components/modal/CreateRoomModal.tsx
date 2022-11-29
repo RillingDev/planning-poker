@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { CardSet, createRoom, loadCardSets } from "../../api";
@@ -14,13 +14,12 @@ export const CreateRoomModal: FC<{
 	onError: (e: Error) => void;
 }> = ({show, onHide, onError, onSubmit}) => {
 	const [cardSets, setCardSets] = useState<CardSet[]>([]);
+	const handleShow = () => {
+		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
+	};
 
 	const [newRoomName, setNewRoomName] = useState<string>("");
 	const [newRoomCardSetName, setNewRoomCardSetName] = useState<string>("");
-
-	useEffect(() => {
-		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
-	}, [onError]);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -28,7 +27,7 @@ export const CreateRoomModal: FC<{
 	};
 
 	return (
-		<Modal show={show} onHide={onHide}>
+		<Modal show={show} onHide={onHide} onShow={() => handleShow()}>
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Create Room</Modal.Title>

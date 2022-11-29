@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { CardSet, editRoom, loadCardSets, Room } from "../../api";
@@ -16,12 +16,11 @@ export const EditRoomModal: FC<{
 	onError: (e: Error) => void;
 }> = ({room, show, onHide, onError, onSubmit}) => {
 	const [cardSets, setCardSets] = useState<CardSet[]>([]);
+	const handleShow = () => {
+		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
+	};
 
 	const [newCardSetName, setNewCardSetName] = useState<string>("");
-
-	useEffect(() => {
-		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(onError);
-	}, [onError]);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -29,7 +28,7 @@ export const EditRoomModal: FC<{
 	};
 
 	return (
-		<Modal show={show} onHide={onHide}>
+		<Modal show={show} onHide={onHide} onShow={() => handleShow()}>
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
