@@ -46,7 +46,8 @@ export const RoomView: FC = () => {
 			setActiveCard(findMemberForUser(room, user)!.vote);
 		}).catch(handleError);
 	};
-	useInterval(updateRoom, 3000); // Poll for other votes
+
+	useInterval(updateRoom, 1500); // Poll for other votes
 
 	const [activeCard, setActiveCard] = useState<Card | null>(null);
 	const handleCardClick = (card: Card) => {
