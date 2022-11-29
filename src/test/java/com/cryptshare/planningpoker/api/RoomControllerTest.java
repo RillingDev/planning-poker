@@ -43,8 +43,11 @@ class RoomControllerTest {
 	@DisplayName("GET `/api/rooms` loads rooms")
 	@WithMockUser
 	void loadRooms() throws Exception {
+		final User johnDoe = new User("John Doe");
+
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Room room1 = new Room("Room #1", cardSet);
+		room1.getMembers().add(new RoomMember(johnDoe, RoomMember.Role.USER));
 		final Room room2 = new Room("Room #2", cardSet);
 		given(roomRepository.findAll()).willReturn(List.of(room1, room2));
 
@@ -53,8 +56,12 @@ class RoomControllerTest {
 				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("Room #1"))
 				.andExpect(jsonPath("$[0].cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$[0].members.length()").value(1))
+				.andExpect(jsonPath("$[0].members[0].username").value("John Doe"))
+				.andExpect(jsonPath("$[0].members[0].role").value(RoomMember.Role.USER.ordinal()))
 				.andExpect(jsonPath("$[1].name").value("Room #2"))
-				.andExpect(jsonPath("$[1].cardSetName").value("My Set 1"));
+				.andExpect(jsonPath("$[1].cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$[1].members.length()").value(0));
 	}
 
 	@Test

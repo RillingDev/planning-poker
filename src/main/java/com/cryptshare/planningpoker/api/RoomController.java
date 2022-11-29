@@ -3,6 +3,7 @@ package com.cryptshare.planningpoker.api;
 import com.cryptshare.planningpoker.UserService;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
+import com.cryptshare.planningpoker.api.projection.RoomMemberJson;
 import com.cryptshare.planningpoker.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ class RoomController {
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	List<RoomJson> loadRooms() {
-		return roomRepository.findAll().stream().map(RoomJson::convert).toList();
+		return roomRepository.findAll().stream().map(room -> RoomJson.convert(room, RoomMemberJson::convertToBasic)).toList();
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}")

@@ -3,6 +3,7 @@ package com.cryptshare.planningpoker.data;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -50,6 +51,16 @@ public class Room extends BaseEntity {
 
 	protected void setMembers(Set<RoomMember> members) {
 		this.members = members;
+	}
+
+	public Optional<RoomMember> findMemberByUser(User user) {
+		return members.stream().filter(roomMember -> roomMember.getUser().equals(user)).findFirst();
+	}
+
+	public boolean isVotingComplete() {
+		return members.stream()
+				.filter(roomMember -> roomMember.getRole() != RoomMember.Role.OBSERVER)
+				.allMatch(roomMember -> roomMember.getVote() != null);
 	}
 
 	@Override

@@ -4,12 +4,13 @@ export const enum Role {
 }
 
 export interface User {
-	readonly username: string,
+	readonly username: string;
 }
 
 interface RoomMember {
-	readonly username: string,
-	readonly role: Role
+	readonly username: string;
+	readonly role: Role;
+	readonly vote: Card | null;
 }
 
 export interface Room {
@@ -87,6 +88,12 @@ export async function leaveRoom(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
+}
+
+export async function getRoom(roomName: string) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
+		method: "GET",
+	}).then(assertStatusOk).then(res => res.json() as Promise<Room>);
 }
 
 

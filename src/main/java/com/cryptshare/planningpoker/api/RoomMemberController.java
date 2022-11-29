@@ -2,19 +2,19 @@ package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.UserService;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
+import com.cryptshare.planningpoker.api.projection.RoomJson;
+import com.cryptshare.planningpoker.api.projection.RoomMemberJson;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
 import com.cryptshare.planningpoker.data.RoomRepository;
 import com.cryptshare.planningpoker.data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 
@@ -38,7 +38,7 @@ class RoomMemberController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		final User user = userService.getUser(userDetails);
 
-		if (room.getMembers().stream().anyMatch(roomMember -> roomMember.getUser().equals(user))) {
+		if (room.findMemberByUser(user).isPresent()) {
 			logger.debug("User '{}' is already in room '{}'.", user, room);
 			return;
 		}
@@ -54,11 +54,27 @@ class RoomMemberController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		final User user = userService.getUser(userDetails);
 
-		room.getMembers().stream().filter(roomMember -> roomMember.getUser().equals(user)).findFirst().ifPresentOrElse(roomMember -> {
+		room.findMemberByUser(user).ifPresentOrElse(roomMember -> {
 			room.getMembers().remove(roomMember);
 			roomRepository.save(room);
 			logger.info("User '{}' left room '{}'.", user, room);
 		}, () -> logger.debug("User '{}' is not part of room '{}'.", user, room));
-
 	}
+
+	@GetMapping(value = "/api/rooms/{room-name}/session")
+	@Transactional
+	@ResponseBody
+	RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails userDetails) {
+		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+		final User user = userService.getUser(userDetails);
+
+		room.findMemberByUser(user).orElseThrow(NotAMemberException::new);
+
+		return RoomJson.convert(room, roomMember -> RoomMemberJson.convertToDetailed(roomMember, !room.isVotingComplete()));
+	}
+
+	@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "You must be a member of this room to perform this action.")
+	private static class NotAMemberException extends RuntimeException {
+	}
+
 }

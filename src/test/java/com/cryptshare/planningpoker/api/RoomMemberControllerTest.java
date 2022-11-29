@@ -18,8 +18,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = RoomMemberController.class)
@@ -89,6 +89,103 @@ class RoomMemberControllerTest {
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
 		assertThat(captor.getValue().getMembers()).isEmpty();
+	}
+
+	@Test
+	@DisplayName("DELETE `/api/rooms/{room-name}/session` throws for unknown name")
+	@WithMockUser
+	void loadRoomsUnknownName() throws Exception {
+		given(userService.getUser(any())).willReturn(new User("John Doe"));
+
+		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
+
+		mockMvc.perform(get("/api/rooms/my-room/session")).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/session` throws when not a member.")
+	@WithMockUser
+	void loadRoomsNotMember() throws Exception {
+		final User alice = new User("Alice");
+
+		final User johnDoe = new User("John Doe");
+		given(userService.getUser(any())).willReturn(johnDoe);
+
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember(alice, RoomMember.Role.USER);
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(get("/api/rooms/my-room/session")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/session` loads room")
+	@WithMockUser
+	void loadRoomsLoads() throws Exception {
+		final User alice = new User("Alice");
+		final User johnDoe = new User("John Doe");
+		given(userService.getUser(any())).willReturn(johnDoe);
+
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember1 = new RoomMember(johnDoe, RoomMember.Role.USER);
+		roomMember1.setVote(new Vote(roomMember1, card));
+		final RoomMember roomMember2 = new RoomMember(alice, RoomMember.Role.USER);
+		room.getMembers().add(roomMember1);
+		room.getMembers().add(roomMember2);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(get("/api/rooms/my-room/session"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("my-room"))
+				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$.members.length()").value(2))
+				.andExpect(jsonPath("$.members[0].username").value("Alice"))
+				.andExpect(jsonPath("$.members[0].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[0].vote").value((Vote) null))
+				.andExpect(jsonPath("$.members[1].username").value("John Doe"))
+				.andExpect(jsonPath("$.members[1].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[1].vote.name").value("Voted"))
+				.andExpect(jsonPath("$.members[1].vote.value").value((Double) null));
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/session` shows votes when complete")
+	@WithMockUser
+	void loadRoomsShowsVotes() throws Exception {
+		final User alice = new User("Alice");
+		final User johnDoe = new User("John Doe");
+		given(userService.getUser(any())).willReturn(johnDoe);
+
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember1 = new RoomMember(johnDoe, RoomMember.Role.USER);
+		roomMember1.setVote(new Vote(roomMember1, card));
+		final RoomMember roomMember2 = new RoomMember(alice, RoomMember.Role.USER);
+		roomMember2.setVote(new Vote(roomMember2, card));
+		room.getMembers().add(roomMember1);
+		room.getMembers().add(roomMember2);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(get("/api/rooms/my-room/session"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("my-room"))
+				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$.members.length()").value(2))
+				.andExpect(jsonPath("$.members[0].username").value("Alice"))
+				.andExpect(jsonPath("$.members[0].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[0].vote.name").value("1"))
+				.andExpect(jsonPath("$.members[0].vote.value").value(1.0))
+				.andExpect(jsonPath("$.members[1].username").value("John Doe"))
+				.andExpect(jsonPath("$.members[1].role").value(RoomMember.Role.USER.ordinal()))
+				.andExpect(jsonPath("$.members[1].vote.name").value("1"))
+				.andExpect(jsonPath("$.members[1].vote.value").value(1.0));
 	}
 
 }

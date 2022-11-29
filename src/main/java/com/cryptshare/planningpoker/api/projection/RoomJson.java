@@ -4,17 +4,16 @@ import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 public record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSetName") String cardSetName,
 					   @JsonProperty("members") List<RoomMemberJson> isModerator) {
-	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(roomMember -> roomMember.getUser().getUsername());
 
-	public static RoomJson convert(Room room) {
+	public static RoomJson convert(Room room, Function<RoomMember, RoomMemberJson> memberConverter) {
 		return new RoomJson(
 				room.getName(),
 				room.getCardSet().getName(),
-				room.getMembers().stream().sorted(MEMBER_COMPARATOR).map(RoomMemberJson::convert).toList());
+				room.getMembers().stream().sorted(RoomMemberJson.MEMBER_COMPARATOR).map(memberConverter).toList());
 	}
 }
