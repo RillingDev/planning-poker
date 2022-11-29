@@ -19,5 +19,7 @@ module.exports = {
 		project: ["./tsconfig.json"],
 	},
 	settings: {react: {"version": "detect"}},
-	rules: {}
+	rules: {
+		"@typescript-eslint/no-non-null-assertion": "off"
+	}
 };

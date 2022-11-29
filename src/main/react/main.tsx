@@ -3,8 +3,8 @@ import "vite/modulepreload-polyfill";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { RoomList } from "./routes/RoomList";
-import { Room } from "./routes/Room";
+import { RoomListView } from "./routes/RoomListView";
+import { loader as roomLoader, RoomView } from "./routes/RoomView";
 import { AppContext } from "./AppContext";
 import { loadIdentity } from "./api";
 import { Header } from "./components/Header";
@@ -14,11 +14,12 @@ import "./index.css";
 const router = createHashRouter([
 	{
 		path: "/",
-		element: <RoomList/>,
+		element: <RoomListView/>,
 	},
 	{
 		path: "/rooms/:roomName",
-		element: <Room/>,
+		element: <RoomView/>,
+		loader: roomLoader
 	},
 ]);
 

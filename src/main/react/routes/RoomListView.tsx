@@ -1,13 +1,13 @@
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { loadRooms, Room } from "../api";
-import "./RoomList.css";
+import "./RoomListView.css";
 import Button from "react-bootstrap/Button";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
 
 
-export const RoomList: FC = () => {
+export const RoomListView: FC = () => {
 	const [rooms, setRooms] = useState<Room[]>([]);
 
 	const updateRooms = () => {
