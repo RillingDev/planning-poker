@@ -11,7 +11,8 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "card")
 public class Card extends BaseEntity {
-	public static final Comparator<Card> COMPARATOR = Comparator.comparing(Card::getValue, Comparator.nullsLast(Comparator.naturalOrder()));
+	public static final Comparator<Card> COMPARATOR = Comparator.comparing(Card::getValue, Comparator.nullsLast(Comparator.naturalOrder()))
+			.thenComparing(Card::getName);
 
 	@Column(name = "card_name", nullable = false)
 	private String name;

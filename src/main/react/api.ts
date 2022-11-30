@@ -30,6 +30,16 @@ export interface CardSet {
 	readonly cards: ReadonlyArray<Card>;
 }
 
+interface VoteSummary {
+	readonly average: number;
+	readonly variance: number;
+	readonly nearestCard: Card;
+	readonly highestVote: Card;
+	readonly highestVoters: ReadonlyArray<RoomMember>;
+	readonly lowestVote: Card;
+	readonly lowestVoters: ReadonlyArray<RoomMember>;
+}
+
 async function assertStatusOk(res: Response): Promise<Response> {
 	if (res.status >= 200 && res.status <= 299) {
 		return res;
@@ -121,5 +131,11 @@ export async function createVote(roomName: string, cardName: string) {
 	return fetch(url, {
 		method: "POST",
 	}).then(assertStatusOk);
+}
+
+export async function getSummary(roomName: string) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
+		method: "GET",
+	}).then(assertStatusOk).then(res => res.json() as Promise<VoteSummary>);
 }
 
