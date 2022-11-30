@@ -7,7 +7,7 @@ export const CardList: FC<{ cardSet: CardSet, activeCard: Card | null, onClick: 
 	return (
 		<ul className="card-list">
 			{cardSet.cards.map(card => <li key={card.name}>
-				<Button variant="light" onClick={() => onClick(card)} active={card.name == activeCard?.name}>{card.name}</Button>
+				<Button variant="light" className="poker-card" onClick={() => onClick(card)} active={card.name == activeCard?.name}>{card.name}</Button>
 			</li>)}
 		</ul>
 	);

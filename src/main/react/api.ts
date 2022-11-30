@@ -30,7 +30,7 @@ export interface CardSet {
 	readonly cards: ReadonlyArray<Card>;
 }
 
-interface VoteSummary {
+export interface VoteSummary {
 	readonly average: number;
 	readonly variance: number;
 	readonly nearestCard: Card;

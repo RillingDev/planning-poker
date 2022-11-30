@@ -3,13 +3,14 @@ import type { FC } from "react";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import "./RoomView.css";
-import type { Card, EditAction, Room, RoomMember, User } from "../api";
-import { createVote, editMember, getRoom, joinRoom, leaveRoom } from "../api";
+import type { Card, EditAction, Room, RoomMember, User, VoteSummary } from "../api";
+import { createVote, editMember, getRoom, getSummary, joinRoom, leaveRoom } from "../api";
 import { MemberList } from "../components/MemberList";
 import { CardList } from "../components/CardList";
 import { AppContext } from "../AppContext";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { useErrorHandler, useInterval } from "../hooks";
+import { Summary } from "../components/Summary";
 
 interface LoaderResult {
 	room: Room;
@@ -31,6 +32,10 @@ export const RoomView: FC = () => {
 	const loaderData = useLoaderData() as LoaderResult;
 	const [room, setRoom] = useState<Room>(loaderData.room);
 
+	const [activeCard, setActiveCard] = useState<Card | null>(null);
+
+	const [voteSummary, setVoteSummary] = useState<VoteSummary | null>(null);
+
 	const handleLeave = () => {
 		leaveRoom(room.name).catch(handleError);
 	};
@@ -38,14 +43,19 @@ export const RoomView: FC = () => {
 	const updateRoom = async () => {
 		const loadedRoom = await getRoom(room.name);
 		setRoom(loadedRoom);
-		setActiveCard(findMemberForUser(loadedRoom, user)!.vote);
+
+		if (loadedRoom.votingComplete) {
+			setVoteSummary(await getSummary(room.name));
+		} else {
+			setVoteSummary(null);
+			setActiveCard(findMemberForUser(loadedRoom, user)!.vote);
+		}
 	};
 
 	useInterval(() => {
 		updateRoom().catch(handleError);
 	}, 1500); // Poll for other votes
 
-	const [activeCard, setActiveCard] = useState<Card | null>(null);
 	const handleCardClick = (card: Card) => {
 		createVote(room.name, card.name).then(updateRoom).catch(handleError);
 	};
@@ -67,7 +77,10 @@ export const RoomView: FC = () => {
 			<main className="room-view">
 				<div>
 					<h3>Vote</h3>
-					<CardList cardSet={room?.cardSet ?? {name: "None", cards: []}} activeCard={activeCard} onClick={handleCardClick}></CardList>
+					{voteSummary != null ? <Summary voteSummary={voteSummary}></Summary> : <CardList cardSet={room?.cardSet ?? {
+						name: "None",
+						cards: []
+					}} activeCard={activeCard} onClick={handleCardClick}></CardList>}
 				</div>
 				<div>
 					<h3>Members</h3>
