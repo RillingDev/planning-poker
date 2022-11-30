@@ -1,15 +1,17 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useContext, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { CardSet } from "../../api";
 import Modal from "react-bootstrap/Modal";
+import { AppContext } from "../../AppContext";
 
 export const CreateRoomModal: FC<{
-	cardSets: ReadonlyArray<CardSet>,
 	show: boolean;
 	onHide: () => void;
 	onSubmit: (roomName: string, cardSet: CardSet) => void;
-}> = ({show, onHide, onSubmit, cardSets}) => {
+}> = ({show, onHide, onSubmit}) => {
+	const {cardSets} = useContext(AppContext);
+
 	const [roomName, setRoomName] = useState<string>("");
 	const [roomCardSetName, setRoomCardSetName] = useState<string>("");
 

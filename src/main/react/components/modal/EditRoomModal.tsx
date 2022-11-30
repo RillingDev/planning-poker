@@ -1,8 +1,9 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useContext, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { CardSet, Room } from "../../api";
 import Modal from "react-bootstrap/Modal";
+import { AppContext } from "../../AppContext";
 
 
 /**
@@ -10,11 +11,12 @@ import Modal from "react-bootstrap/Modal";
  */
 export const EditRoomModal: FC<{
 	room: Room;
-	cardSets: ReadonlyArray<CardSet>;
 	show: boolean;
 	onHide: () => void;
 	onSubmit: (cardSet: CardSet) => void;
-}> = ({room, show, onHide, onSubmit, cardSets}) => {
+}> = ({room, show, onHide, onSubmit}) => {
+	const {cardSets} = useContext(AppContext);
+
 	const [newCardSetName, setNewCardSetName] = useState<string>("");
 
 	const handleSubmit = (e: FormEvent) => {

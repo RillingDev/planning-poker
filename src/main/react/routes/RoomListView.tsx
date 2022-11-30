@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useState } from "react";
-import { CardSet, createRoom, loadCardSets, loadRooms, Room } from "../api";
+import { CardSet, createRoom, deleteRoom, editRoom, loadRooms, Room } from "../api";
 import "./RoomListView.css";
 import Button from "react-bootstrap/Button";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
@@ -24,24 +24,27 @@ export const RoomListView: FC = () => {
 
 	const [rooms, setRooms] = useState<Room[]>(loaderData.rooms);
 
-	const handleRoomUpdate = () => {
-		loadRooms().then(rooms => setRooms(rooms)).catch(handleError);
-	};
-
-	const [cardSets, setCardSets] = useState<CardSet[]>([]);
 	const [modalVisible, setModalVisible] = useState(false);
-	const showModal = () => {
-		setModalVisible(true);
-		loadCardSets().then(loadedCardSets => setCardSets(loadedCardSets)).catch(handleError);
-	};
+	const showModal = () => setModalVisible(true);
 	const hideModal = () => setModalVisible(false);
+
+	const updateRooms = async () => {
+		setRooms(await loadRooms());
+	};
 
 	const handleCreationSubmit = (newRoomName: string, newRoomCardSet: CardSet) => {
 		hideModal();
 		createRoom(newRoomName, newRoomCardSet.name)
-			.then(loadRooms)
-			.then(rooms => setRooms(rooms))
+			.then(updateRooms)
 			.catch(handleError);
+	};
+
+	const handleEdit = (room: Room, newCardSet: CardSet) => {
+		editRoom(room.name, newCardSet.name).then(updateRooms).catch(handleError);
+	};
+
+	const handleDelete = (room: Room) => {
+		deleteRoom(room.name).then(updateRooms).catch(handleError);
 	};
 
 	return (
@@ -49,14 +52,13 @@ export const RoomListView: FC = () => {
 			<header className="room-list__header">
 				<h2>Rooms</h2>
 				<Button variant="primary" onClick={showModal}>Create Room</Button>
-				<CreateRoomModal onSubmit={handleCreationSubmit} show={modalVisible}
-								 onHide={hideModal} cardSets={cardSets}></CreateRoomModal>
+				<CreateRoomModal onSubmit={handleCreationSubmit} show={modalVisible} onHide={hideModal}></CreateRoomModal>
 			</header>
 			<nav>
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name}>
-							<RoomItem room={room} onChange={handleRoomUpdate} onError={handleError}></RoomItem>
+							<RoomItem room={room} onEdit={(newCardSet) => handleEdit(room, newCardSet)} onDelete={() => handleDelete(room)}></RoomItem>
 						</li>,
 					)}
 				</ul>

@@ -6,7 +6,7 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import { loader as roomListLoader, RoomListView } from "./routes/RoomListView";
 import { loader as roomLoader, RoomView } from "./routes/RoomView";
 import { AppContext } from "./AppContext";
-import { loadIdentity } from "./api";
+import { loadCardSets, loadIdentity } from "./api";
 import { Header } from "./components/Header";
 
 import "./index.css";
@@ -24,10 +24,10 @@ const router = createHashRouter([
 	},
 ]);
 
-loadIdentity().then(user => {
+Promise.all([loadIdentity(), loadCardSets()]).then(([user, cardSets]) => {
 	createRoot(document.getElementById("root") as HTMLElement).render(
 		<React.StrictMode>
-			<AppContext.Provider value={{user: user}}>
+			<AppContext.Provider value={{user, cardSets}}>
 				<Header/>
 				<RouterProvider router={router}/>
 			</AppContext.Provider>

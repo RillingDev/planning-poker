@@ -1,8 +1,9 @@
 import { createContext } from "react";
-import { User } from "./api";
+import { CardSet, User } from "./api";
 
 interface AppContextState {
 	user: User;
+	cardSets: ReadonlyArray<CardSet>;
 }
 
-export const AppContext = createContext<AppContextState>({user: {username: "Anonymous"}});
+export const AppContext = createContext<AppContextState>({user: {username: "Anonymous"}, cardSets: []});
