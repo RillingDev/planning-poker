@@ -3,8 +3,8 @@ import type { FC } from "react";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./RoomView.css";
-import type { Card, Room, RoomMember, User } from "../api";
-import { createVote, getRoom, joinRoom, leaveRoom } from "../api";
+import type { Card, EditAction, Room, RoomMember, User } from "../api";
+import { createVote, editMember, getRoom, joinRoom, leaveRoom } from "../api";
 import { MemberList } from "../components/MemberList";
 import { CardList } from "../components/CardList";
 import { AppContext } from "../AppContext";
@@ -40,18 +40,23 @@ export const RoomView: FC = () => {
 		leaveRoom(room.name).catch(handleError);
 	};
 
-	const updateRoom = () => {
-		getRoom(room.name).then(room => {
-			setRoom(room);
-			setActiveCard(findMemberForUser(room, user)!.vote);
-		}).catch(handleError);
+	const updateRoom = async () => {
+		const loadedRoom = await getRoom(room.name);
+		setRoom(loadedRoom);
+		setActiveCard(findMemberForUser(loadedRoom, user)!.vote);
 	};
 
-	useInterval(updateRoom, 1500); // Poll for other votes
+	useInterval(() => {
+		updateRoom().catch(handleError);
+	}, 1500); // Poll for other votes
 
 	const [activeCard, setActiveCard] = useState<Card | null>(null);
 	const handleCardClick = (card: Card) => {
 		createVote(room.name, card.name).then(updateRoom).catch(handleError);
+	};
+
+	const handleAction = (member: RoomMember, action: EditAction) => {
+		editMember(room.name, member.username, action).then(updateRoom).catch(handleError);
 	};
 
 	return (
@@ -69,7 +74,7 @@ export const RoomView: FC = () => {
 				</div>
 				<div>
 					<h3>Members</h3>
-					<MemberList members={room?.members ?? []}></MemberList>
+					<MemberList members={room?.members ?? []} onAction={handleAction}></MemberList>
 				</div>
 			</main>
 		</>

@@ -98,7 +98,7 @@ export async function leaveRoom(roomName: string) {
 	}).then(assertStatusOk);
 }
 
-const enum EditAction {SET_VOTER = "SET_VOTER", SET_OBSERVER = "SET_OBSERVER", KICK = "KICK"}
+export const enum EditAction {SET_VOTER = "SET_VOTER", SET_OBSERVER = "SET_OBSERVER", KICK = "KICK"}
 
 export async function editMember(roomName: string, memberUsername: string, action: EditAction) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/members/${encodeURIComponent(memberUsername)}`, location.href);

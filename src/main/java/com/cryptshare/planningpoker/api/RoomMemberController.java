@@ -58,27 +58,30 @@ class RoomMemberController {
 	@Transactional
 	@ResponseBody
 	void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
-			@RequestParam("action") String actionName, @AuthenticationPrincipal UserDetails user) {
+			@RequestParam("action") EditAction action, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+		final RoomMember actingMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		final RoomMember targetMember = room.findMemberByUser(memberUsername).orElseThrow(MemberNotFoundException::new);
 
-		final EditAction editAction = EditAction.valueOf(actionName);
-
-		switch (editAction) {
+		switch (action) {
 			case SET_VOTER -> {
 				targetMember.setRole(RoomMember.Role.VOTER);
+				roomRepository.save(room);
+				logger.info("Member '{}' set '{}' to voter in '{}'.", actingMember, targetMember, room);
 			}
 			case SET_OBSERVER -> {
 				targetMember.setRole(RoomMember.Role.OBSERVER);
+				roomRepository.save(room);
+				logger.info("Member '{}' set '{}' to observer in '{}'.", actingMember, targetMember, room);
 			}
 			case KICK -> {
 				room.getMembers().remove(targetMember);
+				roomRepository.save(room);
+				logger.info("Member '{}' kicked '{}' from '{}'.", actingMember, targetMember, room);
 			}
 		}
-		roomRepository.save(room);
 	}
 
 	enum EditAction {
