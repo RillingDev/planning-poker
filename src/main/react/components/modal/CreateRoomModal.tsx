@@ -40,9 +40,7 @@ export const CreateRoomModal: FC<{
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button type="submit" variant="primary">
-						Create
-					</Button>
+					<Button type="submit" variant="primary"> Create </Button>
 				</Modal.Footer>
 			</Form>
 		</Modal>

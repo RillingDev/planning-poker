@@ -17,7 +17,7 @@ export const EditRoomModal: FC<{
 }> = ({room, show, onHide, onSubmit}) => {
 	const {cardSets} = useContext(AppContext);
 
-	const [newCardSetName, setNewCardSetName] = useState<string>("");
+	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSet.name);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -31,18 +31,15 @@ export const EditRoomModal: FC<{
 					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form.Group className="mb-3" controlId="formCreateRoomCardSet">
+					<Form.Group className="mb-3" controlId="formEditRoomCardSet">
 						<Form.Label>Card Set</Form.Label>
 						<Form.Select required value={newCardSetName} onChange={(e) => setNewCardSetName(e.target.value)}>
-							<option disabled value=""></option>
 							{cardSets.map(cardSet => <option key={cardSet.name}>{cardSet.name}</option>)}
 						</Form.Select>
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button type="submit" variant="primary">
-						Update
-					</Button>
+					<Button type="submit" variant="primary"> Update </Button>
 				</Modal.Footer>
 			</Form>
 		</Modal>
