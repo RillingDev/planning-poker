@@ -53,7 +53,6 @@ CREATE TABLE room_member
 	CONSTRAINT uq_room_member UNIQUE (room_id, username)
 );
 
-// Note: It is not enforced in the schema that 'observer' members cannot have votes. This must be ensured manually.
 CREATE TABLE vote
 (
 	id             UUID NOT NULL PRIMARY KEY,
@@ -82,6 +81,18 @@ CREATE TABLE vote
 				)
 		)
 );
+// Delete votes when a member switches to observer.
+CREATE TRIGGER update_room_member_vote_cleanup
+	AFTER UPDATE
+	ON room_member
+	FOR EACH ROW
+CALL "com.cryptshare.planningpoker.data.h2.VoteRoleCleanupTrigger";
+// Delete votes when a rooms card-set changes.
+CREATE TRIGGER update_room_card_set_vote_cleanup
+	AFTER UPDATE
+	ON room
+	FOR EACH ROW
+CALL "com.cryptshare.planningpoker.data.h2.VoteCardSetCleanupTrigger";
 
 
 // Initial data

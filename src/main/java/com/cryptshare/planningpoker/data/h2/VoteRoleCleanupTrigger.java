@@ -1,0 +1,26 @@
+package com.cryptshare.planningpoker.data.h2;
+
+import com.cryptshare.planningpoker.data.RoomMember.Role;
+import org.h2.api.Trigger;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.UUID;
+
+/**
+ * Trigger that deletes votes when a {@link com.cryptshare.planningpoker.data.RoomMember} switches to {@link Role#OBSERVER}
+ */
+public class VoteRoleCleanupTrigger implements Trigger {
+	@Override
+	public void fire(Connection conn, Object[] oldRow, Object[] newRow) throws SQLException {
+		final UUID id = (UUID) newRow[0];
+		final Role role = Role.valueOf((String) newRow[1]);
+		if (role == Role.OBSERVER) {
+			try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM vote v WHERE v.room_member_id = ?")) {
+				stmt.setObject(1, id);
+				stmt.execute();
+			}
+		}
+	}
+}
