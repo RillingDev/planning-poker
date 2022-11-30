@@ -87,14 +87,24 @@ export async function editRoom(roomName: string, cardSetName: string) {
 
 
 export async function joinRoom(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
 		method: "POST",
 	}).then(assertStatusOk);
 }
 
 export async function leaveRoom(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
 		method: "DELETE",
+	}).then(assertStatusOk);
+}
+
+const enum EditAction {SET_VOTER = "SET_VOTER", SET_OBSERVER = "SET_OBSERVER", KICK = "KICK"}
+
+export async function editMember(roomName: string, memberUsername: string, action: EditAction) {
+	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/members/${encodeURIComponent(memberUsername)}`, location.href);
+	url.searchParams.set("action", action);
+	return fetch(url, {
+		method: "PATCH",
 	}).then(assertStatusOk);
 }
 

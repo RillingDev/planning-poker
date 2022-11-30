@@ -25,7 +25,7 @@ class RoomMemberController {
 		this.roomRepository = roomRepository;
 	}
 
-	@PostMapping(value = "/api/rooms/{room-name}/session")
+	@PostMapping(value = "/api/rooms/{room-name}/members")
 	@Transactional
 	void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
@@ -40,7 +40,7 @@ class RoomMemberController {
 		logger.info("User '{}' joined room '{}'.", user, room);
 	}
 
-	@DeleteMapping(value = "/api/rooms/{room-name}/session")
+	@DeleteMapping(value = "/api/rooms/{room-name}/members")
 	@Transactional
 	void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
@@ -50,6 +50,39 @@ class RoomMemberController {
 			roomRepository.save(room);
 			logger.info("User '{}' left room '{}'.", user, room);
 		}, () -> logger.debug("User '{}' is not part of room '{}'.", user, room));
+	}
+
+	@PatchMapping(value = "/api/rooms/{room-name}/members/{member-username}")
+	@Transactional
+	@ResponseBody
+	void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
+			@RequestParam("action") String actionName, @AuthenticationPrincipal UserDetails user) {
+		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+
+		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+
+		final RoomMember targetMember = room.findMemberByUser(memberUsername).orElseThrow(MemberNotFoundException::new);
+
+		final EditAction editAction = EditAction.valueOf(actionName);
+
+		switch (editAction) {
+			case SET_VOTER -> {
+				targetMember.setRole(RoomMember.Role.VOTER);
+			}
+			case SET_OBSERVER -> {
+				targetMember.setRole(RoomMember.Role.OBSERVER);
+			}
+			case KICK -> {
+				room.getMembers().remove(targetMember);
+			}
+		}
+		roomRepository.save(room);
+	}
+
+	enum EditAction {
+		SET_VOTER,
+		SET_OBSERVER,
+		KICK
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/session")
@@ -75,8 +108,7 @@ class RoomMemberController {
 				.getCards()
 				.stream()
 				.filter(c -> c.getName().equals(cardName))
-				.findFirst()
-				.orElseThrow(CardNotFoundException::new);
+				.findFirst().orElseThrow(CardNotFoundException::new);
 
 		roomMember.setVote(new Vote(roomMember, card));
 		roomRepository.save(room);
@@ -85,6 +117,10 @@ class RoomMemberController {
 
 	@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "You must be a member of this room to perform this action.")
 	private static class NotAMemberException extends RuntimeException {
+	}
+
+	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No member with this username was found.")
+	private static class MemberNotFoundException extends RuntimeException {
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card in this rooms card-set.")
