@@ -13,13 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
-
 @RestController
 class RoomMemberController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomMemberController.class);
-
-	private static final Comparator<RoomMember> MEMBER_COMPARATOR = Comparator.comparing(RoomMember::getUsername);
 
 	private final RoomRepository roomRepository;
 

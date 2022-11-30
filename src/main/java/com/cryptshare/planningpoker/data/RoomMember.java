@@ -3,11 +3,14 @@ package com.cryptshare.planningpoker.data;
 import jakarta.persistence.*;
 import org.springframework.lang.Nullable;
 
+import java.util.Comparator;
 import java.util.StringJoiner;
 
 @Entity
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
+	public static final Comparator<RoomMember> COMPARATOR = Comparator.comparing(RoomMember::getUsername);
+
 	public enum Role {
 		VOTER,
 		OBSERVER
@@ -53,6 +56,10 @@ public class RoomMember extends BaseEntity {
 	@Nullable
 	public Vote getVote() {
 		return vote;
+	}
+
+	public boolean hasVote() {
+		return vote != null;
 	}
 
 	public void setVote(@Nullable Vote vote) {

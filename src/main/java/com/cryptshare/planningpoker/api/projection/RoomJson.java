@@ -22,7 +22,7 @@ public record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSet
 		return new RoomJson(
 				room.getName(),
 				CardSetJson.convert(room.getCardSet()),
-				room.getMembers().stream().sorted(RoomMemberJson.MEMBER_COMPARATOR).map(roomMemberMapper).toList(),
+				room.getMembers().stream().sorted(RoomMember.COMPARATOR).map(roomMemberMapper).toList(),
 				room.isVotingComplete());
 	}
 }
