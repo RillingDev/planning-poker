@@ -46,7 +46,7 @@ class SummaryServiceTest {
 
 	@Test
 	@DisplayName("calculates nearest card")
-	void calculatesResult() {
+	void calculatesNearest() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
@@ -119,5 +119,42 @@ class SummaryServiceTest {
 		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
 
 		assertThat(voteSummary.variance()).isCloseTo(0.6875, Offset.offset(0.01));
+	}
+
+	@Test
+	@DisplayName("calculates without members")
+	void calculatesWhenNoMembers() {
+		final CardSet cardSet = new CardSet("Set");
+
+		final Room myRoom = new Room("My Room", cardSet);
+
+		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+
+		assertThat(voteSummary.average()).isZero();
+		assertThat(voteSummary.variance()).isZero();
+		assertThat(voteSummary.highestVote().getValue()).isZero();
+		assertThat(voteSummary.highestVoters()).isEmpty();
+		assertThat(voteSummary.lowestVote().getValue()).isZero();
+		assertThat(voteSummary.lowestVoters()).isEmpty();
+	}
+
+	@Test
+	@DisplayName("calculates with only observers")
+	void calculatesWhenOnlObservers() {
+		final CardSet cardSet = new CardSet("Set");
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember johnDoe = new RoomMember("John Doe");
+		johnDoe.setRole(RoomMember.Role.OBSERVER);
+		myRoom.getMembers().add(johnDoe);
+
+		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+
+		assertThat(voteSummary.average()).isZero();
+		assertThat(voteSummary.variance()).isZero();
+		assertThat(voteSummary.highestVote().getValue()).isZero();
+		assertThat(voteSummary.highestVoters()).isEmpty();
+		assertThat(voteSummary.lowestVote().getValue()).isZero();
+		assertThat(voteSummary.lowestVoters()).isEmpty();
 	}
 }

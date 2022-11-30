@@ -12,6 +12,9 @@ import java.util.Set;
 
 @Service
 public class SummaryService {
+
+	private static final Card NOOP_CARD = new Card("0", 0.0);
+
 	public VoteSummary getVoteSummary(Room room) {
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
@@ -20,8 +23,11 @@ public class SummaryService {
 				.sorted((o1, o2) -> Card.COMPARATOR.reversed().compare(o1.getVote().getCard(), o2.getVote().getCard()))
 				.toList();
 
+		if (membersWithCardValues.isEmpty()) {
+			return new VoteSummary(0.0, 0.0, NOOP_CARD, NOOP_CARD, Set.of(), NOOP_CARD, Set.of());
+		}
+
 		double total = 0;
-		int voteValueCount = 0;
 
 		Card max = null;
 		Card min = null;
