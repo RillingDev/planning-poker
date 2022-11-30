@@ -6,6 +6,8 @@ import Button from "react-bootstrap/Button";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
 import { useLoaderData } from "react-router";
+import { ErrorPanel } from "../components/ErrorPanel";
+import { useErrorHandler } from "../hooks";
 
 interface LoaderResult {
 	rooms: Room[];
@@ -17,8 +19,7 @@ export async function loader(): Promise<LoaderResult> {
 }
 
 export const RoomListView: FC = () => {
-	// TODO: show toast or similar for errors
-	const handleError = console.error;
+	const [error, handleError, resetError] = useErrorHandler();
 
 	const loaderData = useLoaderData() as LoaderResult;
 
@@ -49,6 +50,8 @@ export const RoomListView: FC = () => {
 
 	return (
 		<>
+			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
+
 			<header className="room-list__header">
 				<h2>Rooms</h2>
 				<Button variant="primary" onClick={showModal}>Create Room</Button>

@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import type { FC } from "react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import "./RoomView.css";
 import type { Card, EditAction, Room, RoomMember, User } from "../api";
@@ -8,6 +8,8 @@ import { createVote, editMember, getRoom, joinRoom, leaveRoom } from "../api";
 import { MemberList } from "../components/MemberList";
 import { CardList } from "../components/CardList";
 import { AppContext } from "../AppContext";
+import { ErrorPanel } from "../components/ErrorPanel";
+import { useErrorHandler, useInterval } from "../hooks";
 
 interface LoaderResult {
 	room: Room;
@@ -22,15 +24,8 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 
 const findMemberForUser = (room: Room, user: User): RoomMember | null => room.members.find(member => member.username == user.username) ?? null;
 
-const useInterval = (callback: () => void, timeout: number) => {
-	useEffect(() => {
-		const interval = setInterval(callback, timeout);
-		return () => clearInterval(interval);
-	}, [callback, timeout]);
-};
-
 export const RoomView: FC = () => {
-	const handleError = console.error;
+	const [error, handleError, resetError] = useErrorHandler();
 
 	const {user} = useContext(AppContext);
 	const loaderData = useLoaderData() as LoaderResult;
@@ -61,6 +56,8 @@ export const RoomView: FC = () => {
 
 	return (
 		<>
+			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
+
 			<nav>
 				<Link to={"/"} className="btn btn-primary" onClick={() => handleLeave()}>Back</Link>
 			</nav>

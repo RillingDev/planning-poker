@@ -44,8 +44,9 @@ async function assertStatusOk(res: Response): Promise<Response> {
 	if (res.status >= 200 && res.status <= 299) {
 		return res;
 	}
+	const body = await res.text();
 	throw new Error(
-		`Unexpected status code: ${res.status}:\n${await res.text()}.`,
+		`Unexpected status code '${res.status}':\n\n${body}.`,
 	);
 }
 
