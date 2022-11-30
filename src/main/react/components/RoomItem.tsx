@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import { EditRoomModal } from "./modal/EditRoomModal";
 import "./RoomItem.css";
 import { DeleteRoomModal } from "./modal/DeleteRoomModal";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const RoomItem: FC<{
 	room: Room;
@@ -29,10 +31,10 @@ export const RoomItem: FC<{
 
 			<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>
 
-			<Button variant="warning" onClick={() => setEditModalVisible(true)}>Edit</Button>
+			<Button variant="warning" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
 			<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
 
-			<Button variant="danger" onClick={() => setDeleteModalVisible(true)}>Delete</Button>
+			<Button variant="danger" onClick={() => setDeleteModalVisible(true)}><FontAwesomeIcon icon={faTrash} title="Delete Room"/></Button>
 			<DeleteRoomModal onSubmit={handleDelete} room={room} show={deleteModalVisible} onHide={() => setDeleteModalVisible(false)}/>
 		</div>
 	);

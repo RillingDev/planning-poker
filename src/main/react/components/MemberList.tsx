@@ -1,7 +1,9 @@
 import { FC } from "react";
 import { EditAction, RoomMember } from "../api";
 import "./MemberList.css";
-import Dropdown from "react-bootstrap/Dropdown";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { ButtonGroup, Dropdown } from "react-bootstrap";
 
 export const MemberList: FC<{
 	members: ReadonlyArray<RoomMember>, onAction: (member: RoomMember, action: EditAction) => void
@@ -10,9 +12,9 @@ export const MemberList: FC<{
 		<ul className="member-list">
 			{members.map((member, i) => <li key={member.username} className={`member member--${member.role}`}>
 				<span>{member.username} ({member.role})</span>
-				<Dropdown>
+				<Dropdown size="sm" as={ButtonGroup}>
 					<Dropdown.Toggle variant="secondary" id={`options-dropdown-${i}`}>
-						Edit
+						<FontAwesomeIcon icon={faEdit} title="Edit Member"/>
 					</Dropdown.Toggle>
 
 					<Dropdown.Menu>
