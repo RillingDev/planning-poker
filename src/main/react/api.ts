@@ -108,14 +108,15 @@ export async function editMember(roomName: string, memberUsername: string, actio
 	}).then(assertStatusOk);
 }
 
+
 export async function getRoom(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/session`, {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/`, {
 		method: "GET",
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room>);
 }
 
 export async function createVote(roomName: string, cardName: string) {
-	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/session/vote`, location.href);
+	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/votes`, location.href);
 	url.searchParams.set("card-name", cardName);
 	return fetch(url, {
 		method: "POST",
