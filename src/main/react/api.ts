@@ -134,6 +134,13 @@ export async function createVote(roomName: string, cardName: string) {
 	}).then(assertStatusOk);
 }
 
+export async function clearVotes(roomName: string) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
+		method: "DELETE",
+	}).then(assertStatusOk);
+}
+
+
 export async function getSummary(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
 		method: "GET",

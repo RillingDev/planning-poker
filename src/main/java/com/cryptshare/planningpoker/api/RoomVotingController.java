@@ -46,11 +46,27 @@ class RoomVotingController {
 		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		final Card card = room.getCardSet()
-				.getCards().stream().filter(c -> c.getName().equals(cardName)).findFirst().orElseThrow(CardNotFoundException::new);
+				.getCards()
+				.stream()
+				.filter(c -> c.getName().equals(cardName))
+				.findFirst()
+				.orElseThrow(CardNotFoundException::new);
 
 		roomMember.setVote(new Vote(roomMember, card));
 		roomRepository.save(room);
-		logger.info("User '{}' voted with '{}'.", user.getUsername(), card);
+		logger.info("User '{}' voted with '{}' in '{}'.", user.getUsername(), card, room);
+	}
+
+	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
+	@Transactional
+	void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+
+		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+
+		room.getMembers().forEach(rm -> rm.setVote(null));
+		roomRepository.save(room);
+		logger.info("User '{}' cleared votes in '{}'.", user.getUsername(), room);
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/votes/summary")

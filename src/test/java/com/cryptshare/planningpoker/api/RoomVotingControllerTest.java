@@ -1,5 +1,6 @@
 package com.cryptshare.planningpoker.api;
 
+import com.cryptshare.planningpoker.SummaryService;
 import com.cryptshare.planningpoker.data.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,13 +12,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,6 +27,9 @@ class RoomVotingControllerTest {
 
 	@MockBean
 	RoomRepository roomRepository;
+
+	@MockBean
+	SummaryService summaryService;
 
 	@Autowired
 	MockMvc mockMvc;
@@ -191,4 +195,52 @@ class RoomVotingControllerTest {
 		final Vote vote = captor.getValue().findMemberByUser("John Doe").orElseThrow().getVote();
 		assertThat(vote).isNotNull().extracting(Vote::getCard).isEqualTo(card2);
 	}
+
+	@Test
+	@DisplayName("DELETE `/api/rooms/{room-name}/votes` throws for unknown name")
+	@WithMockUser
+	void clearVotesUnknownName() throws Exception {
+		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
+
+		mockMvc.perform(delete("/api/rooms/my-room/votes").with(csrf())).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("DELETE `/api/rooms/{room-name}/votes` throws when not a member")
+	@WithMockUser("John Doe")
+	void clearVotesNotMember() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		cardSet.getCards().add(new Card("1", 1.0));
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember("Alice");
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(delete("/api/rooms/my-room/votes").with(csrf())).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("DELETE `/api/rooms/{room-name}/votes` clear vote")
+	@WithMockUser("John Doe")
+	void clearVotesUpdateVote() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card1 = new Card("1", 1.0);
+		final Card card2 = new Card("2", 2.0);
+		cardSet.getCards().add(card1);
+		cardSet.getCards().add(card2);
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(new Vote(roomMember1, card1));
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(new Vote(roomMember2, card2));
+		room.getMembers().addAll(Set.of(roomMember1, roomMember2));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(delete("/api/rooms/my-room/votes").with(csrf())).andExpect(status().isOk());
+
+		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
+		verify(roomRepository).save(captor.capture());
+		assertThat(captor.getValue().getMembers()).hasSize(2).allMatch(rm -> !rm.hasVote());
+	}
+
 }
