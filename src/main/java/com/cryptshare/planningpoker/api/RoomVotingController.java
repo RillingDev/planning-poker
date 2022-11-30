@@ -77,19 +77,11 @@ class RoomVotingController {
 
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
-		if (!room.isVotingComplete()) {
-			throw new VotingInProgressException();
-		}
-
 		return VoteSummaryJson.convert(summaryService.getVoteSummary(room));
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card in this rooms card-set.")
 	private static class CardNotFoundException extends RuntimeException {
-	}
-
-	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Voting is still in progress.")
-	private static class VotingInProgressException extends RuntimeException {
 	}
 
 }

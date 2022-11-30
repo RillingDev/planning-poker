@@ -243,4 +243,63 @@ class RoomVotingControllerTest {
 		assertThat(captor.getValue().getMembers()).hasSize(2).allMatch(rm -> !rm.hasVote());
 	}
 
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` throws for unknown name")
+	@WithMockUser
+	void getSummaryUnknownName() throws Exception {
+		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
+
+		mockMvc.perform(get("/api/rooms/my-room/votes/summary").with(csrf())).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` throws when not a member")
+	@WithMockUser("John Doe")
+	void getSummaryNotMember() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		cardSet.getCards().add(new Card("1", 1.0));
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember("Alice");
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(get("/api/rooms/my-room/votes/summary").with(csrf())).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` shows votes when complete")
+	@WithMockUser("John Doe")
+	void getSummaryShowsSummary() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(new Vote(roomMember1, card));
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(new Vote(roomMember2, card));
+		room.getMembers().add(roomMember1);
+		room.getMembers().add(roomMember2);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		given(summaryService.getVoteSummary(room)).willReturn(new VoteSummary(1.0,
+				2.0,
+				card,
+				card,
+				Set.of(roomMember1),
+				card,
+				Set.of(roomMember2)));
+
+		mockMvc.perform(get("/api/rooms/my-room/votes/summary"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.average").value(1.0))
+				.andExpect(jsonPath("$.variance").value(2.0))
+				.andExpect(jsonPath("$.nearestCard.name").value(1))
+				.andExpect(jsonPath("$.highestVote.name").value(1))
+				.andExpect(jsonPath("$.highestVoters.length()").value(1))
+				.andExpect(jsonPath("$.highestVoters[0].username").value("John Doe"))
+				.andExpect(jsonPath("$.lowestVote.name").value(1))
+				.andExpect(jsonPath("$.lowestVoters.length()").value(1))
+				.andExpect(jsonPath("$.lowestVoters[0].username").value("Alice"));
+	}
 }

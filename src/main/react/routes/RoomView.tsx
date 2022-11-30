@@ -4,13 +4,14 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import "./RoomView.css";
 import type { Card, EditAction, Room, RoomMember, User, VoteSummary } from "../api";
-import { createVote, editMember, getRoom, getSummary, joinRoom, leaveRoom } from "../api";
+import { clearVotes, createVote, editMember, getRoom, getSummary, joinRoom, leaveRoom } from "../api";
 import { MemberList } from "../components/MemberList";
 import { CardList } from "../components/CardList";
 import { AppContext } from "../AppContext";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { useErrorHandler, useInterval } from "../hooks";
 import { Summary } from "../components/Summary";
+import Button from "react-bootstrap/Button";
 
 interface LoaderResult {
 	room: Room;
@@ -64,6 +65,11 @@ export const RoomView: FC = () => {
 		editMember(room.name, member.username, action).then(updateRoom).catch(handleError);
 	};
 
+	const handleRestart = () => {
+		clearVotes(room.name).then(updateRoom).catch(handleError);
+	};
+
+
 	return (
 		<>
 			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
@@ -81,6 +87,7 @@ export const RoomView: FC = () => {
 						name: "None",
 						cards: []
 					}} activeCard={activeCard} onClick={handleCardClick}></CardList>}
+					<Button variant="warning" onClick={handleRestart}>Restart</Button>
 				</div>
 				<div>
 					<h3>Members</h3>
