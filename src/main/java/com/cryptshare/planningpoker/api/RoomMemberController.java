@@ -29,13 +29,13 @@ class RoomMemberController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		if (room.findMemberByUser(user.getUsername()).isPresent()) {
-			logger.debug("User '{}' is already in room '{}'.", user, room);
+			logger.debug("User '{}' is already in room '{}'.", user.getUsername(), room);
 			return;
 		}
 
 		room.getMembers().add(new RoomMember(user.getUsername()));
 		roomRepository.save(room);
-		logger.info("User '{}' joined room '{}'.", user, room);
+		logger.info("User '{}' joined room '{}'.", user.getUsername(), room);
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/members")
@@ -46,8 +46,8 @@ class RoomMemberController {
 		room.findMemberByUser(user.getUsername()).ifPresentOrElse(roomMember -> {
 			room.getMembers().remove(roomMember);
 			roomRepository.save(room);
-			logger.info("User '{}' left room '{}'.", user, room);
-		}, () -> logger.debug("User '{}' is not part of room '{}'.", user, room));
+			logger.info("User '{}' left room '{}'.", user.getUsername(), room);
+		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getUsername(), room));
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}/members/{member-username}")

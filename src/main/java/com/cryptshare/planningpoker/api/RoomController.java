@@ -45,7 +45,7 @@ class RoomController {
 		final Room room = new Room(roomName, cardSet);
 		room.getMembers().add(new RoomMember(user.getUsername()));
 		roomRepository.save(room);
-		logger.info("Created room '{}' by user '{}'.", room, user);
+		logger.info("Created room '{}' by user '{}'.", room, user.getUsername());
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}")
@@ -54,7 +54,7 @@ class RoomController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		roomRepository.delete(room);
-		logger.info("Deleted room '{}' by user '{}'.", room, user);
+		logger.info("Deleted room '{}' by user '{}'.", room, user.getUsername());
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}")
@@ -65,7 +65,7 @@ class RoomController {
 
 		room.setCardSet(cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new));
 		roomRepository.save(room);
-		logger.info("Edited room '{}' by user '{}'.", room, user);
+		logger.info("Edited room '{}' by user '{}'.", room, user.getUsername());
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card-set.")

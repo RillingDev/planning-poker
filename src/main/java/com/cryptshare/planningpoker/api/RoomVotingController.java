@@ -50,7 +50,7 @@ class RoomVotingController {
 
 		roomMember.setVote(new Vote(roomMember, card));
 		roomRepository.save(room);
-		logger.info("User '{}' voted with '{}'.", user, card);
+		logger.info("User '{}' voted with '{}'.", user.getUsername(), card);
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/votes/summary")
