@@ -95,11 +95,9 @@ export const RoomView: FC = () => {
 		<>
 			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
-			<nav>
-				<Link to={"/"} className="btn btn-primary" onClick={() => handleLeave()}>Back</Link>
-			</nav>
-			<header>
+			<header className="d-flex justify-content-between align-items-center">
 				<h2>{room.name}</h2>
+				<Link to={"/"} className="btn btn-secondary" onClick={() => handleLeave()}>Back to Room List</Link>
 			</header>
 			<main className="room-view">
 				<div>

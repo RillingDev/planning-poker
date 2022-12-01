@@ -1,9 +1,3 @@
-.room-list__header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
 .room-list {
 	display: flex;
 	flex-direction: column;
