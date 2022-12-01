@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public record VoteSummaryJson(@JsonProperty("average") double average, @JsonProperty("variance") double variance,
+public record VoteSummaryJson(@JsonProperty("average") double average, @JsonProperty("offset") double offset,
 							  @JsonProperty("nearestCard") CardJson nearestCard, @JsonProperty("highestVote") CardJson highestVote,
 							  @JsonProperty("highestVoters") List<RoomMemberJson> highestVoters, @JsonProperty("lowestVote") CardJson lowestVote,
 							  @JsonProperty("lowestVoters") List<RoomMemberJson> lowestVoters) {
@@ -14,7 +14,7 @@ public record VoteSummaryJson(@JsonProperty("average") double average, @JsonProp
 	public static VoteSummaryJson convert(VoteSummary voteSummary) {
 		return new VoteSummaryJson(
 				voteSummary.average(),
-				voteSummary.variance(),
+				voteSummary.offset(),
 				CardJson.convert(voteSummary.nearestCard()),
 				CardJson.convert(voteSummary.highestVote()),
 				voteSummary.highestVoters().stream().sorted(RoomMember.COMPARATOR).map(RoomMemberJson::convertToBasic).toList(),

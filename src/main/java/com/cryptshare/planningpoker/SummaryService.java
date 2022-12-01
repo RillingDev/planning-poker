@@ -24,7 +24,7 @@ public class SummaryService {
 				.toList();
 
 		if (membersWithCardValues.isEmpty()) {
-			return new VoteSummary(0.0, 0.0, NOOP_CARD, NOOP_CARD, Set.of(), NOOP_CARD, Set.of());
+			return new VoteSummary(0.0, 0, NOOP_CARD, NOOP_CARD, Set.of(), NOOP_CARD, Set.of());
 		}
 
 		double total = 0;
@@ -46,8 +46,6 @@ public class SummaryService {
 
 		double averageValue = total / membersWithCardValues.size();
 
-		double varianceSum = 0;
-
 		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size());
 		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size());
 
@@ -68,13 +66,11 @@ public class SummaryService {
 				nearestCardDiff = diff;
 				nearestCard = card;
 			}
-
-			// https://stackoverflow.com/a/43675683
-			varianceSum += Math.pow(card.getValue() - averageValue, 2);
 		}
 
-		double variance = varianceSum / membersWithCardValues.size();
+		final List<Card> orderedCards = room.getCardSet().getCards().stream().filter(Card::isBasic).sorted(Card.COMPARATOR).toList();
+		int offset = orderedCards.indexOf(max) - orderedCards.indexOf(min);
 
-		return new VoteSummary(averageValue, variance, nearestCard, max, maxVoters, min, minVoters);
+		return new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters);
 	}
 }

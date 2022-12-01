@@ -11,7 +11,7 @@
 	"average highest"
 	"nearest lowest"
 	"nearest lowest"
-	"nearest variance";
+	"nearest offset";
 }
 
 .summary__average {
@@ -38,13 +38,9 @@
 	grid-area: lowest;
 }
 
-.summary__variance {
-	grid-area: variance;
+.summary__offset {
+	grid-area: offset;
 	font-size: 0.85em;
-}
-
-.summary__extreme {
-
 }
 
 .summary__extreme__header {

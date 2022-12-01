@@ -99,22 +99,24 @@ export const RoomView: FC = () => {
 				<h2>{room.name}</h2>
 				<Link to={"/"} className="btn btn-secondary" onClick={() => handleLeave()}>Back to Room List</Link>
 			</header>
-			<main className="room-view">
-				<div>
+			<div className="room-view">
+				<main>
 					<header className="d-flex justify-content-between align-items-center">
 						<h3>Vote</h3>
 						<Button variant="warning" onClick={handleRestart} size="sm">Restart</Button>
 					</header>
-					{voteSummary != null ?
-						<Summary voteSummary={voteSummary}></Summary> :
-						<CardList cardSet={room.cardSet} activeCard={activeCard} votingEnabled={member.role != Role.OBSERVER} onClick={handleCardClick}></CardList>
-					}
-				</div>
+					<div className="card">
+						{voteSummary != null ?
+							<Summary voteSummary={voteSummary}></Summary> :
+							<CardList cardSet={room.cardSet} activeCard={activeCard} votingEnabled={member.role != Role.OBSERVER} onClick={handleCardClick}></CardList>
+						}
+					</div>
+				</main>
 				<div>
 					<h3>Members</h3>
 					<MemberList members={room.members ?? []} onAction={handleAction}></MemberList>
 				</div>
-			</main>
+			</div>
 		</>
 	);
 };

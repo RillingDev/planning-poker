@@ -350,14 +350,18 @@ class RoomVotingControllerTest {
 		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember2);
 
-		given(summaryService.getVoteSummary(room)).willReturn(new VoteSummary(1.0, 2.0, card, card, Set.of(roomMember1),
+		given(summaryService.getVoteSummary(room)).willReturn(new VoteSummary(1.0,
+				2,
+				card,
+				card,
+				Set.of(roomMember1),
 				card,
 				Set.of(roomMember2)));
 
 		mockMvc.perform(get("/api/rooms/my-room/votes/summary"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.average").value(1.0))
-				.andExpect(jsonPath("$.variance").value(2.0))
+				.andExpect(jsonPath("$.offset").value(2))
 				.andExpect(jsonPath("$.nearestCard.name").value(1))
 				.andExpect(jsonPath("$.highestVote.name").value(1))
 				.andExpect(jsonPath("$.highestVoters.length()").value(1))

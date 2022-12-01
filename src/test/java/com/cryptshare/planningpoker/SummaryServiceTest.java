@@ -96,7 +96,7 @@ class SummaryServiceTest {
 	}
 
 	@Test
-	@DisplayName("calculates variance")
+	@DisplayName("calculates offset")
 	void calculatesVariance() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
@@ -118,7 +118,7 @@ class SummaryServiceTest {
 
 		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
 
-		assertThat(voteSummary.variance()).isCloseTo(0.6875, Offset.offset(0.01));
+		assertThat(voteSummary.offset()).isEqualTo(2);
 	}
 
 	@Test
@@ -131,7 +131,7 @@ class SummaryServiceTest {
 		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
 
 		assertThat(voteSummary.average()).isZero();
-		assertThat(voteSummary.variance()).isZero();
+		assertThat(voteSummary.offset()).isEqualTo(0);
 		assertThat(voteSummary.highestVote().getValue()).isZero();
 		assertThat(voteSummary.highestVoters()).isEmpty();
 		assertThat(voteSummary.lowestVote().getValue()).isZero();
@@ -151,7 +151,7 @@ class SummaryServiceTest {
 		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
 
 		assertThat(voteSummary.average()).isZero();
-		assertThat(voteSummary.variance()).isZero();
+		assertThat(voteSummary.offset()).isEqualTo(0);
 		assertThat(voteSummary.highestVote().getValue()).isZero();
 		assertThat(voteSummary.highestVoters()).isEmpty();
 		assertThat(voteSummary.lowestVote().getValue()).isZero();

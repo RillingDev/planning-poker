@@ -3,7 +3,6 @@
 }
 
 .btn-poker-card:not(.btn-sm) {
-	width: 75px;
+	width: 80px;
 	height: 110px;
-	font-size: 1.125em;
 }

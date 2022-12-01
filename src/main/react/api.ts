@@ -32,7 +32,7 @@ export interface CardSet {
 
 export interface VoteSummary {
 	readonly average: number;
-	readonly variance: number;
+	readonly offset: number;
 	readonly nearestCard: Card;
 	readonly highestVote: Card;
 	readonly highestVoters: ReadonlyArray<RoomMember>;
