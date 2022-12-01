@@ -58,9 +58,7 @@ public class Room extends BaseEntity {
 	}
 
 	public boolean isVotingComplete() {
-		return members.stream()
-				.filter(roomMember -> roomMember.getRole() != RoomMember.Role.OBSERVER)
-				.allMatch(roomMember -> roomMember.getVote() != null);
+		return members.stream().filter(roomMember -> roomMember.getRole() != RoomMember.Role.OBSERVER).allMatch(RoomMember::hasVote);
 	}
 
 	@Override

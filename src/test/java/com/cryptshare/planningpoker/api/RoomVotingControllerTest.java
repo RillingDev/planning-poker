@@ -49,9 +49,10 @@ class RoomVotingControllerTest {
 	void loadRoomNotMember() throws Exception {
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("Alice");
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(get("/api/rooms/my-room/")).andExpect(status().isForbidden());
 	}
@@ -64,25 +65,35 @@ class RoomVotingControllerTest {
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember1 = new RoomMember("John Doe");
 		roomMember1.setVote(new Vote(roomMember1, card));
-		final RoomMember roomMember2 = new RoomMember("Alice");
 		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember2);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember3 = new RoomMember("Bob");
+		room.getMembers().add(roomMember3);
 
 		mockMvc.perform(get("/api/rooms/my-room/"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("my-room"))
 				.andExpect(jsonPath("$.cardSet.name").value("My Set 1"))
-				.andExpect(jsonPath("$.members.length()").value(2))
+				.andExpect(jsonPath("$.members.length()").value(3))
 				.andExpect(jsonPath("$.members[0].username").value("Alice"))
 				.andExpect(jsonPath("$.members[0].role").value("VOTER"))
-				.andExpect(jsonPath("$.members[0].vote").value((Vote) null))
-				.andExpect(jsonPath("$.members[1].username").value("John Doe"))
+				.andExpect(jsonPath("$.members[0].vote.name").value("Voted"))
+				.andExpect(jsonPath("$.members[0].vote.value").value((Double) null))
+				.andExpect(jsonPath("$.members[1].username").value("Bob"))
 				.andExpect(jsonPath("$.members[1].role").value("VOTER"))
-				.andExpect(jsonPath("$.members[1].vote.name").value("Voted"))
-				.andExpect(jsonPath("$.members[1].vote.value").value((Double) null));
+				.andExpect(jsonPath("$.members[1].vote").value((Vote) null))
+				.andExpect(jsonPath("$.members[2].username").value("John Doe"))
+				.andExpect(jsonPath("$.members[2].role").value("VOTER"))
+				.andExpect(jsonPath("$.members[2].vote.name").value("1"))
+				.andExpect(jsonPath("$.members[2].vote.value").value(1.0));
 	}
 
 	@Test
@@ -93,13 +104,15 @@ class RoomVotingControllerTest {
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember1 = new RoomMember("John Doe");
 		roomMember1.setVote(new Vote(roomMember1, card));
+		room.getMembers().add(roomMember1);
+
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card));
-		room.getMembers().add(roomMember1);
 		room.getMembers().add(roomMember2);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(get("/api/rooms/my-room/"))
 				.andExpect(status().isOk())
@@ -132,9 +145,10 @@ class RoomVotingControllerTest {
 		final CardSet cardSet = new CardSet("My Set 1");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("Alice");
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "1")).andExpect(status().isForbidden());
 	}
@@ -146,9 +160,11 @@ class RoomVotingControllerTest {
 		final CardSet cardSet = new CardSet("My Set 1");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("John Doe");
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "99")).andExpect(status().isBadRequest());
 	}
@@ -161,12 +177,36 @@ class RoomVotingControllerTest {
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("John Doe");
 		roomMember.setRole(RoomMember.Role.OBSERVER);
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "99")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/votes` blocks if voting is complete")
+	@WithMockUser("John Doe")
+	void createVoteVotingComplete() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card1 = new Card("1", 1.0);
+		final Card card2 = new Card("2", 2.0);
+		cardSet.getCards().add(card1);
+		cardSet.getCards().add(card2);
+		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(new Vote(roomMember1, card1));
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(new Vote(roomMember2, card1));
+		room.getMembers().add(roomMember2);
+
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "1")).andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -177,9 +217,10 @@ class RoomVotingControllerTest {
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("John Doe");
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "1")).andExpect(status().isOk());
 
@@ -199,10 +240,14 @@ class RoomVotingControllerTest {
 		cardSet.getCards().add(card1);
 		cardSet.getCards().add(card2);
 		final Room room = new Room("my-room", cardSet);
-		final RoomMember roomMember = new RoomMember("John Doe");
-		roomMember.setVote(new Vote(roomMember, card1));
-		room.getMembers().add(roomMember);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(new Vote(roomMember1, card1));
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		room.getMembers().add(roomMember2);
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "2")).andExpect(status().isOk());
 
@@ -228,9 +273,10 @@ class RoomVotingControllerTest {
 		final CardSet cardSet = new CardSet("My Set 1");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("Alice");
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(delete("/api/rooms/my-room/votes").with(csrf())).andExpect(status().isForbidden());
 	}
@@ -245,12 +291,15 @@ class RoomVotingControllerTest {
 		cardSet.getCards().add(card1);
 		cardSet.getCards().add(card2);
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember1 = new RoomMember("John Doe");
 		roomMember1.setVote(new Vote(roomMember1, card1));
+		room.getMembers().add(roomMember1);
+
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card2));
-		room.getMembers().addAll(Set.of(roomMember1, roomMember2));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+		room.getMembers().add(roomMember2);
 
 		mockMvc.perform(delete("/api/rooms/my-room/votes").with(csrf())).andExpect(status().isOk());
 
@@ -275,9 +324,10 @@ class RoomVotingControllerTest {
 		final CardSet cardSet = new CardSet("My Set 1");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("Alice");
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(get("/api/rooms/my-room/votes/summary").with(csrf())).andExpect(status().isForbidden());
 	}
@@ -290,19 +340,17 @@ class RoomVotingControllerTest {
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
-		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card));
-		final RoomMember roomMember2 = new RoomMember("Alice");
-		roomMember2.setVote(new Vote(roomMember2, card));
-		room.getMembers().add(roomMember1);
-		room.getMembers().add(roomMember2);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		given(summaryService.getVoteSummary(room)).willReturn(new VoteSummary(1.0,
-				2.0,
-				card,
-				card,
-				Set.of(roomMember1),
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(new Vote(roomMember1, card));
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(new Vote(roomMember2, card));
+		room.getMembers().add(roomMember2);
+
+		given(summaryService.getVoteSummary(room)).willReturn(new VoteSummary(1.0, 2.0, card, card, Set.of(roomMember1),
 				card,
 				Set.of(roomMember2)));
 

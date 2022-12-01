@@ -45,9 +45,11 @@ class RoomVotingController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
-
 		if (roomMember.getRole() == RoomMember.Role.OBSERVER) {
 			throw new ObserverException();
+		}
+		if (room.isVotingComplete()) {
+			throw new VotingClosedException();
 		}
 
 		final Card card = room.getCardSet()
@@ -93,4 +95,7 @@ class RoomVotingController {
 	private static class ObserverException extends RuntimeException {
 	}
 
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Voting is closed.")
+	private static class VotingClosedException extends RuntimeException {
+	}
 }

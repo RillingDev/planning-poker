@@ -68,8 +68,9 @@ class RoomMemberControllerTest {
 	@WithMockUser("John Doe")
 	void leaveRoomLeaves() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		room.getMembers().add(new RoomMember("John Doe"));
 
 		mockMvc.perform(delete("/api/rooms/my-room/members").with(csrf())).andExpect(status().isOk());
 
@@ -93,8 +94,9 @@ class RoomMemberControllerTest {
 	@WithMockUser("JohnDoe")
 	void editMemberNotMember() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 1"));
-		room.getMembers().add(new RoomMember("Alice"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		room.getMembers().add(new RoomMember("Alice"));
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/JohnDoe").queryParam("action", "SET_OBSERVER").with(csrf()))
 				.andExpect(status().isForbidden());
@@ -105,8 +107,9 @@ class RoomMemberControllerTest {
 	@WithMockUser("JohnDoe")
 	void editMemberUnknownUsername() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember("JohnDoe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		room.getMembers().add(new RoomMember("JohnDoe"));
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/Alice").queryParam("action", "SET_OBSERVER").with(csrf()))
 				.andExpect(status().isNotFound());
@@ -117,10 +120,11 @@ class RoomMemberControllerTest {
 	@WithMockUser("JohnDoe")
 	void editMemberSetsObserver() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("JohnDoe");
 		roomMember.setRole(RoomMember.Role.VOTER);
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/JohnDoe").queryParam("action", "SET_OBSERVER").with(csrf()))
 				.andExpect(status().isOk());
@@ -138,10 +142,11 @@ class RoomMemberControllerTest {
 	@WithMockUser("JohnDoe")
 	void editMemberSetsVoter() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
 		final RoomMember roomMember = new RoomMember("JohnDoe");
 		roomMember.setRole(RoomMember.Role.OBSERVER);
 		room.getMembers().add(roomMember);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/JohnDoe").queryParam("action", "SET_VOTER").with(csrf())).andExpect(status().isOk());
 
@@ -158,11 +163,12 @@ class RoomMemberControllerTest {
 	@WithMockUser("John Doe")
 	void editMemberKicks() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		final RoomMember alice = new RoomMember("Alice");
-		final RoomMember johnDoe = new RoomMember("John Doe");
-		room.getMembers().add(alice);
-		room.getMembers().add(johnDoe);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember alice = new RoomMember("Alice");
+		room.getMembers().add(alice);
+		final RoomMember johnDoe = new RoomMember("John Doe");
+		room.getMembers().add(johnDoe);
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/Alice").queryParam("action", "KICK").with(csrf())).andExpect(status().isOk());
 
