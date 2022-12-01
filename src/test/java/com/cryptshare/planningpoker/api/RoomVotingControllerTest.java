@@ -154,6 +154,22 @@ class RoomVotingControllerTest {
 	}
 
 	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/votes` blocks observers")
+	@WithMockUser("John Doe")
+	void createVoteBlocksObserver() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		final RoomMember roomMember = new RoomMember("John Doe");
+		roomMember.setRole(RoomMember.Role.OBSERVER);
+		room.getMembers().add(roomMember);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "99")).andExpect(status().isForbidden());
+	}
+
+	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` sets vote")
 	@WithMockUser("John Doe")
 	void createVotePutsVote() throws Exception {

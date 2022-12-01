@@ -4,7 +4,7 @@ import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
 import type { Card, EditAction, Room, RoomMember, User, VoteSummary } from "../api";
-import { clearVotes, createVote, editMember, getRoom, getSummary, joinRoom, leaveRoom } from "../api";
+import { clearVotes, createVote, editMember, getRoom, getSummary, joinRoom, leaveRoom, Role } from "../api";
 import { AppContext } from "../AppContext";
 import { CardList } from "../components/CardList";
 import { ErrorPanel } from "../components/ErrorPanel";
@@ -24,7 +24,13 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 	return {room};
 }
 
-const findMemberForUser = (room: Room, user: User): RoomMember | null => room.members.find(member => member.username == user.username) ?? null;
+const findMemberForUser = (room: Room, user: User): RoomMember => {
+	const roomMember = room.members.find(member => member.username == user.username);
+	if (roomMember == null) {
+		throw new TypeError("Could not find member.");
+	}
+	return roomMember;
+};
 
 export const RoomView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
@@ -33,9 +39,12 @@ export const RoomView: FC = () => {
 	const loaderData = useLoaderData() as LoaderResult;
 	const [room, setRoom] = useState<Room>(loaderData.room);
 
+	const [member, setMember] = useState<RoomMember>(findMemberForUser(room, user));
+
 	const [activeCard, setActiveCard] = useState<Card | null>(null);
 
 	const [voteSummary, setVoteSummary] = useState<VoteSummary | null>(null);
+
 
 	const handleLeave = () => {
 		leaveRoom(room.name).catch(handleError);
@@ -44,12 +53,13 @@ export const RoomView: FC = () => {
 	const updateRoom = async () => {
 		const loadedRoom = await getRoom(room.name);
 		setRoom(loadedRoom);
+		setMember(findMemberForUser(loadedRoom, user));
 
 		if (loadedRoom.votingComplete) {
 			setVoteSummary(await getSummary(room.name));
 		} else {
 			setVoteSummary(null);
-			setActiveCard(findMemberForUser(loadedRoom, user)!.vote);
+			setActiveCard(member.vote);
 		}
 	};
 
@@ -86,14 +96,14 @@ export const RoomView: FC = () => {
 						<h3>Vote</h3>
 						<Button variant="warning" onClick={handleRestart} size="sm">Restart</Button>
 					</header>
-					{voteSummary != null ? <Summary voteSummary={voteSummary}></Summary> : <CardList cardSet={room?.cardSet ?? {
-						name: "None",
-						cards: []
-					}} activeCard={activeCard} onClick={handleCardClick}></CardList>}
+					{voteSummary != null ?
+						<Summary voteSummary={voteSummary}></Summary> :
+						<CardList cardSet={room.cardSet} activeCard={activeCard} votingEnabled={member.role != Role.OBSERVER} onClick={handleCardClick}></CardList>
+					}
 				</div>
 				<div>
 					<h3>Members</h3>
-					<MemberList members={room?.members ?? []} onAction={handleAction}></MemberList>
+					<MemberList members={room.members ?? []} onAction={handleAction}></MemberList>
 				</div>
 			</main>
 		</>

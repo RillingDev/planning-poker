@@ -45,6 +45,10 @@ class RoomVotingController {
 
 		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
+		if (roomMember.getRole() == RoomMember.Role.OBSERVER) {
+			throw new ObserverException();
+		}
+
 		final Card card = room.getCardSet()
 				.getCards()
 				.stream()
@@ -82,6 +86,10 @@ class RoomVotingController {
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card in this rooms card-set.")
 	private static class CardNotFoundException extends RuntimeException {
+	}
+
+	@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Observers may not create votes.")
+	private static class ObserverException extends RuntimeException {
 	}
 
 }
