@@ -11,13 +11,13 @@ public record RoomMemberJson(@JsonProperty("username") String username, @JsonPro
 		return convert(roomMember, null);
 	}
 
-	public static RoomMemberJson convertToDetailed(RoomMember roomMember, boolean hideVotes) {
+	public static RoomMemberJson convertToDetailed(RoomMember roomMember, boolean showVotes) {
 		CardJson vote = null;
 		if (roomMember.getVote() != null) {
-			if (hideVotes) {
-				vote = HIDDEN_CARD;
-			} else {
+			if (showVotes) {
 				vote = CardJson.convert(roomMember.getVote().getCard());
+			} else {
+				vote = HIDDEN_CARD;
 			}
 		}
 		return convert(roomMember, vote);

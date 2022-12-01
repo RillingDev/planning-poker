@@ -15,13 +15,22 @@ import "./RoomView.css";
 
 interface LoaderResult {
 	room: Room;
+	voteSummary: VoteSummary | null;
 }
 
 export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 	const roomName = args.params.roomName as string;
+
 	await joinRoom(roomName);
+
 	const room = await getRoom(roomName);
-	return {room};
+
+	let voteSummary = null;
+	if (room.votingComplete) {
+		voteSummary = await getSummary(room.name);
+	}
+
+	return {room, voteSummary};
 }
 
 const findMemberForUser = (room: Room, user: User): RoomMember => {
@@ -40,26 +49,23 @@ export const RoomView: FC = () => {
 	const [room, setRoom] = useState<Room>(loaderData.room);
 
 	const [member, setMember] = useState<RoomMember>(findMemberForUser(room, user));
+	const [activeCard, setActiveCard] = useState<Card | null>(member.vote);
 
-	const [activeCard, setActiveCard] = useState<Card | null>(null);
-
-	const [voteSummary, setVoteSummary] = useState<VoteSummary | null>(null);
-
-
-	const handleLeave = () => {
-		leaveRoom(room.name).catch(handleError);
-	};
+	const [voteSummary, setVoteSummary] = useState<VoteSummary | null>(loaderData.voteSummary);
 
 	const updateRoom = async () => {
 		const loadedRoom = await getRoom(room.name);
 		setRoom(loadedRoom);
-		setMember(findMemberForUser(loadedRoom, user));
+		const loadedMember = findMemberForUser(loadedRoom, user);
+		setMember(loadedMember);
+		setActiveCard(loadedMember.vote);
 
 		if (loadedRoom.votingComplete) {
-			setVoteSummary(await getSummary(room.name));
+			if (voteSummary == null) {
+				setVoteSummary(await getSummary(loadedRoom.name));
+			}
 		} else {
 			setVoteSummary(null);
-			setActiveCard(member.vote);
 		}
 	};
 
@@ -67,7 +73,12 @@ export const RoomView: FC = () => {
 		updateRoom().catch(handleError);
 	}, 1500); // Poll for other votes
 
+	const handleLeave = () => {
+		leaveRoom(room.name).catch(handleError);
+	};
+
 	const handleCardClick = (card: Card) => {
+		setActiveCard(card); // Update directly to give feedback before AJAX completes
 		createVote(room.name, card.name).then(updateRoom).catch(handleError);
 	};
 

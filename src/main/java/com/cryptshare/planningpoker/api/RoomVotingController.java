@@ -32,9 +32,10 @@ class RoomVotingController {
 	RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
-		return RoomJson.convertToDetailed(room, !room.isVotingComplete());
+		// Only show own vote while voting is not complete
+		return RoomJson.convertToDetailed(room, rm -> room.isVotingComplete() || rm.equals(roomMember));
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/votes")
