@@ -16,8 +16,10 @@
 
 .summary__average {
 	grid-area: average;
-	text-align: center;
-	font-size: 1.25em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.125em;
 }
 
 .summary__nearest {

@@ -6,7 +6,9 @@ import "./Summary.css";
 export const Summary: FC<{ voteSummary: VoteSummary }> = ({voteSummary}) => {
 	return (
 		<div className="summary">
-			<div className="summary__average">Average: <strong>{voteSummary.average}</strong></div>
+			<div className="summary__average">
+				<span>Average: <strong>{voteSummary.average}</strong></span>
+			</div>
 			<div className="summary__nearest">
 				<span>Nearest Card:</span>
 				<PokerCard card={voteSummary.nearestCard} disabled={true}/>
