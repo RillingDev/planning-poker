@@ -61,7 +61,7 @@ class RoomVotingController {
 
 		roomMember.setVote(new Vote(roomMember, card));
 		roomRepository.save(room);
-		logger.info("User '{}' voted with '{}' in '{}'.", user.getUsername(), card, room);
+		logger.debug("User '{}' voted with '{}' in '{}'.", user.getUsername(), card, room);
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
@@ -73,7 +73,7 @@ class RoomVotingController {
 
 		room.getMembers().forEach(rm -> rm.setVote(null));
 		roomRepository.save(room);
-		logger.info("User '{}' cleared votes in '{}'.", user.getUsername(), room);
+		logger.debug("User '{}' cleared votes in '{}'.", user.getUsername(), room);
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/votes/summary")
