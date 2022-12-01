@@ -1,9 +1,9 @@
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
+import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { EditAction, RoomMember } from "../api";
 import "./MemberList.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { ButtonGroup, Dropdown } from "react-bootstrap";
 
 export const MemberList: FC<{
 	members: ReadonlyArray<RoomMember>, onAction: (member: RoomMember, action: EditAction) => void

@@ -1,7 +1,6 @@
 import { FC } from "react";
-import Button from "react-bootstrap/Button";
+import { Button, Modal } from "react-bootstrap";
 import { Room } from "../../api";
-import Modal from "react-bootstrap/Modal";
 
 
 export const DeleteRoomModal: FC<{

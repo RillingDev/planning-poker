@@ -1,8 +1,6 @@
 import { FC, FormEvent, useContext, useState } from "react";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import { Button, Form, Modal } from "react-bootstrap";
 import { CardSet } from "../../api";
-import Modal from "react-bootstrap/Modal";
 import { AppContext } from "../../AppContext";
 
 export const CreateRoomModal: FC<{

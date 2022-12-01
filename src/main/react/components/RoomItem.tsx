@@ -1,12 +1,12 @@
-import { FC, useState } from "react";
-import { CardSet, Room } from "../api";
-import { Link } from "react-router-dom";
-import Button from "react-bootstrap/Button";
-import { EditRoomModal } from "./modal/EditRoomModal";
-import "./RoomItem.css";
-import { DeleteRoomModal } from "./modal/DeleteRoomModal";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FC, useState } from "react";
+import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { CardSet, Room } from "../api";
+import { DeleteRoomModal } from "./modal/DeleteRoomModal";
+import { EditRoomModal } from "./modal/EditRoomModal";
+import "./RoomItem.css";
 
 export const RoomItem: FC<{
 	room: Room;

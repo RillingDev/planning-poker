@@ -1,7 +1,7 @@
 import { FC } from "react";
+import { Button } from "react-bootstrap";
 import { Card, CardSet } from "../api";
 import "./CardList.css";
-import Button from "react-bootstrap/Button";
 
 export const CardList: FC<{ cardSet: CardSet, activeCard: Card | null, onClick: (card: Card) => void }> = ({cardSet, activeCard, onClick}) => {
 	return (

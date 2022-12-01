@@ -1,15 +1,14 @@
-import "vite/modulepreload-polyfill";
-
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { loader as roomListLoader, RoomListView } from "./routes/RoomListView";
-import { loader as roomLoader, RoomView } from "./routes/RoomView";
-import { AppContext } from "./AppContext";
+import "vite/modulepreload-polyfill";
 import { loadCardSets, loadIdentity } from "./api";
+import { AppContext } from "./AppContext";
 import { Header } from "./components/Header";
 
 import "./index.css";
+import { loader as roomListLoader, RoomListView } from "./routes/RoomListView";
+import { loader as roomLoader, RoomView } from "./routes/RoomView";
 
 const router = createHashRouter([
 	{

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Alert from "react-bootstrap/Alert";
+import { Alert } from "react-bootstrap";
 
 export const ErrorPanel: FC<{
 	error: Error | null;
