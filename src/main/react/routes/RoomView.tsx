@@ -82,12 +82,14 @@ export const RoomView: FC = () => {
 			</header>
 			<main className="room-view">
 				<div>
-					<h3>Vote</h3>
+					<header className="d-flex justify-content-between align-items-center">
+						<h3>Vote</h3>
+						<Button variant="warning" onClick={handleRestart} size="sm">Restart</Button>
+					</header>
 					{voteSummary != null ? <Summary voteSummary={voteSummary}></Summary> : <CardList cardSet={room?.cardSet ?? {
 						name: "None",
 						cards: []
 					}} activeCard={activeCard} onClick={handleCardClick}></CardList>}
-					<Button variant="warning" onClick={handleRestart}>Restart</Button>
 				</div>
 				<div>
 					<h3>Members</h3>

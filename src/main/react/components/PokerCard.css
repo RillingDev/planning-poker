@@ -1,0 +1,9 @@
+.btn-poker-card {
+	font-weight: bold;
+}
+
+.btn-poker-card:not(.btn-sm) {
+	width: 75px;
+	height: 110px;
+	font-size: 1.125em;
+}

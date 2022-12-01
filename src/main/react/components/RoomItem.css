@@ -1,8 +1,7 @@
 .room-item {
-	padding: 1rem;
-	border: 1px solid var(--bs-gray-500);
 	display: grid;
+	align-items: center;
+	padding: 1rem;
 	grid-template-columns: 1fr min-content min-content min-content;
 	gap: 0.5rem;
-	align-items: center;
 }

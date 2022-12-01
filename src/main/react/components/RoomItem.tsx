@@ -26,7 +26,7 @@ export const RoomItem: FC<{
 	};
 
 	return (
-		<div className="room-item">
+		<div className="card room-item">
 			<span>{room.name}</span>
 
 			<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>

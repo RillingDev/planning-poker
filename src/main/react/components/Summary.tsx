@@ -1,28 +1,35 @@
 import { FC } from "react";
 import { VoteSummary } from "../api";
+import { PokerCard } from "./PokerCard";
+import "./Summary.css";
 
 export const Summary: FC<{ voteSummary: VoteSummary }> = ({voteSummary}) => {
 	return (
-		<div>
-			<div>Average: {voteSummary.average}</div>
-			<div>Variance: {voteSummary.variance}</div>
-			<div><span>Nearest Card:</span>
-				<div className="poker-card">{voteSummary.average}</div>
+		<div className="summary">
+			<div className="summary__average">Average: <strong>{voteSummary.average}</strong></div>
+			<div className="summary__nearest">
+				<span>Nearest Card:</span>
+				<PokerCard card={voteSummary.nearestCard} disabled={true}/>
 			</div>
-			<div>
-				<span>Highest Vote:</span>
-				<div className="poker-card">{voteSummary.highestVote.name}</div>
+			<div className="summary__highest summary__extreme">
+				<div className="summary__extreme__header">
+					<span>Highest Vote:</span>
+					<PokerCard card={voteSummary.highestVote} disabled={true} size="sm"/>
+				</div>
 				<ul>
 					{voteSummary.highestVoters.map(member => <li key={member.username}>{member.username}</li>)}
 				</ul>
 			</div>
-			<div>
-				<span>Lowest Vote:</span>
-				<div className="poker-card">{voteSummary.lowestVote.name}</div>
+			<div className="summary__lowest summary__extreme">
+				<div className="summary__extreme__header">
+					<span>Lowest Vote:</span>
+					<PokerCard card={voteSummary.lowestVote} disabled={true} size="sm"/>
+				</div>
 				<ul>
 					{voteSummary.lowestVoters.map(member => <li key={member.username}>{member.username}</li>)}
 				</ul>
 			</div>
+			<div className="summary__variance">Variance: <strong>{voteSummary.variance}</strong></div>
 		</div>
 	);
 };
