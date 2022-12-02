@@ -15,6 +15,7 @@ export interface RoomMember {
 
 export interface Room {
 	readonly name: string;
+	readonly topic: string | null;
 	readonly cardSet: CardSet;
 	readonly members: ReadonlyArray<RoomMember>;
 	readonly votingComplete: boolean;
