@@ -30,15 +30,15 @@ export const RoomListView: FC = () => {
 		setRooms(await loadRooms());
 	};
 
-	const handleCreationSubmit = (newRoomName: string, newRoomCardSet: CardSet) => {
+	const handleCreationSubmit = (newRoomName: string, newRoomTopic: string, cardSet: CardSet) => {
 		setCreationModalVisible(false);
-		createRoom(newRoomName, newRoomCardSet.name)
+		createRoom(newRoomName, newRoomTopic, cardSet.name)
 			.then(updateRooms)
 			.catch(handleError);
 	};
 
-	const handleEdit = (room: Room, newCardSet: CardSet) => {
-		editRoom(room.name, newCardSet.name).then(updateRooms).catch(handleError);
+	const handleEdit = (room: Room, roomTopic: string, cardSet: CardSet) => {
+		editRoom(room.name, roomTopic, cardSet.name).then(updateRooms).catch(handleError);
 	};
 
 	const handleDelete = (room: Room) => {
@@ -58,7 +58,7 @@ export const RoomListView: FC = () => {
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name}>
-							<RoomItem room={room} onEdit={(newCardSet) => handleEdit(room, newCardSet)} onDelete={() => handleDelete(room)}></RoomItem>
+							<RoomItem room={room} onEdit={(roomTopic, cardSet) => handleEdit(room, roomTopic, cardSet)} onDelete={() => handleDelete(room)}></RoomItem>
 						</li>,
 					)}
 				</ul>

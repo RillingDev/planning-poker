@@ -10,13 +10,13 @@ import "./RoomItem.css";
 
 export const RoomItem: FC<{
 	room: Room;
-	onEdit: (cardSet: CardSet) => void;
+	onEdit: (roomTopic: string, cardSet: CardSet) => void;
 	onDelete: () => void;
 }> = ({room, onEdit, onDelete}) => {
 	const [editModalVisible, setEditModalVisible] = useState(false);
-	const handleEdit = (newCardSet: CardSet) => {
+	const handleEdit = (roomTopic: string, newCardSet: CardSet) => {
 		setEditModalVisible(false);
-		onEdit(newCardSet);
+		onEdit(roomTopic, newCardSet);
 	};
 
 	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
