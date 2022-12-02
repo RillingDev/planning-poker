@@ -60,6 +60,13 @@ export async function loadIdentity() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<User>);
 }
 
+export async function loadExtensions() {
+	return fetch("/api/extensions", {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
+	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<string>>);
+}
+
 export async function loadCardSets() {
 	return fetch("/api/card-sets", {
 		method: "GET",
@@ -124,6 +131,7 @@ export async function editMember(roomName: string, memberUsername: string, actio
 export async function getRoom(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/`, {
 		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room>);
 }
 
@@ -145,6 +153,7 @@ export async function clearVotes(roomName: string) {
 export async function getSummary(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
 		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<VoteSummary>);
 }
 
