@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import "vite/modulepreload-polyfill";
-import { loadCardSets, loadIdentity } from "./api";
+import { loadCardSets, loadExtensions, loadIdentity } from "./api";
 import { AppContext } from "./AppContext";
 import { Header } from "./components/Header";
 
@@ -23,10 +23,10 @@ const router = createHashRouter([
 	},
 ]);
 
-Promise.all([loadIdentity(), loadCardSets()]).then(([user, cardSets]) => {
+Promise.all([loadIdentity(), loadExtensions(), loadCardSets()]).then(([user, extensions, cardSets]) => {
 	createRoot(document.getElementById("root") as HTMLElement).render(
 		<React.StrictMode>
-			<AppContext.Provider value={{user, cardSets}}>
+			<AppContext.Provider value={{user, cardSets, extensions}}>
 				<Header/>
 				<RouterProvider router={router}/>
 			</AppContext.Provider>
