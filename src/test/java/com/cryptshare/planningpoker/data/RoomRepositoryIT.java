@@ -28,7 +28,7 @@ class RoomRepositoryIT {
 	@DirtiesContext
 	void saveAndLoad() {
 		// Ensure user table is filled.
-		jdbcUserDetailsManager.createUser(User.withUsername("John Doe").build());
+		jdbcUserDetailsManager.createUser(User.withUsername("John Doe").password("changeme").roles("USER").build());
 
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
