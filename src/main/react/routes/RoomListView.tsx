@@ -51,7 +51,7 @@ export const RoomListView: FC = () => {
 
 			<header className="d-flex justify-content-between align-items-center">
 				<h2>Rooms</h2>
-				<Button variant="primary" onClick={() => setCreationModalVisible(true)}>Create Room</Button>
+				<Button variant="primary" size="sm" onClick={() => setCreationModalVisible(true)}>Create Room</Button>
 				<CreateRoomModal onSubmit={handleCreationSubmit} show={creationModalVisible} onHide={() => setCreationModalVisible(false)}></CreateRoomModal>
 			</header>
 			<nav>

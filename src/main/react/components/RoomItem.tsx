@@ -27,14 +27,12 @@ export const RoomItem: FC<{
 
 	return (
 		<div className="card room-item">
-			<span>{room.name}</span>
+			<Link to={`/rooms/${encodeURIComponent(room.name)}`}>{room.name}</Link>
 
-			<Link to={`/rooms/${encodeURIComponent(room.name)}`} className="btn btn-primary">Join</Link>
-
-			<Button variant="warning" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
+			<Button size="sm" variant="warning" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
 			<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
 
-			<Button variant="danger" onClick={() => setDeleteModalVisible(true)}><FontAwesomeIcon icon={faTrash} title="Delete Room"/></Button>
+			<Button size="sm" variant="danger" onClick={() => setDeleteModalVisible(true)}><FontAwesomeIcon icon={faTrash} title="Delete Room"/></Button>
 			<DeleteRoomModal onSubmit={handleDelete} room={room} show={deleteModalVisible} onHide={() => setDeleteModalVisible(false)}/>
 		</div>
 	);
