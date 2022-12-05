@@ -39,7 +39,7 @@ export const EditRoomModal: FC<{
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button type="submit" variant="primary"> Update </Button>
+					<Button type="submit" variant="primary">Update</Button>
 				</Modal.Footer>
 			</Form>
 		</Modal>

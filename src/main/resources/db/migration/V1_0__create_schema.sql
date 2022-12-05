@@ -17,16 +17,16 @@ CREATE UNIQUE INDEX ix_auth_username ON authorities (username, authority);
 
 CREATE TABLE card_set
 (
-	id       UUID               NOT NULL PRIMARY KEY,
-	set_name VARCHAR_IGNORECASE NOT NULL UNIQUE
+	id       UUID                    NOT NULL PRIMARY KEY,
+	set_name VARCHAR_IGNORECASE(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE card
 (
-	id          UUID               NOT NULL PRIMARY KEY,
-	card_set_id UUID               NOT NULL,
-	card_name   VARCHAR_IGNORECASE NOT NULL,
-	card_value  DOUBLE             NULL, // Optional if it does not affect score
+	id          UUID                   NOT NULL PRIMARY KEY,
+	card_set_id UUID                   NOT NULL,
+	card_name   VARCHAR_IGNORECASE(50) NOT NULL,
+	card_value  DOUBLE                 NULL, // Optional if it does not affect score
 	CONSTRAINT fk_card_card_set_id FOREIGN KEY (card_set_id) REFERENCES card_set (id)
 		ON DELETE CASCADE,
 	CONSTRAINT uq_card_set_card_name UNIQUE (card_set_id, card_name)
@@ -34,10 +34,10 @@ CREATE TABLE card
 
 CREATE TABLE room
 (
-	id          UUID               NOT NULL PRIMARY KEY,
-	card_set_id UUID               NOT NULL,
-	room_name   VARCHAR_IGNORECASE NOT NULL UNIQUE,
-	topic       TEXT               NULL,
+	id          UUID                   NOT NULL PRIMARY KEY,
+	card_set_id UUID                   NOT NULL,
+	room_name   VARCHAR_IGNORECASE(50) NOT NULL UNIQUE,
+	topic       TEXT                   NULL,
 	CONSTRAINT fk_room_card_set FOREIGN KEY (card_set_id) REFERENCES card_set (id)
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE room_member
 	id        UUID                       NOT NULL PRIMARY KEY,
 	user_role ENUM ('VOTER', 'OBSERVER') NOT NULL,
 	room_id   UUID                       NOT NULL,
-	username  VARCHAR_IGNORECASE         NOT NULL,
+	username  VARCHAR_IGNORECASE(50)     NOT NULL,
 	CONSTRAINT fk_room_member_room FOREIGN KEY (room_id) REFERENCES room (id)
 		ON DELETE CASCADE,
 	CONSTRAINT fk_room_member_user FOREIGN KEY (username) REFERENCES users (username)

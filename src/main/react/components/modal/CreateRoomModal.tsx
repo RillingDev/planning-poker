@@ -28,7 +28,7 @@ export const CreateRoomModal: FC<{
 				<Modal.Body>
 					<Form.Group className="mb-3" controlId="formCreateRoomName">
 						<Form.Label>Room Name</Form.Label>
-						<Form.Control required type="text" value={roomName} onChange={(e) => setRoomName(e.target.value)}/>
+						<Form.Control required type="text" maxLength={50} value={roomName} onChange={(e) => setRoomName(e.target.value)}/>
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formCreateRoomCardSet">
 						<Form.Label>Card Set</Form.Label>
@@ -43,7 +43,7 @@ export const CreateRoomModal: FC<{
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button type="submit" variant="primary"> Create </Button>
+					<Button type="submit" variant="primary">Create</Button>
 				</Modal.Footer>
 			</Form>
 		</Modal>
