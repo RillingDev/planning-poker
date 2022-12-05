@@ -37,6 +37,7 @@ CREATE TABLE room
 	id          UUID               NOT NULL PRIMARY KEY,
 	card_set_id UUID               NOT NULL,
 	room_name   VARCHAR_IGNORECASE NOT NULL UNIQUE,
+	topic       TEXT               NULL,
 	CONSTRAINT fk_room_card_set FOREIGN KEY (card_set_id) REFERENCES card_set (id)
 );
 

@@ -30,15 +30,15 @@ export const RoomListView: FC = () => {
 		setRooms(await loadRooms());
 	};
 
-	const handleCreationSubmit = (newRoomName: string, newRoomCardSet: CardSet) => {
+	const handleCreationSubmit = (newRoomName: string, newRoomTopic: string, cardSet: CardSet) => {
 		setCreationModalVisible(false);
-		createRoom(newRoomName, newRoomCardSet.name)
+		createRoom(newRoomName, newRoomTopic, cardSet.name)
 			.then(updateRooms)
 			.catch(handleError);
 	};
 
-	const handleEdit = (room: Room, newCardSet: CardSet) => {
-		editRoom(room.name, newCardSet.name).then(updateRooms).catch(handleError);
+	const handleEdit = (room: Room, roomTopic: string, cardSet: CardSet) => {
+		editRoom(room.name, roomTopic, cardSet.name).then(updateRooms).catch(handleError);
 	};
 
 	const handleDelete = (room: Room) => {
@@ -51,14 +51,14 @@ export const RoomListView: FC = () => {
 
 			<header className="d-flex justify-content-between align-items-center">
 				<h2>Rooms</h2>
-				<Button variant="primary" onClick={() => setCreationModalVisible(true)}>Create Room</Button>
+				<Button variant="primary" size="sm" onClick={() => setCreationModalVisible(true)}>Create Room</Button>
 				<CreateRoomModal onSubmit={handleCreationSubmit} show={creationModalVisible} onHide={() => setCreationModalVisible(false)}></CreateRoomModal>
 			</header>
 			<nav>
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name}>
-							<RoomItem room={room} onEdit={(newCardSet) => handleEdit(room, newCardSet)} onDelete={() => handleDelete(room)}></RoomItem>
+							<RoomItem room={room} onEdit={(roomTopic, cardSet) => handleEdit(room, roomTopic, cardSet)} onDelete={() => handleDelete(room)}></RoomItem>
 						</li>,
 					)}
 				</ul>

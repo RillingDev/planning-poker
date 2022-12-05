@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSet") CardSetJson cardSet,
+public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic") String topic, @JsonProperty("cardSet") CardSetJson cardSet,
 					   @JsonProperty("members") List<RoomMemberJson> members, @JsonProperty("votingComplete") boolean votingComplete) {
 
 	public static RoomJson convertToBasic(Room room) {
@@ -22,6 +22,7 @@ public record RoomJson(@JsonProperty("name") String name, @JsonProperty("cardSet
 	private static RoomJson convert(Room room, Function<RoomMember, RoomMemberJson> roomMemberMapper) {
 		return new RoomJson(
 				room.getName(),
+				room.getTopic(),
 				CardSetJson.convert(room.getCardSet()),
 				room.getMembers().stream().sorted(RoomMember.COMPARATOR).map(roomMemberMapper).toList(),
 				room.isVotingComplete());

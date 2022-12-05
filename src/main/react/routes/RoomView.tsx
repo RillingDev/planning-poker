@@ -1,14 +1,17 @@
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
 import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
 import type { Card, EditAction, Room, RoomMember, User, VoteSummary } from "../api";
-import { clearVotes, createVote, editMember, getRoom, getSummary, joinRoom, leaveRoom, Role } from "../api";
+import { CardSet, clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, Role } from "../api";
 import { AppContext } from "../AppContext";
 import { CardList } from "../components/CardList";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
+import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { Summary } from "../components/Summary";
 import { useErrorHandler, useInterval } from "../hooks";
 import "./RoomView.css";
@@ -43,6 +46,12 @@ const findMemberForUser = (room: Room, user: User): RoomMember => {
 
 export const RoomView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
+
+	const [editModalVisible, setEditModalVisible] = useState(false);
+	const handleEdit = (roomTopic: string, cardSet: CardSet) => {
+		setEditModalVisible(false);
+		editRoom(room.name, roomTopic, cardSet.name).then(updateRoom).catch(handleError);
+	};
 
 	const {user} = useContext(AppContext);
 	const loaderData = useLoaderData() as LoaderResult;
@@ -95,9 +104,17 @@ export const RoomView: FC = () => {
 		<>
 			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
-			<header className="d-flex justify-content-between align-items-center">
-				<h2>{room.name}</h2>
-				<Link to={"/"} className="btn btn-secondary" onClick={() => handleLeave()}>Back to Room List</Link>
+			<header>
+				<div className="d-flex justify-content-between align-items-center">
+					<div className="room-view__header">
+						<h2>{room.name}</h2>
+						<Button variant="warning" size="sm" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
+						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
+					</div>
+
+					<Link to={"/"} className="btn btn-secondary btn-sm" onClick={() => handleLeave()}>Back to Room List</Link>
+				</div>
+				<span><strong>Topic:</strong> {room.topic}</span>
 			</header>
 			<div className="room-view">
 				<main>
@@ -107,7 +124,7 @@ export const RoomView: FC = () => {
 					</header>
 					<div className="card">
 						{voteSummary != null ?
-							<Summary voteSummary={voteSummary}></Summary> :
+							<Summary voteSummary={voteSummary} room={room}></Summary> :
 							<CardList cardSet={room.cardSet} activeCard={activeCard} votingEnabled={member.role != Role.OBSERVER} onClick={handleCardClick}></CardList>
 						}
 					</div>

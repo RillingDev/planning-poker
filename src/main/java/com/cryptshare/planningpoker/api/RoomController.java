@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +35,8 @@ class RoomController {
 
 	@PostMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	void createRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
-			@AuthenticationPrincipal UserDetails user) {
+	void createRoom(@PathVariable("room-name") String roomName, @RequestParam(value = "room-topic", required = false) @Nullable String roomTopic,
+			@RequestParam("card-set-name") String cardSetName, @AuthenticationPrincipal UserDetails user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
@@ -43,6 +44,7 @@ class RoomController {
 		final CardSet cardSet = cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new);
 
 		final Room room = new Room(roomName, cardSet);
+		room.setTopic(roomTopic);
 		room.getMembers().add(new RoomMember(user.getUsername()));
 		roomRepository.save(room);
 		logger.info("Created room '{}' by user '{}'.", room, user.getUsername());
@@ -59,11 +61,16 @@ class RoomController {
 
 	@PatchMapping(value = "/api/rooms/{room-name}")
 	@Transactional
-	void editRoom(@PathVariable("room-name") String roomName, @RequestParam("card-set-name") String cardSetName,
-			@AuthenticationPrincipal UserDetails user) {
+	void editRoom(@PathVariable("room-name") String roomName, @RequestParam(value = "room-topic", required = false) @Nullable String roomTopic,
+			@RequestParam(value = "card-set-name", required = false) String cardSetName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		room.setCardSet(cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new));
+		if (roomTopic != null) {
+			room.setTopic(roomTopic);
+		}
+		if (cardSetName != null) {
+			room.setCardSet(cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new));
+		}
 		roomRepository.save(room);
 		logger.info("Edited room '{}' by user '{}'.", room, user.getUsername());
 	}

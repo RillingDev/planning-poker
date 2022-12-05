@@ -40,6 +40,7 @@ class RoomControllerTest {
 	void loadRooms() throws Exception {
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Room room1 = new Room("Room #1", cardSet);
+		room1.setTopic("Foo!");
 		room1.getMembers().add(new RoomMember("John Doe"));
 		final Room room2 = new Room("Room #2", cardSet);
 		given(roomRepository.findAll()).willReturn(List.of(room1, room2));
@@ -48,11 +49,13 @@ class RoomControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("Room #1"))
+				.andExpect(jsonPath("$[0].topic").value("Foo!"))
 				.andExpect(jsonPath("$[0].cardSet.name").value("My Set 1"))
 				.andExpect(jsonPath("$[0].members.length()").value(1))
 				.andExpect(jsonPath("$[0].members[0].username").value("John Doe"))
 				.andExpect(jsonPath("$[0].members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$[1].name").value("Room #2"))
+				.andExpect(jsonPath("$[1].topic").value((String) null))
 				.andExpect(jsonPath("$[1].cardSet.name").value("My Set 1"))
 				.andExpect(jsonPath("$[1].members.length()").value(0));
 	}
@@ -92,6 +95,28 @@ class RoomControllerTest {
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
 		assertThat(captor.getValue().getName()).isEqualTo("my-room");
+		assertThat(captor.getValue().getTopic()).isNull();
+		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
+		final Set<RoomMember> members = captor.getValue().getMembers();
+		assertThat(members).extracting(RoomMember::getUsername).containsExactly("John Doe");
+		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.VOTER);
+	}
+
+	@Test
+	@DisplayName("POST `/api/rooms/{room-name}` creates room with topic")
+	@WithMockUser("John Doe")
+	void createRoomCreatesRoomTopic() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
+		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
+
+		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).queryParam("room-topic", "Foo!").queryParam("card-set-name", cardSet.getName()))
+				.andExpect(status().isOk());
+
+		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
+		verify(roomRepository).save(captor.capture());
+		assertThat(captor.getValue().getName()).isEqualTo("my-room");
+		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
 		assertThat(members).extracting(RoomMember::getUsername).containsExactly("John Doe");
@@ -148,20 +173,40 @@ class RoomControllerTest {
 	}
 
 	@Test
-	@DisplayName("PATCH `/api/rooms/{room-name}` edits")
+	@DisplayName("PATCH `/api/rooms/{room-name}` edits card-set")
 	@WithMockUser
-	void editRoomEdits() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+	void editRoomEditsCardSet() throws Exception {
+		final CardSet originalCardSet = new CardSet("My Set 2");
+		final Room room = new Room("my-room", originalCardSet);
+		room.setTopic("Foo!");
 		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		final CardSet cardSet = new CardSet("My Set 1");
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
+		final CardSet newCardSet = new CardSet("My Set 1");
+		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(newCardSet));
 
-		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", cardSet.getName())).andExpect(status().isOk());
+		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", newCardSet.getName())).andExpect(status().isOk());
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
+		assertThat(captor.getValue().getCardSet()).isEqualTo(newCardSet);
+		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
+	}
+
+	@Test
+	@DisplayName("PATCH `/api/rooms/{room-name}` edits topic")
+	@WithMockUser
+	void editRoomEditsTopic() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 2");
+		final Room room = new Room("my-room", cardSet);
+		room.getMembers().add(new RoomMember("John Doe"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("room-topic", "Foo!")).andExpect(status().isOk());
+
+		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
+		verify(roomRepository).save(captor.capture());
+		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 	}
 }

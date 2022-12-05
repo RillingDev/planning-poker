@@ -15,6 +15,7 @@ export interface RoomMember {
 
 export interface Room {
 	readonly name: string;
+	readonly topic: string | null;
 	readonly cardSet: CardSet;
 	readonly members: ReadonlyArray<RoomMember>;
 	readonly votingComplete: boolean;
@@ -40,7 +41,7 @@ export interface VoteSummary {
 	readonly lowestVoters: ReadonlyArray<RoomMember>;
 }
 
-async function assertStatusOk(res: Response): Promise<Response> {
+export async function assertStatusOk(res: Response): Promise<Response> {
 	if (res.status >= 200 && res.status <= 299) {
 		return res;
 	}
@@ -50,13 +51,20 @@ async function assertStatusOk(res: Response): Promise<Response> {
 	);
 }
 
-const MEDIA_TYPE_JSON = "application/json";
+export const MEDIA_TYPE_JSON = "application/json";
 
 export async function loadIdentity() {
 	return fetch("/api/identity", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<User>);
+}
+
+export async function loadExtensions() {
+	return fetch("/api/extensions", {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
+	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<string>>);
 }
 
 export async function loadCardSets() {
@@ -74,8 +82,11 @@ export async function loadRooms() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room[]>);
 }
 
-export async function createRoom(roomName: string, cardSetName: string) {
+export async function createRoom(roomName: string, roomTopic: string, cardSetName: string) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
+	if (roomTopic != null) {
+		url.searchParams.set("room-topic", roomTopic);
+	}
 	url.searchParams.set("card-set-name", cardSetName);
 	return fetch(url, {
 		method: "POST"
@@ -88,9 +99,14 @@ export async function deleteRoom(roomName: string) {
 	}).then(assertStatusOk);
 }
 
-export async function editRoom(roomName: string, cardSetName: string) {
+export async function editRoom(roomName: string, roomTopic: string | null, cardSetName: string | null) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
-	url.searchParams.set("card-set-name", cardSetName);
+	if (roomTopic != null) {
+		url.searchParams.set("room-topic", roomTopic);
+	}
+	if (cardSetName != null) {
+		url.searchParams.set("card-set-name", cardSetName);
+	}
 	return fetch(url, {
 		method: "PATCH",
 	}).then(assertStatusOk);
@@ -123,6 +139,7 @@ export async function editMember(roomName: string, memberUsername: string, actio
 export async function getRoom(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/`, {
 		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room>);
 }
 
@@ -144,6 +161,7 @@ export async function clearVotes(roomName: string) {
 export async function getSummary(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
 		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<VoteSummary>);
 }
 

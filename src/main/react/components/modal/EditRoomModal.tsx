@@ -4,22 +4,20 @@ import { CardSet, Room } from "../../api";
 import { AppContext } from "../../AppContext";
 
 
-/**
- * @param onSubmit Room object must be reloaded after this is fired to get latest state.
- */
 export const EditRoomModal: FC<{
 	room: Room;
 	show: boolean;
 	onHide: () => void;
-	onSubmit: (cardSet: CardSet) => void;
+	onSubmit: (roomTopic: string, cardSet: CardSet) => void;
 }> = ({room, show, onHide, onSubmit}) => {
 	const {cardSets} = useContext(AppContext);
 
 	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSet.name);
+	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		onSubmit(cardSets.find(cardSet => cardSet.name == newCardSetName)!);
+		onSubmit(roomTopic, cardSets.find(cardSet => cardSet.name == newCardSetName)!);
 	};
 
 	return (
@@ -34,6 +32,10 @@ export const EditRoomModal: FC<{
 						<Form.Select required value={newCardSetName} onChange={(e) => setNewCardSetName(e.target.value)}>
 							{cardSets.map(cardSet => <option key={cardSet.name}>{cardSet.name}</option>)}
 						</Form.Select>
+					</Form.Group>
+					<Form.Group className="mb-3" controlId="formEditRoomTopic">
+						<Form.Label>Topic</Form.Label>
+						<Form.Control as="textarea" value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)}/>
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>

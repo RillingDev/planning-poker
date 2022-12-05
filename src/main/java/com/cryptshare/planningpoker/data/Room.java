@@ -1,6 +1,7 @@
 package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.*;
+import org.springframework.lang.Nullable;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -12,6 +13,10 @@ import java.util.StringJoiner;
 public class Room extends BaseEntity {
 	@Column(name = "room_name", nullable = false)
 	private String name;
+
+	@Column(name = "topic")
+	@Nullable
+	private String topic;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "card_set_id", nullable = false)
@@ -53,6 +58,19 @@ public class Room extends BaseEntity {
 		this.members = members;
 	}
 
+	@Nullable
+	public String getTopic() {
+		return topic;
+	}
+
+	public void setTopic(@Nullable String topic) {
+		if (topic != null && topic.isEmpty()) {
+			this.topic = null;
+		} else {
+			this.topic = topic;
+		}
+	}
+
 	public Optional<RoomMember> findMemberByUser(String username) {
 		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
 	}
@@ -64,6 +82,7 @@ public class Room extends BaseEntity {
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
+				.add("topic='" + topic + "'")
 				.add("cardSet='" + cardSet.getName() + "'")
 				.add("members=" + members)
 				.toString();
