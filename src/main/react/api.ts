@@ -41,7 +41,7 @@ export interface VoteSummary {
 	readonly lowestVoters: ReadonlyArray<RoomMember>;
 }
 
-async function assertStatusOk(res: Response): Promise<Response> {
+export async function assertStatusOk(res: Response): Promise<Response> {
 	if (res.status >= 200 && res.status <= 299) {
 		return res;
 	}
@@ -51,7 +51,7 @@ async function assertStatusOk(res: Response): Promise<Response> {
 	);
 }
 
-const MEDIA_TYPE_JSON = "application/json";
+export const MEDIA_TYPE_JSON = "application/json";
 
 export async function loadIdentity() {
 	return fetch("/api/identity", {
