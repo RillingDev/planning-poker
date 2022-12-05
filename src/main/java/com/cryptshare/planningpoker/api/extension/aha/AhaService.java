@@ -22,11 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Client to interact with the <a href="https://www.aha.io/api">Aha! Rest API</a>.
  * <p>
- * Config properties:
- * <ul>
- *     <li>{@code planning-poker.extension.aha.key}: Aha! API key.</li>
- *     <li>{@code planning-poker.extension.aha.subdomain}: Subdomain of the Aha! account.</li>
- * </ul>
+ * For the different flags, see the README.
  */
 @Service
 @Profile("extension:aha")
