@@ -114,7 +114,7 @@ export const RoomView: FC = () => {
 
 					<Link to={"/"} className="btn btn-secondary btn-sm" onClick={() => handleLeave()}>Back to Room List</Link>
 				</div>
-				<span><strong>Topic:</strong> {room.topic}</span>
+				<span><strong>Topic:</strong> {room.topic != null ? room.topic : "-"}</span>
 			</header>
 			<div className="room-view">
 				<main>
