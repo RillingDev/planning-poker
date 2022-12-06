@@ -1,23 +1,14 @@
-// Special tables used for spring security
-CREATE TABLE users
-(
-	username VARCHAR_IGNORECASE(50)  NOT NULL PRIMARY KEY,
-	password VARCHAR_IGNORECASE(500) NOT NULL,
-	enabled  BOOLEAN                 NOT NULL
-);
-CREATE TABLE authorities
-(
-	username  VARCHAR_IGNORECASE(50) NOT NULL,
-	authority VARCHAR_IGNORECASE(50) NOT NULL,
-	CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users (username)
-);
-CREATE UNIQUE INDEX ix_auth_username ON authorities (username, authority);
+// Schema
 
-// Planning-poker entities
+// Not mapped to JPA
+CREATE TABLE app_user
+(
+	username VARCHAR_IGNORECASE(50) NOT NULL PRIMARY KEY
+);
 
 CREATE TABLE card_set
 (
-	id       UUID                    NOT NULL PRIMARY KEY,
+	id       UUID                   NOT NULL PRIMARY KEY,
 	set_name VARCHAR_IGNORECASE(50) NOT NULL UNIQUE
 );
 
@@ -49,7 +40,7 @@ CREATE TABLE room_member
 	username  VARCHAR_IGNORECASE(50)     NOT NULL,
 	CONSTRAINT fk_room_member_room FOREIGN KEY (room_id) REFERENCES room (id)
 		ON DELETE CASCADE,
-	CONSTRAINT fk_room_member_user FOREIGN KEY (username) REFERENCES users (username)
+	CONSTRAINT fk_room_member_user FOREIGN KEY (username) REFERENCES app_user (username)
 		ON DELETE CASCADE,
 	CONSTRAINT uq_room_member UNIQUE (room_id, username)
 );
@@ -96,7 +87,10 @@ CREATE TRIGGER update_room_card_set_vote_cleanup
 CALL "com.cryptshare.planningpoker.data.h2.VoteCardSetCleanupTrigger";
 
 
-// Initial data
+/////////////////////////////////////////////////////////////////////
+
+
+// Data
 
 INSERT INTO CARD_SET (id, set_name)
 VALUES ('947dddcf-e093-4726-b070-fce668365edc', 'Adjusted Fibonacci Scale');

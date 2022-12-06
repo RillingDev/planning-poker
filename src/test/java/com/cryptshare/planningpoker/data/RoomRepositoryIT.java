@@ -1,13 +1,17 @@
 package com.cryptshare.planningpoker.data;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,14 +25,22 @@ class RoomRepositoryIT {
 	CardSetRepository cardSetRepository;
 
 	@Autowired
-	UserDetailsManager jdbcUserDetailsManager;
+	PlatformTransactionManager transactionManager;
+
+	@PersistenceContext
+	EntityManager em;
 
 	@Test
 	@DisplayName("can be saved and loaded")
 	@DirtiesContext
 	void saveAndLoad() {
 		// Ensure user table is filled.
-		jdbcUserDetailsManager.createUser(User.withUsername("John Doe").password("changeme").roles("USER").build());
+		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				em.createNativeQuery("INSERT INTO app_user (username) VALUES ('John Doe')").executeUpdate();
+			}
+		});
 
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
