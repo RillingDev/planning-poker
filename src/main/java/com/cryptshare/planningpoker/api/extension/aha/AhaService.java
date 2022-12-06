@@ -56,6 +56,10 @@ class AhaService {
 	}
 
 	public void putIdeaScore(String ideaId, String scoreFactName, int value) {
+		this.restTemplate.put("/ideas/{idea}/", createIdeaPayload(scoreFactName, value), Map.of("idea", ideaId));
+	}
+
+	ObjectNode createIdeaPayload(String scoreFactName, int value) {
 		final ObjectNode root = NODE_FACTORY.objectNode();
 		final ObjectNode idea = NODE_FACTORY.objectNode();
 		root.set("idea", idea);
@@ -65,8 +69,7 @@ class AhaService {
 		scoreFacts.add(scoreFact);
 		scoreFact.put("name", scoreFactName);
 		scoreFact.put("value", value);
-
-		this.restTemplate.put("/ideas/{idea}/", root, Map.of("idea", ideaId));
+		return root;
 	}
 
 	public Set<String> getScoreFactNames() {

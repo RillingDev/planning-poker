@@ -33,11 +33,11 @@ class AhaController {
 			@RequestParam("score-value") int value) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		final String ideaId = room.getTopic();
-
 		if (!ahaService.getScoreFactNames().contains(scoreFactName)) {
 			throw new IllegalScoreFactNameException();
 		}
+
+		final String ideaId = room.getTopic();
 
 		try {
 			ahaService.putIdeaScore(ideaId, scoreFactName, value);
