@@ -1,3 +1,5 @@
+import { isStatusOk, MEDIA_TYPE_JSON } from "./apiUtils";
+
 export const enum Role {
 	VOTER = "VOTER",
 	OBSERVER = "OBSERVER",
@@ -41,17 +43,24 @@ export interface VoteSummary {
 	readonly lowestVoters: ReadonlyArray<RoomMember>;
 }
 
-export async function assertStatusOk(res: Response): Promise<Response> {
-	if (res.status >= 200 && res.status <= 299) {
+async function assertStatusOk(res: Response): Promise<Response> {
+	if (isStatusOk(res)) {
 		return res;
 	}
+
+	if (res.status == 403) {
+		throw new Error("Missing permissions. This may be because you were kicked from the room. Please go back to the room list.");
+	}
+	if (res.status == 404) {
+		throw new Error("Not found. This may be because this room was deleted in the mean time. Please go back to the room list.");
+	}
+
 	const body = await res.text();
 	throw new Error(
-		`Unexpected status code '${res.status}':\n\n${body}.`,
+		`Unexpected status code '${res.status}':
+		${body}.`,
 	);
 }
-
-export const MEDIA_TYPE_JSON = "application/json";
 
 export async function loadIdentity() {
 	return fetch("/api/identity", {

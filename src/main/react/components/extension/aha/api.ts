@@ -1,4 +1,14 @@
-import { assertStatusOk, MEDIA_TYPE_JSON } from "../../../api";
+import { isStatusOk, MEDIA_TYPE_JSON } from "../../../apiUtils";
+
+export async function assertStatusOk(res: Response): Promise<Response> {
+	if (isStatusOk(res)) {
+		return res;
+	}
+	const body = await res.text();
+	throw new Error(
+		`Unexpected status code '${res.status}':\n\n${body}.`,
+	);
+}
 
 export async function getScoreFactNames() {
 	return fetch("/api/extensions/aha/score-facts", {
