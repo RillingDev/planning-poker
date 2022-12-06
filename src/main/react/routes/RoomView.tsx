@@ -111,8 +111,10 @@ export const RoomView: FC = () => {
 						<Button variant="warning" size="sm" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
 						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
 					</div>
-
-					<Link to={"/"} onClick={() => handleLeave()}>Back to Room List</Link>
+					<nav className="btn-group btn-group-sm">
+						<Link to={"/"} className="btn btn-secondary">Back to Room List</Link>
+						<Link to={"/"} onClick={() => handleLeave()} className="btn btn-warning">Leave</Link>
+					</nav>
 				</div>
 				<span><strong>Topic:</strong> {room.topic != null ? room.topic : "-"}</span>
 			</header>
