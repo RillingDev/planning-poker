@@ -1,13 +1,17 @@
 package com.cryptshare.planningpoker.api.extension.aha;
 
+import com.cryptshare.planningpoker.api.exception.NotAMemberException;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.data.Room;
+import com.cryptshare.planningpoker.data.RoomMember;
 import com.cryptshare.planningpoker.data.RoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -30,13 +34,14 @@ class AhaController {
 	// TODO: link to privileged role
 	@PostMapping("/api/extensions/aha/score/")
 	void putIdeaScore(@RequestParam("room-name") String roomName, @RequestParam("score-fact-name") String scoreFactName,
-			@RequestParam("score-value") int value) {
+			@RequestParam("score-value") int value, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+
+		final RoomMember actingMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		if (!ahaService.getScoreFactNames().contains(scoreFactName)) {
 			throw new IllegalScoreFactNameException();
 		}
-
 		final String ideaId = room.getTopic();
 
 		try {
@@ -48,7 +53,7 @@ class AhaController {
 			}
 			throw e;
 		}
-		logger.info("Setting idea '{}' score '{}' to '{}'.", ideaId, scoreFactName, value);
+		logger.info("User {} set idea '{}' score '{}' to '{}'.", actingMember.getUsername(), ideaId, scoreFactName, value);
 	}
 
 	@GetMapping(value = "/api/extensions/aha/score-facts", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -2,6 +2,7 @@ package com.cryptshare.planningpoker.api.extension.aha;
 
 import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.Room;
+import com.cryptshare.planningpoker.data.RoomMember;
 import com.cryptshare.planningpoker.data.RoomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,9 +50,9 @@ class AhaControllerTest {
 	}
 
 	@Test
-	@DisplayName("POST `/api/extensions/aha/score/` throws on room not found")
+	@DisplayName("POST `/api/extensions/aha/score/` throws for unknown room")
 	@WithMockUser
-	void putIdeaScoreRoomNotFound() throws Exception {
+	void putIdeaScoreUnknownRoom() throws Exception {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
 
@@ -62,10 +63,25 @@ class AhaControllerTest {
 	}
 
 	@Test
+	@DisplayName("POST `/api/extensions/aha/score/` throws when not a member")
+	@WithMockUser("John Doe")
+	void putIdeaScoreNotMember() throws Exception {
+		final Room room = new Room("Room", new CardSet("Card Set"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
+
+		mockMvc.perform(post("/api/extensions/aha/score/").with(csrf())
+				.queryParam("room-name", "my-room")
+				.queryParam("score-fact-name", "fact1")
+				.queryParam("score-value", "1")).andExpect(status().isForbidden());
+	}
+
+	@Test
 	@DisplayName("POST `/api/extensions/aha/score/` throws on not in facts")
-	@WithMockUser
+	@WithMockUser("John Doe")
 	void putIdeaScoreInvalidFactName() throws Exception {
 		final Room room = new Room("Room", new CardSet("Card Set"));
+		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
 
@@ -77,9 +93,10 @@ class AhaControllerTest {
 
 	@Test
 	@DisplayName("POST `/api/extensions/aha/score/` puts")
-	@WithMockUser
+	@WithMockUser("John Doe")
 	void putIdeaScorePuts() throws Exception {
 		final Room room = new Room("Room", new CardSet("Card Set"));
+		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
 
