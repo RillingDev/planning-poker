@@ -94,7 +94,7 @@ class RoomVotingController {
 	private static class CardNotFoundException extends RuntimeException {
 	}
 
-	@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Observers may not create votes.")
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Observers may not create votes.")
 	private static class ObserverException extends RuntimeException {
 	}
 

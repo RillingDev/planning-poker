@@ -112,7 +112,7 @@ class RoomMemberControllerTest {
 		room.getMembers().add(new RoomMember("JohnDoe"));
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/Alice").queryParam("action", "SET_OBSERVER").with(csrf()))
-				.andExpect(status().isNotFound());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test

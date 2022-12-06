@@ -86,7 +86,7 @@ class RoomMemberController {
 		KICK
 	}
 
-	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No member with this username was found.")
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No member with this username was found.")
 	private static class MemberNotFoundException extends RuntimeException {
 	}
 

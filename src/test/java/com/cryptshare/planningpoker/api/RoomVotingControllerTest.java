@@ -184,7 +184,7 @@ class RoomVotingControllerTest {
 		roomMember.setRole(RoomMember.Role.OBSERVER);
 		room.getMembers().add(roomMember);
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "99")).andExpect(status().isForbidden());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "99")).andExpect(status().isBadRequest());
 	}
 
 	@Test
