@@ -48,8 +48,11 @@ class RoomVotingController {
 		if (roomMember.getRole() == RoomMember.Role.OBSERVER) {
 			throw new ObserverException();
 		}
+
 		if (room.isVotingComplete()) {
-			throw new VotingClosedException();
+			// May happen on accident, so dont throw an error.
+			logger.warn("Ignoring user '{}' voting in '{}' as voting is completed.", user.getUsername(), room);
+			return;
 		}
 
 		final Card card = room.getCardSet()
@@ -95,7 +98,4 @@ class RoomVotingController {
 	private static class ObserverException extends RuntimeException {
 	}
 
-	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Voting is closed.")
-	private static class VotingClosedException extends RuntimeException {
-	}
 }

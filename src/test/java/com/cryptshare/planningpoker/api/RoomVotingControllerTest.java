@@ -15,7 +15,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -165,7 +167,6 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember = new RoomMember("John Doe");
 		room.getMembers().add(roomMember);
 
-
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "99")).andExpect(status().isBadRequest());
 	}
 
@@ -187,7 +188,7 @@ class RoomVotingControllerTest {
 	}
 
 	@Test
-	@DisplayName("POST `/api/rooms/{room-name}/votes` blocks if voting is complete")
+	@DisplayName("POST `/api/rooms/{room-name}/votes` ignores if voting is complete")
 	@WithMockUser("John Doe")
 	void createVoteVotingComplete() throws Exception {
 		final CardSet cardSet = new CardSet("My Set 1");
@@ -206,7 +207,9 @@ class RoomVotingControllerTest {
 		roomMember2.setVote(new Vote(roomMember2, card1));
 		room.getMembers().add(roomMember2);
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "1")).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "2")).andExpect(status().isOk());
+
+		verify(roomRepository, never()).save(any());
 	}
 
 	@Test
