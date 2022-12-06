@@ -1,5 +1,5 @@
-import { FC, FormEvent, useEffect, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import React, { FC, FormEvent, useEffect, useState } from "react";
+import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Room, VoteSummary } from "../../../api";
 import { useErrorHandler } from "../../../hooks";
 import { ErrorPanel } from "../../ErrorPanel";
@@ -17,9 +17,13 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 		getScoreFactNames().then(loaded => setScoreFactNames(loaded)).catch(handleError);
 	});
 
+
+	const [ajaxInProgress, setAjaxInProgress] = useState(false);
+
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		putIdeaScore(room.name, scoreFactName, voteSummary.average).then(() => setModalVisible(false)).catch(handleError);
+		setAjaxInProgress(true);
+		putIdeaScore(room.name, scoreFactName, voteSummary.average).then(() => setModalVisible(false)).catch(handleError).finally(() => setAjaxInProgress(false));
 	};
 
 	return (<>
@@ -42,7 +46,15 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 						</Form.Group>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button type="submit" variant="primary">Submit</Button>
+						<Button type="submit" variant="primary">
+							<Spinner
+								hidden={!ajaxInProgress}
+								as="span"
+								animation="border"
+								size="sm"
+								role="status"
+								aria-hidden="true"
+							/> Submit</Button>
 					</Modal.Footer>
 				</Form>
 			</Modal>
