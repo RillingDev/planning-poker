@@ -7,8 +7,11 @@ export const Header: FC = () => {
 
 	return (
 		<header className="header">
-			<h1>Untitled Planing Poker Tool</h1>
-			<p>Signed in as <strong>{user.username}</strong></p>
+			<h1>Planning Poker</h1>
+			<span>
+				<p>Signed in as <strong>{user.username}</strong></p>
+				<p><a href="/logout">Log out</a></p>
+			</span>
 		</header>
 	);
 };
