@@ -1,11 +1,9 @@
 package com.cryptshare.planningpoker;
 
-import com.cryptshare.planningpoker.data.Card;
-import com.cryptshare.planningpoker.data.Room;
-import com.cryptshare.planningpoker.data.RoomMember;
-import com.cryptshare.planningpoker.data.VoteSummary;
+import com.cryptshare.planningpoker.data.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +17,7 @@ public class SummaryService {
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
 				.filter(roomMember -> roomMember.hasVote() && roomMember.getVote().getCard().getValue() != null)
-				.sorted()
+				.sorted(Comparator.comparing(RoomMember::getVote))
 				.toList();
 
 		if (membersWithCardValues.isEmpty()) {
@@ -27,10 +25,8 @@ public class SummaryService {
 		}
 
 		double total = 0;
-
 		Card max = null;
 		Card min = null;
-
 		for (RoomMember member : membersWithCardValues) {
 			final Card card = member.getVote().getCard();
 			total += card.getValue();
@@ -42,15 +38,10 @@ public class SummaryService {
 				min = card;
 			}
 		}
-
 		double averageValue = total / membersWithCardValues.size();
 
-		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size());
-		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size());
-
-		Card nearestCard = null;
-		double nearestCardDiff = Double.MAX_VALUE;
-
+		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size() / 2);
+		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size() / 2);
 		for (RoomMember member : membersWithCardValues) {
 			final Card card = member.getVote().getCard();
 			if (card.equals(max)) {
@@ -59,7 +50,12 @@ public class SummaryService {
 			if (card.equals(min)) {
 				minVoters.add(member);
 			}
+		}
 
+		Card nearestCard = null;
+		double nearestCardDiff = Double.MAX_VALUE;
+		// Due to the ordering, cards with the same difference will be 'rounded' up
+		for (Card card : getOrderedCardsWithValues(room.getCardSet(), false)) {
 			double diff = Math.abs(card.getValue() - averageValue);
 			if (diff < nearestCardDiff) {
 				nearestCardDiff = diff;
@@ -67,9 +63,18 @@ public class SummaryService {
 			}
 		}
 
-		final List<Card> orderedCards = room.getCardSet().getCards().stream().filter(Card::isBasicNumeric).sorted().toList();
-		int offset = orderedCards.indexOf(max) - orderedCards.indexOf(min);
+		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
+		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
 
 		return new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters);
+	}
+
+	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
+		Comparator<Card> comparator = Comparator.comparing(Card::getValue);
+		if (asc) {
+			comparator = comparator.reversed();
+		}
+		comparator = comparator.thenComparing(Card::isBasicNumeric).reversed();
+		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
 	}
 }

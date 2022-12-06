@@ -55,15 +55,60 @@ class SummaryServiceTest {
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember johnDoe = new RoomMember("John Doe");
 		final RoomMember alice = new RoomMember("Alice");
-		myRoom.getMembers().addAll(Set.of(johnDoe, alice));
+		final RoomMember bob = new RoomMember("Bob");
+		myRoom.getMembers().addAll(Set.of(johnDoe, alice, bob));
 
 		johnDoe.setVote(new Vote(johnDoe, card1));
 		alice.setVote(new Vote(alice, card3));
+		bob.setVote(new Vote(bob, card3));
+
+		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+
+		assertThat(voteSummary.nearestCard()).isEqualTo(card3);
+	}
+
+	@Test
+	@DisplayName("calculates nearest card rounding up")
+	void calculatesNearestRoundingUp() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card0 = new Card("0", 0.0);
+		final Card card1 = new Card("1", 1.0);
+		cardSet.getCards().addAll(Set.of(card0, card1));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember johnDoe = new RoomMember("John Doe");
+		final RoomMember alice = new RoomMember("Alice");
+		myRoom.getMembers().addAll(Set.of(johnDoe, alice));
+
+		johnDoe.setVote(new Vote(johnDoe, card0));
+		alice.setVote(new Vote(alice, card1));
 
 		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
 
 		// Nearest card is rounded upwards
-		assertThat(voteSummary.nearestCard()).isEqualTo(card3);
+		assertThat(voteSummary.nearestCard()).isEqualTo(card1);
+	}
+
+	@Test
+	@DisplayName("calculates nearest card rounding towards basic numeric")
+	void calculatesNearestRoundingBasicNumeric() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card0 = new Card("Coffee", 0.0);
+		final Card card1 = new Card("0", 0.0);
+		cardSet.getCards().addAll(Set.of(card0, card1));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember johnDoe = new RoomMember("John Doe");
+		final RoomMember alice = new RoomMember("Alice");
+		myRoom.getMembers().addAll(Set.of(johnDoe, alice));
+
+		johnDoe.setVote(new Vote(johnDoe, card0));
+		alice.setVote(new Vote(alice, card1));
+
+		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+
+		// Nearest card is rounded upwards
+		assertThat(voteSummary.nearestCard()).isEqualTo(card1);
 	}
 
 	@Test
@@ -97,7 +142,7 @@ class SummaryServiceTest {
 
 	@Test
 	@DisplayName("calculates offset")
-	void calculatesVariance() {
+	void calculatesOffset() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
@@ -119,6 +164,30 @@ class SummaryServiceTest {
 		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
 
 		assertThat(voteSummary.offset()).isEqualTo(2);
+	}
+
+	@Test
+	@DisplayName("calculates offset with basic numeric")
+	void calculatesOffsetBasicNumeric() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card1 = new Card("1", 1.0);
+		final Card card2 = new Card("2", 2.0);
+		final Card card2text = new Card("Two but text", 2.0);
+		cardSet.getCards().addAll(Set.of(card1, card2, card2text));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember johnDoe = new RoomMember("John Doe");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember bob = new RoomMember("Bob");
+		myRoom.getMembers().addAll(Set.of(johnDoe, alice, bob));
+
+		johnDoe.setVote(new Vote(johnDoe, card1));
+		alice.setVote(new Vote(alice, card2));
+		bob.setVote(new Vote(bob, card2text));
+
+		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+
+		assertThat(voteSummary.offset()).isEqualTo(1);
 	}
 
 	@Test
