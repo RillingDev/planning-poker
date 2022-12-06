@@ -10,8 +10,8 @@ import java.util.StringJoiner;
 
 @Entity
 @Table(name = "card")
-public class Card extends BaseEntity {
-	public static final Comparator<Card> COMPARATOR = Comparator.comparing(Card::isBasic)
+public class Card extends BaseEntity implements Comparable<Card> {
+	private static final Comparator<Card> COMPARATOR = Comparator.comparing(Card::isBasicNumeric)
 			.reversed()
 			.thenComparing(Card::getValue, Comparator.nullsLast(Comparator.naturalOrder()))
 			.thenComparing(Card::getName);
@@ -51,10 +51,15 @@ public class Card extends BaseEntity {
 		return new StringJoiner(", ", Card.class.getSimpleName() + "[", "]").add("name='" + name + "'").add("value=" + value).toString();
 	}
 
-	public boolean isBasic() {
+	public boolean isBasicNumeric() {
 		if (name.isEmpty()) {
 			return false;
 		}
 		return Character.isDigit(name.charAt(0));
+	}
+
+	@Override
+	public int compareTo(Card o) {
+		return COMPARATOR.compare(this, o);
 	}
 }

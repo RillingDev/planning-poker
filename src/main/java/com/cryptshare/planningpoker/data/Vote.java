@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 
 @Entity
 @Table(name = "vote")
-public class Vote extends BaseEntity {
+public class Vote extends BaseEntity implements Comparable<Vote> {
 	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "room_member_id", nullable = false)
 	private RoomMember roomMember;
@@ -42,5 +42,10 @@ public class Vote extends BaseEntity {
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", Vote.class.getSimpleName() + "[", "]").add("card=" + card).toString();
+	}
+
+	@Override
+	public int compareTo(Vote o) {
+		return this.card.compareTo(o.card);
 	}
 }

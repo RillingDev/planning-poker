@@ -19,8 +19,7 @@ public class SummaryService {
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
 				.filter(roomMember -> roomMember.hasVote() && roomMember.getVote().getCard().getValue() != null)
-				// Sort from highest to lowest vote
-				.sorted((o1, o2) -> Card.COMPARATOR.reversed().compare(o1.getVote().getCard(), o2.getVote().getCard()))
+				.sorted()
 				.toList();
 
 		if (membersWithCardValues.isEmpty()) {
@@ -68,7 +67,7 @@ public class SummaryService {
 			}
 		}
 
-		final List<Card> orderedCards = room.getCardSet().getCards().stream().filter(Card::isBasic).sorted(Card.COMPARATOR).toList();
+		final List<Card> orderedCards = room.getCardSet().getCards().stream().filter(Card::isBasicNumeric).sorted().toList();
 		int offset = orderedCards.indexOf(max) - orderedCards.indexOf(min);
 
 		return new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters);

@@ -3,14 +3,11 @@ package com.cryptshare.planningpoker.data;
 import jakarta.persistence.*;
 import org.springframework.lang.Nullable;
 
-import java.util.Comparator;
 import java.util.StringJoiner;
 
 @Entity
 @Table(name = "room_member")
-public class RoomMember extends BaseEntity {
-	public static final Comparator<RoomMember> COMPARATOR = Comparator.comparing(RoomMember::getUsername);
-
+public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 	public enum Role {
 		VOTER,
 		OBSERVER
@@ -72,5 +69,10 @@ public class RoomMember extends BaseEntity {
 				.add("role=" + role)
 				.add("vote=" + vote)
 				.toString();
+	}
+
+	@Override
+	public int compareTo(RoomMember o) {
+		return this.username.compareToIgnoreCase(o.username);
 	}
 }
