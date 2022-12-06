@@ -23,11 +23,14 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setAjaxInProgress(true);
-		putIdeaScore(room.name, scoreFactName, voteSummary.average).then(() => setModalVisible(false)).catch(handleError).finally(() => setAjaxInProgress(false));
+		putIdeaScore(room.name, scoreFactName, score).then(() => setModalVisible(false)).catch(handleError).finally(() => setAjaxInProgress(false));
 	};
 
+	const ideaId = room.topic;
+	const score = voteSummary.average;
+
 	return (<>
-			<Button size="sm" onClick={() => setModalVisible(true)}>Save to Aha!</Button>
+			<Button size="sm" onClick={() => setModalVisible(true)} hidden={ideaId == null}>Save to Aha!</Button>
 			<Modal show={modalVisible} onHide={() => setModalVisible(false)}>
 				<Form onSubmit={handleSubmit}>
 					<Modal.Header closeButton>
@@ -35,8 +38,8 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 					</Modal.Header>
 					<Modal.Body>
 						<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
-						<p>You are about to save the score <strong>{voteSummary.average}</strong> to Aha! for the
-							idea <strong>{room.topic}</strong>.</p>
+						<p>You are about to save the score <strong>{score}</strong> to Aha! for the
+							idea with the ID <strong>{ideaId}</strong>.</p>
 						<Form.Group className="mb-3" controlId="formAhaScoreFact">
 							<Form.Label>Score Fact Name</Form.Label>
 							<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)}>
