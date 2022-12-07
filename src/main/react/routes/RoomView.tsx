@@ -1,7 +1,7 @@
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
@@ -46,6 +46,10 @@ const findMemberForUser = (room: Room, user: User): RoomMember => {
 
 export const RoomView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
+
+	useEffect(() => {
+		document.title = room.name;
+	}, []);
 
 	const [editModalVisible, setEditModalVisible] = useState(false);
 	const handleEdit = (roomTopic: string, cardSet: CardSet) => {

@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useLoaderData } from "react-router";
 import { CardSet, createRoom, deleteRoom, editRoom, loadRooms, Room } from "../api";
@@ -18,8 +18,14 @@ export async function loader(): Promise<LoaderResult> {
 	return {rooms};
 }
 
+const originalDocumentTitle = document.title;
+
 export const RoomListView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
+
+	useEffect(() => {
+		document.title = originalDocumentTitle;
+	}, []);
 
 	const loaderData = useLoaderData() as LoaderResult;
 	const [rooms, setRooms] = useState<Room[]>(loaderData.rooms);
