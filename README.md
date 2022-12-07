@@ -10,7 +10,7 @@ Configuration may be done using [properties](https://docs.spring.io/spring-boot/
 
 ### Requirements
 
-- JRE 17
+- JRE 21
 
 ### Authentication
 
@@ -47,7 +47,7 @@ If the topic of a room is set to an Aha! idea ID or URL, a button to submit the 
 ### Requirements
 
 - Node.js 20
-- JDK 17
+- JDK 21
 - Maven
 - IntelliJ IDEA
 
