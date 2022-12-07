@@ -1,16 +1,16 @@
-<mxfile host="Electron" modified="2022-11-17T07:17:26.246Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/20.3.0 Chrome/104.0.5112.114 Electron/20.1.3 Safari/537.36" etag="cYYCQY7NnXcawcCOI14A" compressed="false" version="20.3.0" type="device">
+<mxfile host="Electron" modified="2022-12-07T15:18:42.229Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/20.3.0 Chrome/104.0.5112.114 Electron/20.1.3 Safari/537.36" etag="pT49ONtpUFgmwfRLI6uo" compressed="false" version="20.3.0" type="device">
   <diagram id="Clue_gm_ekicOMNB30h_" name="Page-1">
-    <mxGraphModel dx="1408" dy="851" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="3041" dy="907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="mGE9tZvGB-g8vQap3XKN-1" value="dd Deployment of Components" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;" parent="1" vertex="1">
-          <mxGeometry x="220" y="170" width="790" height="360" as="geometry" />
+        <mxCell id="mGE9tZvGB-g8vQap3XKN-1" value="dd Deployment of Components" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;connectable=0;" parent="1" vertex="1">
+          <mxGeometry x="-70" y="170" width="1080" height="660" as="geometry" />
         </mxCell>
-        <mxCell id="mGE9tZvGB-g8vQap3XKN-2" value="&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&lt;br&gt;Server" style="verticalAlign=top;align=left;shape=cube;size=10;direction=south;fontStyle=0;html=1;boundedLbl=1;spacingLeft=5;" parent="1" vertex="1">
-          <mxGeometry x="250" y="240" width="310" height="261" as="geometry" />
+        <mxCell id="mGE9tZvGB-g8vQap3XKN-2" value="&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&lt;br&gt;Planning-Poker Server" style="verticalAlign=top;align=left;shape=cube;size=10;direction=south;fontStyle=0;html=1;boundedLbl=1;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="240" width="310" height="261" as="geometry" />
         </mxCell>
-        <mxCell id="mGE9tZvGB-g8vQap3XKN-7" value="&amp;lt;&amp;lt;executable&amp;gt;&amp;gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;planningpoker.jar&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;dashed=0;fillColor=#ffffff;strokeColor=#000000;" parent="mGE9tZvGB-g8vQap3XKN-2" vertex="1">
+        <mxCell id="mGE9tZvGB-g8vQap3XKN-7" value="&amp;lt;&amp;lt;executable&amp;gt;&amp;gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;planning-poker.jar&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;dashed=0;fillColor=#ffffff;strokeColor=#000000;" parent="mGE9tZvGB-g8vQap3XKN-2" vertex="1">
           <mxGeometry x="60" y="107.03999999999999" width="167.43" height="95.93" as="geometry" />
         </mxCell>
         <mxCell id="mGE9tZvGB-g8vQap3XKN-8" value="&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&lt;br&gt;Client" style="verticalAlign=top;align=left;shape=cube;size=10;direction=south;fontStyle=0;html=1;boundedLbl=1;spacingLeft=5;" parent="1" vertex="1">
@@ -26,6 +26,15 @@
           <mxGeometry x="-0.2477" y="5" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="3tXjNq_8ndhW5hLObYnR-1" value="&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&lt;br&gt;Aha! Server" style="verticalAlign=top;align=left;shape=cube;size=10;direction=south;fontStyle=0;html=1;boundedLbl=1;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="540" width="310" height="261" as="geometry" />
+        </mxCell>
+        <mxCell id="3tXjNq_8ndhW5hLObYnR-2" value="&amp;lt;&amp;lt;executable&amp;gt;&amp;gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;REST API&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;dashed=0;fillColor=#ffffff;strokeColor=#000000;" parent="3tXjNq_8ndhW5hLObYnR-1" vertex="1">
+          <mxGeometry x="60" y="107.03999999999999" width="167.43" height="95.93" as="geometry" />
+        </mxCell>
+        <mxCell id="3tXjNq_8ndhW5hLObYnR-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="mGE9tZvGB-g8vQap3XKN-7" target="3tXjNq_8ndhW5hLObYnR-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
