@@ -4,15 +4,25 @@
 
 When the JAR file is executed, a web server will be started and listens at <http://localhost:8080>.
 
+Configuration may be done
+using [properties](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.properties-and-configuration.external-properties-location).
+
+### Requirements
+
+- JRE 17
+
 ### Authentication
 
-Authentication is possible via active directory.
+Authentication is possible via AD (Active Directory).
 The following properties must be set:
 
 - `planning-poker.auth.active-directory.domain`: The AD domain.
 - `planning-poker.auth.active-directory.url` The AD URL.
 
 ### Extensions
+
+Extensions may be enabled
+by [starting the application with additional profiles](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.properties-and-configuration.set-active-spring-profiles).
 
 #### Aha!
 
