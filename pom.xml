@@ -10,10 +10,14 @@
 	</parent>
 	<groupId>com.cryptshare</groupId>
 	<artifactId>planningpoker</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${revision}</version>
 	<name>planning-poker</name>
 	<properties>
 		<java.version>17</java.version>
+
+		<build.version>1.0.0</build.version>
+		<build.number>0</build.number>
+		<revision>${build.version}.${build.number}</revision>
 	</properties>
 	<dependencies>
 		<dependency>
