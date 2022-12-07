@@ -25,7 +25,7 @@ export interface Room {
 
 export interface Card {
 	readonly name: string;
-	readonly value: number;
+	readonly value: number | null;
 }
 
 export interface CardSet {

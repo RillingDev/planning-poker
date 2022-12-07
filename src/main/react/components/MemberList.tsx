@@ -8,19 +8,20 @@ import { AppContext } from "../AppContext";
 import "./MemberList.css";
 import { PokerCard } from "./PokerCard";
 
+
+const mapRoleToColor = (role: Role): Color => {
+	switch (role) {
+		case Role.VOTER:
+			return "dark";
+		default:
+			return "secondary";
+	}
+};
+
 export const MemberList: FC<{
 	members: ReadonlyArray<RoomMember>, onAction: (member: RoomMember, action: EditAction) => void
 }> = ({members, onAction}) => {
 	const {user} = useContext(AppContext);
-
-	const mapRoleToColor = (role: Role): Color => {
-		switch (role) {
-			case Role.VOTER:
-				return "dark";
-			default:
-				return "secondary";
-		}
-	};
 
 	return (
 		<ul className="member-list">
