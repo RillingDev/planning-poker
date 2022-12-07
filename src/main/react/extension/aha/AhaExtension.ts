@@ -5,6 +5,8 @@ import { extractIdeaId } from "./utils";
 
 export class AhaExtension implements Extension {
 	key = "aha";
+	label = "Aha!";
+
 	SubmitComponent = AhaSubmitButton;
 
 	client: AhaClient | null = null;

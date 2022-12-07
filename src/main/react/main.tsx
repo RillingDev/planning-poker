@@ -20,7 +20,7 @@ async function createContextState(): Promise<AppContextState> {
 	return {
 		cardSets,
 		user,
-		extensions,
+		extensions: extensions,
 	};
 }
 

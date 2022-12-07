@@ -5,6 +5,8 @@ export type SubmitComponent = FC<{ self: Extension, room: Room, voteSummary: Vot
 
 export interface Extension {
 	readonly key: ExtensionKey;
+	readonly label: string;
+
 	readonly SubmitComponent: SubmitComponent;
 
 	initialize(): Promise<void>;
