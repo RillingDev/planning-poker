@@ -57,7 +57,6 @@ export const RoomView: FC = () => {
 	const {user} = useContext(AppContext);
 	const loaderData = useLoaderData() as LoaderResult;
 	const [room, setRoom] = useState<Room>(loaderData.room);
-
 	const [member, setMember] = useState<RoomMember>(findMemberForUser(room, user));
 	const [activeCard, setActiveCard] = useState<Card | null>(member.vote);
 
@@ -66,6 +65,10 @@ export const RoomView: FC = () => {
 	useEffect(() => {
 		document.title = room.name;
 	}, [room.name]);
+
+	useInterval(() => {
+		updateRoom().catch(handleError);
+	}, 1500); // Poll for other votes
 
 	const updateRoom = async () => {
 		const loadedRoom = await getRoom(room.name);
@@ -83,10 +86,6 @@ export const RoomView: FC = () => {
 		}
 	};
 
-	useInterval(() => {
-		updateRoom().catch(handleError);
-	}, 1500); // Poll for other votes
-
 	const handleLeave = () => {
 		leaveRoom(room.name).catch(handleError);
 	};
@@ -103,7 +102,6 @@ export const RoomView: FC = () => {
 	const handleRestart = () => {
 		clearVotes(room.name).then(updateRoom).catch(handleError);
 	};
-
 
 	return (
 		<>

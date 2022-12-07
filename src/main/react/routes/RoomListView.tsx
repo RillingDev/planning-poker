@@ -6,7 +6,7 @@ import { CardSet, createRoom, deleteRoom, editRoom, loadRooms, Room } from "../a
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
-import { useErrorHandler } from "../hooks";
+import { useErrorHandler, useInterval } from "../hooks";
 import "./RoomListView.css";
 
 interface LoaderResult {
@@ -23,14 +23,18 @@ const originalDocumentTitle = document.title;
 export const RoomListView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	useEffect(() => {
-		document.title = originalDocumentTitle;
-	}, []);
-
 	const loaderData = useLoaderData() as LoaderResult;
 	const [rooms, setRooms] = useState<Room[]>(loaderData.rooms);
 
 	const [creationModalVisible, setCreationModalVisible] = useState(false);
+
+	useEffect(() => {
+		document.title = originalDocumentTitle;
+	}, []);
+
+	useInterval(() => {
+		updateRooms().catch(handleError);
+	}, 3000); // Poll for deletions/creations
 
 	const updateRooms = async () => {
 		setRooms(await loadRooms());
