@@ -112,4 +112,17 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>ci</id>
+			<activation>
+				<property>
+					<name>env.BUILD_NUMBER</name>
+				</property>
+			</activation>
+			<properties>
+				<build.number>${env.BUILD_NUMBER}</build.number>
+			</properties>
+		</profile>
+	</profiles>
 </project>
