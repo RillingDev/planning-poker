@@ -1,7 +1,7 @@
 import { ErrorResponse } from "@remix-run/router/utils";
 import { FC } from "react";
 import { Alert } from "react-bootstrap";
-import { createHashRouter, isRouteErrorResponse, Link, useRouteError } from "react-router-dom";
+import { createBrowserRouter, isRouteErrorResponse, Link, useRouteError } from "react-router-dom";
 import { loader as roomListLoader, RoomListView } from "./routes/RoomListView";
 import { loader as roomLoader, RoomView } from "./routes/RoomView";
 
@@ -19,7 +19,7 @@ const ErrorBoundary: FC = () => {
 	);
 };
 
-export const router = createHashRouter([
+export const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <RoomListView/>,
