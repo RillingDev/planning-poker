@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { Role, RoomMember } from "../../../main/react/api";
-import { MemberList } from "../../../main/react/components/MemberList";
+import { Role, RoomMember } from "../api";
+import { MemberList } from "./MemberList";
 
 
 const noop = () => {

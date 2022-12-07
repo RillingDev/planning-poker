@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { DisagreementMeter } from "../../../main/react/components/DisagreementMeter";
+import { DisagreementMeter } from "./DisagreementMeter";
 
 
 describe("DisagreementMeter", () => {

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { AppContext } from "../../../main/react/AppContext";
-import { Header } from "../../../main/react/components/Header";
+import { AppContext } from "../AppContext";
+import { Header } from "./Header";
 
 
 describe("Header", () => {

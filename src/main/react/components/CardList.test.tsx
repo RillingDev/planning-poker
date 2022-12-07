@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { CardSet } from "../../../main/react/api";
-import { CardList } from "../../../main/react/components/CardList";
+import { CardSet } from "../api";
+import { CardList } from "./CardList";
 
 
 describe("CardList", () => {

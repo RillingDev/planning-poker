@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { Card } from "../../../main/react/api";
-import { PokerCard } from "../../../main/react/components/PokerCard";
+import { Card } from "../api";
+import { PokerCard } from "./PokerCard";
 
 
 describe("PokerCard", () => {
