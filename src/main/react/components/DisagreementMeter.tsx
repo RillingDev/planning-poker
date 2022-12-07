@@ -1,21 +1,29 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { Badge } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
 import { VoteSummary } from "../api";
 
+const getOffsetVisuals = (voteSummary: VoteSummary): { label: string, color: Color } => {
+	if (voteSummary.offset > 3) {
+		return {
+			label: "High",
+			color: "danger"
+		};
+	}
+	if (voteSummary.offset > 1) {
+		return {
+			label: "Medium",
+			color: "warning"
+		};
+	}
+	return {
+		label: "Low",
+		color: "success"
+	};
+};
+
 export const DisagreementMeter: FC<{ voteSummary: VoteSummary }> = ({voteSummary}) => {
-	const [offsetLabel, setOffsetLabel] = useState<string>("Low");
-	const [offsetColor, setOffsetColor] = useState<Color>("success");
+	const {label, color} = getOffsetVisuals(voteSummary);
 
-	useEffect(() => {
-		if (voteSummary.offset > 3) {
-			setOffsetLabel("High");
-			setOffsetColor("danger");
-		} else if (voteSummary.offset > 1) {
-			setOffsetLabel("Medium");
-			setOffsetColor("warning");
-		}
-	}, [voteSummary]);
-
-	return (<Badge bg={offsetColor} className="text-uppercase">{offsetLabel}</Badge>);
+	return (<Badge bg={color} className="text-uppercase">{label}</Badge>);
 };
