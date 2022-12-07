@@ -108,9 +108,9 @@ export const RoomView: FC = () => {
 			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
 			<header>
-				<div className="d-flex justify-content-between align-items-center">
+				<div className="d-flex justify-content-between align-items-center mb-1">
 					<div className="room-view__header">
-						<h2>{room.name}</h2>
+						<h2 className="mb-0">{room.name}</h2>
 						<Button variant="warning" size="sm" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
 						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
 					</div>
@@ -123,8 +123,8 @@ export const RoomView: FC = () => {
 			</header>
 			<div className="room-view">
 				<main>
-					<header className="d-flex justify-content-between align-items-center">
-						<h3>Vote</h3>
+					<header className="d-flex justify-content-between align-items-center mb-2">
+						<h3 className="mb-0">Vote</h3>
 						<Button variant="warning" onClick={handleRestart} size="sm">Restart</Button>
 					</header>
 					<div className="card">
@@ -135,7 +135,7 @@ export const RoomView: FC = () => {
 					</div>
 				</main>
 				<div>
-					<h3>Members</h3>
+					<h3 className="mb-2">Members</h3>
 					<MemberList members={room.members ?? []} onAction={handleAction}></MemberList>
 				</div>
 			</div>

@@ -7,7 +7,7 @@ export const Header: FC = () => {
 
 	return (
 		<header className="header">
-			<h1 className="m-0">Planning Poker</h1>
+			<h1 className="mb-0">Planning Poker</h1>
 			<span>Signed in as <strong>{user.username}</strong> (<a href="/logout">Log out</a>)</span>
 		</header>
 	);
