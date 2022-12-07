@@ -43,7 +43,7 @@ export const Summary: FC<{
 					{voteSummary.lowestVoters.map(member => <li key={member.username}>{member.username}</li>)}
 				</ul>
 			</div>
-			<div className="summary__offset">Disagreement: <DisagreementMeter voteSummary={voteSummary}/></div>
+			<div className="summary__offset">Disagreement: <DisagreementMeter offset={voteSummary.offset}/></div>
 		</div>
 	);
 };

@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Room, VoteSummary } from "../../../api";
 import { useErrorHandler } from "../../../hooks";

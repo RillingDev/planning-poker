@@ -47,9 +47,6 @@ const findMemberForUser = (room: Room, user: User): RoomMember => {
 export const RoomView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	useEffect(() => {
-		document.title = room.name;
-	}, []);
 
 	const [editModalVisible, setEditModalVisible] = useState(false);
 	const handleEdit = (roomTopic: string, cardSet: CardSet) => {
@@ -65,6 +62,10 @@ export const RoomView: FC = () => {
 	const [activeCard, setActiveCard] = useState<Card | null>(member.vote);
 
 	const [voteSummary, setVoteSummary] = useState<VoteSummary | null>(loaderData.voteSummary);
+
+	useEffect(() => {
+		document.title = room.name;
+	}, [room.name]);
 
 	const updateRoom = async () => {
 		const loadedRoom = await getRoom(room.name);
