@@ -132,7 +132,7 @@ export const RoomView: FC = () => {
 					<div className="card">
 						{voteSummary != null ?
 							<Summary voteSummary={voteSummary} room={room}></Summary> :
-							<CardList cardSet={room.cardSet} activeCard={activeCard} votingEnabled={member.role != Role.OBSERVER} onClick={handleCardClick}></CardList>
+							<CardList cardSet={room.cardSet} activeCard={activeCard} disabled={member.role == Role.OBSERVER} onClick={handleCardClick}></CardList>
 						}
 					</div>
 				</main>
