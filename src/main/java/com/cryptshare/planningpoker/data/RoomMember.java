@@ -67,7 +67,6 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 	public String toString() {
 		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'")
 				.add("role=" + role)
-				.add("vote=" + vote)
 				.toString();
 	}
 

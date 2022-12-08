@@ -84,7 +84,6 @@ public class Room extends BaseEntity {
 		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
 				.add("topic='" + topic + "'")
 				.add("cardSet='" + cardSet.getName() + "'")
-				.add("members=" + members)
 				.toString();
 	}
 }
