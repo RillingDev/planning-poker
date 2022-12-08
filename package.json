@@ -1,0 +1,43 @@
+{
+	"name": "planning-poker-frontend",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"lint": "eslint src/main/react/ --ext tsx --ext ts",
+		"test": "vitest"
+	},
+	"dependencies": {
+		"@fortawesome/fontawesome-svg-core": "^6.2.1",
+		"@fortawesome/free-solid-svg-icons": "^6.2.1",
+		"@fortawesome/react-fontawesome": "^0.2.0",
+		"bootstrap": "^5.2.3",
+		"react": "^18.2.0",
+		"react-bootstrap": "^2.6.0",
+		"react-dom": "^18.2.0",
+		"react-router": "^6.4.3",
+		"react-router-dom": "^6.4.3"
+	},
+	"devDependencies": {
+		"@rushstack/eslint-patch": "^1.1.4",
+		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/react": "^13.4.0",
+		"@testing-library/user-event": "14.4.3",
+		"@types/react": "^18.0.24",
+		"@types/react-dom": "^18.0.8",
+		"@typescript-eslint/eslint-plugin": "^5.43.0",
+		"@typescript-eslint/parser": "^5.43.0",
+		"@vitejs/plugin-react": "^2.2.0",
+		"eslint": "^8.22.0",
+		"eslint-plugin-jsx-a11y": "^6.6.1",
+		"eslint-plugin-react": "^7.31.10",
+		"eslint-plugin-react-hooks": "^4.6.0",
+		"jsdom": "^20.0.3",
+		"typescript": "~4.9.3",
+		"vite": "^3.2.3",
+		"vitest": "^0.25.3"
+	}
+}

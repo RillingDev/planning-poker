@@ -1,0 +1,58 @@
+.summary {
+	display: grid;
+
+	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+	padding: 1rem;
+
+	grid-template-areas:
+	"average highest"
+	"average highest"
+	"nearest lowest"
+	"nearest lowest"
+	"nearest offset";
+}
+
+.summary__average {
+	grid-area: average;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.125em;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.summary__nearest {
+	grid-area: nearest;
+	display: flex;
+	gap: 0.5rem;
+	flex-direction: column;
+	align-items: center;
+}
+
+.summary__highest {
+	grid-area: highest;
+}
+
+.summary__lowest {
+	grid-area: lowest;
+}
+
+.summary__offset {
+	grid-area: offset;
+	font-size: 0.85em;
+}
+
+.summary__extreme__header {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.summary__extreme ul {
+	margin: 0;
+	padding-left: 1.5rem;
+	font-size: 0.85em;
+}
