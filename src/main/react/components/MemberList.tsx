@@ -1,5 +1,3 @@
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC, useContext } from "react";
 import { Badge, ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
@@ -28,9 +26,7 @@ export const MemberList: FC<{
 			{members.map((member, i) => <li key={member.username} className={`card member member--${member.role}`}>
 				<span>{member.username} <Badge bg="light" text={mapRoleToColor(member.role)}>{member.role}</Badge></span>
 				<Dropdown size="sm" as={ButtonGroup}>
-					<Dropdown.Toggle variant="secondary" id={`options-dropdown-${i}`}>
-						<FontAwesomeIcon icon={faEdit} title="Edit Member"/>
-					</Dropdown.Toggle>
+					<Dropdown.Toggle variant="secondary" id={`options-dropdown-${i}`} aria-label="Edit member"/>
 
 					<Dropdown.Menu>
 						<Dropdown.Item onClick={() => onAction(member, EditAction.SET_OBSERVER)} disabled={member.role == Role.OBSERVER}>
