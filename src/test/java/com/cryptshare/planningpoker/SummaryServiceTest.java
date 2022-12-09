@@ -38,6 +38,7 @@ class SummaryServiceTest {
 		johnDoe.setVote(new Vote(johnDoe, card1));
 		alice.setVote(new Vote(alice, card3));
 		bob.setVote(new Vote(bob, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
@@ -61,6 +62,7 @@ class SummaryServiceTest {
 		johnDoe.setVote(new Vote(johnDoe, card1));
 		alice.setVote(new Vote(alice, card3));
 		bob.setVote(new Vote(bob, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
@@ -82,6 +84,7 @@ class SummaryServiceTest {
 
 		johnDoe.setVote(new Vote(johnDoe, card0));
 		alice.setVote(new Vote(alice, card1));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
@@ -104,6 +107,7 @@ class SummaryServiceTest {
 
 		johnDoe.setVote(new Vote(johnDoe, card0));
 		alice.setVote(new Vote(alice, card1));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
@@ -131,6 +135,7 @@ class SummaryServiceTest {
 		alice.setVote(new Vote(alice, card2));
 		bob.setVote(new Vote(bob, card3));
 		eve.setVote(new Vote(eve, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
@@ -160,6 +165,7 @@ class SummaryServiceTest {
 		alice.setVote(new Vote(alice, card2));
 		bob.setVote(new Vote(bob, card3));
 		eve.setVote(new Vote(eve, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
@@ -184,6 +190,7 @@ class SummaryServiceTest {
 		johnDoe.setVote(new Vote(johnDoe, card1));
 		alice.setVote(new Vote(alice, card2));
 		bob.setVote(new Vote(bob, card2text));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
@@ -196,19 +203,23 @@ class SummaryServiceTest {
 		final CardSet cardSet = new CardSet("Set");
 
 		final Room myRoom = new Room("My Room", cardSet);
+		myRoom.setVotingState(Room.VotingState.OPEN);
 
 		assertThat(summaryService.summarize(myRoom)).isEmpty();
 	}
 
 	@Test
-	@DisplayName("calculates with only observers")
+	@DisplayName("calculates with only non-value votes")
 	void calculatesWhenOnlObservers() {
 		final CardSet cardSet = new CardSet("Set");
+		final Card card = new Card("?", null);
+		cardSet.getCards().add(card);
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember johnDoe = new RoomMember("John Doe");
-		johnDoe.setRole(RoomMember.Role.OBSERVER);
+		johnDoe.setVote(new Vote(johnDoe, card));
 		myRoom.getMembers().add(johnDoe);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		assertThat(summaryService.summarize(myRoom)).isEmpty();
 	}

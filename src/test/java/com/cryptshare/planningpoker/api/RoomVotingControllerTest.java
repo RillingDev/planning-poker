@@ -115,6 +115,7 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
 		mockMvc.perform(get("/api/rooms/my-room/"))
 				.andExpect(status().isOk())
@@ -190,7 +191,7 @@ class RoomVotingControllerTest {
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` ignores if voting is complete")
 	@WithMockUser("John Doe")
-	void createVoteVotingComplete() throws Exception {
+	void createVoteClosed() throws Exception {
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
@@ -206,6 +207,7 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card1));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "2")).andExpect(status().isOk());
 
@@ -229,8 +231,9 @@ class RoomVotingControllerTest {
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
-		final Vote vote = captor.getValue().findMemberByUser("John Doe").orElseThrow().getVote();
-		assertThat(vote).isNotNull().extracting(Vote::getCard).isEqualTo(card);
+		final Room actual = captor.getValue();
+		assertThat(actual.findMemberByUser("John Doe").orElseThrow().getVote()).isNotNull().extracting(Vote::getCard).isEqualTo(card);
+		assertThat(actual.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
 	@Test
@@ -303,12 +306,14 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card2));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
 		mockMvc.perform(delete("/api/rooms/my-room/votes").with(csrf())).andExpect(status().isOk());
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
 		assertThat(captor.getValue().getMembers()).hasSize(2).allMatch(rm -> !rm.hasVote());
+		assertThat(captor.getValue().getVotingState()).isEqualTo(Room.VotingState.OPEN);
 	}
 
 	@Test
@@ -375,6 +380,7 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
 		given(summaryService.summarize(room)).willReturn(Optional.of(new VoteSummary(1.0,
 				2,

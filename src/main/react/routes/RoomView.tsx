@@ -29,7 +29,7 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 	const room = await getRoom(roomName);
 
 	let summaryResult = null;
-	if (room.votingComplete) {
+	if (room.votingClosed) {
 		summaryResult = await getSummary(room.name);
 	}
 
@@ -77,7 +77,7 @@ export const RoomView: FC = () => {
 		setMember(loadedMember);
 		setActiveCard(loadedMember.vote);
 
-		if (loadedRoom.votingComplete) {
+		if (loadedRoom.votingClosed) {
 			if (summaryResult == null) {
 				setSummaryResult(await getSummary(loadedRoom.name));
 			}

@@ -15,6 +15,10 @@ public class SummaryService {
 	 * @return Summary, or empty if not applicable (e.g. because no votes with value were made).
 	 */
 	public Optional<VoteSummary> summarize(Room room) {
+		if (room.getVotingState() == Room.VotingState.OPEN) {
+			return Optional.empty();
+		}
+
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
 				.filter(roomMember -> roomMember.hasVote() && roomMember.getVote().getCard().getValue() != null)

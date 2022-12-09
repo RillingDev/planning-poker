@@ -38,7 +38,7 @@ class RoomVotingController {
 		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		// Only show own vote while voting is not complete
-		return RoomJson.convertToDetailed(room, rm -> room.isVotingComplete() || rm.equals(roomMember));
+		return RoomJson.convertToDetailed(room, rm -> room.getVotingState() == Room.VotingState.CLOSED || rm.equals(roomMember));
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/votes")
@@ -52,7 +52,7 @@ class RoomVotingController {
 			throw new ObserverException();
 		}
 
-		if (room.isVotingComplete()) {
+		if (room.getVotingState() == Room.VotingState.CLOSED) {
 			// May happen on accident, so dont throw an error.
 			logger.warn("Ignoring user '{}' voting in '{}' as voting is completed.", user.getUsername(), room);
 			return;
@@ -66,6 +66,10 @@ class RoomVotingController {
 				.orElseThrow(CardNotFoundException::new);
 
 		roomMember.setVote(new Vote(roomMember, card));
+		if (room.allVotersVoted()) {
+			room.setVotingState(Room.VotingState.CLOSED);
+		}
+
 		roomRepository.save(room);
 		logger.debug("User '{}' voted with '{}' in '{}'.", user.getUsername(), card, room);
 	}
@@ -78,6 +82,7 @@ class RoomVotingController {
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		room.getMembers().forEach(rm -> rm.setVote(null));
+		room.setVotingState(Room.VotingState.OPEN);
 		roomRepository.save(room);
 		logger.debug("User '{}' cleared votes in '{}'.", user.getUsername(), room);
 	}

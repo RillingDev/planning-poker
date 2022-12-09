@@ -20,7 +20,7 @@ export interface Room {
 	readonly topic: string | null;
 	readonly cardSet: CardSet;
 	readonly members: ReadonlyArray<RoomMember>;
-	readonly votingComplete: boolean;
+	readonly votingClosed: boolean;
 }
 
 export interface Card {
