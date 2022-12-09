@@ -45,7 +45,7 @@ export const MemberList: FC<{
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
-				{member.vote != null ? <PokerCard card={member.vote} disabled={true} size="sm"/> : <></>}
+				{member.vote != null && <PokerCard card={member.vote} disabled={true} size="sm"/>}
 			</li>)}
 		</ul>
 	);

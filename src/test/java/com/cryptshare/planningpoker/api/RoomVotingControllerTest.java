@@ -336,6 +336,29 @@ class RoomVotingControllerTest {
 	}
 
 	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` shows empty when not complete")
+	@WithMockUser("John Doe")
+	void getSummaryShowsEmpty() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(new Vote(roomMember1, card));
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(new Vote(roomMember2, card));
+		room.getMembers().add(roomMember2);
+
+		given(summaryService.summarize(room)).willReturn(Optional.empty());
+
+		mockMvc.perform(get("/api/rooms/my-room/votes/summary")).andExpect(status().isOk()).andExpect(jsonPath("$.votes").value((Object) null));
+	}
+
+	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` shows votes when complete")
 	@WithMockUser("John Doe")
 	void getSummaryShowsSummary() throws Exception {
@@ -353,24 +376,24 @@ class RoomVotingControllerTest {
 		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember2);
 
-		given(summaryService.getVoteSummary(room)).willReturn(new VoteSummary(1.0,
+		given(summaryService.summarize(room)).willReturn(Optional.of(new VoteSummary(1.0,
 				2,
 				card,
 				card,
 				Set.of(roomMember1),
 				card,
-				Set.of(roomMember2)));
+				Set.of(roomMember2))));
 
 		mockMvc.perform(get("/api/rooms/my-room/votes/summary"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.average").value(1.0))
-				.andExpect(jsonPath("$.offset").value(2))
-				.andExpect(jsonPath("$.nearestCard.name").value(1))
-				.andExpect(jsonPath("$.highestVote.name").value(1))
-				.andExpect(jsonPath("$.highestVoters.length()").value(1))
-				.andExpect(jsonPath("$.highestVoters[0].username").value("John Doe"))
-				.andExpect(jsonPath("$.lowestVote.name").value(1))
-				.andExpect(jsonPath("$.lowestVoters.length()").value(1))
-				.andExpect(jsonPath("$.lowestVoters[0].username").value("Alice"));
+				.andExpect(jsonPath("$.votes.average").value(1.0))
+				.andExpect(jsonPath("$.votes.offset").value(2))
+				.andExpect(jsonPath("$.votes.nearestCard.name").value(1))
+				.andExpect(jsonPath("$.votes.highestVote.name").value(1))
+				.andExpect(jsonPath("$.votes.highestVoters.length()").value(1))
+				.andExpect(jsonPath("$.votes.highestVoters[0].username").value("John Doe"))
+				.andExpect(jsonPath("$.votes.lowestVote.name").value(1))
+				.andExpect(jsonPath("$.votes.lowestVoters.length()").value(1))
+				.andExpect(jsonPath("$.votes.lowestVoters[0].username").value("Alice"));
 	}
 }

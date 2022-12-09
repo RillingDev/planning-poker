@@ -10,9 +10,17 @@ const formatter = new Intl.NumberFormat("en-US", {style: "decimal", maximumFract
 
 export const Summary: FC<{
 	room: Room,
-	voteSummary: VoteSummary
+	voteSummary: VoteSummary | null
 }> = ({room, voteSummary}) => {
 	const {extensions} = useContext(AppContext);
+
+	if (voteSummary == null) {
+		return (
+			<div className="summary summary--empty">
+				<span>No result</span>
+			</div>
+		);
+	}
 
 	return (
 		<div className="summary">

@@ -6,9 +6,12 @@ import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.api.projection.VoteSummaryJson;
 import com.cryptshare.planningpoker.data.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +29,7 @@ class RoomVotingController {
 		this.summaryService = summaryService;
 	}
 
-	@GetMapping(value = "/api/rooms/{room-name}/")
+	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Transactional
 	@ResponseBody
 	RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
@@ -79,15 +82,18 @@ class RoomVotingController {
 		logger.debug("User '{}' cleared votes in '{}'.", user.getUsername(), room);
 	}
 
-	@GetMapping(value = "/api/rooms/{room-name}/votes/summary")
+	@GetMapping(value = "/api/rooms/{room-name}/votes/summary", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Transactional
 	@ResponseBody
-	VoteSummaryJson getSummary(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	SummaryResultJson getSummary(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
-		return VoteSummaryJson.convert(summaryService.getVoteSummary(room));
+		return new SummaryResultJson(summaryService.summarize(room).map(VoteSummaryJson::convert).orElse(null));
+	}
+
+	private record SummaryResultJson(@JsonProperty("votes") @Nullable VoteSummaryJson voteSummaryJson) {
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card in this rooms card-set.")

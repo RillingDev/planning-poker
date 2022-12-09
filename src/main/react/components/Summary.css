@@ -56,3 +56,10 @@
 	padding-left: 1.5rem;
 	font-size: 0.85em;
 }
+
+
+.summary--empty {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

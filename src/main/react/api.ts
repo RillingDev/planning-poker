@@ -33,6 +33,10 @@ export interface CardSet {
 	readonly cards: ReadonlyArray<Card>;
 }
 
+export interface SummaryResult {
+	readonly votes: VoteSummary | null;
+}
+
 export interface VoteSummary {
 	readonly average: number;
 	readonly offset: number;
@@ -171,6 +175,6 @@ export async function getSummary(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
-	}).then(assertStatusOk).then(res => res.json() as Promise<VoteSummary>);
+	}).then(assertStatusOk).then(res => res.json() as Promise<SummaryResult>);
 }
 
