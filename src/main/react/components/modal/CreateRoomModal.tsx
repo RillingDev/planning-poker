@@ -28,7 +28,15 @@ export const CreateRoomModal: FC<{
 				<Modal.Body>
 					<Form.Group className="mb-3" controlId="formCreateRoomName">
 						<Form.Label>Room Name</Form.Label>
-						<Form.Control required type="text" maxLength={50} value={roomName} onChange={(e) => setRoomName(e.target.value)}/>
+						<Form.Control
+							type="text"
+							required
+							maxLength={50}
+							title="May not contain the following: ;%\/"
+							pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
+							value={roomName}
+							onChange={(e) => setRoomName(e.target.value)}
+						/>
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formCreateRoomCardSet">
 						<Form.Label>Card Set</Form.Label>
