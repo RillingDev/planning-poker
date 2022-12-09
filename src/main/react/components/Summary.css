@@ -3,15 +3,15 @@
 
 	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
 	grid-template-columns: 1fr 1fr;
-	gap: 1rem;
-	padding: 1rem;
-
 	grid-template-areas:
 	"average highest"
 	"average highest"
 	"nearest lowest"
 	"nearest lowest"
 	"nearest offset";
+
+	gap: 1rem;
+	padding: 1rem;
 }
 
 .summary__average {
