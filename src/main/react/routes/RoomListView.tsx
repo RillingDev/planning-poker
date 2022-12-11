@@ -60,7 +60,7 @@ export const RoomListView: FC = () => {
 			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
 			<header className="d-flex justify-content-between align-items-center">
-				<h2>Rooms</h2>
+				<h2 className="mb-0">Rooms</h2>
 				<Button variant="primary" size="sm" onClick={() => setCreationModalVisible(true)}>Create Room</Button>
 				<CreateRoomModal onSubmit={handleCreationSubmit} show={creationModalVisible} onHide={() => setCreationModalVisible(false)}></CreateRoomModal>
 			</header>

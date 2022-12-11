@@ -115,6 +115,7 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
 		mockMvc.perform(get("/api/rooms/my-room/"))
 				.andExpect(status().isOk())
@@ -190,7 +191,7 @@ class RoomVotingControllerTest {
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` ignores if voting is complete")
 	@WithMockUser("John Doe")
-	void createVoteVotingComplete() throws Exception {
+	void createVoteClosed() throws Exception {
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
@@ -206,6 +207,7 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card1));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(csrf()).queryParam("card-name", "2")).andExpect(status().isOk());
 
@@ -229,8 +231,9 @@ class RoomVotingControllerTest {
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
-		final Vote vote = captor.getValue().findMemberByUser("John Doe").orElseThrow().getVote();
-		assertThat(vote).isNotNull().extracting(Vote::getCard).isEqualTo(card);
+		final Room actual = captor.getValue();
+		assertThat(actual.findMemberByUser("John Doe").orElseThrow().getVote()).isNotNull().extracting(Vote::getCard).isEqualTo(card);
+		assertThat(actual.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
 	@Test
@@ -303,12 +306,14 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card2));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
 		mockMvc.perform(delete("/api/rooms/my-room/votes").with(csrf())).andExpect(status().isOk());
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
 		assertThat(captor.getValue().getMembers()).hasSize(2).allMatch(rm -> !rm.hasVote());
+		assertThat(captor.getValue().getVotingState()).isEqualTo(Room.VotingState.OPEN);
 	}
 
 	@Test
@@ -336,6 +341,29 @@ class RoomVotingControllerTest {
 	}
 
 	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` shows empty when not complete")
+	@WithMockUser("John Doe")
+	void getSummaryShowsEmpty() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(new Vote(roomMember1, card));
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(new Vote(roomMember2, card));
+		room.getMembers().add(roomMember2);
+
+		given(summaryService.summarize(room)).willReturn(Optional.empty());
+
+		mockMvc.perform(get("/api/rooms/my-room/votes/summary")).andExpect(status().isOk()).andExpect(jsonPath("$.votes").value((Object) null));
+	}
+
+	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` shows votes when complete")
 	@WithMockUser("John Doe")
 	void getSummaryShowsSummary() throws Exception {
@@ -352,25 +380,26 @@ class RoomVotingControllerTest {
 		final RoomMember roomMember2 = new RoomMember("Alice");
 		roomMember2.setVote(new Vote(roomMember2, card));
 		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
 
-		given(summaryService.getVoteSummary(room)).willReturn(new VoteSummary(1.0,
+		given(summaryService.summarize(room)).willReturn(Optional.of(new VoteSummary(1.0,
 				2,
 				card,
 				card,
 				Set.of(roomMember1),
 				card,
-				Set.of(roomMember2)));
+				Set.of(roomMember2))));
 
 		mockMvc.perform(get("/api/rooms/my-room/votes/summary"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.average").value(1.0))
-				.andExpect(jsonPath("$.offset").value(2))
-				.andExpect(jsonPath("$.nearestCard.name").value(1))
-				.andExpect(jsonPath("$.highestVote.name").value(1))
-				.andExpect(jsonPath("$.highestVoters.length()").value(1))
-				.andExpect(jsonPath("$.highestVoters[0].username").value("John Doe"))
-				.andExpect(jsonPath("$.lowestVote.name").value(1))
-				.andExpect(jsonPath("$.lowestVoters.length()").value(1))
-				.andExpect(jsonPath("$.lowestVoters[0].username").value("Alice"));
+				.andExpect(jsonPath("$.votes.average").value(1.0))
+				.andExpect(jsonPath("$.votes.offset").value(2))
+				.andExpect(jsonPath("$.votes.nearestCard.name").value(1))
+				.andExpect(jsonPath("$.votes.highestVote.name").value(1))
+				.andExpect(jsonPath("$.votes.highestVoters.length()").value(1))
+				.andExpect(jsonPath("$.votes.highestVoters[0].username").value("John Doe"))
+				.andExpect(jsonPath("$.votes.lowestVote.name").value(1))
+				.andExpect(jsonPath("$.votes.lowestVoters.length()").value(1))
+				.andExpect(jsonPath("$.votes.lowestVoters[0].username").value("Alice"));
 	}
 }

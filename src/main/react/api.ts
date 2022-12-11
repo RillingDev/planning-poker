@@ -20,7 +20,7 @@ export interface Room {
 	readonly topic: string | null;
 	readonly cardSet: CardSet;
 	readonly members: ReadonlyArray<RoomMember>;
-	readonly votingComplete: boolean;
+	readonly votingClosed: boolean;
 }
 
 export interface Card {
@@ -31,6 +31,10 @@ export interface Card {
 export interface CardSet {
 	readonly name: string;
 	readonly cards: ReadonlyArray<Card>;
+}
+
+export interface SummaryResult {
+	readonly votes: VoteSummary | null;
 }
 
 export interface VoteSummary {
@@ -171,6 +175,6 @@ export async function getSummary(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
-	}).then(assertStatusOk).then(res => res.json() as Promise<VoteSummary>);
+	}).then(assertStatusOk).then(res => res.json() as Promise<SummaryResult>);
 }
 
