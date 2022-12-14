@@ -8,7 +8,7 @@ import java.util.StringJoiner;
 
 @Entity
 @Table(name = "card_set")
-public class CardSet extends BaseEntity {
+public class CardSet extends BaseEntity implements Comparable<CardSet> {
 	@Column(name = "set_name", nullable = false)
 	private String name;
 
@@ -44,4 +44,8 @@ public class CardSet extends BaseEntity {
 		this.cards = cards;
 	}
 
+	@Override
+	public int compareTo(CardSet o) {
+		return name.compareToIgnoreCase(o.name);
+	}
 }

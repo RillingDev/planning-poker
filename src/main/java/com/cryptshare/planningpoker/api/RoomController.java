@@ -30,7 +30,7 @@ class RoomController {
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	List<RoomJson> loadRooms() {
-		return roomRepository.findAll().stream().map(RoomJson::convertToBasic).toList();
+		return roomRepository.findAll().stream().sorted().map(RoomJson::convertToBasic).toList();
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}")

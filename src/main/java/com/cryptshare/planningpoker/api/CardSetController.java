@@ -22,7 +22,7 @@ class CardSetController {
 	@GetMapping(value = "/api/card-sets", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	List<CardSetJson> loadCardSets() {
-		return cardSetRepository.findAll().stream().map(CardSetJson::convert).toList();
+		return cardSetRepository.findAll().stream().sorted().map(CardSetJson::convert).toList();
 	}
 
 }

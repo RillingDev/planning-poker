@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 
 @Entity
 @Table(name = "room")
-public class Room extends BaseEntity {
+public class Room extends BaseEntity implements Comparable<Room> {
 
 	@Column(name = "room_name", nullable = false)
 	private String name;
@@ -104,5 +104,10 @@ public class Room extends BaseEntity {
 				.add("cardSet='" + cardSet.getName() + "'")
 				.add("votingState='" + votingState + "'")
 				.toString();
+	}
+
+	@Override
+	public int compareTo(Room o) {
+		return name.compareToIgnoreCase(o.name);
 	}
 }
