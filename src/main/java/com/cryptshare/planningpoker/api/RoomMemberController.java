@@ -45,6 +45,9 @@ class RoomMemberController {
 
 		room.findMemberByUser(user.getUsername()).ifPresentOrElse(roomMember -> {
 			room.getMembers().remove(roomMember);
+			if (room.allVotersVoted()) {
+				room.setVotingState(Room.VotingState.CLOSED);
+			}
 			roomRepository.save(room);
 			logger.info("User '{}' left room '{}'.", user.getUsername(), room);
 		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getUsername(), room));
@@ -69,11 +72,17 @@ class RoomMemberController {
 			}
 			case SET_OBSERVER -> {
 				targetMember.setRole(RoomMember.Role.OBSERVER);
+				if (room.allVotersVoted()) {
+					room.setVotingState(Room.VotingState.CLOSED);
+				}
 				roomRepository.save(room);
 				logger.info("Member '{}' set '{}' to observer in '{}'.", actingMember, targetMember, room);
 			}
 			case KICK -> {
 				room.getMembers().remove(targetMember);
+				if (room.allVotersVoted()) {
+					room.setVotingState(Room.VotingState.CLOSED);
+				}
 				roomRepository.save(room);
 				logger.info("Member '{}' kicked '{}' from '{}'.", actingMember, targetMember, room);
 			}

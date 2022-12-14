@@ -11,6 +11,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "room")
 public class Room extends BaseEntity {
+
 	@Column(name = "room_name", nullable = false)
 	private String name;
 
@@ -25,6 +26,15 @@ public class Room extends BaseEntity {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "room_id", nullable = false)
 	private Set<RoomMember> members = new HashSet<>(16);
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "voting_state", nullable = false)
+	private VotingState votingState = VotingState.OPEN;
+
+	public enum VotingState {
+		OPEN,
+		CLOSED
+	}
 
 	protected Room() {
 	}
@@ -71,12 +81,20 @@ public class Room extends BaseEntity {
 		}
 	}
 
-	public Optional<RoomMember> findMemberByUser(String username) {
-		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
+	public VotingState getVotingState() {
+		return votingState;
 	}
 
-	public boolean isVotingComplete() {
-		return members.stream().filter(roomMember -> roomMember.getRole() != RoomMember.Role.OBSERVER).allMatch(RoomMember::hasVote);
+	public void setVotingState(VotingState votingState) {
+		this.votingState = votingState;
+	}
+
+	public boolean allVotersVoted() {
+		return members.stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(RoomMember::hasVote);
+	}
+
+	public Optional<RoomMember> findMemberByUser(String username) {
+		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
 	}
 
 	@Override
@@ -84,7 +102,7 @@ public class Room extends BaseEntity {
 		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
 				.add("topic='" + topic + "'")
 				.add("cardSet='" + cardSet.getName() + "'")
-				.add("members=" + members)
+				.add("votingState='" + votingState + "'")
 				.toString();
 	}
 }

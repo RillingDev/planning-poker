@@ -38,8 +38,9 @@ class SummaryServiceTest {
 		johnDoe.setVote(new Vote(johnDoe, card1));
 		alice.setVote(new Vote(alice, card3));
 		bob.setVote(new Vote(bob, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		assertThat(voteSummary.average()).isCloseTo(2.333, Offset.offset(0.01));
 	}
@@ -61,8 +62,9 @@ class SummaryServiceTest {
 		johnDoe.setVote(new Vote(johnDoe, card1));
 		alice.setVote(new Vote(alice, card3));
 		bob.setVote(new Vote(bob, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		assertThat(voteSummary.nearestCard()).isEqualTo(card3);
 	}
@@ -82,8 +84,9 @@ class SummaryServiceTest {
 
 		johnDoe.setVote(new Vote(johnDoe, card0));
 		alice.setVote(new Vote(alice, card1));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		// Nearest card is rounded upwards
 		assertThat(voteSummary.nearestCard()).isEqualTo(card1);
@@ -104,8 +107,9 @@ class SummaryServiceTest {
 
 		johnDoe.setVote(new Vote(johnDoe, card0));
 		alice.setVote(new Vote(alice, card1));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		// Nearest card is rounded upwards
 		assertThat(voteSummary.nearestCard()).isEqualTo(card1);
@@ -131,8 +135,9 @@ class SummaryServiceTest {
 		alice.setVote(new Vote(alice, card2));
 		bob.setVote(new Vote(bob, card3));
 		eve.setVote(new Vote(eve, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		assertThat(voteSummary.highestVote()).isEqualTo(card3);
 		assertThat(voteSummary.highestVoters()).containsExactlyInAnyOrder(bob, eve);
@@ -160,8 +165,9 @@ class SummaryServiceTest {
 		alice.setVote(new Vote(alice, card2));
 		bob.setVote(new Vote(bob, card3));
 		eve.setVote(new Vote(eve, card3));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		assertThat(voteSummary.offset()).isEqualTo(2);
 	}
@@ -184,8 +190,9 @@ class SummaryServiceTest {
 		johnDoe.setVote(new Vote(johnDoe, card1));
 		alice.setVote(new Vote(alice, card2));
 		bob.setVote(new Vote(bob, card2text));
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		assertThat(voteSummary.offset()).isEqualTo(1);
 	}
@@ -196,34 +203,24 @@ class SummaryServiceTest {
 		final CardSet cardSet = new CardSet("Set");
 
 		final Room myRoom = new Room("My Room", cardSet);
+		myRoom.setVotingState(Room.VotingState.OPEN);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
-
-		assertThat(voteSummary.average()).isZero();
-		assertThat(voteSummary.offset()).isEqualTo(0);
-		assertThat(voteSummary.highestVote().getValue()).isZero();
-		assertThat(voteSummary.highestVoters()).isEmpty();
-		assertThat(voteSummary.lowestVote().getValue()).isZero();
-		assertThat(voteSummary.lowestVoters()).isEmpty();
+		assertThat(summaryService.summarize(myRoom)).isEmpty();
 	}
 
 	@Test
-	@DisplayName("calculates with only observers")
+	@DisplayName("calculates with only non-value votes")
 	void calculatesWhenOnlObservers() {
 		final CardSet cardSet = new CardSet("Set");
+		final Card card = new Card("?", null);
+		cardSet.getCards().add(card);
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember johnDoe = new RoomMember("John Doe");
-		johnDoe.setRole(RoomMember.Role.OBSERVER);
+		johnDoe.setVote(new Vote(johnDoe, card));
 		myRoom.getMembers().add(johnDoe);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
 
-		final VoteSummary voteSummary = summaryService.getVoteSummary(myRoom);
-
-		assertThat(voteSummary.average()).isZero();
-		assertThat(voteSummary.offset()).isEqualTo(0);
-		assertThat(voteSummary.highestVote().getValue()).isZero();
-		assertThat(voteSummary.highestVoters()).isEmpty();
-		assertThat(voteSummary.lowestVote().getValue()).isZero();
-		assertThat(voteSummary.lowestVoters()).isEmpty();
+		assertThat(summaryService.summarize(myRoom)).isEmpty();
 	}
 }

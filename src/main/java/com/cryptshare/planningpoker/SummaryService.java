@@ -3,17 +3,22 @@ package com.cryptshare.planningpoker;
 import com.cryptshare.planningpoker.data.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class SummaryService {
 
-	private static final Card NOOP_CARD = new Card("0", 0.0);
+	/**
+	 * Calculates a rooms voting statistic.
+	 *
+	 * @param room Room to check.
+	 * @return Summary, or empty if not applicable (e.g. because no votes with value were made).
+	 */
+	public Optional<VoteSummary> summarize(Room room) {
+		if (room.getVotingState() == Room.VotingState.OPEN) {
+			return Optional.empty();
+		}
 
-	public VoteSummary getVoteSummary(Room room) {
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
 				.filter(roomMember -> roomMember.hasVote() && roomMember.getVote().getCard().getValue() != null)
@@ -21,7 +26,7 @@ public class SummaryService {
 				.toList();
 
 		if (membersWithCardValues.isEmpty()) {
-			return new VoteSummary(0.0, 0, NOOP_CARD, NOOP_CARD, Set.of(), NOOP_CARD, Set.of());
+			return Optional.empty();
 		}
 
 		double total = 0;
@@ -66,7 +71,7 @@ public class SummaryService {
 		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
 		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
 
-		return new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters);
+		return Optional.of(new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters));
 	}
 
 	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {

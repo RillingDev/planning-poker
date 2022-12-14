@@ -25,7 +25,7 @@ public class CardSet extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", CardSet.class.getSimpleName() + "[", "]").add("name='" + name + "'").add("cards=" + cards).toString();
+		return new StringJoiner(", ", CardSet.class.getSimpleName() + "[", "]").add("name='" + name + "'").toString();
 	}
 
 	public String getName() {

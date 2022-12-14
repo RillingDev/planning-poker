@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
-import type { Card, EditAction, Room, RoomMember, User, VoteSummary } from "../api";
+import type { Card, EditAction, Room, RoomMember, SummaryResult, User } from "../api";
 import { CardSet, clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, Role } from "../api";
 import { AppContext } from "../AppContext";
 import { CardList } from "../components/CardList";
@@ -18,7 +18,7 @@ import "./RoomView.css";
 
 interface LoaderResult {
 	room: Room;
-	voteSummary: VoteSummary | null;
+	summaryResult: SummaryResult | null;
 }
 
 export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
@@ -28,12 +28,12 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 
 	const room = await getRoom(roomName);
 
-	let voteSummary = null;
-	if (room.votingComplete) {
-		voteSummary = await getSummary(room.name);
+	let summaryResult = null;
+	if (room.votingClosed) {
+		summaryResult = await getSummary(room.name);
 	}
 
-	return {room, voteSummary};
+	return {room, summaryResult};
 }
 
 const findMemberForUser = (room: Room, user: User): RoomMember => {
@@ -60,7 +60,7 @@ export const RoomView: FC = () => {
 	const [member, setMember] = useState<RoomMember>(findMemberForUser(room, user));
 	const [activeCard, setActiveCard] = useState<Card | null>(member.vote);
 
-	const [voteSummary, setVoteSummary] = useState<VoteSummary | null>(loaderData.voteSummary);
+	const [summaryResult, setSummaryResult] = useState<SummaryResult | null>(loaderData.summaryResult);
 
 	useEffect(() => {
 		document.title = room.name;
@@ -77,12 +77,12 @@ export const RoomView: FC = () => {
 		setMember(loadedMember);
 		setActiveCard(loadedMember.vote);
 
-		if (loadedRoom.votingComplete) {
-			if (voteSummary == null) {
-				setVoteSummary(await getSummary(loadedRoom.name));
+		if (loadedRoom.votingClosed) {
+			if (summaryResult == null) {
+				setSummaryResult(await getSummary(loadedRoom.name));
 			}
 		} else {
-			setVoteSummary(null);
+			setSummaryResult(null);
 		}
 	};
 
@@ -114,9 +114,8 @@ export const RoomView: FC = () => {
 						<Button variant="warning" size="sm" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
 						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
 					</div>
-					<nav className="btn-group btn-group-sm">
-						<Link to={"/"} className="btn btn-secondary">Back to Room List</Link>
-						<Link to={"/"} onClick={() => handleLeave()} className="btn btn-warning">Leave</Link>
+					<nav>
+						<Link to={"/"} onClick={() => handleLeave()} className="btn btn-secondary btn-sm">Back to Room List</Link>
 					</nav>
 				</div>
 				<span><strong>Topic:</strong> {room.topic != null ? room.topic : "-"}</span>
@@ -128,8 +127,8 @@ export const RoomView: FC = () => {
 						<Button variant="warning" onClick={handleRestart} size="sm">Restart</Button>
 					</header>
 					<div className="card">
-						{voteSummary != null ?
-							<Summary voteSummary={voteSummary} room={room}></Summary> :
+						{summaryResult != null ?
+							<Summary voteSummary={summaryResult.votes} room={room}></Summary> :
 							<CardList cardSet={room.cardSet} activeCard={activeCard} disabled={member.role == Role.OBSERVER} onClick={handleCardClick}></CardList>
 						}
 					</div>
