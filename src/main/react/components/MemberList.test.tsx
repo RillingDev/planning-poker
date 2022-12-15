@@ -31,10 +31,10 @@ describe("MemberList", () => {
 	});
 
 	it("shows vote", () => {
-		const members: RoomMember[] = [{username: "John Doe", role: Role.VOTER, vote: {name: "Coffee", value: 1}}, {
+		const members: RoomMember[] = [{username: "John Doe", role: Role.VOTER, vote: {name: "Coffee", value: 1, description: null}}, {
 			username: "Alice",
 			role: Role.OBSERVER,
-			vote: {name: "?", value: null}
+			vote: {name: "?", value: null, description: null}
 		}];
 
 		render(<MemberList members={members} onAction={noop}/>);

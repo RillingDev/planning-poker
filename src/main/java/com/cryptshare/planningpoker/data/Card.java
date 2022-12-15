@@ -20,7 +20,12 @@ public class Card extends BaseEntity implements Comparable<Card> {
 	private String name;
 
 	@Column(name = "card_value")
+	@Nullable
 	private Double value;
+
+	@Column(name = "card_description")
+	@Nullable
+	private String description;
 
 	protected Card() {
 	}
@@ -44,6 +49,14 @@ public class Card extends BaseEntity implements Comparable<Card> {
 
 	public void setValue(@Nullable Double value) {
 		this.value = value;
+	}
+
+	public @Nullable String getDescription() {
+		return description;
+	}
+
+	public void setDescription(@Nullable String description) {
+		this.description = description;
 	}
 
 	@Override
