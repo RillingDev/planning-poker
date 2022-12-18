@@ -11,6 +11,7 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -35,7 +36,8 @@ class SecurityConfig {
 	// Ensure user table entry is present
 	@EventListener
 	public void onSuccess(AuthenticationSuccessEvent success) {
-		try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
+		try (Connection connection = dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(
+				"MERGE INTO app_user (username) VALUES (?)")) {
 			preparedStatement.setString(1, success.getAuthentication().getName());
 			preparedStatement.execute();
 		} catch (SQLException e) {

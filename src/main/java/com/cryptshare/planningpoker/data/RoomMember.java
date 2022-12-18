@@ -58,8 +58,8 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 		return vote;
 	}
 
-	public void setVote(@Nullable Card card) {
-		this.vote = card;
+	public void setVote(@Nullable Card vote) {
+		this.vote = vote;
 	}
 
 	@Override

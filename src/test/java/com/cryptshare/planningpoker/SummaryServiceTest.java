@@ -24,7 +24,6 @@ class SummaryServiceTest {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
-		final Card cardCoffee = new Card("Coffee", null);
 		cardSet.getCards().addAll(Set.of(card1, card3));
 
 		final Room myRoom = new Room("My Room", cardSet);

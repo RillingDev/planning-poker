@@ -43,7 +43,8 @@ public class Card extends BaseEntity implements Comparable<Card> {
 		this.name = name;
 	}
 
-	public @Nullable Double getValue() {
+	@Nullable
+	public Double getValue() {
 		return value;
 	}
 
@@ -51,7 +52,8 @@ public class Card extends BaseEntity implements Comparable<Card> {
 		this.value = value;
 	}
 
-	public @Nullable String getDescription() {
+	@Nullable
+	public String getDescription() {
 		return description;
 	}
 
