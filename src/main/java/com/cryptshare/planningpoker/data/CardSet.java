@@ -12,7 +12,7 @@ public class CardSet extends BaseEntity implements Comparable<CardSet> {
 	@Column(name = "set_name", nullable = false)
 	private String name;
 
-	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private Set<Card> cards = new HashSet<>(16);
 

@@ -9,8 +9,7 @@ import java.util.StringJoiner;
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 	public enum Role {
-		VOTER,
-		OBSERVER
+		VOTER, OBSERVER
 	}
 
 	@Column(name = "username", nullable = false)
@@ -20,9 +19,12 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 	@Column(name = "user_role", nullable = false)
 	private Role role = Role.VOTER;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "roomMember")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "vote", joinColumns = {
+			@JoinColumn(name = "room_member_id", referencedColumnName = "id")}, inverseJoinColumns = {
+			@JoinColumn(name = "card_id", referencedColumnName = "id")})
 	@Nullable
-	private Vote vote;
+	private Card vote;
 
 	protected RoomMember() {
 	}
@@ -50,17 +52,14 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 		this.role = role;
 	}
 
+
 	@Nullable
-	public Vote getVote() {
+	public Card getVote() {
 		return vote;
 	}
 
-	public boolean hasVote() {
-		return vote != null;
-	}
-
-	public void setVote(@Nullable Vote vote) {
-		this.vote = vote;
+	public void setVote(@Nullable Card card) {
+		this.vote = card;
 	}
 
 	@Override
@@ -72,6 +71,6 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 
 	@Override
 	public int compareTo(RoomMember o) {
-		return this.username.compareToIgnoreCase(o.username);
+		return username.compareToIgnoreCase(o.username);
 	}
 }

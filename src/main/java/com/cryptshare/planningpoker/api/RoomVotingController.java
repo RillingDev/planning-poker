@@ -65,7 +65,7 @@ class RoomVotingController {
 				.findFirst()
 				.orElseThrow(CardNotFoundException::new);
 
-		roomMember.setVote(new Vote(roomMember, card));
+		roomMember.setVote(card);
 		if (room.allVotersVoted()) {
 			room.setVotingState(Room.VotingState.CLOSED);
 		}

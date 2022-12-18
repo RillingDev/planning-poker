@@ -15,7 +15,7 @@ public record RoomMemberJson(@JsonProperty("username") String username, @JsonPro
 		CardJson vote = null;
 		if (roomMember.getVote() != null) {
 			if (showVotes) {
-				vote = CardJson.convert(roomMember.getVote().getCard());
+				vote = CardJson.convert(roomMember.getVote());
 			} else {
 				vote = HIDDEN_CARD;
 			}

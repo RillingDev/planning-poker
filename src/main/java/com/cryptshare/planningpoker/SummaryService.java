@@ -21,7 +21,7 @@ public class SummaryService {
 
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
-				.filter(roomMember -> roomMember.hasVote() && roomMember.getVote().getCard().getValue() != null)
+				.filter(roomMember -> roomMember.getVote() != null && roomMember.getVote().getValue() != null)
 				.sorted(Comparator.comparing(RoomMember::getVote))
 				.toList();
 
@@ -33,7 +33,7 @@ public class SummaryService {
 		Card max = null;
 		Card min = null;
 		for (RoomMember member : membersWithCardValues) {
-			final Card card = member.getVote().getCard();
+			final Card card = member.getVote();
 			total += card.getValue();
 
 			if (max == null || card.getValue() > max.getValue()) {
@@ -48,7 +48,7 @@ public class SummaryService {
 		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size() / 2);
 		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size() / 2);
 		for (RoomMember member : membersWithCardValues) {
-			final Card card = member.getVote().getCard();
+			final Card card = member.getVote();
 			if (card.equals(max)) {
 				maxVoters.add(member);
 			}

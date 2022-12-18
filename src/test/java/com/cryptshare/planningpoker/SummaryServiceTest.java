@@ -35,9 +35,9 @@ class SummaryServiceTest {
 		eve.setRole(RoomMember.Role.OBSERVER);
 		myRoom.getMembers().addAll(Set.of(johnDoe, alice, bob, eve));
 
-		johnDoe.setVote(new Vote(johnDoe, card1));
-		alice.setVote(new Vote(alice, card3));
-		bob.setVote(new Vote(bob, card3));
+		johnDoe.setVote( card1);
+		alice.setVote( card3);
+		bob.setVote( card3);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -59,9 +59,9 @@ class SummaryServiceTest {
 		final RoomMember bob = new RoomMember("Bob");
 		myRoom.getMembers().addAll(Set.of(johnDoe, alice, bob));
 
-		johnDoe.setVote(new Vote(johnDoe, card1));
-		alice.setVote(new Vote(alice, card3));
-		bob.setVote(new Vote(bob, card3));
+		johnDoe.setVote( card1);
+		alice.setVote( card3);
+		bob.setVote( card3);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -82,8 +82,8 @@ class SummaryServiceTest {
 		final RoomMember alice = new RoomMember("Alice");
 		myRoom.getMembers().addAll(Set.of(johnDoe, alice));
 
-		johnDoe.setVote(new Vote(johnDoe, card0));
-		alice.setVote(new Vote(alice, card1));
+		johnDoe.setVote( card0);
+		alice.setVote( card1);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -105,8 +105,8 @@ class SummaryServiceTest {
 		final RoomMember alice = new RoomMember("Alice");
 		myRoom.getMembers().addAll(Set.of(johnDoe, alice));
 
-		johnDoe.setVote(new Vote(johnDoe, card0));
-		alice.setVote(new Vote(alice, card1));
+		johnDoe.setVote( card0);
+		alice.setVote( card1);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -131,10 +131,10 @@ class SummaryServiceTest {
 		final RoomMember eve = new RoomMember("Eve");
 		myRoom.getMembers().addAll(Set.of(johnDoe, alice, bob, eve));
 
-		johnDoe.setVote(new Vote(johnDoe, card1));
-		alice.setVote(new Vote(alice, card2));
-		bob.setVote(new Vote(bob, card3));
-		eve.setVote(new Vote(eve, card3));
+		johnDoe.setVote( card1);
+		alice.setVote( card2);
+		bob.setVote( card3);
+		eve.setVote( card3);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -161,10 +161,10 @@ class SummaryServiceTest {
 		final RoomMember eve = new RoomMember("Eve");
 		myRoom.getMembers().addAll(Set.of(johnDoe, alice, bob, eve));
 
-		johnDoe.setVote(new Vote(johnDoe, card1));
-		alice.setVote(new Vote(alice, card2));
-		bob.setVote(new Vote(bob, card3));
-		eve.setVote(new Vote(eve, card3));
+		johnDoe.setVote( card1);
+		alice.setVote( card2);
+		bob.setVote( card3);
+		eve.setVote( card3);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -187,9 +187,9 @@ class SummaryServiceTest {
 		final RoomMember bob = new RoomMember("Bob");
 		myRoom.getMembers().addAll(Set.of(johnDoe, alice, bob));
 
-		johnDoe.setVote(new Vote(johnDoe, card1));
-		alice.setVote(new Vote(alice, card2));
-		bob.setVote(new Vote(bob, card2text));
+		johnDoe.setVote( card1);
+		alice.setVote( card2);
+		bob.setVote( card2text);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -217,7 +217,7 @@ class SummaryServiceTest {
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember johnDoe = new RoomMember("John Doe");
-		johnDoe.setVote(new Vote(johnDoe, card));
+		johnDoe.setVote( card);
 		myRoom.getMembers().add(johnDoe);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 

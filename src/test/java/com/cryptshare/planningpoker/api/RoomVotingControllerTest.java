@@ -70,11 +70,11 @@ class RoomVotingControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card));
+		roomMember1.setVote( card);
 		room.getMembers().add(roomMember1);
 
 		final RoomMember roomMember2 = new RoomMember("Alice");
-		roomMember2.setVote(new Vote(roomMember2, card));
+		roomMember2.setVote( card);
 		room.getMembers().add(roomMember2);
 
 		final RoomMember roomMember3 = new RoomMember("Bob");
@@ -91,7 +91,7 @@ class RoomVotingControllerTest {
 				.andExpect(jsonPath("$.members[0].vote.value").value((Double) null))
 				.andExpect(jsonPath("$.members[1].username").value("Bob"))
 				.andExpect(jsonPath("$.members[1].role").value("VOTER"))
-				.andExpect(jsonPath("$.members[1].vote").value((Vote) null))
+				.andExpect(jsonPath("$.members[1].vote").value((Card) null))
 				.andExpect(jsonPath("$.members[2].username").value("John Doe"))
 				.andExpect(jsonPath("$.members[2].role").value("VOTER"))
 				.andExpect(jsonPath("$.members[2].vote.name").value("1"))
@@ -109,11 +109,11 @@ class RoomVotingControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card));
+		roomMember1.setVote( card);
 		room.getMembers().add(roomMember1);
 
 		final RoomMember roomMember2 = new RoomMember("Alice");
-		roomMember2.setVote(new Vote(roomMember2, card));
+		roomMember2.setVote( card);
 		room.getMembers().add(roomMember2);
 		room.setVotingState(Room.VotingState.CLOSED);
 
@@ -201,11 +201,11 @@ class RoomVotingControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card1));
+		roomMember1.setVote( card1);
 		room.getMembers().add(roomMember1);
 
 		final RoomMember roomMember2 = new RoomMember("Alice");
-		roomMember2.setVote(new Vote(roomMember2, card1));
+		roomMember2.setVote( card1);
 		room.getMembers().add(roomMember2);
 		room.setVotingState(Room.VotingState.CLOSED);
 
@@ -232,7 +232,7 @@ class RoomVotingControllerTest {
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
 		final Room actual = captor.getValue();
-		assertThat(actual.findMemberByUser("John Doe").orElseThrow().getVote()).isNotNull().extracting(Vote::getCard).isEqualTo(card);
+		assertThat(actual.findMemberByUser("John Doe").orElseThrow().getVote()).isNotNull().isEqualTo(card);
 		assertThat(actual.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
@@ -249,7 +249,7 @@ class RoomVotingControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card1));
+		roomMember1.setVote( card1);
 		room.getMembers().add(roomMember1);
 
 		final RoomMember roomMember2 = new RoomMember("Alice");
@@ -259,8 +259,8 @@ class RoomVotingControllerTest {
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
-		final Vote vote = captor.getValue().findMemberByUser("John Doe").orElseThrow().getVote();
-		assertThat(vote).isNotNull().extracting(Vote::getCard).isEqualTo(card2);
+		final Card vote = captor.getValue().findMemberByUser("John Doe").orElseThrow().getVote();
+		assertThat(vote).isEqualTo(card2);
 	}
 
 	@Test
@@ -300,11 +300,11 @@ class RoomVotingControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card1));
+		roomMember1.setVote( card1);
 		room.getMembers().add(roomMember1);
 
 		final RoomMember roomMember2 = new RoomMember("Alice");
-		roomMember2.setVote(new Vote(roomMember2, card2));
+		roomMember2.setVote( card2);
 		room.getMembers().add(roomMember2);
 		room.setVotingState(Room.VotingState.CLOSED);
 
@@ -312,7 +312,7 @@ class RoomVotingControllerTest {
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getMembers()).hasSize(2).allMatch(rm -> !rm.hasVote());
+		assertThat(captor.getValue().getMembers()).hasSize(2).allMatch(rm -> rm.getVote() == null);
 		assertThat(captor.getValue().getVotingState()).isEqualTo(Room.VotingState.OPEN);
 	}
 
@@ -351,11 +351,11 @@ class RoomVotingControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card));
+		roomMember1.setVote( card);
 		room.getMembers().add(roomMember1);
 
 		final RoomMember roomMember2 = new RoomMember("Alice");
-		roomMember2.setVote(new Vote(roomMember2, card));
+		roomMember2.setVote( card);
 		room.getMembers().add(roomMember2);
 
 		given(summaryService.summarize(room)).willReturn(Optional.empty());
@@ -374,11 +374,11 @@ class RoomVotingControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember1 = new RoomMember("John Doe");
-		roomMember1.setVote(new Vote(roomMember1, card));
+		roomMember1.setVote( card);
 		room.getMembers().add(roomMember1);
 
 		final RoomMember roomMember2 = new RoomMember("Alice");
-		roomMember2.setVote(new Vote(roomMember2, card));
+		roomMember2.setVote( card);
 		room.getMembers().add(roomMember2);
 		room.setVotingState(Room.VotingState.CLOSED);
 
