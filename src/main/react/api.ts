@@ -18,7 +18,7 @@ export interface RoomMember {
 export interface Room {
 	readonly name: string;
 	readonly topic: string | null;
-	readonly cardSet: CardSet;
+	readonly cardSetName: string;
 	readonly members: ReadonlyArray<RoomMember>;
 	readonly votingClosed: boolean;
 }
@@ -57,7 +57,7 @@ async function assertStatusOk(res: Response): Promise<Response> {
 		throw new Error("Missing permissions. This may be because you were kicked from the room. Please go back to the room list.");
 	}
 	if (res.status == 404) {
-		throw new Error("Not found. This may be because this room was deleted in the mean time. Please go back to the room list.");
+		throw new Error("Not found. This may be because this room was deleted in the meantime. Please go back to the room list.");
 	}
 
 	const body = await res.text();

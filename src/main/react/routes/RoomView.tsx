@@ -6,7 +6,18 @@ import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
 import type { Card, EditAction, Room, RoomMember, SummaryResult, User } from "../api";
-import { CardSet, clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, Role } from "../api";
+import {
+	CardSet,
+	clearVotes,
+	createVote,
+	editMember,
+	editRoom,
+	getRoom,
+	getSummary,
+	joinRoom,
+	leaveRoom,
+	Role,
+} from "../api";
 import { AppContext } from "../AppContext";
 import { CardList } from "../components/CardList";
 import { ErrorPanel } from "../components/ErrorPanel";
@@ -39,9 +50,17 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 const findMemberForUser = (room: Room, user: User): RoomMember => {
 	const roomMember = room.members.find(member => member.username == user.username);
 	if (roomMember == null) {
-		throw new TypeError("Could not find member.");
+		throw new TypeError("Could not find member.", roomMember);
 	}
 	return roomMember;
+};
+
+const findCardSet = (cardSets: ReadonlyArray<CardSet>, room: Room): CardSet => {
+	const cardSet = cardSets.find(cs => cs.name == room.cardSetName);
+	if (cardSet == null) {
+		throw new TypeError("Invalid card set.", cardSet);
+	}
+	return cardSet;
 };
 
 export const RoomView: FC = () => {
@@ -54,7 +73,7 @@ export const RoomView: FC = () => {
 		editRoom(room.name, roomTopic, cardSet.name).then(updateRoom).catch(handleError);
 	};
 
-	const {user} = useContext(AppContext);
+	const {user, cardSets} = useContext(AppContext);
 	const loaderData = useLoaderData() as LoaderResult;
 	const [room, setRoom] = useState<Room>(loaderData.room);
 	const [member, setMember] = useState<RoomMember>(findMemberForUser(room, user));
@@ -103,6 +122,8 @@ export const RoomView: FC = () => {
 		clearVotes(room.name).then(updateRoom).catch(handleError);
 	};
 
+	const cardSet = findCardSet(cardSets, room);
+
 	return (
 		<>
 			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
@@ -111,11 +132,14 @@ export const RoomView: FC = () => {
 				<div className="d-flex justify-content-between align-items-center mb-1">
 					<div className="room-view__header">
 						<h2 className="mb-0">{room.name}</h2>
-						<Button variant="warning" size="sm" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
-						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
+						<Button variant="warning" size="sm" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon
+							icon={faEdit} title="Edit Room"/></Button>
+						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible}
+									   onHide={() => setEditModalVisible(false)}/>
 					</div>
 					<nav>
-						<Link to={"/"} onClick={() => handleLeave()} className="btn btn-secondary btn-sm">Back to Room List</Link>
+						<Link to={"/"} onClick={() => handleLeave()} className="btn btn-secondary btn-sm">Back to Room
+							List</Link>
 					</nav>
 				</div>
 				<span><strong>Topic:</strong> {room.topic != null ? room.topic : "-"}</span>
@@ -129,7 +153,8 @@ export const RoomView: FC = () => {
 					<div className="card">
 						{summaryResult != null ?
 							<Summary voteSummary={summaryResult.votes} room={room}></Summary> :
-							<CardList cardSet={room.cardSet} activeCard={activeCard} disabled={member.role == Role.OBSERVER} onClick={handleCardClick}></CardList>
+							<CardList cardSet={cardSet} activeCard={activeCard}
+									  disabled={member.role == Role.OBSERVER} onClick={handleCardClick}></CardList>
 						}
 					</div>
 				</main>
