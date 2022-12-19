@@ -1,6 +1,9 @@
 package com.cryptshare.planningpoker;
 
-import com.cryptshare.planningpoker.data.*;
+import com.cryptshare.planningpoker.data.Card;
+import com.cryptshare.planningpoker.data.CardSet;
+import com.cryptshare.planningpoker.data.Room;
+import com.cryptshare.planningpoker.data.RoomMember;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,6 +22,8 @@ public class SummaryService {
 			return Optional.empty();
 		}
 
+		// Keep only members with votes that have values to it.
+		// Subsequent IDE warnings regarding null-pointers are not valid due to this.
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
 				.filter(roomMember -> roomMember.getVote() != null && roomMember.getVote().getValue() != null)
@@ -81,5 +86,9 @@ public class SummaryService {
 		}
 		comparator = comparator.thenComparing(Card::isBasicNumeric).reversed();
 		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
+	}
+
+	public record VoteSummary(double average, int offset, Card nearestCard, Card highestVote,
+							  Set<RoomMember> highestVoters, Card lowestVote, Set<RoomMember> lowestVoters) {
 	}
 }

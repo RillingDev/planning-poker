@@ -1,5 +1,6 @@
 package com.cryptshare.planningpoker;
 
+import com.cryptshare.planningpoker.SummaryService.VoteSummary;
 import com.cryptshare.planningpoker.data.*;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.DisplayName;

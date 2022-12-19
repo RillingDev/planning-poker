@@ -1,6 +1,6 @@
 package com.cryptshare.planningpoker.api.projection;
 
-import com.cryptshare.planningpoker.data.VoteSummary;
+import com.cryptshare.planningpoker.SummaryService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -10,7 +10,7 @@ public record VoteSummaryJson(@JsonProperty("average") double average, @JsonProp
 							  @JsonProperty("highestVoters") List<RoomMemberJson> highestVoters, @JsonProperty("lowestVote") CardJson lowestVote,
 							  @JsonProperty("lowestVoters") List<RoomMemberJson> lowestVoters) {
 
-	public static VoteSummaryJson convert(VoteSummary voteSummary) {
+	public static VoteSummaryJson convert(SummaryService.VoteSummary voteSummary) {
 		return new VoteSummaryJson(
 				voteSummary.average(),
 				voteSummary.offset(),
