@@ -1,4 +1,4 @@
-# Planning-Poker
+# Planning Poker
 
 ## Usage
 
