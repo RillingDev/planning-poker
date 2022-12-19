@@ -17,13 +17,17 @@ export const CreateRoomModal: FC<{
 
 	const onNameChange = (e: ChangeEvent<HTMLInputElement>): void => {
 		const value = e.target.value;
-		e.target.setCustomValidity(existingRooms.some(r => r.name == value) ? "This room name is already in use." : "");
+		e.target.setCustomValidity(existingRooms.some(room => room.name == value) ? "This room name is already in use." : "");
 		setRoomName(value);
 	};
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		onSubmit(roomName, roomTopic, cardSets.find(cardSet => cardSet.name == cardSetName)!);
+
+		// Reset name and topic, as these are probably not useful for the next room. Card set may make sense so keep it.
+		setRoomName("");
+		setRoomTopic("");
 	};
 
 	return (
