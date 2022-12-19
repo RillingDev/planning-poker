@@ -1,18 +1,25 @@
-import { FC, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { CardSet } from "../../api";
+import { CardSet, Room } from "../../api";
 import { AppContext } from "../../AppContext";
 
 export const CreateRoomModal: FC<{
 	show: boolean;
+	existingRooms: ReadonlyArray<Room>;
 	onHide: () => void;
 	onSubmit: (roomName: string, roomTopic: string, cardSet: CardSet) => void;
-}> = ({show, onHide, onSubmit}) => {
+}> = ({show, existingRooms, onHide, onSubmit}) => {
 	const {cardSets} = useContext(AppContext);
 
 	const [roomName, setRoomName] = useState<string>("");
 	const [roomTopic, setRoomTopic] = useState<string>("");
 	const [cardSetName, setCardSetName] = useState<string>("");
+
+	const onNameChange = (e: ChangeEvent<HTMLInputElement>): void => {
+		const value = e.target.value;
+		e.target.setCustomValidity(existingRooms.some(r => r.name == value) ? "This room name is already in use." : "");
+		setRoomName(value);
+	};
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -35,7 +42,7 @@ export const CreateRoomModal: FC<{
 							title="May not contain the following: ;%\/"
 							pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
 							value={roomName}
-							onChange={(e) => setRoomName(e.target.value)}
+							onChange={onNameChange}
 						/>
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formCreateRoomCardSet">
