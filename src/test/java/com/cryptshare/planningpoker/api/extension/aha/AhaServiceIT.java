@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = { "planning-poker.extension.aha.score-fact-names=Fact Name 1,Fact Name 2",
 		"planning-poker.extension.aha.subdomain=example", "planning-poker.extension.aha.key=th1sK3y1sFak3" })
 @ActiveProfiles("extension:aha")
+@TestPropertySource(locations = "classpath:application-integrationtest.properties")
 class AhaServiceIT {
 
 	@Autowired
