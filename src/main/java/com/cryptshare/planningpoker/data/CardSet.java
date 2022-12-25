@@ -2,13 +2,16 @@ package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.*;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
 @Entity
 @Table(name = "card_set")
-public class CardSet extends BaseEntity implements Comparable<CardSet> {
+public class CardSet extends BaseEntity {
+	public static final Comparator<CardSet> ALPHABETIC_COMPARATOR = Comparator.comparing(CardSet::getName, String::compareToIgnoreCase);
+
 	@Column(name = "set_name", nullable = false)
 	private String name;
 
@@ -25,7 +28,9 @@ public class CardSet extends BaseEntity implements Comparable<CardSet> {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", CardSet.class.getSimpleName() + "[", "]").add("name='" + name + "'").toString();
+		return new StringJoiner(", ", CardSet.class.getSimpleName() + "[", "]")
+				.add("name='" + name + "'")
+				.add("cards=" + cards.size()).toString();
 	}
 
 	public String getName() {
@@ -44,8 +49,4 @@ public class CardSet extends BaseEntity implements Comparable<CardSet> {
 		this.cards = cards;
 	}
 
-	@Override
-	public int compareTo(CardSet o) {
-		return name.compareToIgnoreCase(o.name);
-	}
 }

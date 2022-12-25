@@ -25,7 +25,7 @@ public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic")
 				room.getName(),
 				room.getTopic(),
 				room.getCardSet().getName(),
-				room.getMembers().stream().sorted().map(roomMemberMapper).toList(),
+				room.getMembers().stream().sorted(RoomMember.ALPHABETIC_COMPARATOR).map(roomMemberMapper).toList(),
 				room.getVotingState() == Room.VotingState.CLOSED);
 	}
 }

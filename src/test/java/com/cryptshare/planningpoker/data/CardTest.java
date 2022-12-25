@@ -6,13 +6,10 @@ import org.junit.jupiter.api.RepeatedTest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CardTest {
-
-	private static final Random random = new Random();
 
 	@RepeatedTest(100) // Test relies on random shuffled input, so we test several.
 	@DisplayName("Is sort")
@@ -44,7 +41,7 @@ class CardTest {
 				cardQ));
 		Collections.shuffle(unordered);
 
-		final List<Card> ordered = unordered.stream().sorted().toList();
+		final List<Card> ordered = unordered.stream().sorted(Card.NATURAL_COMPARATOR).toList();
 		assertThat(ordered).containsExactly(card0,
 				card05,
 				card1,

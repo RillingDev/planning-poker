@@ -27,7 +27,7 @@ public class SummaryService {
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
 				.filter(roomMember -> roomMember.getVote() != null && roomMember.getVote().getValue() != null)
-				.sorted(Comparator.comparing(RoomMember::getVote))
+				.sorted(Comparator.comparing(RoomMember::getVote, Card.NATURAL_COMPARATOR))
 				.toList();
 
 		if (membersWithCardValues.isEmpty()) {

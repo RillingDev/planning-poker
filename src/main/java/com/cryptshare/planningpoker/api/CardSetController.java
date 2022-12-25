@@ -1,6 +1,7 @@
 package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.api.projection.CardSetJson;
+import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.CardSetRepository;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ class CardSetController {
 	@GetMapping(value = "/api/card-sets", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	List<CardSetJson> loadCardSets() {
-		return cardSetRepository.findAll().stream().sorted().map(CardSetJson::convert).toList();
+		return cardSetRepository.findAll().stream().sorted(CardSet.ALPHABETIC_COMPARATOR).map(CardSetJson::convert).toList();
 	}
 
 }
