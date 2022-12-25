@@ -98,8 +98,6 @@ class RoomControllerTest {
 		assertThat(captor.getValue().getTopic()).isNull();
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
-		assertThat(members).extracting(RoomMember::getUsername).containsExactly("John Doe");
-		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.VOTER);
 	}
 
 	@Test
@@ -119,8 +117,6 @@ class RoomControllerTest {
 		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
-		assertThat(members).extracting(RoomMember::getUsername).containsExactly("John Doe");
-		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.VOTER);
 	}
 
 	@Test

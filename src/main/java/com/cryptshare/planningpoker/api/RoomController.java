@@ -48,7 +48,6 @@ class RoomController {
 
 		final Room room = new Room(roomName, cardSet);
 		room.setTopic(roomTopic);
-		room.getMembers().add(new RoomMember(user.getUsername()));
 		roomRepository.save(room);
 		logger.info("Created room '{}' by user '{}'.", room, user.getUsername());
 	}

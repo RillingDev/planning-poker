@@ -2,6 +2,7 @@ package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.*;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -72,12 +73,12 @@ public class Room extends BaseEntity {
     }
 
     public void setTopic(@Nullable String topic) {
-        if (topic != null && topic.isEmpty()) {
-            this.topic = null;
-        } else {
-            this.topic = topic;
-        }
-    }
+		if (StringUtils.hasText(topic)) {
+			this.topic = topic;
+		} else {
+			this.topic = null;
+		}
+	}
 
     public VotingState getVotingState() {
         return votingState;
