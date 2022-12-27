@@ -21,7 +21,7 @@ async function createContextState() {
 }
 
 createContextState().then(ctx => {
-	createRoot(document.getElementById("root") as HTMLElement).render(
+	createRoot(document.getElementById("root")!).render(
 		<React.StrictMode>
 			<AppContext.Provider value={ctx}>
 				<Header/>

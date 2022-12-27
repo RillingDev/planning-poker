@@ -6,18 +6,7 @@ import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
 import type { Card, EditAction, Room, RoomMember, SummaryResult, User } from "../api";
-import {
-	CardSet,
-	clearVotes,
-	createVote,
-	editMember,
-	editRoom,
-	getRoom,
-	getSummary,
-	joinRoom,
-	leaveRoom,
-	Role,
-} from "../api";
+import { CardSet, clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, Role, } from "../api";
 import { AppContext } from "../AppContext";
 import { CardList } from "../components/CardList";
 import { ErrorPanel } from "../components/ErrorPanel";
@@ -33,7 +22,7 @@ interface LoaderResult {
 }
 
 export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
-	const roomName = args.params.roomName as string;
+	const roomName = args.params.roomName!;
 
 	await joinRoom(roomName);
 
