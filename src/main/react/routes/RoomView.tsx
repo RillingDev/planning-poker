@@ -13,7 +13,7 @@ import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { Summary } from "../components/Summary";
-import { useErrorHandler, useInterval } from "../hooks";
+import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
 import "./RoomView.css";
 
 interface LoaderResult {
@@ -56,9 +56,9 @@ export const RoomView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
 
 
-	const [editModalVisible, setEditModalVisible] = useState(false);
+	const [editModalVisible, showEditModel, hideEditModal] = useBooleanState(false);
 	const handleEdit = (roomTopic: string, cardSet: CardSet) => {
-		setEditModalVisible(false);
+		hideEditModal();
 		editRoom(room.name, roomTopic, cardSet.name).then(updateRoom).catch(handleError);
 	};
 
@@ -115,20 +115,21 @@ export const RoomView: FC = () => {
 
 	return (
 		<>
-			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
+			<ErrorPanel error={error} onClose={resetError}/>
 
 			<header>
 				<div className="d-flex justify-content-between align-items-center mb-1">
 					<div className="room-view__header">
 						<h2 className="mb-0">{room.name}</h2>
-						<Button variant="warning" size="sm" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon
-							icon={faEdit} title="Edit Room"/></Button>
-						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible}
-									   onHide={() => setEditModalVisible(false)}/>
+						<Button variant="warning" size="sm" onClick={showEditModel}>
+							<FontAwesomeIcon icon={faEdit} title="Edit Room"/>
+						</Button>
+						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={hideEditModal}/>
 					</div>
 					<nav>
-						<Link to={"/"} onClick={() => handleLeave()} className="btn btn-secondary btn-sm">Back to Room
-							List</Link>
+						<Link to={"/"} onClick={handleLeave} className="btn btn-secondary btn-sm">
+							Back to Room List
+						</Link>
 					</nav>
 				</div>
 				<span><strong>Topic:</strong> {room.topic != null ? room.topic : "-"}</span>
@@ -141,15 +142,14 @@ export const RoomView: FC = () => {
 					</header>
 					<div className="card">
 						{summaryResult != null ?
-							<Summary voteSummary={summaryResult.votes} room={room}></Summary> :
-							<CardList cardSet={cardSet} activeCard={activeCard}
-									  disabled={member.role == Role.OBSERVER} onClick={handleCardClick}></CardList>
+							<Summary voteSummary={summaryResult.votes} room={room}/> :
+							<CardList cardSet={cardSet} activeCard={activeCard} disabled={member.role == Role.OBSERVER} onClick={handleCardClick}/>
 						}
 					</div>
 				</main>
 				<div>
 					<h3 className="mb-2">Members</h3>
-					<MemberList members={room.members ?? []} onAction={handleAction}></MemberList>
+					<MemberList members={room.members ?? []} onAction={handleAction}/>
 				</div>
 			</div>
 		</>

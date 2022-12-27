@@ -18,7 +18,7 @@ export const DeleteRoomModal: FC<{
 				Are you sure you want to delete this room?
 			</Modal.Body>
 			<Modal.Footer>
-				<Button variant="danger" onClick={() => onSubmit()}>Permanently Delete This Room</Button>
+				<Button variant="danger" onClick={onSubmit}>Permanently Delete This Room</Button>
 			</Modal.Footer>
 		</Modal>
 	);

@@ -1,21 +1,21 @@
 import { FC, FormEvent, useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Room, VoteSummary } from "../../../api";
-import { useErrorHandler } from "../../../hooks";
+import { useBooleanState, useErrorHandler } from "../../../hooks";
 import { ErrorPanel } from "../../ErrorPanel";
 import { getScoreFactNames, putIdeaScore } from "./api";
 
 export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({room, voteSummary}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	const [modalVisible, setModalVisible] = useState(false);
+	const [modalVisible, showModal, hideModal] = useBooleanState(false);
 
 	const [scoreFactName, setScoreFactName] = useState("");
 
 	const [scoreFactNames, setScoreFactNames] = useState<string[]>([]);
 	useEffect(() => {
 		getScoreFactNames().then(loaded => setScoreFactNames(loaded)).catch(handleError);
-	});
+	}, [handleError]);
 
 
 	const [ajaxInProgress, setAjaxInProgress] = useState(false);
@@ -23,15 +23,15 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setAjaxInProgress(true);
-		putIdeaScore(room.name, scoreFactName, score).then(() => setModalVisible(false)).catch(handleError).finally(() => setAjaxInProgress(false));
+		putIdeaScore(room.name, scoreFactName, score).then(hideModal).catch(handleError).finally(() => setAjaxInProgress(false));
 	};
 
 	const ideaId = room.topic;
 	const score = voteSummary.average;
 
 	return (<>
-			<Button size="sm" onClick={() => setModalVisible(true)} hidden={ideaId == null}>Save to Aha!</Button>
-			<Modal show={modalVisible} onHide={() => setModalVisible(false)}>
+			<Button size="sm" onClick={showModal} hidden={ideaId == null}>Save to Aha!</Button>
+			<Modal show={modalVisible} onHide={hideModal}>
 				<Form onSubmit={handleSubmit}>
 					<Modal.Header closeButton>
 						<Modal.Title>Save to Aha!</Modal.Title>
@@ -44,7 +44,7 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 							<Form.Label>Score Fact Name</Form.Label>
 							<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)}>
 								<option disabled value=""></option>
-								{scoreFactNames.map(sfn => <option key={sfn}>{sfn}</option>)}
+								{scoreFactNames.map(factName => <option key={factName}>{factName}</option>)}
 							</Form.Select>
 						</Form.Group>
 					</Modal.Body>
