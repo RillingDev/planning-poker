@@ -96,7 +96,7 @@ export async function loadRooms() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room[]>);
 }
 
-export async function createRoom(roomName: string, roomTopic: string, cardSetName: string) {
+export async function createRoom(roomName: string, roomTopic: string | null, cardSetName: string) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
 	if (roomTopic != null) {
 		url.searchParams.set("room-topic", roomTopic);
