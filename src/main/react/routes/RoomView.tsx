@@ -64,8 +64,10 @@ export const RoomView: FC = () => {
 
 	const {user, cardSets} = useContext(AppContext);
 	const loaderData = useLoaderData() as LoaderResult;
+
 	const [room, setRoom] = useState<Room>(loaderData.room);
-	const [member, setMember] = useState<RoomMember>(findMemberForUser(room, user));
+	const cardSet = findCardSet(cardSets, room);
+	const member = findMemberForUser(room, user);
 	const [activeCard, setActiveCard] = useState<Card | null>(member.vote);
 
 	const [summaryResult, setSummaryResult] = useState<SummaryResult | null>(loaderData.summaryResult);
@@ -81,9 +83,7 @@ export const RoomView: FC = () => {
 	const updateRoom = async () => {
 		const loadedRoom = await getRoom(room.name);
 		setRoom(loadedRoom);
-		const loadedMember = findMemberForUser(loadedRoom, user);
-		setMember(loadedMember);
-		setActiveCard(loadedMember.vote);
+		setActiveCard(findMemberForUser(loadedRoom, user).vote);
 
 		if (loadedRoom.votingClosed) {
 			if (summaryResult == null) {
@@ -111,7 +111,6 @@ export const RoomView: FC = () => {
 		clearVotes(room.name).then(updateRoom).catch(handleError);
 	};
 
-	const cardSet = findCardSet(cardSets, room);
 
 	return (
 		<>
