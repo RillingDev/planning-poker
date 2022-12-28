@@ -1,8 +1,8 @@
 import { FC, FormEvent, useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
-import { Room, VoteSummary } from "../../../api";
-import { useBooleanState, useErrorHandler } from "../../../hooks";
-import { ErrorPanel } from "../../ErrorPanel";
+import { Room, VoteSummary } from "../../api";
+import { ErrorPanel } from "../../components/ErrorPanel";
+import { useBooleanState, useErrorHandler } from "../../hooks";
 import { getScoreFactNames, putIdeaScore } from "./api";
 
 export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({room, voteSummary}) => {
