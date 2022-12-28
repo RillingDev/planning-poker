@@ -15,7 +15,7 @@ export const CreateRoomModal: FC<{
 	const [roomTopic, setRoomTopic] = useState<string>("");
 	const [cardSetName, setCardSetName] = useState<string>("");
 
-	const onNameChange = (e: ChangeEvent<HTMLInputElement>): void => {
+	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		e.target.setCustomValidity(existingRooms.some(room => room.name == value) ? "This room name is already in use." : "");
 		setRoomName(value);
@@ -46,7 +46,7 @@ export const CreateRoomModal: FC<{
 							title="May not contain the following: ;%\/"
 							pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
 							value={roomName}
-							onChange={onNameChange}
+							onChange={handleNameChange}
 						/>
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formCreateRoomCardSet">
