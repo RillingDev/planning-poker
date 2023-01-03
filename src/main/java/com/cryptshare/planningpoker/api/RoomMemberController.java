@@ -66,11 +66,19 @@ class RoomMemberController {
 
 		switch (action) {
 			case SET_VOTER -> {
+				if (targetMember.getRole() == RoomMember.Role.VOTER) {
+					logger.warn("Member '{}' already has the role voter in '{}'.", actingMember, room);
+					return;
+				}
 				targetMember.setRole(RoomMember.Role.VOTER);
 				roomRepository.save(room);
 				logger.info("Member '{}' set '{}' to voter in '{}'.", actingMember, targetMember, room);
 			}
 			case SET_OBSERVER -> {
+				if (targetMember.getRole() == RoomMember.Role.OBSERVER) {
+					logger.warn("Member '{}' already has the role observer in '{}'.", actingMember, room);
+					return;
+				}
 				targetMember.setRole(RoomMember.Role.OBSERVER);
 				if (room.allVotersVoted()) {
 					room.setVotingState(Room.VotingState.CLOSED);
