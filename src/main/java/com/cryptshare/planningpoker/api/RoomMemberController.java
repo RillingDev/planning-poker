@@ -33,7 +33,7 @@ class RoomMemberController {
 			return;
 		}
 
-		room.getMembers().add(new RoomMember(user.getUsername()));
+		addMember(room, user.getUsername());
 		roomRepository.save(room);
 		logger.info("User '{}' joined room '{}'.", user.getUsername(), room);
 	}
@@ -44,10 +44,7 @@ class RoomMemberController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		room.findMemberByUser(user.getUsername()).ifPresentOrElse(roomMember -> {
-			room.getMembers().remove(roomMember);
-			if (room.allVotersVoted()) {
-				room.setVotingState(Room.VotingState.CLOSED);
-			}
+			removeMember(room, roomMember);
 			roomRepository.save(room);
 			logger.info("User '{}' left room '{}'.", user.getUsername(), room);
 		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getUsername(), room));
@@ -70,7 +67,7 @@ class RoomMemberController {
 					logger.warn("Member '{}' already has the role voter in '{}'.", actingMember, room);
 					return;
 				}
-				targetMember.setRole(RoomMember.Role.VOTER);
+				setRole(room, targetMember, RoomMember.Role.VOTER);
 				roomRepository.save(room);
 				logger.info("Member '{}' set '{}' to voter in '{}'.", actingMember, targetMember, room);
 			}
@@ -79,18 +76,12 @@ class RoomMemberController {
 					logger.warn("Member '{}' already has the role observer in '{}'.", actingMember, room);
 					return;
 				}
-				targetMember.setRole(RoomMember.Role.OBSERVER);
-				if (room.allVotersVoted()) {
-					room.setVotingState(Room.VotingState.CLOSED);
-				}
+				setRole(room, targetMember, RoomMember.Role.OBSERVER);
 				roomRepository.save(room);
 				logger.info("Member '{}' set '{}' to observer in '{}'.", actingMember, targetMember, room);
 			}
 			case KICK -> {
-				room.getMembers().remove(targetMember);
-				if (room.allVotersVoted()) {
-					room.setVotingState(Room.VotingState.CLOSED);
-				}
+				removeMember(room, targetMember);
 				roomRepository.save(room);
 				logger.info("Member '{}' kicked '{}' from '{}'.", actingMember, targetMember, room);
 			}
@@ -107,4 +98,23 @@ class RoomMemberController {
 	private static class MemberNotFoundException extends RuntimeException {
 	}
 
+	private static void setRole(Room room, RoomMember roomMember, RoomMember.Role role) {
+		roomMember.setRole(role);
+
+		if (role == RoomMember.Role.OBSERVER && room.allVotersVoted()) {
+			room.setVotingState(Room.VotingState.CLOSED);
+		}
+	}
+
+	private static void addMember(Room room, String username) {
+		room.getMembers().add(new RoomMember(username));
+	}
+
+	private static void removeMember(Room room, RoomMember roomMember) {
+		room.getMembers().remove(roomMember);
+
+		if (room.allVotersVoted()) {
+			room.setVotingState(Room.VotingState.CLOSED);
+		}
+	}
 }

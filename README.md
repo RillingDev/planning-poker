@@ -57,3 +57,10 @@ This will:
 1) compile the backend.
 2) compile the frontend into the compiled backend files directory.
 3) package the whole bunch as JAR.
+
+### Architecture
+
+#### Validation & State Transitions
+
+The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or voting).
+Integrity related validation is done in the persistence layer, such as clearing votes of observers.
