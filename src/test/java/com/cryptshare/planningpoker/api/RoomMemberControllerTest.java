@@ -268,7 +268,7 @@ class RoomMemberControllerTest {
 		final RoomMember alice = new RoomMember("Alice");
 		room.getMembers().add(alice);
 		final RoomMember johnDoe = new RoomMember("John Doe");
-		johnDoe.setVote(new Vote(johnDoe, card));
+		johnDoe.setVote( card);
 		room.getMembers().add(johnDoe);
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/Alice").queryParam("action", "KICK").with(csrf())).andExpect(status().isOk());

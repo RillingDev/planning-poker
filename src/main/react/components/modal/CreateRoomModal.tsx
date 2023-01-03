@@ -1,22 +1,33 @@
-import { FC, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { CardSet } from "../../api";
+import { CardSet, Room } from "../../api";
 import { AppContext } from "../../AppContext";
 
 export const CreateRoomModal: FC<{
 	show: boolean;
+	existingRooms: ReadonlyArray<Room>;
 	onHide: () => void;
 	onSubmit: (roomName: string, roomTopic: string, cardSet: CardSet) => void;
-}> = ({show, onHide, onSubmit}) => {
+}> = ({show, existingRooms, onHide, onSubmit}) => {
 	const {cardSets} = useContext(AppContext);
 
 	const [roomName, setRoomName] = useState<string>("");
 	const [roomTopic, setRoomTopic] = useState<string>("");
 	const [cardSetName, setCardSetName] = useState<string>("");
 
+	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		e.target.setCustomValidity(existingRooms.some(room => room.name == value) ? "This room name is already in use." : "");
+		setRoomName(value);
+	};
+
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		onSubmit(roomName, roomTopic, cardSets.find(cardSet => cardSet.name == cardSetName)!);
+
+		// Reset name and topic, as these are probably not useful for the next room. Card set may make sense so keep it.
+		setRoomName("");
+		setRoomTopic("");
 	};
 
 	return (
@@ -35,7 +46,7 @@ export const CreateRoomModal: FC<{
 							title="May not contain the following: ;%\/"
 							pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
 							value={roomName}
-							onChange={(e) => setRoomName(e.target.value)}
+							onChange={handleNameChange}
 						/>
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formCreateRoomCardSet">

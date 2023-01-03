@@ -50,13 +50,13 @@ class RoomControllerTest {
 				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("Room #1"))
 				.andExpect(jsonPath("$[0].topic").value("Foo!"))
-				.andExpect(jsonPath("$[0].cardSet.name").value("My Set 1"))
+				.andExpect(jsonPath("$[0].cardSetName").value("My Set 1"))
 				.andExpect(jsonPath("$[0].members.length()").value(1))
 				.andExpect(jsonPath("$[0].members[0].username").value("John Doe"))
 				.andExpect(jsonPath("$[0].members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$[1].name").value("Room #2"))
 				.andExpect(jsonPath("$[1].topic").value((String) null))
-				.andExpect(jsonPath("$[1].cardSet.name").value("My Set 1"))
+				.andExpect(jsonPath("$[1].cardSetName").value("My Set 1"))
 				.andExpect(jsonPath("$[1].members.length()").value(0));
 	}
 
@@ -98,8 +98,6 @@ class RoomControllerTest {
 		assertThat(captor.getValue().getTopic()).isNull();
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
-		assertThat(members).extracting(RoomMember::getUsername).containsExactly("John Doe");
-		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.VOTER);
 	}
 
 	@Test
@@ -119,8 +117,6 @@ class RoomControllerTest {
 		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 		final Set<RoomMember> members = captor.getValue().getMembers();
-		assertThat(members).extracting(RoomMember::getUsername).containsExactly("John Doe");
-		assertThat(members).extracting(RoomMember::getRole).containsExactly(RoomMember.Role.VOTER);
 	}
 
 	@Test

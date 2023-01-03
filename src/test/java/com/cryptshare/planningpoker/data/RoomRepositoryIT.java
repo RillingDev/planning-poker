@@ -52,8 +52,7 @@ class RoomRepositoryIT {
 		final RoomMember member = new RoomMember("John Doe");
 		room.getMembers().add(member);
 
-		final Vote vote = new Vote(member, card);
-		member.setVote(vote);
+		member.setVote(card);
 
 		roomRepository.save(room);
 

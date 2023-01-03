@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
+		"preview": "vite preview",
 		"lint": "eslint src/main/react/ --ext tsx --ext ts",
 		"test": "vitest"
 	},
@@ -37,6 +38,6 @@
 		"jsdom": "^20.0.3",
 		"typescript": "~4.9.3",
 		"vite": "^4.0.1",
-		"vitest": "^0.25.3"
+		"vitest": "^0.26.2"
 	}
 }

@@ -1,6 +1,9 @@
 package com.cryptshare.planningpoker;
 
-import com.cryptshare.planningpoker.data.*;
+import com.cryptshare.planningpoker.data.Card;
+import com.cryptshare.planningpoker.data.CardSet;
+import com.cryptshare.planningpoker.data.Room;
+import com.cryptshare.planningpoker.data.RoomMember;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,10 +22,12 @@ public class SummaryService {
 			return Optional.empty();
 		}
 
+		// Keep only members with votes that have values to it.
+		// Subsequent IDE warnings regarding null-pointers are not valid due to this.
 		final List<RoomMember> membersWithCardValues = room.getMembers()
 				.stream()
-				.filter(roomMember -> roomMember.hasVote() && roomMember.getVote().getCard().getValue() != null)
-				.sorted(Comparator.comparing(RoomMember::getVote))
+				.filter(roomMember -> roomMember.getVote() != null && roomMember.getVote().getValue() != null)
+				.sorted(Comparator.comparing(RoomMember::getVote, Card.NATURAL_COMPARATOR))
 				.toList();
 
 		if (membersWithCardValues.isEmpty()) {
@@ -33,7 +38,7 @@ public class SummaryService {
 		Card max = null;
 		Card min = null;
 		for (RoomMember member : membersWithCardValues) {
-			final Card card = member.getVote().getCard();
+			final Card card = member.getVote();
 			total += card.getValue();
 
 			if (max == null || card.getValue() > max.getValue()) {
@@ -48,7 +53,7 @@ public class SummaryService {
 		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size() / 2);
 		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size() / 2);
 		for (RoomMember member : membersWithCardValues) {
-			final Card card = member.getVote().getCard();
+			final Card card = member.getVote();
 			if (card.equals(max)) {
 				maxVoters.add(member);
 			}
@@ -81,5 +86,9 @@ public class SummaryService {
 		}
 		comparator = comparator.thenComparing(Card::isBasicNumeric).reversed();
 		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
+	}
+
+	public record VoteSummary(double average, int offset, Card nearestCard, Card highestVote, Set<RoomMember> highestVoters, Card lowestVote,
+							  Set<RoomMember> lowestVoters) {
 	}
 }

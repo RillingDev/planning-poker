@@ -18,7 +18,7 @@ export interface RoomMember {
 export interface Room {
 	readonly name: string;
 	readonly topic: string | null;
-	readonly cardSet: CardSet;
+	readonly cardSetName: string;
 	readonly members: ReadonlyArray<RoomMember>;
 	readonly votingClosed: boolean;
 }
@@ -26,6 +26,7 @@ export interface Room {
 export interface Card {
 	readonly name: string;
 	readonly value: number | null;
+	readonly description: number | null;
 }
 
 export interface CardSet {
@@ -56,7 +57,7 @@ async function assertStatusOk(res: Response): Promise<Response> {
 		throw new Error("Missing permissions. This may be because you were kicked from the room. Please go back to the room list.");
 	}
 	if (res.status == 404) {
-		throw new Error("Not found. This may be because this room was deleted in the mean time. Please go back to the room list.");
+		throw new Error("Not found. This may be because this room was deleted in the meantime. Please go back to the room list.");
 	}
 
 	const body = await res.text();
@@ -95,7 +96,7 @@ export async function loadRooms() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room[]>);
 }
 
-export async function createRoom(roomName: string, roomTopic: string, cardSetName: string) {
+export async function createRoom(roomName: string, roomTopic: string | null, cardSetName: string) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
 	if (roomTopic != null) {
 		url.searchParams.set("room-topic", roomTopic);

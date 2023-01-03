@@ -3,11 +3,15 @@ package com.cryptshare.planningpoker.data;
 import jakarta.persistence.*;
 import org.springframework.lang.Nullable;
 
+import java.util.Comparator;
 import java.util.StringJoiner;
 
 @Entity
 @Table(name = "room_member")
-public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
+public class RoomMember extends BaseEntity {
+	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername,
+			String::compareToIgnoreCase);
+
 	public enum Role {
 		VOTER,
 		OBSERVER
@@ -20,9 +24,11 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 	@Column(name = "user_role", nullable = false)
 	private Role role = Role.VOTER;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "roomMember")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "vote", joinColumns = { @JoinColumn(name = "room_member_id", referencedColumnName = "id") }, inverseJoinColumns = {
+			@JoinColumn(name = "card_id", referencedColumnName = "id") })
 	@Nullable
-	private Vote vote;
+	private Card vote;
 
 	protected RoomMember() {
 	}
@@ -51,15 +57,11 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 	}
 
 	@Nullable
-	public Vote getVote() {
+	public Card getVote() {
 		return vote;
 	}
 
-	public boolean hasVote() {
-		return vote != null;
-	}
-
-	public void setVote(@Nullable Vote vote) {
+	public void setVote(@Nullable Card vote) {
 		this.vote = vote;
 	}
 
@@ -68,10 +70,5 @@ public class RoomMember extends BaseEntity implements Comparable<RoomMember> {
 		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'")
 				.add("role=" + role)
 				.toString();
-	}
-
-	@Override
-	public int compareTo(RoomMember o) {
-		return this.username.compareToIgnoreCase(o.username);
 	}
 }

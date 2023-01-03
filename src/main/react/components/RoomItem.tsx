@@ -1,9 +1,10 @@
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { CardSet, Room } from "../api";
+import { useBooleanState } from "../hooks";
 import { DeleteRoomModal } from "./modal/DeleteRoomModal";
 import { EditRoomModal } from "./modal/EditRoomModal";
 import "./RoomItem.css";
@@ -13,15 +14,15 @@ export const RoomItem: FC<{
 	onEdit: (roomTopic: string, cardSet: CardSet) => void;
 	onDelete: () => void;
 }> = ({room, onEdit, onDelete}) => {
-	const [editModalVisible, setEditModalVisible] = useState(false);
+	const [editModalVisible, showEditModal, hideEditModal] = useBooleanState(false);
 	const handleEdit = (roomTopic: string, newCardSet: CardSet) => {
-		setEditModalVisible(false);
+		hideEditModal();
 		onEdit(roomTopic, newCardSet);
 	};
 
-	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+	const [deleteModalVisible, showDeleteModal, hideDeleteModal] = useBooleanState(false);
 	const handleDelete = () => {
-		setDeleteModalVisible(false);
+		hideDeleteModal();
 		onDelete();
 	};
 
@@ -29,11 +30,11 @@ export const RoomItem: FC<{
 		<div className="card room-item">
 			<Link to={`/rooms/${encodeURIComponent(room.name)}`}>{room.name}</Link>
 
-			<Button size="sm" variant="warning" onClick={() => setEditModalVisible(true)}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
-			<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={() => setEditModalVisible(false)}/>
+			<Button size="sm" variant="warning" onClick={showEditModal}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
+			<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={hideEditModal}/>
 
-			<Button size="sm" variant="danger" onClick={() => setDeleteModalVisible(true)}><FontAwesomeIcon icon={faTrash} title="Delete Room"/></Button>
-			<DeleteRoomModal onSubmit={handleDelete} room={room} show={deleteModalVisible} onHide={() => setDeleteModalVisible(false)}/>
+			<Button size="sm" variant="danger" onClick={showDeleteModal}><FontAwesomeIcon icon={faTrash} title="Delete Room"/></Button>
+			<DeleteRoomModal onSubmit={handleDelete} room={room} show={deleteModalVisible} onHide={hideDeleteModal}/>
 		</div>
 	);
 };

@@ -2,15 +2,14 @@ package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.*;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Entity
 @Table(name = "room")
 public class Room extends BaseEntity {
+	public static final Comparator<Room> ALPHABETIC_COMPARATOR = Comparator.comparing(Room::getName, String::compareToIgnoreCase);
 
 	@Column(name = "room_name", nullable = false)
 	private String name;
@@ -19,7 +18,7 @@ public class Room extends BaseEntity {
 	@Nullable
 	private String topic;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private CardSet cardSet;
 
@@ -74,10 +73,10 @@ public class Room extends BaseEntity {
 	}
 
 	public void setTopic(@Nullable String topic) {
-		if (topic != null && topic.isEmpty()) {
-			this.topic = null;
-		} else {
+		if (StringUtils.hasText(topic)) {
 			this.topic = topic;
+		} else {
+			this.topic = null;
 		}
 	}
 
@@ -90,7 +89,7 @@ public class Room extends BaseEntity {
 	}
 
 	public boolean allVotersVoted() {
-		return members.stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(RoomMember::hasVote);
+		return members.stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(roomMember -> roomMember.getVote() != null);
 	}
 
 	public Optional<RoomMember> findMemberByUser(String username) {
@@ -102,6 +101,7 @@ public class Room extends BaseEntity {
 		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
 				.add("topic='" + topic + "'")
 				.add("cardSet='" + cardSet.getName() + "'")
+				.add("members=" + members.size())
 				.add("votingState='" + votingState + "'")
 				.toString();
 	}

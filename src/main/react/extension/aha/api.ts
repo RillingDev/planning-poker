@@ -1,4 +1,4 @@
-import { isStatusOk, MEDIA_TYPE_JSON } from "../../../apiUtils";
+import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
 
 export async function assertStatusOk(res: Response): Promise<Response> {
 	if (isStatusOk(res)) {

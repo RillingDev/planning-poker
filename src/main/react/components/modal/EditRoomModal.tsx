@@ -12,7 +12,7 @@ export const EditRoomModal: FC<{
 }> = ({room, show, onHide, onSubmit}) => {
 	const {cardSets} = useContext(AppContext);
 
-	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSet.name);
+	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
 	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
 
 	const handleSubmit = (e: FormEvent) => {

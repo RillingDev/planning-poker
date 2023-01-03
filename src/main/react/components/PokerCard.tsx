@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button, ButtonProps } from "react-bootstrap";
+import { Button, ButtonProps, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Card } from "../api";
 import "./PokerCard.css";
 
@@ -8,7 +8,18 @@ interface Props extends ButtonProps {
 }
 
 export const PokerCard: FC<Props> = ({card, ...props}) => {
+	const button = <Button className="btn-poker-card" variant="outline-dark" {...props}>{card.name}</Button>;
+
+	if (card.description == null) {
+		return button;
+	}
+
 	return (
-		<Button className="btn-poker-card" variant="outline-dark" {...props}>{card.name}</Button>
+		<OverlayTrigger overlay={
+			<Tooltip id={`tooltip-${card.name}`}>
+				{card.description}
+			</Tooltip>}>
+			{button}
+		</OverlayTrigger>
 	);
 };

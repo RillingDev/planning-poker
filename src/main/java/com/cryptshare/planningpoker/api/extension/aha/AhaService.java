@@ -16,7 +16,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 class AhaService {
 
 	private static final JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance;
-	private static final Pattern IDEA_PATTERN = Pattern.compile("https://\\S+\\.aha\\.io/ideas/\\S+");
 
 	private final RestTemplate restTemplate;
 
@@ -38,7 +36,7 @@ class AhaService {
 	AhaService(Environment environment, RestTemplateBuilder restTemplateBuilder) {
 		scoreFactNames = Arrays.stream(environment.getRequiredProperty("planning-poker.extension.aha.score-fact-names").split(","))
 				.map(String::trim)
-				.collect(Collectors.toSet());
+				.collect(Collectors.toUnmodifiableSet());
 
 		final String subdomain = environment.getRequiredProperty("planning-poker.extension.aha.subdomain");
 		final URI rootUri = new DefaultUriBuilderFactory().builder()
@@ -49,14 +47,14 @@ class AhaService {
 
 		final String apiKey = environment.getRequiredProperty("planning-poker.extension.aha.key");
 
-		this.restTemplate = restTemplateBuilder.rootUri(rootUri.toString())
+		restTemplate = restTemplateBuilder.rootUri(rootUri.toString())
 				.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(apiKey))
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}
 
 	public void putIdeaScore(String ideaId, String scoreFactName, int value) {
-		this.restTemplate.put("/ideas/{idea}/", createIdeaPayload(scoreFactName, value), Map.of("idea", ideaId));
+		restTemplate.put("/ideas/{idea}/", createIdeaPayload(scoreFactName, value), Map.of("idea", ideaId));
 	}
 
 	ObjectNode createIdeaPayload(String scoreFactName, int value) {

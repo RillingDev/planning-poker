@@ -6,7 +6,7 @@ import { CardSet, createRoom, deleteRoom, editRoom, loadRooms, Room } from "../a
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
-import { useErrorHandler, useInterval } from "../hooks";
+import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
 import "./RoomListView.css";
 
 interface LoaderResult {
@@ -26,7 +26,7 @@ export const RoomListView: FC = () => {
 	const loaderData = useLoaderData() as LoaderResult;
 	const [rooms, setRooms] = useState<Room[]>(loaderData.rooms);
 
-	const [creationModalVisible, setCreationModalVisible] = useState(false);
+	const [creationModalVisible, showCreationModal, hideCreationModal] = useBooleanState(false);
 
 	useEffect(() => {
 		document.title = originalDocumentTitle;
@@ -41,7 +41,7 @@ export const RoomListView: FC = () => {
 	};
 
 	const handleCreationSubmit = (newRoomName: string, newRoomTopic: string, cardSet: CardSet) => {
-		setCreationModalVisible(false);
+		hideCreationModal();
 		createRoom(newRoomName, newRoomTopic, cardSet.name)
 			.then(updateRooms)
 			.catch(handleError);
@@ -61,14 +61,14 @@ export const RoomListView: FC = () => {
 
 			<header className="d-flex justify-content-between align-items-center">
 				<h2 className="mb-0">Rooms</h2>
-				<Button variant="primary" size="sm" onClick={() => setCreationModalVisible(true)}>Create Room</Button>
-				<CreateRoomModal onSubmit={handleCreationSubmit} show={creationModalVisible} onHide={() => setCreationModalVisible(false)}></CreateRoomModal>
+				<Button variant="primary" size="sm" onClick={showCreationModal}>Create Room</Button>
+				<CreateRoomModal show={creationModalVisible} existingRooms={rooms} onSubmit={handleCreationSubmit} onHide={hideCreationModal}/>
 			</header>
 			<nav>
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name}>
-							<RoomItem room={room} onEdit={(roomTopic, cardSet) => handleEdit(room, roomTopic, cardSet)} onDelete={() => handleDelete(room)}></RoomItem>
+							<RoomItem room={room} onEdit={(roomTopic, cardSet) => handleEdit(room, roomTopic, cardSet)} onDelete={() => handleDelete(room)}/>
 						</li>,
 					)}
 				</ul>

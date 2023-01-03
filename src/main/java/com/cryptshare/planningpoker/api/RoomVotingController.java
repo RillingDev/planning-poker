@@ -5,7 +5,10 @@ import com.cryptshare.planningpoker.api.exception.NotAMemberException;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.api.projection.VoteSummaryJson;
-import com.cryptshare.planningpoker.data.*;
+import com.cryptshare.planningpoker.data.Card;
+import com.cryptshare.planningpoker.data.Room;
+import com.cryptshare.planningpoker.data.RoomMember;
+import com.cryptshare.planningpoker.data.RoomRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +68,7 @@ class RoomVotingController {
 				.findFirst()
 				.orElseThrow(CardNotFoundException::new);
 
-		roomMember.setVote(new Vote(roomMember, card));
-		if (room.allVotersVoted()) {
-			room.setVotingState(Room.VotingState.CLOSED);
-		}
-
+		setVote(room, roomMember, card);
 		roomRepository.save(room);
 		logger.debug("User '{}' voted with '{}' in '{}'.", user.getUsername(), card, room);
 	}
@@ -81,8 +80,7 @@ class RoomVotingController {
 
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
-		room.getMembers().forEach(rm -> rm.setVote(null));
-		room.setVotingState(Room.VotingState.OPEN);
+		clearVotes(room);
 		roomRepository.save(room);
 		logger.debug("User '{}' cleared votes in '{}'.", user.getUsername(), room);
 	}
@@ -109,4 +107,17 @@ class RoomVotingController {
 	private static class ObserverException extends RuntimeException {
 	}
 
+	private static void setVote(Room room, RoomMember roomMember, Card card) {
+		roomMember.setVote(card);
+
+		if (room.allVotersVoted()) {
+			room.setVotingState(Room.VotingState.CLOSED);
+		}
+	}
+
+	private static void clearVotes(Room room) {
+		room.getMembers().forEach(rm -> rm.setVote(null));
+
+		room.setVotingState(Room.VotingState.OPEN);
+	}
 }

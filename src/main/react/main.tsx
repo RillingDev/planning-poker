@@ -5,7 +5,7 @@ import "vite/modulepreload-polyfill";
 import { loadCardSets, loadExtensions, loadIdentity } from "./api";
 import { AppContext, AppContextState } from "./AppContext";
 import { Header } from "./components/Header";
-import { ahaExtension } from "./extension/aha";
+import { ahaExtension } from "./extension/aha/ahaExtension";
 import "./index.css";
 import { router } from "./router";
 
@@ -21,7 +21,7 @@ async function createContextState() {
 }
 
 createContextState().then(ctx => {
-	createRoot(document.getElementById("root") as HTMLElement).render(
+	createRoot(document.getElementById("root")!).render(
 		<React.StrictMode>
 			<AppContext.Provider value={ctx}>
 				<Header/>

@@ -11,6 +11,7 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -28,14 +29,15 @@ class SecurityConfig {
 	// https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html#mvc-enablewebmvcsecurity
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated()).formLogin(withDefaults()).csrf().disable();
+		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).formLogin(withDefaults()).csrf().disable();
 		return http.build();
 	}
 
 	// Ensure user table entry is present
 	@EventListener
 	public void onSuccess(AuthenticationSuccessEvent success) {
-		try (PreparedStatement preparedStatement = dataSource.getConnection().prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
 			preparedStatement.setString(1, success.getAuthentication().getName());
 			preparedStatement.execute();
 		} catch (SQLException e) {

@@ -2,7 +2,10 @@ package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
-import com.cryptshare.planningpoker.data.*;
+import com.cryptshare.planningpoker.data.CardSet;
+import com.cryptshare.planningpoker.data.CardSetRepository;
+import com.cryptshare.planningpoker.data.Room;
+import com.cryptshare.planningpoker.data.RoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,7 +33,7 @@ class RoomController {
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	List<RoomJson> loadRooms() {
-		return roomRepository.findAll().stream().map(RoomJson::convertToBasic).toList();
+		return roomRepository.findAll().stream().sorted(Room.ALPHABETIC_COMPARATOR).map(RoomJson::convertToBasic).toList();
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}")
@@ -45,7 +48,6 @@ class RoomController {
 
 		final Room room = new Room(roomName, cardSet);
 		room.setTopic(roomTopic);
-		room.getMembers().add(new RoomMember(user.getUsername()));
 		roomRepository.save(room);
 		logger.info("Created room '{}' by user '{}'.", room, user.getUsername());
 	}

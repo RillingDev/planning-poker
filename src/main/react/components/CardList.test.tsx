@@ -1,11 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import { CardSet } from "../api";
+import { Card, CardSet } from "../api";
 import { CardList } from "./CardList";
 
 
 describe("CardList", () => {
 	it("shows cards", () => {
-		const cardSet: CardSet = {name: "Set", cards: [{name: "Card 1", value: 1}, {name: "Card 2", value: 2}]};
+		const cardSet: CardSet = {
+			name: "Set",
+			cards: [{name: "Card 1", value: 1, description: null}, {name: "Card 2", value: 2, description: null}]
+		};
 
 		render(<CardList cardSet={cardSet} activeCard={null} disabled={true}/>);
 
@@ -15,7 +18,10 @@ describe("CardList", () => {
 
 
 	it("disables buttons", () => {
-		const cardSet: CardSet = {name: "Set", cards: [{name: "Card 1", value: 1}, {name: "Card 2", value: 2}]};
+		const cardSet: CardSet = {
+			name: "Set",
+			cards: [{name: "Card 1", value: 1, description: null}, {name: "Card 2", value: 2, description: null}]
+		};
 
 		render(<CardList cardSet={cardSet} activeCard={null} disabled={true}/>);
 
@@ -24,7 +30,10 @@ describe("CardList", () => {
 	});
 
 	it("enables buttons", () => {
-		const cardSet: CardSet = {name: "Set", cards: [{name: "Card 1", value: 1}, {name: "Card 2", value: 2}]};
+		const cardSet: CardSet = {
+			name: "Set",
+			cards: [{name: "Card 1", value: 1, description: null}, {name: "Card 2", value: 2, description: null}]
+		};
 
 		render(<CardList cardSet={cardSet} activeCard={null} disabled={false}/>);
 
@@ -33,8 +42,8 @@ describe("CardList", () => {
 	});
 
 	it("sets active card", () => {
-		const card1 = {name: "Card 1", value: 1};
-		const cardSet: CardSet = {name: "Set", cards: [card1, {name: "Card 2", value: 2}]};
+		const card1: Card = {name: "Card 1", value: 1, description: null};
+		const cardSet: CardSet = {name: "Set", cards: [card1, {name: "Card 2", value: 2, description: null}]};
 
 		render(<CardList cardSet={cardSet} activeCard={card1} disabled={false}/>);
 
