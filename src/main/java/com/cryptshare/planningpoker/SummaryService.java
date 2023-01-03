@@ -88,7 +88,7 @@ public class SummaryService {
 		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
 	}
 
-	public record VoteSummary(double average, int offset, Card nearestCard, Card highestVote,
-							  Set<RoomMember> highestVoters, Card lowestVote, Set<RoomMember> lowestVoters) {
+	public record VoteSummary(double average, int offset, Card nearestCard, Card highestVote, Set<RoomMember> highestVoters, Card lowestVote,
+							  Set<RoomMember> lowestVoters) {
 	}
 }

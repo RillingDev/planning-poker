@@ -9,65 +9,66 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
-    public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername, String::compareToIgnoreCase);
+	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername,
+			String::compareToIgnoreCase);
 
-    public enum Role {
-        VOTER, OBSERVER
-    }
-    @Column(name = "username", nullable = false)
-    private String username;
+	public enum Role {
+		VOTER,
+		OBSERVER
+	}
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_role", nullable = false)
-    private Role role = Role.VOTER;
+	@Column(name = "username", nullable = false)
+	private String username;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "vote", joinColumns = {
-            @JoinColumn(name = "room_member_id", referencedColumnName = "id")}, inverseJoinColumns = {
-            @JoinColumn(name = "card_id", referencedColumnName = "id")})
-    @Nullable
-    private Card vote;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "user_role", nullable = false)
+	private Role role = Role.VOTER;
 
-    protected RoomMember() {
-    }
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "vote", joinColumns = { @JoinColumn(name = "room_member_id", referencedColumnName = "id") }, inverseJoinColumns = {
+			@JoinColumn(name = "card_id", referencedColumnName = "id") })
+	@Nullable
+	private Card vote;
 
-    /**
-     * @param username Must be derived from a valid {@link org.springframework.security.core.userdetails.UserDetails}.
-     */
-    public RoomMember(String username) {
-        this.username = username;
-    }
+	protected RoomMember() {
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	/**
+	 * @param username Must be derived from a valid {@link org.springframework.security.core.userdetails.UserDetails}.
+	 */
+	public RoomMember(String username) {
+		this.username = username;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public Role getRole() {
-        return role;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
+	public Role getRole() {
+		return role;
+	}
 
+	public void setRole(Role role) {
+		this.role = role;
+	}
 
-    @Nullable
-    public Card getVote() {
-        return vote;
-    }
+	@Nullable
+	public Card getVote() {
+		return vote;
+	}
 
-    public void setVote(@Nullable Card vote) {
-        this.vote = vote;
-    }
+	public void setVote(@Nullable Card vote) {
+		this.vote = vote;
+	}
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'")
-                .add("role=" + role)
-                .toString();
-    }
+	@Override
+	public String toString() {
+		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'")
+				.add("role=" + role)
+				.toString();
+	}
 }

@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic") String topic, @JsonProperty(
-		"cardSetName") String cardSetName,
+public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic") String topic, @JsonProperty("cardSetName") String cardSetName,
 					   @JsonProperty("members") List<RoomMemberJson> members, @JsonProperty("votingClosed") boolean votingClosed) {
 
 	public static RoomJson convertToBasic(Room room) {

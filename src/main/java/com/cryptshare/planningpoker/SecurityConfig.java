@@ -36,8 +36,8 @@ class SecurityConfig {
 	// Ensure user table entry is present
 	@EventListener
 	public void onSuccess(AuthenticationSuccessEvent success) {
-		try (Connection connection = dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(
-				"MERGE INTO app_user (username) VALUES (?)")) {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
 			preparedStatement.setString(1, success.getAuthentication().getName());
 			preparedStatement.execute();
 		} catch (SQLException e) {
