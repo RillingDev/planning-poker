@@ -5,7 +5,7 @@ import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./Summary.css";
 
-const formatter = new Intl.NumberFormat("en-US", {style: "decimal", maximumFractionDigits: 2});
+const formatter = new Intl.NumberFormat("en-US", {style: "decimal", maximumFractionDigits: 1});
 
 const ExtremeSummary: FC<{
 	className: string,

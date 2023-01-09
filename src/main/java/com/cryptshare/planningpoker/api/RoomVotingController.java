@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,9 +32,8 @@ class RoomVotingController {
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Transactional
 	@ResponseBody
-	RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
@@ -45,8 +43,7 @@ class RoomVotingController {
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/votes")
-	@Transactional
-	void createVote(@PathVariable("room-name") String roomName, @RequestParam("card-name") String cardName,
+	public void createVote(@PathVariable("room-name") String roomName, @RequestParam("card-name") String cardName,
 			@AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
@@ -74,8 +71,7 @@ class RoomVotingController {
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
-	@Transactional
-	void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
@@ -86,9 +82,8 @@ class RoomVotingController {
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/votes/summary", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Transactional
 	@ResponseBody
-	SummaryResultJson getSummary(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public SummaryResultJson getSummary(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);

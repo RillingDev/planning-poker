@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,14 +31,14 @@ class RoomController {
 
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	List<RoomJson> loadRooms() {
+	public List<RoomJson> loadRooms() {
 		return roomRepository.findAll().stream().sorted(Room.ALPHABETIC_COMPARATOR).map(RoomJson::convertToBasic).toList();
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}")
-	@Transactional
-	void createRoom(@PathVariable("room-name") String roomName, @RequestParam(value = "room-topic", required = false) @Nullable String roomTopic,
-			@RequestParam("card-set-name") String cardSetName, @AuthenticationPrincipal UserDetails user) {
+	public void createRoom(@PathVariable("room-name") String roomName,
+			@RequestParam(value = "room-topic", required = false) @Nullable String roomTopic, @RequestParam("card-set-name") String cardSetName,
+			@AuthenticationPrincipal UserDetails user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
@@ -53,8 +52,7 @@ class RoomController {
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}")
-	@Transactional
-	void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		roomRepository.delete(room);
@@ -62,8 +60,8 @@ class RoomController {
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}")
-	@Transactional
-	void editRoom(@PathVariable("room-name") String roomName, @RequestParam(value = "room-topic", required = false) @Nullable String roomTopic,
+	public void editRoom(@PathVariable("room-name") String roomName,
+			@RequestParam(value = "room-topic", required = false) @Nullable String roomTopic,
 			@RequestParam(value = "card-set-name", required = false) String cardSetName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 

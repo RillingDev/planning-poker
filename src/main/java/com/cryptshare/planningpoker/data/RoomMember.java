@@ -24,9 +24,10 @@ public class RoomMember extends BaseEntity {
 	@Column(name = "user_role", nullable = false)
 	private Role role = Role.VOTER;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "vote", joinColumns = { @JoinColumn(name = "room_member_id", referencedColumnName = "id") }, inverseJoinColumns = {
-			@JoinColumn(name = "card_id", referencedColumnName = "id") })
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinTable(name = "vote", joinColumns = {
+			@JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
+			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false) })
 	@Nullable
 	private Card vote;
 

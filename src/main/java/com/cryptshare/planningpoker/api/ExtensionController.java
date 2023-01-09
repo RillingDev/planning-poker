@@ -21,7 +21,7 @@ class ExtensionController {
 
 	@GetMapping(value = "/api/extensions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	List<String> loadIdentity() {
+	public List<String> loadExtensions() {
 		return Arrays.stream(environment.getActiveProfiles())
 				.filter(profile -> profile.startsWith(PREFIX))
 				.map(profile -> profile.replace(PREFIX, ""))
