@@ -13,7 +13,7 @@ class UserController {
 
 	@GetMapping(value = "/api/identity", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	UserJson loadIdentity(@AuthenticationPrincipal UserDetails user) {
+	public UserJson loadIdentity(@AuthenticationPrincipal UserDetails user) {
 		return new UserJson(user.getUsername());
 	}
 

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,8 +23,7 @@ class RoomMemberController {
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/members")
-	@Transactional
-	void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		if (room.findMemberByUser(user.getUsername()).isPresent()) {
@@ -39,8 +37,7 @@ class RoomMemberController {
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/members")
-	@Transactional
-	void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		room.findMemberByUser(user.getUsername()).ifPresentOrElse(roomMember -> {
@@ -51,9 +48,8 @@ class RoomMemberController {
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}/members/{member-username}")
-	@Transactional
 	@ResponseBody
-	void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
+	public void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
 			@RequestParam("action") EditAction action, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
