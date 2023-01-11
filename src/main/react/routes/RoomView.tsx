@@ -1,7 +1,7 @@
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { Summary } from "../components/Summary";
-import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
+import { useBooleanState, useDocumentTitle, useErrorHandler, useInterval } from "../hooks";
 import "./RoomView.css";
 
 interface LoaderResult {
@@ -72,9 +72,7 @@ export const RoomView: FC = () => {
 
 	const [summaryResult, setSummaryResult] = useState<SummaryResult | null>(loaderData.summaryResult);
 
-	useEffect(() => {
-		document.title = room.name;
-	}, [room.name]);
+	useDocumentTitle(room.name);
 
 	useInterval(() => {
 		updateRoom().catch(handleError);
