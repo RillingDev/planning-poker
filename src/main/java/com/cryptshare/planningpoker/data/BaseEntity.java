@@ -20,11 +20,11 @@ abstract class BaseEntity {
 	private UUID id = UUID.randomUUID();
 
 	@Nullable
-	public UUID getId() {
+	protected UUID getId() {
 		return id;
 	}
 
-	public void setId(@Nullable UUID id) {
+	protected void setId(@Nullable UUID id) {
 		this.id = id;
 	}
 

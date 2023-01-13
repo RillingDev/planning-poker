@@ -1,12 +1,12 @@
 import type { FC } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { useLoaderData } from "react-router";
 import { CardSet, createRoom, deleteRoom, editRoom, loadRooms, Room } from "../api";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
-import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
+import { useBooleanState, useDocumentTitle, useErrorHandler, useInterval } from "../hooks";
 import "./RoomListView.css";
 
 interface LoaderResult {
@@ -28,9 +28,7 @@ export const RoomListView: FC = () => {
 
 	const [creationModalVisible, showCreationModal, hideCreationModal] = useBooleanState(false);
 
-	useEffect(() => {
-		document.title = originalDocumentTitle;
-	}, []);
+	useDocumentTitle(originalDocumentTitle);
 
 	useInterval(() => {
 		updateRooms().catch(handleError);

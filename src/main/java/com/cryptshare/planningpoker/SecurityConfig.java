@@ -48,8 +48,14 @@ class SecurityConfig {
 	@Bean
 	@ConditionalOnProperty(value = { "planning-poker.auth.active-directory.domain", "planning-poker.auth.active-directory.url" })
 	public ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider(Environment environment) {
-		return new ActiveDirectoryLdapAuthenticationProvider(
+		final ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(
 				environment.getRequiredProperty("planning-poker.auth.active-directory.domain"),
 				environment.getRequiredProperty("planning-poker.auth.active-directory.url"));
+
+		if (environment.containsProperty("planning-poker.auth.active-directory.search-filter")) {
+			authenticationProvider.setSearchFilter(environment.getRequiredProperty("planning-poker.auth.active-directory.search-filter"));
+		}
+
+		return authenticationProvider;
 	}
 }
