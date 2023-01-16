@@ -2,6 +2,7 @@
 /// <reference types="vite/client" />
 
 import react from "@vitejs/plugin-react";
+import { readFileSync } from "fs";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
@@ -21,6 +22,10 @@ export default defineConfig({
 	},
 	server: {
 		host: "127.0.0.1",
+		https: {
+			key: readFileSync("./.local/ssl.key"),
+			cert: readFileSync("./.local/ssl.cer"),
+		}
 	},
 	test: {
 		globals: true,

@@ -45,9 +45,15 @@ The following additional properties must be set:
 - Maven
 - IntelliJ IDEA
 
+### HTTPS
+
+Create a keystore with a self-signed certificate (https://www.baeldung.com/spring-boot-https-self-signed-certificate) and adapt
+the `application-development.properties` parameters.
+Then export the certificate and its key, can make them available for Vite (`vite.config.ts`).
+
 ### Development Mode
 
-Start the run config `backend:dev` and `frontend:dev` and go to <http://localhost:8080>.
+Start the run config `backend:dev` and `frontend:dev` and go to <https://localhost:8443>.
 
 ### Build for Production
 
