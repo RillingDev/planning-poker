@@ -17,8 +17,7 @@ export default defineConfig({
 				entryFileNames: "[name].js",
 				assetFileNames: "[name][extname]",
 			},
-		},
-		emptyOutDir: false,
+		}
 	},
 	server: {
 		host: "127.0.0.1",
