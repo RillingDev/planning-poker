@@ -1,108 +1,37 @@
 package com.cryptshare.planningpoker.api.extension.aha;
 
-import com.cryptshare.planningpoker.data.CardSet;
-import com.cryptshare.planningpoker.data.Room;
-import com.cryptshare.planningpoker.data.RoomMember;
-import com.cryptshare.planningpoker.data.RoomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-import java.util.Set;
-
-import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = AhaController.class)
+@WebMvcTest(value = AhaController.class, properties = { "planning-poker.extension.aha.account-domain=example",
+		"planning-poker.extension.aha.client-id=abc", "planning-poker.extension.aha.redirect-uri=https://example.com",
+		"planning-poker.extension.aha.score-fact-names=Fact Name 1,Fact Name 2" })
 @ActiveProfiles("extension:aha")
 class AhaControllerTest {
-
-	@MockBean
-	AhaService ahaService;
-
-	@MockBean
-	RoomRepository roomRepository;
 
 	@Autowired
 	MockMvc mockMvc;
 
 	@Test
-	@DisplayName("GET `/api/extensions/aha/score-facts` returns score facts")
+	@DisplayName("GET `/api/extensions/aha/config` returns config")
 	@WithMockUser
-	void getScoreFactNames() throws Exception {
-		given(ahaService.getScoreFactNames()).willReturn(Set.of("Fact Name 1", "Fact Name 2"));
-
-		mockMvc.perform(get("/api/extensions/aha/score-facts"))
+	void getConfig() throws Exception {
+		mockMvc.perform(get("/api/extensions/aha/config"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.length()").value(2))
-				.andExpect(jsonPath("$[0]").value("Fact Name 1"))
-				.andExpect(jsonPath("$[1]").value("Fact Name 2"));
-	}
-
-	@Test
-	@DisplayName("POST `/api/extensions/aha/score/` throws for unknown room")
-	@WithMockUser
-	void putIdeaScoreUnknownRoom() throws Exception {
-		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
-		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
-
-		mockMvc.perform(post("/api/extensions/aha/score/").with(csrf())
-				.queryParam("room-name", "my-room")
-				.queryParam("score-fact-name", "fact1")
-				.queryParam("score-value", "1")).andExpect(status().isNotFound());
-	}
-
-	@Test
-	@DisplayName("POST `/api/extensions/aha/score/` throws when not a member")
-	@WithMockUser("John Doe")
-	void putIdeaScoreNotMember() throws Exception {
-		final Room room = new Room("Room", new CardSet("Card Set"));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
-
-		mockMvc.perform(post("/api/extensions/aha/score/").with(csrf())
-				.queryParam("room-name", "my-room")
-				.queryParam("score-fact-name", "fact1")
-				.queryParam("score-value", "1")).andExpect(status().isForbidden());
-	}
-
-	@Test
-	@DisplayName("POST `/api/extensions/aha/score/` throws on not in facts")
-	@WithMockUser("John Doe")
-	void putIdeaScoreInvalidFactName() throws Exception {
-		final Room room = new Room("Room", new CardSet("Card Set"));
-		room.getMembers().add(new RoomMember("John Doe"));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
-
-		mockMvc.perform(post("/api/extensions/aha/score/").with(csrf())
-				.queryParam("room-name", "my-room")
-				.queryParam("score-fact-name", "fact2")
-				.queryParam("score-value", "1")).andExpect(status().isBadRequest());
-	}
-
-	@Test
-	@DisplayName("POST `/api/extensions/aha/score/` puts")
-	@WithMockUser("John Doe")
-	void putIdeaScorePuts() throws Exception {
-		final Room room = new Room("Room", new CardSet("Card Set"));
-		room.getMembers().add(new RoomMember("John Doe"));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-		given(ahaService.getScoreFactNames()).willReturn(Set.of("fact1"));
-
-		mockMvc.perform(post("/api/extensions/aha/score/").with(csrf())
-				.queryParam("room-name", "my-room")
-				.queryParam("score-fact-name", "fact1")
-				.queryParam("score-value", "1")).andExpect(status().isOk());
+				.andExpect(jsonPath("$.accountDomain").value("example"))
+				.andExpect(jsonPath("$.clientId").value("abc"))
+				.andExpect(jsonPath("$.redirectUri").value("https://example.com"))
+				.andExpect(jsonPath("$.scoreFactNames.length()").value("2"))
+				.andExpect(jsonPath("$.scoreFactNames[0]").value("Fact Name 1"))
+				.andExpect(jsonPath("$.scoreFactNames[1]").value("Fact Name 2"));
 	}
 }

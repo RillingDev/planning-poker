@@ -3,7 +3,7 @@ import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Room, VoteSummary } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
-import { getScoreFactNames, putIdeaScore } from "./api";
+import { AhaClient, getAhaConfig } from "./api";
 
 export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({room, voteSummary}) => {
 	const [error, handleError, resetError] = useErrorHandler();
@@ -13,24 +13,26 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 	const [scoreFactName, setScoreFactName] = useState("");
 
 	const [scoreFactNames, setScoreFactNames] = useState<string[]>([]);
+	const [ahaClient, setAhaClient] = useState<AhaClient>();
 	useEffect(() => {
-		getScoreFactNames().then(loaded => setScoreFactNames(loaded)).catch(handleError);
+		getAhaConfig().then(loaded => {
+			setScoreFactNames(loaded.scoreFactNames);
+			setAhaClient(new AhaClient(loaded));
+		}).catch(handleError);
 	}, [handleError]);
 
+	const ideaId = room.topic;
+	const score = Math.round(voteSummary.average);
 
 	const [ajaxInProgress, setAjaxInProgress] = useState(false);
-
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setAjaxInProgress(true);
-		putIdeaScore(room.name, scoreFactName, score).then(hideModal).catch(handleError).finally(() => setAjaxInProgress(false));
+		ahaClient!.putIdeaScore(ideaId!, scoreFactName, score).then(hideModal).catch(handleError).finally(() => setAjaxInProgress(false));
 	};
 
-	const ideaId = room.topic;
-	const score = voteSummary.average;
-
 	return (<>
-			<Button size="sm" onClick={showModal} hidden={ideaId == null}>Save to Aha!</Button>
+			<Button size="sm" onClick={showModal} hidden={ideaId == null} disabled={ahaClient == null}>Save to Aha!</Button>
 			<Modal show={modalVisible} onHide={hideModal}>
 				<Form onSubmit={handleSubmit}>
 					<Modal.Header closeButton>
