@@ -29,9 +29,6 @@ class AhaControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.accountDomain").value("example"))
 				.andExpect(jsonPath("$.clientId").value("abc"))
-				.andExpect(jsonPath("$.redirectUri").value("https://example.com"))
-				.andExpect(jsonPath("$.scoreFactNames.length()").value("2"))
-				.andExpect(jsonPath("$.scoreFactNames[0]").value("Fact Name 1"))
-				.andExpect(jsonPath("$.scoreFactNames[1]").value("Fact Name 2"));
+				.andExpect(jsonPath("$.redirectUri").value("https://example.com"));
 	}
 }

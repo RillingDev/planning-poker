@@ -1,35 +1,35 @@
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Room, VoteSummary } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
-import { useBooleanState, useErrorHandler } from "../../hooks";
+import { useAsyncData, useBooleanState, useErrorHandler } from "../../hooks";
 import { Extension } from "../Extension";
 import { AhaExtension } from "./AhaExtension";
-import { getAhaConfig } from "./api";
 
 export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: VoteSummary }> = ({self, room, voteSummary}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	const [modalVisible, showModal, hideModal] = useBooleanState(false);
+	const [modalVisible, showModalInternal, hideModal] = useBooleanState(false);
 
 	const [scoreFactName, setScoreFactName] = useState("");
 
-	const [scoreFactNames, setScoreFactNames] = useState<string[]>([]);
-	useEffect(() => {
-		getAhaConfig().then(loaded => {
-			setScoreFactNames(loaded.scoreFactNames);
-		}).catch(handleError);
-	}, [handleError]);
 
 	const ideaId = room.topic;
 	const score = Math.round(voteSummary.average);
 
 	const ahaClient = (self as AhaExtension).client!;
-	const [ajaxInProgress, setAjaxInProgress] = useState(false);
+
+	const [scoreFactNames, loadScoreFactNames, scoreFactNamesPending] = useAsyncData(() => ahaClient.getIdea(ideaId!).then(idea => idea.score_facts.map(item => item.name)));
+	const showModal = () => {
+		showModalInternal();
+		loadScoreFactNames().catch(handleError);
+	};
+
+	const [scoreSubmissionPending, setScoreSubmissionPending] = useState(false);
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		setAjaxInProgress(true);
-		ahaClient.putIdeaScore(ideaId!, scoreFactName, score).then(hideModal).catch(handleError).finally(() => setAjaxInProgress(false));
+		setScoreSubmissionPending(true);
+		ahaClient.putIdeaScore(ideaId!, scoreFactName, score).then(hideModal).catch(handleError).finally(() => setScoreSubmissionPending(false));
 	};
 
 	return (<>
@@ -44,17 +44,24 @@ export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: Vot
 						<p>You are about to save the score <strong>{score}</strong> to Aha! for the
 							idea with the ID <strong>{ideaId}</strong>.</p>
 						<Form.Group className="mb-3" controlId="formAhaScoreFact">
-							<Form.Label>Score Fact Name</Form.Label>
-							<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)}>
+							<Form.Label>Score Fact Name <Spinner
+								hidden={!scoreFactNamesPending}
+								as="span"
+								animation="border"
+								size="sm"
+								role="status"
+								aria-hidden="true"
+							/></Form.Label>
+							<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)} disabled={scoreFactNamesPending}>
 								<option disabled value=""></option>
-								{scoreFactNames.map(factName => <option key={factName}>{factName}</option>)}
+								{(scoreFactNames ?? []).map(factName => <option key={factName}>{factName}</option>)}
 							</Form.Select>
 						</Form.Group>
 					</Modal.Body>
 					<Modal.Footer>
 						<Button type="submit" variant="primary">
 							<Spinner
-								hidden={!ajaxInProgress}
+								hidden={!scoreSubmissionPending}
 								as="span"
 								animation="border"
 								size="sm"

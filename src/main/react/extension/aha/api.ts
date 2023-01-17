@@ -6,7 +6,6 @@ export interface AhaConfig {
 	readonly accountDomain: string;
 	readonly clientId: string;
 	readonly redirectUri: string;
-	readonly scoreFactNames: string[];
 }
 
 export async function getAhaConfig() {
@@ -14,6 +13,16 @@ export async function getAhaConfig() {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<AhaConfig>);
+}
+
+interface ScoreFact {
+	readonly name: string,
+	readonly value: number
+}
+
+interface Idea {
+	name: string,
+	score_facts: ScoreFact[]
 }
 
 export class AhaClient {
@@ -24,7 +33,7 @@ export class AhaClient {
 
 	#accessToken: string | null;
 
-	constructor(config: Omit<AhaConfig, "scoreFactNames">) {
+	constructor(config: AhaConfig) {
 		this.#clientId = config.clientId;
 		this.#redirectUri = new URL(config.redirectUri);
 
@@ -74,20 +83,40 @@ export class AhaClient {
 		});
 	}
 
-	async putIdeaScore(ideaId: string, scoreFactName: string, value: number) {
+	#getBaseHeaders() {
+		return {"Authorization": `Bearer ${this.#accessToken!}`};
+	}
+
+	async getIdea(ideaId: string) {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
 		return fetch(url, {
+			method: "GET",
+			headers: {
+				...this.#getBaseHeaders(),
+				"Accept": MEDIA_TYPE_JSON
+			}
+		}).then(assertStatusOk).then(res => res.json() as Promise<{
+			idea: Idea;
+		}>).then(res => res.idea);
+	}
+
+	async putIdeaScore(ideaId: string, scoreFactName: string, value: number) {
+		await this.#authenticate();
+
+		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
+		const body: Partial<Idea> = {
+			score_facts: [{name: scoreFactName, value: value}]
+		};
+		await fetch(url, {
 			method: "PUT",
 			body: JSON.stringify({
-				"idea": {
-					"score_facts": [{"name": scoreFactName, "value": value}]
-				}
+				idea: body
 			}),
 			headers: {
-				"Content-Type": MEDIA_TYPE_JSON,
-				"Authorization": `Bearer ${this.#accessToken!}`
+				...this.#getBaseHeaders(),
+				"Content-Type": MEDIA_TYPE_JSON
 			}
 		}).then(assertStatusOk);
 	}
