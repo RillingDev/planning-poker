@@ -9,7 +9,7 @@ import { AhaExtension } from "./AhaExtension";
 export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: VoteSummary }> = ({self, room, voteSummary}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	const [modalVisible, showModalInternal, hideModal] = useBooleanState(false);
+	const [modalVisible, showModal, hideModal] = useBooleanState(false);
 
 	const [scoreFactName, setScoreFactName] = useState("");
 
@@ -18,12 +18,12 @@ export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: Vot
 	const score = Math.round(voteSummary.average);
 
 	const ahaClient = (self as AhaExtension).client!;
-
-	const [scoreFactNames, loadScoreFactNames, scoreFactNamesPending] = useAsyncData(() => ahaClient.getIdea(ideaId!).then(idea => idea.score_facts.map(item => item.name)));
-	const showModal = () => {
-		showModalInternal();
-		loadScoreFactNames().catch(handleError);
+	const [idea, loadIdea, ideaLoadingPending] = useAsyncData(() => ahaClient.getIdea(ideaId!));
+	const loadSubmissionModal = () => {
+		loadIdea().then(showModal).catch(handleError);
 	};
+	const scoreFactNames = idea?.score_facts.map(item => item.name) ?? [];
+	const ideaName = idea?.name ?? "";
 
 	const [scoreSubmissionPending, setScoreSubmissionPending] = useState(false);
 	const handleSubmit = (e: FormEvent) => {
@@ -33,7 +33,15 @@ export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: Vot
 	};
 
 	return (<>
-			<Button size="sm" onClick={showModal} hidden={ideaId == null} disabled={ahaClient == null}>Save to Aha!</Button>
+			<Button size="sm" onClick={loadSubmissionModal} hidden={ideaId == null} disabled={ahaClient == null}>Save to Aha! <Spinner
+				hidden={!ideaLoadingPending}
+				as="span"
+				animation="border"
+				size="sm"
+				role="status"
+				aria-hidden="true"
+			/></Button>
+
 			<Modal show={modalVisible} onHide={hideModal}>
 				<Form onSubmit={handleSubmit}>
 					<Modal.Header closeButton>
@@ -42,19 +50,12 @@ export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: Vot
 					<Modal.Body>
 						<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 						<p>You are about to save the score <strong>{score}</strong> to Aha! for the
-							idea with the ID <strong>{ideaId}</strong>.</p>
+							idea &quot;<strong>{ideaName}</strong>&quot; with the ID <strong>{ideaId}</strong>.</p>
 						<Form.Group className="mb-3" controlId="formAhaScoreFact">
-							<Form.Label>Score Fact Name <Spinner
-								hidden={!scoreFactNamesPending}
-								as="span"
-								animation="border"
-								size="sm"
-								role="status"
-								aria-hidden="true"
-							/></Form.Label>
-							<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)} disabled={scoreFactNamesPending}>
+							<Form.Label>Score Fact Name</Form.Label>
+							<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)} disabled={ideaLoadingPending}>
 								<option disabled value=""></option>
-								{(scoreFactNames ?? []).map(factName => <option key={factName}>{factName}</option>)}
+								{scoreFactNames.map(factName => <option key={factName}>{factName}</option>)}
 							</Form.Select>
 						</Form.Group>
 					</Modal.Body>
