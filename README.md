@@ -41,6 +41,10 @@ The following additional properties must be set:
 
 Note that the Aha! Integration only works when the application is available under HTTPs.
 
+##### Usage
+
+If the topic of a room is set to an Aha! idea ID or URL, a button to submit the average score to Aha! will show up after voting completes.
+
 ## Development
 
 ### Requirements
