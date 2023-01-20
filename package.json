@@ -8,7 +8,8 @@
 		"build": "tsc && vite build",
 		"preview": "vite preview",
 		"lint": "eslint src/main/react/ --ext tsx --ext ts",
-		"test": "vitest"
+		"test": "vitest run",
+		"test:dev": "vitest dev"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^6.2.1",
