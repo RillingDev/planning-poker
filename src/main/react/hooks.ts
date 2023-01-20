@@ -22,13 +22,13 @@ export const useBooleanState = (initialState = false): [boolean, () => void, () 
 };
 
 
-export const useInterval = (callback: () => void, timeout: number) =>
+export const useInterval = (callback: () => void, timeout: number): void =>
 	useEffect(() => {
 		const interval = setInterval(callback, timeout);
 		return () => clearInterval(interval);
 	}, [callback, timeout]);
 
-export const useDocumentTitle = (title: string) => {
+export const useDocumentTitle = (title: string): void => {
 	useEffect(() => {
 		document.title = title;
 	}, [title]);

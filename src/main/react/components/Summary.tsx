@@ -48,7 +48,7 @@ export const Summary: FC<{
 			<div className="summary__average">
 				<span>Average: <strong>{formatter.format(voteSummary.average)}</strong></span>
 				<div className="summary__average__extensions">{extensions.map(extension =>
-					<extension.SubmitComponent key={extension.id} room={room} voteSummary={voteSummary}/>)}</div>
+					<extension.SubmitComponent key={extension.id} self={extension} room={room} voteSummary={voteSummary}/>)}</div>
 			</div>
 			<div className="summary__nearest">
 				<span>Nearest Card:</span>

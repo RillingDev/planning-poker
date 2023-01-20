@@ -29,12 +29,10 @@ by [starting the application with additional profiles](https://docs.spring.io/sp
 The Aha! extension can be enabled by starting the application with the profile `extension:aha`.
 The following additional properties must be set:
 
-- `planning-poker.extension.aha.key`: The Aha! API key.
-- `planning-poker.extension.aha.subdomain`: The subdomain part that the target Aha! instance is running on. For example, if you
+- `planning-poker.extension.aha.account-domain`: The subdomain part that the target Aha! instance is running on. For example, if you
   use `https://example.aha.io`, this would be `example`.
-- `planning-poker.extension.aha.score-fact-names`: A comma seperated list of score-facts, which are the elements that make up idea scores in
-  Aha!.
-  See <https://www.aha.io/api/resources/ideas/create_an_idea_with_a_score> for details.
+- `planning-poker.extension.aha.client-id`: The Aha! OAuth2 client ID. See <https://www.aha.io/api/oauth2> for details.
+- `planning-poker.extension.aha.redirect-uri`: The Aha! OAuth2 redirect URI. Should be the address the application is running on.
 
 ## Development
 
@@ -45,9 +43,15 @@ The following additional properties must be set:
 - Maven
 - IntelliJ IDEA
 
+### HTTPS
+
+Create a keystore with a self-signed certificate (https://www.baeldung.com/spring-boot-https-self-signed-certificate) and adapt
+the `application-development.properties` parameters.
+Then export the certificate and its key, can make them available for Vite (`vite.config.ts`).
+
 ### Development Mode
 
-Start the run config `backend:dev` and `frontend:dev` and go to <http://localhost:8080>.
+Start the run config `backend:dev` and `frontend:dev` and go to <https://localhost:8443>.
 
 ### Build for Production
 
