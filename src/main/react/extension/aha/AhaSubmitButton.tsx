@@ -5,11 +5,12 @@ import { useBooleanState } from "../../hooks";
 import { Extension } from "../Extension";
 import { AhaExtension } from "./AhaExtension";
 import { AhaSubmissionModal } from "./AhaSubmissionModal";
+import { extractIdeaId } from "./utils";
 
 export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: VoteSummary }> = ({self, room, voteSummary}) => {
 	const [modalVisible, showModal, hideModal] = useBooleanState(false);
 
-	const ideaId = room.topic;
+	const ideaId = room.topic != null ? extractIdeaId(room.topic) : null;
 	const score = Math.round(voteSummary.average);
 
 	const client = (self as AhaExtension).client!;
