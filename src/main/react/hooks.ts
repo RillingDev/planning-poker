@@ -33,23 +33,3 @@ export const useDocumentTitle = (title: string): void => {
 		document.title = title;
 	}, [title]);
 };
-
-export const useAsyncData = <T>(asyncFn: () => Promise<T>): [T | null, () => Promise<void>, boolean] => {
-	const [pending, setPending] = useState(false);
-	const [result, setResult] = useState<T | null>(null);
-
-	const decoratedAsyncFn = useCallback(async () => {
-		if (result != null) {
-			return;
-		}
-
-		setPending(true);
-		try {
-			setResult(await asyncFn());
-		} finally {
-			setPending(false);
-		}
-	}, [asyncFn, result]);
-
-	return [result, decoratedAsyncFn, pending];
-};

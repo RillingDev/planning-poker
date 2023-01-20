@@ -20,9 +20,10 @@ interface ScoreFact {
 	readonly value: number
 }
 
-interface Idea {
+export interface Idea {
 	name: string,
 	score_facts: ScoreFact[]
+	reference_num: string
 }
 
 export class AhaClient {
