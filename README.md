@@ -2,7 +2,7 @@
 
 ## Usage
 
-When the JAR file is executed, a web server will be started and listens at <http://localhost:8080>.
+When the JAR file is executed, a web server will be started and listen at <http://localhost:8080>.
 
 Configuration may be done
 using [properties](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.properties-and-configuration.external-properties-location).
@@ -19,6 +19,11 @@ The following properties must be set:
 - `planning-poker.auth.active-directory.domain`: The AD domain.
 - `planning-poker.auth.active-directory.url` The AD URL.
 
+The following properties are optional:
+
+- `planning-poker.auth.active-directory.search-filter` A custom search filter.
+  See `org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider.setSearchFilter` for details.
+
 ### Extensions
 
 Extensions may be enabled
@@ -33,6 +38,8 @@ The following additional properties must be set:
   use `https://example.aha.io`, this would be `example`.
 - `planning-poker.extension.aha.client-id`: The Aha! OAuth2 client ID. See <https://www.aha.io/api/oauth2> for details.
 - `planning-poker.extension.aha.redirect-uri`: The Aha! OAuth2 redirect URI. Should be the address the application is running on.
+
+Note that the Aha! Integration only works when the application is available under HTTPs.
 
 ## Development
 
