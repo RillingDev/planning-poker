@@ -8,4 +8,6 @@ export interface Extension {
 	readonly SubmitComponent: SubmitComponent;
 
 	initialize(): Promise<void>;
+
+	loadSuggestion(newTopic: string): Promise<string | null>;
 }

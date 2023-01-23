@@ -1,8 +1,22 @@
-import { FC, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { CardSet, Room } from "../../api";
 import { AppContext } from "../../AppContext";
+import { Extension } from "../../extension/Extension";
 
+interface SuggestionResult {
+	readonly content: string;
+	readonly extension: Extension;
+}
+
+async function loadSuggestions(newTopic: string, extensions: ReadonlyArray<Extension>): Promise<SuggestionResult[]> {
+	const suggestionResultPromises = extensions.map(extension => extension.loadSuggestion(newTopic).then(content => ({
+		extension,
+		content
+	})));
+	const lookupResults = await Promise.all(suggestionResultPromises);
+	return lookupResults.filter(result => result.content != null) as SuggestionResult[];
+}
 
 export const EditRoomModal: FC<{
 	room: Room;
@@ -10,16 +24,23 @@ export const EditRoomModal: FC<{
 	onHide: () => void;
 	onSubmit: (roomTopic: string, cardSet: CardSet) => void;
 }> = ({room, show, onHide, onSubmit}) => {
-	const {cardSets} = useContext(AppContext);
+	const {cardSets, extensions} = useContext(AppContext);
 
 	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
 	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
+
+	const [suggestions, setSuggestions] = useState<SuggestionResult[]>([]);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		onSubmit(roomTopic, cardSets.find(cardSet => cardSet.name == newCardSetName)!);
 	};
 
+	const onTopicChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+		const newTopic = e.target.value;
+		setRoomTopic(newTopic);
+		loadSuggestions(newTopic, extensions).then(setSuggestions).catch(console.error);
+	};
 	return (
 		<Modal show={show} onHide={onHide}>
 			<Form onSubmit={handleSubmit}>
@@ -35,8 +56,11 @@ export const EditRoomModal: FC<{
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formEditRoomTopic">
 						<Form.Label>Topic</Form.Label>
-						<Form.Control as="textarea" value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)}/>
+						<Form.Control as="textarea" value={roomTopic} onChange={onTopicChange}/>
 					</Form.Group>
+					<ul>
+						{suggestions.map(suggestion => <li key={suggestion.extension.id}>{suggestion.content} - {suggestion.extension.id}</li>)}
+					</ul>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button type="submit" variant="primary">Update</Button>

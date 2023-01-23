@@ -88,7 +88,7 @@ export class AhaClient {
 		return {"Authorization": `Bearer ${this.#accessToken!}`};
 	}
 
-	async getIdea(ideaId: string) {
+	async getIdea(ideaId: string): Promise<Idea> {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
@@ -103,7 +103,7 @@ export class AhaClient {
 		}>).then(res => res.idea);
 	}
 
-	async putIdeaScore(ideaId: string, scoreFactName: string, value: number) {
+	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
