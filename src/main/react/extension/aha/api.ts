@@ -88,19 +88,27 @@ export class AhaClient {
 		return {"Authorization": `Bearer ${this.#accessToken!}`};
 	}
 
-	async getIdea(ideaId: string): Promise<Idea> {
+	async getIdea(ideaId: string): Promise<Idea | null> {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
-		return fetch(url, {
+		const response = await fetch(url, {
 			method: "GET",
 			headers: {
 				...this.#getBaseHeaders(),
 				"Accept": MEDIA_TYPE_JSON
 			}
-		}).then(assertStatusOk).then(res => res.json() as Promise<{
+		});
+
+		if (response.status == 404) {
+			return null;
+		}
+		await assertStatusOk(response);
+
+		const body = await response.json() as {
 			idea: Idea;
-		}>).then(res => res.idea);
+		};
+		return body.idea;
 	}
 
 	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {

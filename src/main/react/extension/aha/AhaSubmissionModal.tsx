@@ -16,7 +16,13 @@ export const AhaSubmissionModal: FC<{
 	const [ideaLoading, setIdeaLoading] = useState(false);
 	useEffect(() => {
 		setIdeaLoading(true);
-		client.getIdea(ideaId).then(setIdea).catch(handleError).finally(() => setIdeaLoading(false));
+		client.getIdea(ideaId).then(idea => {
+			if (idea == null) {
+				handleError(new Error(`Could not find idea '${ideaId}'.`));
+				return;
+			}
+			setIdea(idea);
+		}).catch(handleError).finally(() => setIdeaLoading(false));
 	}, [client, ideaId, handleError]);
 
 	const [scoreFactName, setScoreFactName] = useState("");

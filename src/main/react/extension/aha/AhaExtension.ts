@@ -19,6 +19,9 @@ export class AhaExtension implements Extension {
 			return null;
 		}
 		const idea = await this.client.getIdea(ideaId);
+		if (idea == null) {
+			return null;
+		}
 		return `${idea.reference_num}: ${idea.name}`;
 	}
 }
