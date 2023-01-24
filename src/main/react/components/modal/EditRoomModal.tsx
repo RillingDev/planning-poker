@@ -1,22 +1,9 @@
-import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
+import { FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { CardSet, Room } from "../../api";
 import { AppContext } from "../../AppContext";
-import { Extension } from "../../extension/Extension";
+import { ProposalTextArea, Suggestion } from "../ProposalTextArea";
 
-interface SuggestionResult {
-	readonly content: string;
-	readonly extension: Extension;
-}
-
-async function loadSuggestions(newTopic: string, extensions: ReadonlyArray<Extension>): Promise<SuggestionResult[]> {
-	const suggestionResultPromises = extensions.map(extension => extension.loadSuggestion(newTopic).then(content => ({
-		extension,
-		content
-	})));
-	const lookupResults = await Promise.all(suggestionResultPromises);
-	return lookupResults.filter(result => result.content != null) as SuggestionResult[];
-}
 
 export const EditRoomModal: FC<{
 	room: Room;
@@ -29,20 +16,22 @@ export const EditRoomModal: FC<{
 	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
 	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
 
-	const [suggestions, setSuggestions] = useState<SuggestionResult[]>([]);
-
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		onSubmit(roomTopic, cardSets.find(cardSet => cardSet.name == newCardSetName)!);
 	};
 
-	const onTopicChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-		const newTopic = e.target.value;
-		setRoomTopic(newTopic);
-		loadSuggestions(newTopic, extensions).then(setSuggestions).catch(console.error);
-	};
+	async function loadSuggestions(newTopic: string): Promise<Suggestion[]> {
+		const suggestionResultPromises = extensions.map(extension => extension.loadSuggestion(newTopic).then(content => ({
+			key: extension.id,
+			content
+		})));
+		const lookupResults = await Promise.all(suggestionResultPromises);
+		return lookupResults.filter(result => result.content != null) as Suggestion[];
+	}
+
 	return (
-		<Modal show={show} onHide={onHide}>
+		<Modal show={show} onHide={onHide} size="lg">
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
@@ -56,11 +45,8 @@ export const EditRoomModal: FC<{
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formEditRoomTopic">
 						<Form.Label>Topic</Form.Label>
-						<Form.Control as="textarea" value={roomTopic} onChange={onTopicChange}/>
+						<ProposalTextArea value={roomTopic} onChange={setRoomTopic} loadProposals={loadSuggestions}/>
 					</Form.Group>
-					<ul>
-						{suggestions.map(suggestion => <li key={suggestion.extension.id}>{suggestion.content} - {suggestion.extension.id}</li>)}
-					</ul>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button type="submit" variant="primary">Update</Button>
