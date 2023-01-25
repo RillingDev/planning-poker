@@ -11,25 +11,36 @@ import java.util.StringJoiner;
 public class Extension extends BaseEntity {
 
 	@Column(name = "extension_key", nullable = false)
-	private String extension;
+	private String key;
+
+	@Column(name = "extension_enabled", nullable = false)
+	private boolean enabled = true;
 
 	protected Extension() {
 	}
 
-	public Extension(String extension) {
-		this.extension = extension;
+	public Extension(String key) {
+		this.key = key;
 	}
 
-	public String getExtension() {
-		return extension;
+	public String getKey() {
+		return key;
 	}
 
-	public void setExtension(String extension) {
-		this.extension = extension;
+	public void setKey(String extension) {
+		this.key = extension;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", Extension.class.getSimpleName() + "[", "]").add("extension='" + extension + "'").toString();
+		return new StringJoiner(", ", Extension.class.getSimpleName() + "[", "]").add("key='" + key + "'").add("enabled=" + enabled).toString();
 	}
 }

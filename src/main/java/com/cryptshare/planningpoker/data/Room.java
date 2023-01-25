@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "room")
@@ -100,12 +101,18 @@ public class Room extends BaseEntity {
 		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
 	}
 
-	public Set<RoomExtensionConfig> getExtensionConfigs() {
+	protected Set<RoomExtensionConfig> getExtensionConfigs() {
 		return extensionConfigs;
 	}
 
-	public void setExtensionConfigs(Set<RoomExtensionConfig> extensions) {
+	protected void setExtensionConfigs(Set<RoomExtensionConfig> extensions) {
 		this.extensionConfigs = extensions;
+	}
+
+	public Set<RoomExtensionConfig> getEnabledExtensionConfigs() {
+		return extensionConfigs.stream()
+				.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().isEnabled())
+				.collect(Collectors.toUnmodifiableSet());
 	}
 
 	@Override

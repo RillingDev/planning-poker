@@ -1,7 +1,8 @@
 CREATE TABLE extension
 (
-	id            UUID           NOT NULL PRIMARY KEY,
-	extension_key VARCHAR UNIQUE NOT NULL
+	id                UUID           NOT NULL PRIMARY KEY,
+	extension_key     VARCHAR UNIQUE NOT NULL,
+	extension_enabled BOOLEAN        NOT NULL
 );
 
 CREATE TABLE room_extension_config
@@ -12,5 +13,5 @@ CREATE TABLE room_extension_config
 	CONSTRAINT uq_room_extension_config UNIQUE (room_id, extension_id)
 );
 
-INSERT INTO extension (id, extension_key)
-VALUES (RANDOM_UUID(), 'aha');
+INSERT INTO extension
+VALUES (RANDOM_UUID(), 'aha', TRUE);
