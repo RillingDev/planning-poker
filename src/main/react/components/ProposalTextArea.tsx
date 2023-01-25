@@ -1,7 +1,6 @@
-import { debounce } from "lodash-es";
-import { ChangeEvent, FC, useCallback, useId, useState } from "react";
+import { ChangeEvent, FC, useId, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useErrorHandler } from "../hooks";
+import { useDebounce, useErrorHandler } from "../hooks";
 import { ErrorPanel } from "./ErrorPanel";
 
 export interface Suggestion {
@@ -22,10 +21,9 @@ export const ProposalTextArea: FC<{
 
 	const suggestionsId = useId();
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const updateSuggestions = useCallback(debounce((newValue: string) => {
+	const updateSuggestions = useDebounce((newValue: string) => {
 		loadProposals(newValue).then(setSuggestions).catch(handleError);
-	}, 500), []);
+	}, 500);
 	const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 		const newValue = e.target.value;
 		setCurrentValue(newValue);
