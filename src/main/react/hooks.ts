@@ -1,3 +1,4 @@
+import { debounce, DebouncedFunc } from "lodash-es";
 import { useCallback, useEffect, useState } from "react";
 
 export const useErrorHandler = (): [Error | null, (e: Error) => void, () => void] => {
@@ -33,3 +34,6 @@ export const useDocumentTitle = (title: string): void => {
 		document.title = title;
 	}, [title]);
 };
+
+
+export const useDebounce = <T extends (...args: any[]) => any>(fn: T, wait: number): DebouncedFunc<T> => useCallback(debounce(fn, wait), []);

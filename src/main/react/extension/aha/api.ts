@@ -68,13 +68,21 @@ export class AhaClient {
 					return;
 				}
 
-				if (newWindow.location.host == this.#redirectUri.host) {
+				let windowUrl: string;
+				try {
+					windowUrl = newWindow.location.host;
+				} catch (e) {
+					// Access denied, because not the same origin (yet).
+					return;
+				}
+
+				if (windowUrl == this.#redirectUri.host) {
 					newWindow.close();
 					clearInterval(completionTimer);
 
 					const exec = ACCESS_TOKEN_REGEX.exec(newWindow.location.hash);
 					if (exec == null) {
-						reject(new TypeError(`Unexpected response: ${newWindow.location.href}`));
+						reject(new TypeError(`Unexpected response URI: ${newWindow.location.href}`));
 						return;
 					}
 					const accessToken = exec[1];
@@ -88,22 +96,30 @@ export class AhaClient {
 		return {"Authorization": `Bearer ${this.#accessToken!}`};
 	}
 
-	async getIdea(ideaId: string) {
+	async getIdea(ideaId: string): Promise<Idea | null> {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
-		return fetch(url, {
+		const response = await fetch(url, {
 			method: "GET",
 			headers: {
 				...this.#getBaseHeaders(),
 				"Accept": MEDIA_TYPE_JSON
 			}
-		}).then(assertStatusOk).then(res => res.json() as Promise<{
+		});
+
+		if (response.status == 404) {
+			return null;
+		}
+		await assertStatusOk(response);
+
+		const body = await response.json() as {
 			idea: Idea;
-		}>).then(res => res.idea);
+		};
+		return body.idea;
 	}
 
-	async putIdeaScore(ideaId: string, scoreFactName: string, value: number) {
+	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
