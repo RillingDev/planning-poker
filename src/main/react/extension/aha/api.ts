@@ -68,13 +68,21 @@ export class AhaClient {
 					return;
 				}
 
-				if (newWindow.location.host == this.#redirectUri.host) {
+				let windowUrl: string;
+				try {
+					windowUrl = newWindow.location.host;
+				} catch (e) {
+					// Access denied, because not the same origin (yet).
+					return;
+				}
+
+				if (windowUrl == this.#redirectUri.host) {
 					newWindow.close();
 					clearInterval(completionTimer);
 
 					const exec = ACCESS_TOKEN_REGEX.exec(newWindow.location.hash);
 					if (exec == null) {
-						reject(new TypeError(`Unexpected response: ${newWindow.location.href}`));
+						reject(new TypeError(`Unexpected response URI: ${newWindow.location.href}`));
 						return;
 					}
 					const accessToken = exec[1];
