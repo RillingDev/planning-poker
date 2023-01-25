@@ -19,17 +19,22 @@ public class CardSet extends BaseEntity {
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private Set<Card> cards = new HashSet<>(16);
 
+	@Column(name = "relevant_fraction_digits", nullable = false)
+	private int relevantFractionDigits;
+
 	protected CardSet() {
 	}
 
 	public CardSet(String name) {
 		this.name = name;
+		this.relevantFractionDigits = 1;
 	}
 
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", CardSet.class.getSimpleName() + "[", "]").add("name='" + name + "'")
 				.add("cards=" + cards.size())
+				.add("relevantFractionDigits=" + relevantFractionDigits)
 				.toString();
 	}
 
@@ -49,4 +54,11 @@ public class CardSet extends BaseEntity {
 		this.cards = cards;
 	}
 
+	public int getRelevantFractionDigits() {
+		return relevantFractionDigits;
+	}
+
+	public void setRelevantFractionDigits(int relevantFractionDigits) {
+		this.relevantFractionDigits = relevantFractionDigits;
+	}
 }

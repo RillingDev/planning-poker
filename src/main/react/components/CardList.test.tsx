@@ -7,6 +7,7 @@ describe("CardList", () => {
 	it("shows cards", () => {
 		const cardSet: CardSet = {
 			name: "Set",
+			relevantFractionDigits: 1,
 			cards: [{name: "Card 1", value: 1, description: null}, {name: "Card 2", value: 2, description: null}]
 		};
 
@@ -20,6 +21,7 @@ describe("CardList", () => {
 	it("disables buttons", () => {
 		const cardSet: CardSet = {
 			name: "Set",
+			relevantFractionDigits: 1,
 			cards: [{name: "Card 1", value: 1, description: null}, {name: "Card 2", value: 2, description: null}]
 		};
 
@@ -32,6 +34,7 @@ describe("CardList", () => {
 	it("enables buttons", () => {
 		const cardSet: CardSet = {
 			name: "Set",
+			relevantFractionDigits: 1,
 			cards: [{name: "Card 1", value: 1, description: null}, {name: "Card 2", value: 2, description: null}]
 		};
 
@@ -43,7 +46,10 @@ describe("CardList", () => {
 
 	it("sets active card", () => {
 		const card1: Card = {name: "Card 1", value: 1, description: null};
-		const cardSet: CardSet = {name: "Set", cards: [card1, {name: "Card 2", value: 2, description: null}]};
+		const cardSet: CardSet = {
+			name: "Set",
+			relevantFractionDigits: 1, cards: [card1, {name: "Card 2", value: 2, description: null}]
+		};
 
 		render(<CardList cardSet={cardSet} activeCard={card1} disabled={false}/>);
 

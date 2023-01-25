@@ -1,11 +1,9 @@
 import { FC, useContext } from "react";
-import { Card, Room, RoomMember, VoteSummary } from "../api";
+import { Card, CardSet, Room, RoomMember, VoteSummary } from "../api";
 import { AppContext } from "../AppContext";
 import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./Summary.css";
-
-const formatter = new Intl.NumberFormat("en-US", {style: "decimal", maximumFractionDigits: 1});
 
 const ExtremeSummary: FC<{
 	className: string,
@@ -27,10 +25,16 @@ const ExtremeSummary: FC<{
 	);
 };
 
+const createFormatter = (cardSet: CardSet) => new Intl.NumberFormat("en-US", {
+	style: "decimal",
+	maximumFractionDigits: cardSet.relevantFractionDigits
+});
+
 export const Summary: FC<{
 	room: Room,
-	voteSummary: VoteSummary | null
-}> = ({room, voteSummary}) => {
+	voteSummary: VoteSummary | null,
+	cardSet: CardSet
+}> = ({room, voteSummary, cardSet}) => {
 	const {extensions} = useContext(AppContext);
 
 	if (voteSummary == null) {
@@ -40,6 +44,7 @@ export const Summary: FC<{
 			</div>
 		);
 	}
+	const formatter = createFormatter(cardSet);
 
 	const showExtremesDetails = voteSummary.highestVote.name !== voteSummary.lowestVote.name;
 

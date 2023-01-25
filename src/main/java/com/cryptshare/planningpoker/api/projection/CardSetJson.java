@@ -6,10 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public record CardSetJson(@JsonProperty("name") String name, @JsonProperty("cards") List<CardJson> cards) {
+public record CardSetJson(@JsonProperty("name") String name, @JsonProperty("cards") List<CardJson> cards,
+						  @JsonProperty("relevantFractionDigits") int relevantFractionDigits) {
 
 	public static CardSetJson convert(CardSet cardSet) {
-		return new CardSetJson(cardSet.getName(), cardSet.getCards().stream().sorted(Card.NATURAL_COMPARATOR).map(CardJson::convert).toList());
+		return new CardSetJson(
+				cardSet.getName(),
+				cardSet.getCards().stream().sorted(Card.NATURAL_COMPARATOR).map(CardJson::convert).toList(),
+				cardSet.getRelevantFractionDigits());
 	}
 
 }

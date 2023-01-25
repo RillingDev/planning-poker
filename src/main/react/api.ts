@@ -32,6 +32,7 @@ export interface Card {
 export interface CardSet {
 	readonly name: string;
 	readonly cards: ReadonlyArray<Card>;
+	readonly relevantFractionDigits: number;
 }
 
 export interface SummaryResult {
