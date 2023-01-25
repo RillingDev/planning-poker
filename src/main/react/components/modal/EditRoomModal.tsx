@@ -23,7 +23,7 @@ export const EditRoomModal: FC<{
 
 	async function loadSuggestions(newTopic: string): Promise<Suggestion[]> {
 		const suggestionResultPromises = extensions.map(extension => extension.loadSuggestion(newTopic).then(content => ({
-			key: extension.id,
+			key: extension.key,
 			content
 		})));
 		const lookupResults = await Promise.all(suggestionResultPromises);

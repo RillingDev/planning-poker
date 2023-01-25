@@ -4,7 +4,7 @@ import { AhaClient, getAhaConfig } from "./api";
 import { extractIdeaId } from "./utils";
 
 export class AhaExtension implements Extension {
-	id = "aha";
+	key = "aha";
 	SubmitComponent = AhaSubmitButton;
 
 	client: AhaClient | null = null;

@@ -12,9 +12,9 @@ import { router } from "./router";
 const AVAILABLE_EXTENSIONS = [new AhaExtension()];
 
 async function createContextState(): Promise<AppContextState> {
-	const [user, enabledExtensionIds, cardSets] = await Promise.all([loadIdentity(), loadExtensions(), loadCardSets()]);
+	const [user, enabledExtensionKeys, cardSets] = await Promise.all([loadIdentity(), loadExtensions(), loadCardSets()]);
 
-	const extensions = AVAILABLE_EXTENSIONS.filter(availableExtension => enabledExtensionIds.includes(availableExtension.id));
+	const extensions = AVAILABLE_EXTENSIONS.filter(availableExtension => enabledExtensionKeys.includes(availableExtension.key));
 	await Promise.all(extensions.map(extension => extension.initialize()));
 
 	return {
