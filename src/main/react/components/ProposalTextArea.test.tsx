@@ -4,12 +4,13 @@ import { ProposalTextArea } from "./ProposalTextArea";
 
 describe("ProposalTextArea", () => {
 	it("delegates input", () => {
-		let actualNewValue;
-		render(<ProposalTextArea
-			value={"foo"}
-			onChange={(newValue) => actualNewValue = newValue}
+		let value = "foo";
+		const component = <ProposalTextArea
+			value={value}
+			onChange={(newValue) => value = newValue}
 			loadProposals={() => Promise.resolve([])}
-		/>);
+		/>;
+		render(component);
 
 		const input = screen.getByText("foo");
 		expect(input).toBeInTheDocument();
@@ -17,8 +18,7 @@ describe("ProposalTextArea", () => {
 
 		fireEvent.change(input, {target: {value: "bar"}});
 
-		expect(input).toHaveValue("bar");
-		expect(actualNewValue).toBe("bar");
+		expect(value).toBe("bar");
 	});
 
 	it("loads suggestion", async () => {
@@ -38,11 +38,11 @@ describe("ProposalTextArea", () => {
 	});
 
 	it("allows clicking suggestion", async () => {
-		let actualNewValue;
+		let value = "foo";
 		const loadProposals = () => Promise.resolve([{key: "a", content: "bar"}, {key: "b", content: "bazz"}]);
 		render(<ProposalTextArea
-			value={"foo"}
-			onChange={(newValue) => actualNewValue = newValue}
+			value={value}
+			onChange={(newValue) => value = newValue}
 			loadProposals={loadProposals}
 		/>);
 
@@ -52,7 +52,7 @@ describe("ProposalTextArea", () => {
 
 		fireEvent.click(screen.getByText("bar"));
 
-		expect(actualNewValue).toBe("bar");
+		expect(value).toBe("bar");
 
 		expect(screen.queryByText("bazz")).not.toBeInTheDocument();
 	});

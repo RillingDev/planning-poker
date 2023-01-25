@@ -15,8 +15,6 @@ export const ProposalTextArea: FC<{
 }> = ({value, loadProposals, onChange}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	const [currentValue, setCurrentValue] = useState(value);
-
 	const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
 	const suggestionsId = useId();
@@ -26,20 +24,18 @@ export const ProposalTextArea: FC<{
 	}, 500);
 	const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 		const newValue = e.target.value;
-		setCurrentValue(newValue);
 		onChange(newValue);
 		updateSuggestions(newValue);
 	};
 
 	function handleSuggestionClick(suggestion: Suggestion) {
 		const newValue = suggestion.content;
-		setCurrentValue(newValue);
 		onChange(newValue);
 		setSuggestions([]);
 	}
 
 	return (<>
-		<Form.Control as="textarea" value={currentValue} onChange={handleChange} aria-autocomplete="list" role="textbox" aria-controls={suggestionsId}/>
+		<Form.Control as="textarea" value={value} onChange={handleChange} aria-autocomplete="list" role="textbox" aria-controls={suggestionsId}/>
 
 		<div className="mt-3" hidden={suggestions.length == 0} aria-live="polite">
 			<p className="mb-0">Suggestions:</p>
