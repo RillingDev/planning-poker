@@ -55,6 +55,9 @@ class RoomRepositoryIT {
 		room.getMembers().add(member);
 		member.setVote(card);
 
+		final RoomExtension extension = new RoomExtension("aha");
+		room.getExtensions().add(extension);
+
 		roomRepository.save(room);
 
 		final Room loaded = roomRepository.findByName("My Room").orElseThrow();
@@ -62,6 +65,7 @@ class RoomRepositoryIT {
 		assertThat(loaded.getCardSet()).isEqualTo(cardSet);
 		assertThat(loaded.getTopic()).isEqualTo("topic!");
 		assertThat(loaded.getMembers()).containsExactly(member);
+		assertThat(loaded.getExtensions()).containsExactly(extension);
 		assertThat(loaded.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
@@ -132,6 +136,54 @@ class RoomRepositoryIT {
 		roomRepository.delete(room);
 
 		assertThat(cardSetRepository.findByName("Set #1")).isPresent();
+	}
+
+	@Test
+	@DisplayName("cascades delete to extensions")
+	@DirtiesContext
+	void cascadesExtensionDeletion() {
+		final CardSet cardSet = new CardSet("Set #1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		cardSetRepository.save(cardSet);
+
+		final Room room = new Room("My Room", cardSet);
+
+		final RoomExtension extension = new RoomExtension("aha");
+		room.getExtensions().add(extension);
+
+		roomRepository.save(room);
+
+		roomRepository.delete(room);
+
+		assertThat(em.createQuery("SELECT COUNT(*) FROM RoomExtension re", Long.class).getSingleResult()).isZero();
+
+		assertThat(em.createNativeQuery("SELECT COUNT(*) FROM extension", Long.class).getSingleResult()).isEqualTo(1L);
+	}
+
+	@Test
+	@DisplayName("cascades detach to extensions")
+	@DirtiesContext
+	void cascadesExtensionDetach() {
+		final CardSet cardSet = new CardSet("Set #1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		cardSetRepository.save(cardSet);
+
+		final Room room = new Room("My Room", cardSet);
+
+		final RoomExtension extension = new RoomExtension("aha");
+		room.getExtensions().add(extension);
+
+		roomRepository.save(room);
+
+		room.getExtensions().clear();
+
+		roomRepository.save(room);
+
+		assertThat(em.createQuery("SELECT COUNT(*) FROM RoomExtension re", Long.class).getSingleResult()).isZero();
+
+		assertThat(em.createNativeQuery("SELECT COUNT(*) FROM extension", Long.class).getSingleResult()).isEqualTo(1L);
 	}
 
 	private void createExampleUser() {

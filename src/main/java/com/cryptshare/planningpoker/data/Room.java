@@ -30,6 +30,10 @@ public class Room extends BaseEntity {
 	@Column(name = "voting_state", nullable = false)
 	private VotingState votingState = VotingState.OPEN;
 
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "room_id", nullable = false)
+	private Set<RoomExtension> extensions = new HashSet<>(4);
+
 	public enum VotingState {
 		OPEN,
 		CLOSED
@@ -94,6 +98,14 @@ public class Room extends BaseEntity {
 
 	public Optional<RoomMember> findMemberByUser(String username) {
 		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
+	}
+
+	public Set<RoomExtension> getExtensions() {
+		return extensions;
+	}
+
+	public void setExtensions(Set<RoomExtension> extensions) {
+		this.extensions = extensions;
 	}
 
 	@Override
