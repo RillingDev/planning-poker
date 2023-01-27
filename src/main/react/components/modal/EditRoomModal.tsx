@@ -11,7 +11,7 @@ export const EditRoomModal: FC<{
 	onHide: () => void;
 	onSubmit: (roomTopic: string, cardSet: CardSet) => void;
 }> = ({room, show, onHide, onSubmit}) => {
-	const {cardSets, extensions} = useContext(AppContext);
+	const {cardSets, extensionManager} = useContext(AppContext);
 
 	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
 	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
@@ -22,8 +22,8 @@ export const EditRoomModal: FC<{
 	};
 
 	async function loadSuggestions(newTopic: string): Promise<Suggestion[]> {
-		const suggestionResultPromises = extensions.map(extension => extension.loadSuggestion(newTopic).then(content => ({
-			key: extension.id,
+		const suggestionResultPromises = extensionManager.getByRoom(room).map(extension => extension.loadSuggestion(newTopic).then(content => ({
+			key: extension.key,
 			content
 		})));
 		const lookupResults = await Promise.all(suggestionResultPromises);

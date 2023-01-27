@@ -5,22 +5,21 @@ import "vite/modulepreload-polyfill";
 import { loadCardSets, loadExtensions, loadIdentity } from "./api";
 import { AppContext, AppContextState } from "./AppContext";
 import { Header } from "./components/Header";
-import { AhaExtension } from "./extension/aha/AhaExtension";
+import { ExtensionManager } from "./extension/ExtensionManager";
 import "./index.css";
 import { router } from "./router";
 
-const AVAILABLE_EXTENSIONS = [new AhaExtension()];
 
 async function createContextState(): Promise<AppContextState> {
-	const [user, enabledExtensionIds, cardSets] = await Promise.all([loadIdentity(), loadExtensions(), loadCardSets()]);
+	const [user, enabledExtensionKeys, cardSets] = await Promise.all([loadIdentity(), loadExtensions(), loadCardSets()]);
 
-	const extensions = AVAILABLE_EXTENSIONS.filter(availableExtension => enabledExtensionIds.includes(availableExtension.id));
-	await Promise.all(extensions.map(extension => extension.initialize()));
+	const extensionManager = new ExtensionManager(enabledExtensionKeys);
+	await extensionManager.initialize();
 
 	return {
 		cardSets,
 		user,
-		extensions,
+		extensionManager,
 	};
 }
 

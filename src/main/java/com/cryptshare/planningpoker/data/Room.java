@@ -30,6 +30,10 @@ public class Room extends BaseEntity {
 	@Column(name = "voting_state", nullable = false)
 	private VotingState votingState = VotingState.OPEN;
 
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "room_id", nullable = false)
+	private Set<RoomExtensionConfig> extensionConfigs = new HashSet<>(4);
+
 	public enum VotingState {
 		OPEN,
 		CLOSED
@@ -96,6 +100,18 @@ public class Room extends BaseEntity {
 		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
 	}
 
+	public Set<RoomExtensionConfig> getExtensionConfigs() {
+		return extensionConfigs;
+	}
+
+	public Optional<RoomExtensionConfig> getExtensionConfig(Extension extension) {
+		return extensionConfigs.stream().filter(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(extension)).findFirst();
+	}
+
+	protected void setExtensionConfigs(Set<RoomExtensionConfig> extensions) {
+		this.extensionConfigs = extensions;
+	}
+
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
@@ -103,6 +119,7 @@ public class Room extends BaseEntity {
 				.add("cardSet='" + cardSet.getName() + "'")
 				.add("members=" + members.size())
 				.add("votingState='" + votingState + "'")
+				.add("extensionConfigs=" + extensionConfigs.size())
 				.toString();
 	}
 }

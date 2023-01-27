@@ -1,5 +1,7 @@
 import { isStatusOk, MEDIA_TYPE_JSON } from "./apiUtils";
 
+export type ExtensionKey = string;
+
 export const enum Role {
 	VOTER = "VOTER",
 	OBSERVER = "OBSERVER",
@@ -21,6 +23,7 @@ export interface Room {
 	readonly cardSetName: string;
 	readonly members: ReadonlyArray<RoomMember>;
 	readonly votingClosed: boolean;
+	readonly extensions: ReadonlyArray<ExtensionKey>;
 }
 
 export interface Card {
@@ -79,7 +82,7 @@ export async function loadExtensions() {
 	return fetch("/api/extensions", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
-	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<string>>);
+	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<ExtensionKey>>);
 }
 
 export async function loadCardSets() {
@@ -180,3 +183,14 @@ export async function getSummary(roomName: string) {
 	}).then(assertStatusOk).then(res => res.json() as Promise<SummaryResult>);
 }
 
+export async function addExtension(roomName: string, extension: ExtensionKey) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${encodeURIComponent(extension)}`, {
+		method: "POST"
+	}).then(assertStatusOk);
+}
+
+export async function removeExtension(roomName: string, extension: ExtensionKey) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${encodeURIComponent(extension)}`, {
+		method: "DELETE"
+	}).then(assertStatusOk);
+}

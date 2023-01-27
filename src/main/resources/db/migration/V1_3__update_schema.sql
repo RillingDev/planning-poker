@@ -20,4 +20,23 @@ ALTER TABLE vote
 						 LEFT JOIN card_set cs ON c.card_set_id = cs.id
 				WHERE c.id = vote.card_id
 				)
-		)
+		);
+
+
+CREATE TABLE extension
+(
+	id                UUID           NOT NULL PRIMARY KEY,
+	extension_key     VARCHAR UNIQUE NOT NULL,
+	extension_enabled BOOLEAN        NOT NULL
+);
+
+CREATE TABLE room_extension_config
+(
+	id           UUID    NOT NULL PRIMARY KEY,
+	room_id      UUID    NOT NULL REFERENCES room (id) ON DELETE CASCADE,
+	extension_id VARCHAR NOT NULL REFERENCES extension (id) ON DELETE CASCADE,
+	CONSTRAINT uq_room_extension_config UNIQUE (room_id, extension_id)
+);
+
+INSERT INTO extension
+VALUES (RANDOM_UUID(), 'aha', TRUE);
