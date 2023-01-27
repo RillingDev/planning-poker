@@ -4,13 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Repository
 public interface ExtensionRepository extends JpaRepository<Extension, UUID> {
 
-	Stream<Extension> findAllByEnabled(boolean enabled);
+	Set<Extension> findAllByEnabled(boolean enabled);
 
 	Optional<Extension> findByKey(String key);
 }

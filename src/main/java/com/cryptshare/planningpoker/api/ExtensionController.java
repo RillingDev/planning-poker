@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Access to globally available extensions.
+ */
 @RestController
 class ExtensionController {
 	private final ExtensionRepository extensionRepository;
@@ -20,7 +23,7 @@ class ExtensionController {
 	@GetMapping(value = "/api/extensions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<String> loadExtensions() {
-		return extensionRepository.findAllByEnabled(true).map(Extension::getKey).sorted().toList();
+		return extensionRepository.findAllByEnabled(true).stream().map(Extension::getKey).sorted().toList();
 	}
 
 }
