@@ -1,4 +1,4 @@
-import { faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
@@ -12,7 +12,6 @@ import { CardList } from "../components/CardList";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
-import { ExtensionRoomModal } from "../components/modal/ExtensionRoomModal";
 import { Summary } from "../components/Summary";
 import { useBooleanState, useDocumentTitle, useErrorHandler, useInterval } from "../hooks";
 import "./RoomView.css";
@@ -57,14 +56,10 @@ export const RoomView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
 
 
-	const [editModalVisible, showEditModal, hideEditModal] = useBooleanState(false);
+	const [editModalVisible, showEditModel, hideEditModal] = useBooleanState(false);
 	const handleEdit = (roomTopic: string, cardSet: CardSet) => {
 		hideEditModal();
 		editRoom(room.name, roomTopic, cardSet.name).then(updateRoom).catch(handleError);
-	};
-	const [extensionModalVisible, showExtensionModal, hideExtensionModal] = useBooleanState(false);
-	const handleExtensionChange = () => {
-		updateRoom().catch(handleError);
 	};
 
 	const {user, cardSets} = useContext(AppContext);
@@ -122,14 +117,10 @@ export const RoomView: FC = () => {
 				<div className="d-flex justify-content-between align-items-center mb-1">
 					<div className="room-view__header">
 						<h2 className="mb-0">{room.name}</h2>
-						<Button variant="warning" size="sm" onClick={showEditModal}>
+						<Button variant="warning" size="sm" onClick={showEditModel}>
 							<FontAwesomeIcon icon={faEdit} title="Edit Room"/>
 						</Button>
 						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={hideEditModal}/>
-						<Button variant="warning" size="sm" onClick={showExtensionModal}>
-							<FontAwesomeIcon icon={faPlus} title="Configure Room Extensions"/>
-						</Button>
-						<ExtensionRoomModal room={room} show={extensionModalVisible} onHide={hideExtensionModal} onChange={handleExtensionChange}/>
 					</div>
 					<nav>
 						<Link to={"/"} onClick={handleLeave} className="btn btn-secondary btn-sm">
