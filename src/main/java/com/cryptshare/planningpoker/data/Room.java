@@ -104,10 +104,13 @@ public class Room extends BaseEntity {
 		return extensionConfigs;
 	}
 
+	public Optional<RoomExtensionConfig> getExtensionConfig(Extension extension) {
+		return extensionConfigs.stream().filter(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(extension)).findFirst();
+	}
+
 	protected void setExtensionConfigs(Set<RoomExtensionConfig> extensions) {
 		this.extensionConfigs = extensions;
 	}
-
 
 	@Override
 	public String toString() {

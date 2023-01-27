@@ -33,7 +33,7 @@ class RoomExtensionController {
 
 		final Extension extension = extensionRepository.findByKey(extensionKey).orElseThrow(ExtensionNotFoundException::new);
 
-		if (room.getExtensionConfigs().stream().anyMatch(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(extension))) {
+		if (room.getExtensionConfig(extension).isPresent()) {
 			logger.warn("Extension '{}' is already in room '{}'.", extension, room);
 			return;
 		}
@@ -55,15 +55,11 @@ class RoomExtensionController {
 
 		final Extension extension = extensionRepository.findByKey(extensionKey).orElseThrow(ExtensionNotFoundException::new);
 
-		room.getExtensionConfigs()
-				.stream()
-				.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(extension))
-				.findFirst()
-				.ifPresentOrElse(roomExtensionConfig -> {
-					room.getExtensionConfigs().remove(roomExtensionConfig);
-					roomRepository.save(room);
-					logger.info("Extension '{}' removed from room '{}'.", extension, room);
-				}, () -> logger.warn("Extension '{}' is not in room '{}'.", extension, room));
+		room.getExtensionConfig(extension).ifPresentOrElse(roomExtensionConfig -> {
+			room.getExtensionConfigs().remove(roomExtensionConfig);
+			roomRepository.save(room);
+			logger.info("Extension '{}' removed from room '{}'.", extension, room);
+		}, () -> logger.warn("Extension '{}' is not in room '{}'.", extension, room));
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such extension.")
