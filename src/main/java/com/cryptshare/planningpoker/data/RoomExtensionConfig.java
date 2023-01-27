@@ -30,10 +30,6 @@ public class RoomExtensionConfig extends BaseEntity {
 		this.extension = extension;
 	}
 
-	public boolean isEnabled() {
-		return getExtension().isEnabled();
-	}
-
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", RoomExtensionConfig.class.getSimpleName() + "[", "]").add("extension='" + extension + "'").toString();

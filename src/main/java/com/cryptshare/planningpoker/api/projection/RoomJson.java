@@ -1,7 +1,6 @@
 package com.cryptshare.planningpoker.api.projection;
 
 import com.cryptshare.planningpoker.data.Room;
-import com.cryptshare.planningpoker.data.RoomExtensionConfig;
 import com.cryptshare.planningpoker.data.RoomMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,7 +26,10 @@ public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic")
 				room.getTopic(),
 				room.getCardSet().getName(),
 				room.getMembers().stream().sorted(RoomMember.ALPHABETIC_COMPARATOR).map(roomMemberMapper).toList(),
-				room.getVotingState() == Room.VotingState.CLOSED, room.getExtensionConfigs().stream().filter(RoomExtensionConfig::isEnabled)
+				room.getVotingState() == Room.VotingState.CLOSED,
+				room.getExtensionConfigs()
+						.stream()
+						.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().isEnabled())
 						.map(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey())
 						.sorted()
 						.toList());

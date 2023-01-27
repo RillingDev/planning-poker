@@ -54,9 +54,9 @@ class RoomExtensionControllerTest {
 	}
 
 	@Test
-	@DisplayName("POST `/api/rooms/{room-name}/extensions/{extension-key}` enables extension")
+	@DisplayName("POST `/api/rooms/{room-name}/extensions/{extension-key}` adds extension")
 	@WithMockUser("John Doe")
-	void enableExtension() throws Exception {
+	void addExtension() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 1"));
 		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -73,9 +73,9 @@ class RoomExtensionControllerTest {
 	}
 
 	@Test
-	@DisplayName("POST `/api/rooms/{room-name}/extensions/{extension-key}` ignores already enabled extension")
+	@DisplayName("POST `/api/rooms/{room-name}/extensions/{extension-key}` ignores already added extension")
 	@WithMockUser("John Doe")
-	void enableEnabledExtension() throws Exception {
+	void addDuplicateExtension() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 1"));
 		room.getMembers().add(new RoomMember("John Doe"));
 		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
@@ -91,7 +91,7 @@ class RoomExtensionControllerTest {
 	@Test
 	@DisplayName("DELETE `/api/rooms/{room-name}/extensions/{extension-key}` throws for unknown extension")
 	@WithMockUser("John Doe")
-	void disableChecksExtension() throws Exception {
+	void removeChecksExtension() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 1"));
 		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -102,9 +102,9 @@ class RoomExtensionControllerTest {
 	}
 
 	@Test
-	@DisplayName("DELETE `/api/rooms/{room-name}/extensions/{extension-key}` disables extension")
+	@DisplayName("DELETE `/api/rooms/{room-name}/extensions/{extension-key}` removes extension")
 	@WithMockUser("John Doe")
-	void disableExtension() throws Exception {
+	void removeExtension() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 1"));
 		room.getMembers().add(new RoomMember("John Doe"));
 		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
@@ -120,9 +120,9 @@ class RoomExtensionControllerTest {
 	}
 
 	@Test
-	@DisplayName("DELETE `/api/rooms/{room-name}/extensions/{extension-key}` ignores already disabled extension")
+	@DisplayName("DELETE `/api/rooms/{room-name}/extensions/{extension-key}` ignores already removed extension")
 	@WithMockUser("John Doe")
-	void disableDisabledExtension() throws Exception {
+	void removeDuplicateExtension() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 1"));
 		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));

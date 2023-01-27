@@ -182,13 +182,13 @@ export async function getSummary(roomName: string) {
 	}).then(assertStatusOk).then(res => res.json() as Promise<SummaryResult>);
 }
 
-export async function enableExtension(roomName: string, extension: ExtensionKey) {
+export async function addExtension(roomName: string, extension: ExtensionKey) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${encodeURIComponent(extension)}`, {
 		method: "POST"
 	}).then(assertStatusOk);
 }
 
-export async function disableExtension(roomName: string, extension: ExtensionKey) {
+export async function removeExtension(roomName: string, extension: ExtensionKey) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${encodeURIComponent(extension)}`, {
 		method: "DELETE"
 	}).then(assertStatusOk);
