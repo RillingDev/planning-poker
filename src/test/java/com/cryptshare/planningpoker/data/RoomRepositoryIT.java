@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
+@DirtiesContext
 class RoomRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
@@ -44,7 +45,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("can be saved and loaded")
-	@DirtiesContext
 	void saveAndLoad() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -78,7 +78,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("cascades delete to members")
-	@DirtiesContext
 	void cascadesMemberDeletion() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -103,7 +102,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("cascades detach to members")
-	@DirtiesContext
 	void cascadesMemberDetach() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -130,7 +128,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("does not cascade delete to card set")
-	@DirtiesContext
 	void doesNotCascadeCardSet() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -147,7 +144,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("cascades delete to extensions")
-	@DirtiesContext
 	void cascadesExtensionDeletion() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -172,7 +168,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("cascades detach to extensions")
-	@DirtiesContext
 	void cascadesExtensionDetach() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);

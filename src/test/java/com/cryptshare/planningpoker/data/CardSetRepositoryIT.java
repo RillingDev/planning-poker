@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
+@DirtiesContext
 class CardSetRepositoryIT {
 
 	@Autowired
@@ -29,7 +30,6 @@ class CardSetRepositoryIT {
 
 	@Test
 	@DisplayName("can be saved and loaded")
-	@DirtiesContext
 	void saveAndLoad() {
 		final CardSet cardSet = new CardSet("Set #1");
 		cardSet.getCards().add(new Card("1", 1.0));
@@ -46,7 +46,6 @@ class CardSetRepositoryIT {
 
 	@Test
 	@DisplayName("cascades delete to cards")
-	@DirtiesContext
 	void cascadesCardDeletion() {
 		final CardSet cardSet = new CardSet("Set #1");
 		cardSet.getCards().add(new Card("1", 1.0));
@@ -60,7 +59,6 @@ class CardSetRepositoryIT {
 
 	@Test
 	@DisplayName("cascades detach to cards")
-	@DirtiesContext
 	void cascadesCardDetach() {
 		final CardSet cardSet = new CardSet("Set #1");
 		cardSet.getCards().add(new Card("1", 1.0));
