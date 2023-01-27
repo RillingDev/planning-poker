@@ -31,7 +31,7 @@ export const Summary: FC<{
 	room: Room,
 	voteSummary: VoteSummary | null
 }> = ({room, voteSummary}) => {
-	const {extensions} = useContext(AppContext);
+	const {extensionManager} = useContext(AppContext);
 
 	if (voteSummary == null) {
 		return (
@@ -47,7 +47,7 @@ export const Summary: FC<{
 		<div className="summary">
 			<div className="summary__average">
 				<span>Average: <strong>{formatter.format(voteSummary.average)}</strong></span>
-				<div className="summary__average__extensions">{extensions.filter(e => room.extensions.includes(e.key)).map(extension =>
+				<div className="summary__average__extensions">{extensionManager.getByRoom(room).map(extension =>
 					<extension.SubmitComponent key={extension.key} self={extension} room={room} voteSummary={voteSummary}/>)}</div>
 			</div>
 			<div className="summary__nearest">
