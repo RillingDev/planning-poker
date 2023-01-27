@@ -22,7 +22,7 @@ export const EditRoomModal: FC<{
 	};
 
 	async function loadSuggestions(newTopic: string): Promise<Suggestion[]> {
-		const suggestionResultPromises = extensions.map(extension => extension.loadSuggestion(newTopic).then(content => ({
+		const suggestionResultPromises = extensions.filter(e => room.extensions.includes(e.key)).map(extension => extension.loadSuggestion(newTopic).then(content => ({
 			key: extension.key,
 			content
 		})));
