@@ -23,7 +23,7 @@ class RoomExtensionController {
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/extensions/{extension-key}")
-	public void addExtension(@PathVariable("room-name") String roomName, @PathVariable("extension-key") String extensionKey,
+	public void enableExtension(@PathVariable("room-name") String roomName, @PathVariable("extension-key") String extensionKey,
 			@AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
@@ -41,17 +41,14 @@ class RoomExtensionController {
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/extensions/{extension-key}")
-	public void removeExtension(@PathVariable("room-name") String roomName, @PathVariable("extension-key") String extensionKey,
+	public void disableExtension(@PathVariable("room-name") String roomName, @PathVariable("extension-key") String extensionKey,
 			@AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 
 		final Extension extension = extensionRepository.findByKey(extensionKey).orElseThrow(ExtensionNotFoundException::new);
 
-		room.getExtensionConfigs()
-				.stream()
-				.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(extension))
-				.findFirst()
+		room.getExtensionConfigs().stream().filter(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(extension)).findFirst()
 				.ifPresentOrElse(roomExtensionConfig -> {
 					room.getExtensionConfigs().remove(roomExtensionConfig);
 					roomRepository.save(room);
