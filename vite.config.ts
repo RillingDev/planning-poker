@@ -9,6 +9,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
 	plugins: [react()],
 	build: {
+		// TODO: fix cache invalidation
 		outDir: "target/classes/static/",
 		// https://vitejs.dev/guide/backend-integration.html
 		rollupOptions: {

@@ -28,6 +28,7 @@ class RoomExtensionController {
 	@PostMapping(value = "/api/rooms/{room-name}/extensions/{extension-key}")
 	public void addExtension(@PathVariable("room-name") String roomName, @PathVariable("extension-key") String extensionKey,
 			@AuthenticationPrincipal UserDetails user) {
+		// TODO extract this in resolver
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
 

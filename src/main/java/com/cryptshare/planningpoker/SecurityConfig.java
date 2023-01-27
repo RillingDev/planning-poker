@@ -3,6 +3,7 @@ package com.cryptshare.planningpoker;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@Profile("!test")
 class SecurityConfig {
 
 	private final DataSource dataSource;
