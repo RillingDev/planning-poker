@@ -89,6 +89,25 @@ class RoomExtensionControllerTest {
 	}
 
 	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/extensions/{extension-key}` adds disabled extension")
+	@WithMockUser("John Doe")
+	void addDisabledExtension() throws Exception {
+		final Room room = new Room("my-room", new CardSet("My Set 1"));
+		room.getMembers().add(new RoomMember("John Doe"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+		someExtension.setEnabled(false);
+		given(extensionRepository.findByKey(someExtension.getKey())).willReturn(Optional.of(someExtension));
+
+		mockMvc.perform(post("/api/rooms/my-room/extensions/someExtension").with(csrf())).andExpect(status().isOk());
+
+		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
+		verify(roomRepository).save(captor.capture());
+		assertThat(captor.getValue().getExtensionConfigs()).hasSize(1);
+		final RoomExtensionConfig roomExtensionConfig = captor.getValue().getExtensionConfigs().iterator().next();
+		assertThat(roomExtensionConfig.getExtension()).isEqualTo(someExtension);
+	}
+
+	@Test
 	@DisplayName("DELETE `/api/rooms/{room-name}/extensions/{extension-key}` throws for unknown extension")
 	@WithMockUser("John Doe")
 	void removeChecksExtension() throws Exception {
@@ -134,4 +153,22 @@ class RoomExtensionControllerTest {
 		verify(roomRepository, never()).save(room);
 	}
 
+	@Test
+	@DisplayName("DELETE `/api/rooms/{room-name}/extensions/{extension-key}` removes disabled extension")
+	@WithMockUser("John Doe")
+	void removeDisabledExtension() throws Exception {
+		final Room room = new Room("my-room", new CardSet("My Set 1"));
+		room.getMembers().add(new RoomMember("John Doe"));
+		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
+		someExtension.setEnabled(false);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		given(extensionRepository.findByKey(someExtension.getKey())).willReturn(Optional.of(someExtension));
+
+		mockMvc.perform(delete("/api/rooms/my-room/extensions/someExtension").with(csrf())).andExpect(status().isOk());
+
+		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
+		verify(roomRepository).save(captor.capture());
+		assertThat(captor.getValue().getExtensionConfigs()).isEmpty();
+	}
 }

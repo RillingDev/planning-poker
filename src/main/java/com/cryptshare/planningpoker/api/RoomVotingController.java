@@ -31,6 +31,7 @@ class RoomVotingController {
 		this.summaryService = summaryService;
 	}
 
+	// TODO: move to another controller
 	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {

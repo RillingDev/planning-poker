@@ -29,7 +29,7 @@ class ExtensionControllerTest {
 	@Test
 	@DisplayName("GET `/api/extensions` returns extensions")
 	@WithMockUser
-	void loadCardSets() throws Exception {
+	void loadsExtensions() throws Exception {
 		final Extension foo = new Extension("foo");
 		final Extension bar = new Extension("bar");
 		given(extensionRepository.findAllByEnabled(true)).willReturn(Set.of(bar, foo));

@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CardTest {
 
 	@RepeatedTest(100) // Test relies on random shuffled input, so we test several.
-	@DisplayName("Is sort")
+	@DisplayName("is sorted")
 	void order() {
 		final Card card0 = new Card("0", 0.0);
 		final Card card05 = new Card("0.5", 0.5);
