@@ -70,8 +70,9 @@ Start the run config `package`.
 This will:
 
 1) compile the backend.
-2) compile the frontend into the compiled backend files directory.
-3) package the whole bunch as JAR.
+2) compile the frontend.
+3) copy the compiled frontend into the compiled backend resources.
+4) package the whole bunch as JAR.
 
 ### Architecture
 
