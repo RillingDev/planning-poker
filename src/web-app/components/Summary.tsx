@@ -5,7 +5,7 @@ import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./Summary.css";
 
-const ExtremeSummary: FC<{
+const ExtremeSummaryDetails: FC<{
 	className: string,
 	label: string,
 	vote: Card,
@@ -59,8 +59,8 @@ export const Summary: FC<{
 				<span>Nearest Card:</span>
 				<PokerCard card={voteSummary.nearestCard} disabled={true}/>
 			</div>
-			<ExtremeSummary className="summary__highest" label="Highest Vote" showDetails={showExtremesDetails} vote={voteSummary.highestVote} members={voteSummary.highestVoters}/>
-			<ExtremeSummary className="summary__lowest" label="Lowest Vote" showDetails={showExtremesDetails} vote={voteSummary.lowestVote} members={voteSummary.lowestVoters}/>
+			<ExtremeSummaryDetails className="summary__highest" label="Highest Vote" showDetails={showExtremesDetails} vote={voteSummary.highestVote} members={voteSummary.highestVoters}/>
+			<ExtremeSummaryDetails className="summary__lowest" label="Lowest Vote" showDetails={showExtremesDetails} vote={voteSummary.lowestVote} members={voteSummary.lowestVoters}/>
 			<div className="summary__offset">Disagreement: <DisagreementMeter offset={voteSummary.offset}/></div>
 		</div>
 	);

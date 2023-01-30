@@ -5,12 +5,11 @@ import { ProposalTextArea } from "./ProposalTextArea";
 describe("ProposalTextArea", () => {
 	it("delegates input", () => {
 		let value = "foo";
-		const component = <ProposalTextArea
+		render(<ProposalTextArea
 			value={value}
 			onChange={(newValue) => value = newValue}
 			loadProposals={() => Promise.resolve([])}
-		/>;
-		render(component);
+		/>);
 
 		const input = screen.getByText("foo");
 		expect(input).toBeInTheDocument();
