@@ -1,4 +1,4 @@
-import { FC, useContext } from "react";
+import { FC, useContext, useId } from "react";
 import { Badge, ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
 import { EditAction, Role, RoomMember } from "../api";
@@ -16,33 +16,41 @@ const mapRoleToColor = (role: Role): Color => {
 	}
 };
 
+const Member: FC<{
+	member: RoomMember, onAction: (action: EditAction) => void
+}> = ({member, onAction}) => {
+	const {user} = useContext(AppContext);
+
+	const id = useId();
+
+	return (<li className={`card member member--${member.role}`}>
+		<span>{member.username} <Badge bg="light" text={mapRoleToColor(member.role)}>{member.role}</Badge></span>
+		<Dropdown size="sm" as={ButtonGroup}>
+			<Dropdown.Toggle variant="secondary" id={id} aria-label="Edit member"/>
+
+			<Dropdown.Menu>
+				<Dropdown.Item onClick={() => onAction(EditAction.SET_OBSERVER)} disabled={member.role == Role.OBSERVER}>
+					Set To Observer
+				</Dropdown.Item>
+				<Dropdown.Item onClick={() => onAction(EditAction.SET_VOTER)} disabled={member.role == Role.VOTER}>
+					Set To Voter
+				</Dropdown.Item>
+				<Dropdown.Divider/>
+				<Dropdown.Item onClick={() => onAction(EditAction.KICK)} disabled={member.username == user.username}>
+					Kick
+				</Dropdown.Item>
+			</Dropdown.Menu>
+		</Dropdown>
+		{member.vote != null && <PokerCard card={member.vote} disabled={true} size="sm"/>}
+	</li>);
+};
+
 export const MemberList: FC<{
 	members: ReadonlyArray<RoomMember>, onAction: (member: RoomMember, action: EditAction) => void
 }> = ({members, onAction}) => {
-	const {user} = useContext(AppContext);
-
 	return (
 		<ul className="member-list">
-			{members.map((member, i) => <li key={member.username} className={`card member member--${member.role}`}>
-				<span>{member.username} <Badge bg="light" text={mapRoleToColor(member.role)}>{member.role}</Badge></span>
-				<Dropdown size="sm" as={ButtonGroup}>
-					<Dropdown.Toggle variant="secondary" id={`options-dropdown-${i}`} aria-label="Edit member"/>
-
-					<Dropdown.Menu>
-						<Dropdown.Item onClick={() => onAction(member, EditAction.SET_OBSERVER)} disabled={member.role == Role.OBSERVER}>
-							Set To Observer
-						</Dropdown.Item>
-						<Dropdown.Item onClick={() => onAction(member, EditAction.SET_VOTER)} disabled={member.role == Role.VOTER}>
-							Set To Voter
-						</Dropdown.Item>
-						<Dropdown.Divider/>
-						<Dropdown.Item onClick={() => onAction(member, EditAction.KICK)} disabled={member.username == user.username}>
-							Kick
-						</Dropdown.Item>
-					</Dropdown.Menu>
-				</Dropdown>
-				{member.vote != null && <PokerCard card={member.vote} disabled={true} size="sm"/>}
-			</li>)}
+			{members.map((member) => <Member key={member.username} member={member} onAction={action => onAction(member, action)}/>)}
 		</ul>
 	);
 };
