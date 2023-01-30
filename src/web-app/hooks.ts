@@ -36,4 +36,4 @@ export const useDocumentTitle = (title: string): void => {
 };
 
 
-export const useDebounce = <T extends (...args: any[]) => any>(fn: T, wait: number): DebouncedFunc<T> => useCallback(debounce(fn, wait), []);
+export const useDebounce = <T extends (...args: never[]) => unknown>(fn: T, wait: number): DebouncedFunc<T> => useCallback(debounce(fn, wait), []);
