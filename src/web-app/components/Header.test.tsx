@@ -10,7 +10,10 @@ describe("Header", () => {
 			user: {username: "John Doe"},
 			cardSets: [],
 			extensionManager: new ExtensionManager([])
-		}}><Header/></AppContext.Provider>);
+		}}>
+			<Header/>
+		</AppContext.Provider>);
+
 		expect(screen.getByText("John Doe")).toBeInTheDocument();
 	});
 });

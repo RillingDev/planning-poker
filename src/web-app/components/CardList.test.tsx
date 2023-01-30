@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { vi } from "vitest";
 import { Card, CardSet } from "../api";
 import { CardList } from "./CardList";
 
@@ -55,5 +56,22 @@ describe("CardList", () => {
 
 		expect(screen.getByText("Card 1")).toHaveClass("active");
 		expect(screen.getByText("Card 2")).not.toHaveClass("active");
+	});
+
+
+	it("invokes click handler", () => {
+		const card1: Card = {name: "Card 1", value: 1, description: null};
+		const cardSet: CardSet = {
+			name: "Set",
+			relevantFractionDigits: 1,
+			cards: [card1, {name: "Card 2", value: 2, description: null}]
+		};
+		const handleClick = vi.fn();
+
+		render(<CardList cardSet={cardSet} activeCard={null} disabled={false} onClick={handleClick}/>);
+
+		fireEvent.click(screen.getByText("Card 1"));
+
+		expect(handleClick).toBeCalledWith(card1);
 	});
 });

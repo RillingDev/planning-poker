@@ -3,15 +3,11 @@ import { Role, RoomMember } from "../api";
 import { MemberList } from "./MemberList";
 
 
-const noop = () => {
-	// noop
-};
-
 describe("MemberList", () => {
 	it("shows members", () => {
 		const members: RoomMember[] = [{username: "John Doe", role: Role.VOTER, vote: null}, {username: "Alice", role: Role.VOTER, vote: null}];
 
-		render(<MemberList members={members} onAction={noop}/>);
+		render(<MemberList members={members} onAction={() => ({})}/>);
 
 		expect(screen.getByText("John Doe")).toBeInTheDocument();
 		expect(screen.getByText("Alice")).toBeInTheDocument();
@@ -24,7 +20,7 @@ describe("MemberList", () => {
 			vote: null
 		}];
 
-		render(<MemberList members={members} onAction={noop}/>);
+		render(<MemberList members={members} onAction={() => ({})}/>);
 
 		expect(screen.getByText("VOTER")).toBeInTheDocument();
 		expect(screen.getByText("OBSERVER")).toBeInTheDocument();
@@ -37,7 +33,7 @@ describe("MemberList", () => {
 			vote: {name: "?", value: null, description: null}
 		}];
 
-		render(<MemberList members={members} onAction={noop}/>);
+		render(<MemberList members={members} onAction={() => ({})}/>);
 
 		expect(screen.getByText("Coffee")).toBeInTheDocument();
 		expect(screen.getByText("?")).toBeInTheDocument();
