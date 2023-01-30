@@ -13,7 +13,7 @@ export default defineConfig({
 		outDir: "target/classes/static/",
 		// https://vitejs.dev/guide/backend-integration.html
 		rollupOptions: {
-			input: "src/main/react/main.tsx",
+			input: "src/web-app/main.tsx",
 			output: {
 				// Remove hashes from file name so we have an easier time including them
 				entryFileNames: "[name].js",
@@ -31,6 +31,6 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: "jsdom",
-		setupFiles: "./src/main/react/test/setup.ts",
+		setupFiles: "./src/web-app/test/setup.ts",
 	},
 });
