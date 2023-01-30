@@ -1,4 +1,14 @@
 import { Card, CardSet, Role, Room, RoomMember } from "../api";
+import { AppContextState } from "../AppContext";
+import { ExtensionManager } from "../extension/ExtensionManager";
+
+export function createContextState(values: Partial<AppContextState>): AppContextState {
+	return {
+		user: values.user ?? {username: "John Doe"},
+		cardSets: values.cardSets ?? [],
+		extensionManager: values.extensionManager ?? new ExtensionManager([])
+	};
+}
 
 export function createCard(values: Partial<Card>): Card {
 	return {name: values.name ?? "Card", description: values.description ?? null, value: values.value ?? null};
