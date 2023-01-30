@@ -21,12 +21,12 @@ const Member: FC<{
 }> = ({member, onAction}) => {
 	const {user} = useContext(AppContext);
 
-	const id = useId();
+	const dropdownId = useId();
 
 	return (<li className={`card member member--${member.role}`}>
 		<span>{member.username} <Badge bg="light" text={mapRoleToColor(member.role)}>{member.role}</Badge></span>
 		<Dropdown size="sm" as={ButtonGroup}>
-			<Dropdown.Toggle variant="secondary" id={id} aria-label="Edit member"/>
+			<Dropdown.Toggle variant="secondary" id={dropdownId} aria-label="Edit member"/>
 
 			<Dropdown.Menu>
 				<Dropdown.Item onClick={() => onAction(EditAction.SET_OBSERVER)} disabled={member.role == Role.OBSERVER}>

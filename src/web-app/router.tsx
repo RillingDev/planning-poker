@@ -5,7 +5,7 @@ import { createBrowserRouter, isRouteErrorResponse, Link, useRouteError } from "
 import { loader as roomListLoader, RoomListView } from "./routes/RoomListView";
 import { loader as roomLoader, RoomView } from "./routes/RoomView";
 
-const ErrorBoundary: FC = () => {
+const ErrorPage: FC = () => {
 	const routeError = useRouteError() as Error | ErrorResponse;
 	console.error(routeError);
 	const message = isRouteErrorResponse(routeError) ? routeError.error?.message : routeError.message;
@@ -24,12 +24,12 @@ export const router = createBrowserRouter([
 		path: "/",
 		element: <RoomListView/>,
 		loader: roomListLoader,
-		errorElement: <ErrorBoundary/>
+		errorElement: <ErrorPage/>
 	},
 	{
 		path: "/rooms/:roomName",
 		element: <RoomView/>,
 		loader: roomLoader,
-		errorElement: <ErrorBoundary/>
+		errorElement: <ErrorPage/>
 	},
 ]);
