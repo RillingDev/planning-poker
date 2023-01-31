@@ -6,6 +6,8 @@ const IDEA_PATTERN = /(\w+-(?:I-)?\d+)/;
 
 export class AhaExtension implements Extension {
 	key = "aha";
+	label = "Aha!";
+
 	SubmitComponent = AhaSubmitButton;
 
 	#client: AhaClient | null = null;
