@@ -35,8 +35,8 @@ public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic")
 	private static List<String> convertExtensionConfigs(Set<RoomExtensionConfig> extensionConfigs) {
 		return extensionConfigs.stream()
 				.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().isEnabled())
+				.sorted(RoomExtensionConfig.ALPHABETIC_COMPARATOR)
 				.map(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey())
-				.sorted()
 				.toList();
 	}
 }

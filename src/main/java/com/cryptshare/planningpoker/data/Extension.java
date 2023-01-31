@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+import java.util.Comparator;
 import java.util.StringJoiner;
 
 /**
@@ -12,6 +13,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "extension")
 public class Extension extends BaseEntity {
+	public static final Comparator<Extension> ALPHABETIC_COMPARATOR = Comparator.comparing(Extension::getKey, String::compareToIgnoreCase);
 
 	@Column(name = "extension_key", nullable = false)
 	private String key;

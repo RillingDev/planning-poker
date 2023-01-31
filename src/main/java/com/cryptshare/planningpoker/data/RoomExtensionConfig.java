@@ -5,6 +5,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.util.Comparator;
 import java.util.StringJoiner;
 
 /**
@@ -13,6 +14,8 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "room_extension_config")
 public class RoomExtensionConfig extends BaseEntity {
+	public static final Comparator<RoomExtensionConfig> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomExtensionConfig::getExtension,
+			Extension.ALPHABETIC_COMPARATOR);
 
 	@ManyToOne
 	@JoinColumn(name = "extension_id", nullable = false)

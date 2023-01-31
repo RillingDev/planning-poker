@@ -23,7 +23,7 @@ class ExtensionController {
 	@GetMapping(value = "/api/extensions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<String> loadExtensions() {
-		return extensionRepository.findAllByEnabled(true).stream().map(Extension::getKey).sorted().toList();
+		return extensionRepository.findAllByEnabled(true).stream().sorted(Extension.ALPHABETIC_COMPARATOR).map(Extension::getKey).toList();
 	}
 
 }
