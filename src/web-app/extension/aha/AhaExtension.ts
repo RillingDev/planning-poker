@@ -1,7 +1,8 @@
 import type { Extension } from "../Extension";
 import { AhaSubmitButton } from "./AhaSubmitButton";
 import { AhaClient, getAhaConfig } from "./api";
-import { extractIdeaId } from "./utils";
+
+const IDEA_PATTERN = /(\w+-(?:I-)?\d+)/;
 
 export class AhaExtension implements Extension {
 	key = "aha";
@@ -14,7 +15,7 @@ export class AhaExtension implements Extension {
 	}
 
 	async loadSuggestion(newTopic: string) {
-		const ideaId = extractIdeaId(newTopic);
+		const ideaId = AhaExtension.extractIdeaId(newTopic);
 		if (ideaId == null || this.client == null) {
 			return null;
 		}
@@ -23,5 +24,10 @@ export class AhaExtension implements Extension {
 			return null;
 		}
 		return `${idea.reference_num}: ${idea.name}`;
+	}
+
+	static extractIdeaId(val: string): string | null {
+		const matchArray = val.match(IDEA_PATTERN);
+		return matchArray?.[1] ?? null;
 	}
 }
