@@ -12,12 +12,12 @@ export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: Vot
 	const ideaId = room.topic != null ? AhaExtension.extractIdeaId(room.topic) : null;
 	const score = Math.round(voteSummary.average);
 
-	const client = (self as AhaExtension).client!;
+	const extension = (self as AhaExtension);
 
 	return (<>
 			<Button size="sm" onClick={showModal} hidden={ideaId == null}>Save to Aha!</Button>
 			{ideaId && modalVisible && // Delay mount until click to ensure modal data loading is not done prematurely
-				<AhaSubmissionModal client={client} ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
+				<AhaSubmissionModal extension={extension} ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
 		</>
 	);
 };

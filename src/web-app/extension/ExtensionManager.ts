@@ -12,11 +12,6 @@ export class ExtensionManager {
 		this.#extensions = AVAILABLE_EXTENSIONS.filter(availableExtension => enabledExtensionKeys.includes(availableExtension.key));
 	}
 
-	async initialize() {
-		await Promise.all(this.#extensions.map(extension => extension.initialize()));
-	}
-
-
 	getByRoom(room: Room): ReadonlyArray<Extension> {
 		return this.#extensions.filter(extension => room.extensions.includes(extension.key));
 	}

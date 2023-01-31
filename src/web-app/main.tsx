@@ -14,7 +14,6 @@ async function createContextState(): Promise<AppContextState> {
 	const [user, enabledExtensionKeys, cardSets] = await Promise.all([loadIdentity(), loadExtensions(), loadCardSets()]);
 
 	const extensionManager = new ExtensionManager(enabledExtensionKeys);
-	await extensionManager.initialize();
 
 	return {
 		cardSets,

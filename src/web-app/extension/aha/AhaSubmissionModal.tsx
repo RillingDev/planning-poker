@@ -2,28 +2,31 @@ import { FC, FormEvent, useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useErrorHandler } from "../../hooks";
-import { AhaClient, Idea } from "./api";
+import { AhaExtension } from "./AhaExtension";
+import { Idea } from "./api";
 
 export const AhaSubmissionModal: FC<{
-	client: AhaClient, ideaId: string, score: number
+	extension: AhaExtension,
+	ideaId: string,
+	score: number
 	show: boolean;
 	onHide: () => void;
 	onSubmit: () => void;
-}> = ({client, ideaId, score, show, onHide, onSubmit}) => {
+}> = ({extension, ideaId, score, show, onHide, onSubmit}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
 	const [idea, setIdea] = useState<Idea>();
 	const [ideaLoading, setIdeaLoading] = useState(false);
 	useEffect(() => {
 		setIdeaLoading(true);
-		client.getIdea(ideaId).then(idea => {
+		extension.getClient().then(client => client.getIdea(ideaId)).then(idea => {
 			if (idea == null) {
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
 				return;
 			}
 			setIdea(idea);
 		}).catch(handleError).finally(() => setIdeaLoading(false));
-	}, [client, ideaId, handleError]);
+	}, [extension, ideaId, handleError]);
 
 	const [scoreFactName, setScoreFactName] = useState("");
 
@@ -31,7 +34,7 @@ export const AhaSubmissionModal: FC<{
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setScoreSubmissionPending(true);
-		client.putIdeaScore(ideaId, scoreFactName, score).then(onSubmit).catch(handleError).finally(() => setScoreSubmissionPending(false));
+		extension.getClient().then(client => client.putIdeaScore(ideaId, scoreFactName, score)).then(onSubmit).catch(handleError).finally(() => setScoreSubmissionPending(false));
 	};
 
 	return (<Modal show={show} onHide={onHide}>

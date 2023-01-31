@@ -8,22 +8,26 @@ export class AhaExtension implements Extension {
 	key = "aha";
 	SubmitComponent = AhaSubmitButton;
 
-	client: AhaClient | null = null;
-
-	async initialize() {
-		this.client = new AhaClient(await getAhaConfig());
-	}
+	#client: AhaClient | null = null;
 
 	async loadSuggestion(newTopic: string) {
 		const ideaId = AhaExtension.extractIdeaId(newTopic);
-		if (ideaId == null || this.client == null) {
+		if (ideaId == null) {
 			return null;
 		}
-		const idea = await this.client.getIdea(ideaId);
+
+		const idea = await this.getClient().then(client => client.getIdea(ideaId));
 		if (idea == null) {
 			return null;
 		}
 		return `${idea.reference_num}: ${idea.name}`;
+	}
+
+	async getClient(): Promise<AhaClient> {
+		if (this.#client == null) {
+			this.#client = new AhaClient(await getAhaConfig());
+		}
+		return this.#client;
 	}
 
 	static extractIdeaId(val: string): string | null {
