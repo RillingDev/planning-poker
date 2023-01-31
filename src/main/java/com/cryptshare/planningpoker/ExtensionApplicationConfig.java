@@ -11,13 +11,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 
 @Configuration
-public class ExtensionConfig {
+public class ExtensionApplicationConfig {
 	private static final Logger logger = LoggerFactory.getLogger(PlanningpokerApplication.class);
 
 	private final Environment environment;
 	private final ExtensionRepository extensionRepository;
 
-	ExtensionConfig(Environment environment, ExtensionRepository extensionRepository) {
+	ExtensionApplicationConfig(Environment environment, ExtensionRepository extensionRepository) {
 		this.environment = environment;
 		this.extensionRepository = extensionRepository;
 	}

@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
+/**
+ * Collection of {@link Card}s.
+ */
 @Entity
 @Table(name = "card_set")
 public class CardSet extends BaseEntity {

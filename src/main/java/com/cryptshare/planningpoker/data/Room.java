@@ -6,6 +6,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
+/**
+ * A room of {@link RoomMember} with a specific {@link CardSet}.
+ */
 @Entity
 @Table(name = "room")
 public class Room extends BaseEntity {

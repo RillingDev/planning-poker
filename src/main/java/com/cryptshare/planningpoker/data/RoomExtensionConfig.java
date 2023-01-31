@@ -7,6 +7,9 @@ import jakarta.persistence.Table;
 
 import java.util.StringJoiner;
 
+/**
+ * The configuration of an {@link Extension} for a {@link Room}.
+ */
 @Entity
 @Table(name = "room_extension_config")
 public class RoomExtensionConfig extends BaseEntity {

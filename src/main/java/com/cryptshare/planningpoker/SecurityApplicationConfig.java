@@ -20,11 +20,11 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @Profile("!test")
-class SecurityConfig {
+class SecurityApplicationConfig {
 
 	private final DataSource dataSource;
 
-	SecurityConfig(DataSource dataSource) {
+	SecurityApplicationConfig(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 

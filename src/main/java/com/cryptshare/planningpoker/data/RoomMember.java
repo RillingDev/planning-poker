@@ -6,11 +6,13 @@ import org.springframework.lang.Nullable;
 import java.util.Comparator;
 import java.util.StringJoiner;
 
+/**
+ * User in a {@link Room}.
+ */
 @Entity
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
-	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername,
-			String::compareToIgnoreCase);
+	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername, String::compareToIgnoreCase);
 
 	public enum Role {
 		VOTER,
@@ -25,8 +27,7 @@ public class RoomMember extends BaseEntity {
 	private Role role = Role.VOTER;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name = "vote", joinColumns = {
-			@JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
+	@JoinTable(name = "vote", joinColumns = { @JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
 			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false) })
 	@Nullable
 	private Card vote;
@@ -68,8 +69,6 @@ public class RoomMember extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'")
-				.add("role=" + role)
-				.toString();
+		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'").add("role=" + role).toString();
 	}
 }

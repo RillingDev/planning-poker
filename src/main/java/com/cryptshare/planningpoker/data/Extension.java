@@ -6,6 +6,9 @@ import jakarta.persistence.Table;
 
 import java.util.StringJoiner;
 
+/**
+ * Data of an extension.
+ */
 @Entity
 @Table(name = "extension")
 public class Extension extends BaseEntity {
