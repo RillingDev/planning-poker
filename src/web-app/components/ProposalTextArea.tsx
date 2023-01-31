@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useId, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Spinner } from "react-bootstrap";
 import { useDebounce, useErrorHandler } from "../hooks";
 import { ErrorPanel } from "./ErrorPanel";
 
@@ -16,11 +16,13 @@ export const ProposalTextArea: FC<{
 	const [error, handleError, resetError] = useErrorHandler();
 
 	const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+	const [suggestionsLoading, setSuggestionsLoading] = useState(false);
 
 	const suggestionsId = useId();
 
-	const updateSuggestions = useDebounce((newValue: string) => {// TODO: search feedback
-		loadProposals(newValue).then(setSuggestions).catch(handleError);
+	const updateSuggestions = useDebounce((newValue: string) => {
+		setSuggestionsLoading(true);
+		loadProposals(newValue).then(setSuggestions).catch(handleError).finally(() => setSuggestionsLoading(false));
 	}, 500);
 	const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 		const newValue = e.target.value;
@@ -35,9 +37,26 @@ export const ProposalTextArea: FC<{
 	}
 
 	return (<>
-		<Form.Control as="textarea" value={value} onChange={handleChange} aria-autocomplete="list" role="textbox" aria-controls={suggestionsId}/>
+		<Form.Control
+			className="mb-3"
+			as="textarea"
+			value={value}
+			onChange={handleChange}
+			aria-autocomplete="list"
+			role="textbox"
+			aria-controls={suggestionsId}
+		/>
 
-		<div className="mt-3" hidden={suggestions.length == 0} aria-live="polite">
+		<Spinner
+			hidden={!suggestionsLoading}
+			animation="border"
+			size="sm"
+			role="status"
+			aria-hidden="true">
+			<span className="visually-hidden">Loading suggestions</span>
+		</Spinner>
+
+		<div hidden={suggestions.length == 0} aria-live="polite">
 			<p className="mb-0">Suggestions:</p>
 			<ul id={suggestionsId} role="listbox">
 				{suggestions.map(suggestion => <li key={suggestion.key}>
