@@ -143,7 +143,7 @@ class RoomRepositoryIT {
 	}
 
 	@Test
-	@DisplayName("cascades delete to extensions")
+	@DisplayName("cascades delete to extension config")
 	void cascadesExtensionDeletion() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -167,7 +167,7 @@ class RoomRepositoryIT {
 	}
 
 	@Test
-	@DisplayName("cascades detach to extensions")
+	@DisplayName("cascades detach to extension config")
 	void cascadesExtensionDetach() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
