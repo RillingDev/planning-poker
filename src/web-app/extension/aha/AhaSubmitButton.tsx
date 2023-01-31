@@ -2,22 +2,19 @@ import { FC } from "react";
 import { Button } from "react-bootstrap";
 import { Room, VoteSummary } from "../../api";
 import { useBooleanState } from "../../hooks";
-import { Extension } from "../Extension";
 import { AhaExtension } from "./AhaExtension";
 import { AhaSubmissionModal } from "./AhaSubmissionModal";
 
-export const AhaSubmitButton: FC<{ self: Extension, room: Room, voteSummary: VoteSummary }> = ({self, room, voteSummary}) => {
+export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({room, voteSummary}) => {
 	const [modalVisible, showModal, hideModal] = useBooleanState(false);
 
 	const ideaId = room.topic != null ? AhaExtension.extractIdeaId(room.topic) : null;
 	const score = Math.round(voteSummary.average);
 
-	const extension = (self as AhaExtension);
-
 	return (<>
 			<Button size="sm" onClick={showModal} hidden={ideaId == null}>Save to Aha!</Button>
 			{ideaId && modalVisible && // Delay mount until click to ensure modal data loading is not done prematurely
-				<AhaSubmissionModal extension={extension} ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
+				<AhaSubmissionModal ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
 		</>
 	);
 };

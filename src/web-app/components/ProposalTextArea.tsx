@@ -19,7 +19,7 @@ export const ProposalTextArea: FC<{
 
 	const suggestionsId = useId();
 
-	const updateSuggestions = useDebounce((newValue: string) => {
+	const updateSuggestions = useDebounce((newValue: string) => {// TODO: search feedback
 		loadProposals(newValue).then(setSuggestions).catch(handleError);
 	}, 500);
 	const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

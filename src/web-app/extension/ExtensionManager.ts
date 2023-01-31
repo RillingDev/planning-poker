@@ -1,8 +1,8 @@
 import { ExtensionKey, Room } from "../api";
-import { AhaExtension } from "./aha/AhaExtension";
+import { ahaExtension } from "./aha/AhaExtension";
 import { Extension } from "./Extension";
 
-const AVAILABLE_EXTENSIONS = [new AhaExtension()];
+const AVAILABLE_EXTENSIONS = [ahaExtension];
 
 export class ExtensionManager {
 	readonly #extensions: Extension[];

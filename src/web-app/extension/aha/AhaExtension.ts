@@ -35,3 +35,5 @@ export class AhaExtension implements Extension {
 		return matchArray?.[1] ?? null;
 	}
 }
+
+export const ahaExtension = new AhaExtension();
