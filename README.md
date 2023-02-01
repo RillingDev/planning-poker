@@ -74,9 +74,21 @@ This will:
 3) copy the compiled frontend into the compiled backend resources.
 4) package the whole bunch as JAR.
 
+### Known Issues
+
+Problem: The web app does not reflect changes to the code, and the React dev tools report that it is running in production mode.
+
+Solution: Delete the `target` folder, it probably contains old build artifacts of the web app.
+
 ### Architecture
 
 #### Validation & State Transitions
 
 The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or voting).
 Integrity related validation is done in the persistence layer, such as clearing votes of observers.
+
+The persistence layer is treated as single-source-of-truth.
+
+#### Extensions
+
+Extensions are primarily controlled using spring profiles that start with the prefix `extension:`. This is then delegated to the web app.
