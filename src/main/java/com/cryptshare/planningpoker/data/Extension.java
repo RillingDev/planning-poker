@@ -18,6 +18,11 @@ public class Extension extends BaseEntity {
 	@Column(name = "extension_key", nullable = false)
 	private String key;
 
+	/**
+	 * If the extension is enabled globally.
+	 * <p>
+	 * If false, it should be hidden from clients.
+	 */
 	@Column(name = "extension_enabled", nullable = false)
 	private boolean enabled = true;
 

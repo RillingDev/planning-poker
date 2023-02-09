@@ -226,7 +226,7 @@ class RoomControllerTest {
 		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		given(extensionRepository.findByKey("bar")).willReturn(Optional.empty());
+		given(extensionRepository.findByKeyAndEnabledIsTrue("bar")).willReturn(Optional.empty());
 
 		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
@@ -245,33 +245,7 @@ class RoomControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final Extension someExtension = new Extension("someExtension");
-		given(extensionRepository.findByKey("someExtension")).willReturn(Optional.of(someExtension));
-
-		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
-				{
-					"extensions": ["someExtension"]
-				}
-				""")).andExpect(status().isOk());
-
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getExtensionConfigs()).hasSize(1);
-		final RoomExtensionConfig roomExtensionConfig = captor.getValue().getExtensionConfigs().iterator().next();
-		assertThat(roomExtensionConfig.getExtension()).isEqualTo(someExtension);
-	}
-
-	@Test
-	@DisplayName("PATCH `/api/rooms/{room-name}` adds disabled extension")
-	@WithMockUser
-	void editRoomAddsDisabledExtension() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 2");
-		final Room room = new Room("my-room", cardSet);
-		room.getMembers().add(new RoomMember("John Doe"));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-
-		final Extension someExtension = new Extension("someExtension");
-		someExtension.setEnabled(false);
-		given(extensionRepository.findByKey("someExtension")).willReturn(Optional.of(someExtension));
+		given(extensionRepository.findByKeyAndEnabledIsTrue("someExtension")).willReturn(Optional.of(someExtension));
 
 		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
@@ -297,7 +271,7 @@ class RoomControllerTest {
 
 		final Extension someExtension = new Extension("someExtension");
 		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
-		given(extensionRepository.findByKey("someExtension")).willReturn(Optional.of(someExtension));
+		given(extensionRepository.findByKeyAndEnabledIsTrue("someExtension")).willReturn(Optional.of(someExtension));
 
 		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
@@ -321,9 +295,9 @@ class RoomControllerTest {
 
 		final Extension someExtension = new Extension("someExtension");
 		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
-		given(extensionRepository.findByKey("someExtension")).willReturn(Optional.of(someExtension));
+		given(extensionRepository.findByKeyAndEnabledIsTrue("someExtension")).willReturn(Optional.of(someExtension));
 		final Extension otherExtension = new Extension("otherExtension");
-		given(extensionRepository.findByKey("otherExtension")).willReturn(Optional.of(otherExtension));
+		given(extensionRepository.findByKeyAndEnabledIsTrue("otherExtension")).willReturn(Optional.of(otherExtension));
 
 		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{

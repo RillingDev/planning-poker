@@ -37,14 +37,14 @@ class ExtensionRepositoryIT {
 		foo.setEnabled(true);
 		extensionRepository.save(foo);
 
-		final Extension loaded = extensionRepository.findByKey("foo").orElseThrow();
+		final Extension loaded = extensionRepository.findById(foo.getId()).orElseThrow();
 
 		assertThat(loaded.getKey()).isEqualTo("foo");
 		assertThat(loaded.isEnabled()).isTrue();
 	}
 
 	@Test
-	@DisplayName("loads by enabled")
+	@DisplayName("loads all by enabled")
 	void findAllByEnabled() {
 		final Extension foo = new Extension("foo");
 		foo.setEnabled(true);
@@ -59,5 +59,19 @@ class ExtensionRepositoryIT {
 		final Set<Extension> loaded = extensionRepository.findAllByEnabled(true);
 
 		assertThat(loaded).containsExactlyInAnyOrder(foo, fizz);
+	}
+
+	@Test
+	@DisplayName("loads by enabled and key")
+	void findAllByEnabledAndKey() {
+		final Extension foo = new Extension("foo");
+		foo.setEnabled(true);
+		extensionRepository.save(foo);
+		final Extension bar = new Extension("bar");
+		bar.setEnabled(false);
+		extensionRepository.save(bar);
+
+		assertThat(extensionRepository.findByKeyAndEnabledIsTrue("foo")).get().isEqualTo(foo);
+		assertThat(extensionRepository.findByKeyAndEnabledIsTrue("bar")).isEmpty();
 	}
 }

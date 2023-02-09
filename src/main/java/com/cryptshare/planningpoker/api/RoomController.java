@@ -105,7 +105,8 @@ class RoomController {
 				.collect(Collectors.toCollection(HashSet::new));
 
 		for (String newExtensionKey : newExtensionKeys) {
-			final Extension extension = extensionRepository.findByKey(newExtensionKey).orElseThrow(ExtensionNotFoundException::new);
+			final Extension extension = extensionRepository.findByKeyAndEnabledIsTrue(newExtensionKey)
+					.orElseThrow(ExtensionNotFoundException::new);
 
 			if (previousExtensionKeys.contains(newExtensionKey)) {
 				// Extension unchanged.
@@ -113,10 +114,6 @@ class RoomController {
 				// Extension added.
 				room.getExtensionConfigs().add(new RoomExtensionConfig(extension));
 				logger.info("Extension '{}' added to room '{}'.", newExtensionKey, room);
-
-				if (!extension.isEnabled()) {
-					logger.warn("Adding disabled extension '{}', it will not be available.", extension);
-				}
 			}
 			previousExtensionKeys.remove(newExtensionKey);
 		}

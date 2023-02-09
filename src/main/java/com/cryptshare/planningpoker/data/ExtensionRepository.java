@@ -12,5 +12,5 @@ public interface ExtensionRepository extends JpaRepository<Extension, UUID> {
 
 	Set<Extension> findAllByEnabled(boolean enabled);
 
-	Optional<Extension> findByKey(String key);
+	Optional<Extension> findByKeyAndEnabledIsTrue(String key);
 }
