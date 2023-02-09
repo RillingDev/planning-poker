@@ -64,7 +64,7 @@ export class AhaClient {
 				if (newWindow == null) {
 					clearInterval(completionTimer);
 
-					reject(new Error("Could not open window"));
+					reject(new Error("Could not open window."));
 					return;
 				}
 

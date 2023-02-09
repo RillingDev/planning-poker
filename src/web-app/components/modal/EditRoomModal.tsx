@@ -35,7 +35,7 @@ export const EditRoomModal: FC<{
 	}
 
 	return (
-		<Modal show={show} onHide={onHide} size="lg">
+		<Modal show={show} onHide={onHide}>
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
