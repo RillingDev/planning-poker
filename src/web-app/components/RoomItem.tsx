@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { CardSet, Room } from "../api";
+import { Room, RoomEditOptions } from "../api";
 import { useBooleanState } from "../hooks";
 import { DeleteRoomModal } from "./modal/DeleteRoomModal";
 import { EditRoomModal } from "./modal/EditRoomModal";
@@ -11,13 +11,13 @@ import "./RoomItem.css";
 
 export const RoomItem: FC<{
 	room: Room;
-	onEdit: (roomTopic: string, cardSet: CardSet) => void;
+	onEdit: (changes: Partial<Room>) => void;
 	onDelete: () => void;
 }> = ({room, onEdit, onDelete}) => {
 	const [editModalVisible, showEditModal, hideEditModal] = useBooleanState(false);
-	const handleEdit = (roomTopic: string, newCardSet: CardSet) => {
+	const handleEdit = (changes: RoomEditOptions) => {
 		hideEditModal();
-		onEdit(roomTopic, newCardSet);
+		onEdit(changes);
 	};
 
 	const [deleteModalVisible, showDeleteModal, hideDeleteModal] = useBooleanState(false);

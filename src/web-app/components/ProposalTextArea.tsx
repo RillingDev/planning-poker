@@ -8,6 +8,7 @@ export interface Suggestion {
 	readonly key: string;
 }
 
+// TODO: integrate into new extension panel
 export const ProposalTextArea: FC<{
 	value: string;
 	loadProposals: (value: string) => Promise<Suggestion[]>;

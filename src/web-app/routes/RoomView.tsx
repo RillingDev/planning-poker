@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
-import type { Card, EditAction, ExtensionKey, Room, RoomMember, SummaryResult, User } from "../api";
+import type { Card, EditAction, Room, RoomEditOptions, RoomMember, SummaryResult, User } from "../api";
 import { CardSet, clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, Role, } from "../api";
 import { AppContext } from "../AppContext";
 import { CardList } from "../components/CardList";
@@ -57,9 +57,9 @@ export const RoomView: FC = () => {
 
 
 	const [editModalVisible, showEditModel, hideEditModal] = useBooleanState(false);
-	const handleEdit = (roomTopic: string, cardSet: CardSet, extensions: ReadonlyArray<ExtensionKey>) => {
+	const handleEdit = (changes: RoomEditOptions) => {
 		hideEditModal();
-		editRoom(room.name, roomTopic, cardSet.name).then(updateRoom).catch(handleError);
+		editRoom(room.name, changes).then(updateRoom).catch(handleError);
 	};
 
 	const {user, cardSets} = useContext(AppContext);

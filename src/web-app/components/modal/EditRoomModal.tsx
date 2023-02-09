@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { CardSet, ExtensionKey, Room } from "../../api";
+import { ExtensionKey, Room, RoomEditOptions } from "../../api";
 import { AppContext } from "../../AppContext";
 import { Extension } from "../../extension/Extension";
 
@@ -9,7 +9,7 @@ export const EditRoomModal: FC<{
 	room: Room;
 	show: boolean;
 	onHide: () => void;
-	onSubmit: (roomTopic: string, cardSet: CardSet, extensions: ReadonlyArray<string>) => void;
+	onSubmit: (changes: RoomEditOptions) => void;
 }> = ({room, show, onHide, onSubmit}) => {
 	const {cardSets, extensionManager} = useContext(AppContext);
 
@@ -19,7 +19,7 @@ export const EditRoomModal: FC<{
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		onSubmit(roomTopic, cardSets.find(cardSet => cardSet.name == newCardSetName)!, extensions);
+		onSubmit({topic: roomTopic, cardSetName: newCardSetName, extensions});
 	};
 
 	function handleExtensionChange(e: ChangeEvent<HTMLInputElement>, changedExtension: Extension) {

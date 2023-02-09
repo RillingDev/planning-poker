@@ -52,6 +52,7 @@ export interface VoteSummary {
 	readonly lowestVoters: ReadonlyArray<RoomMember>;
 }
 
+
 async function assertStatusOk(res: Response): Promise<Response> {
 	if (isStatusOk(res)) {
 		return res;
@@ -100,11 +101,13 @@ export async function loadRooms() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room[]>);
 }
 
-export async function createRoom(roomName: string, roomTopic: string | null, cardSetName: string) {
+export type RoomCreationOptions = Pick<Room, "cardSetName">
+
+export async function createRoom(roomName: string, {cardSetName}: RoomCreationOptions) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "POST",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
-		body: JSON.stringify({topic: roomTopic, cardSetName: cardSetName})
+		body: JSON.stringify({cardSetName})
 	}).then(assertStatusOk);
 }
 
@@ -114,11 +117,14 @@ export async function deleteRoom(roomName: string) {
 	}).then(assertStatusOk);
 }
 
-export async function editRoom(roomName: string, roomTopic: string | null, cardSetName: string | null) {
+
+export type RoomEditOptions = Partial<Pick<Room, "topic" | "cardSetName" | "extensions">>
+
+export async function editRoom(roomName: string, {topic, cardSetName, extensions}: RoomEditOptions) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "PATCH",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
-		body: JSON.stringify({topic: roomTopic, cardSetName: cardSetName})
+		body: JSON.stringify({topic, cardSetName, extensions})
 	}).then(assertStatusOk);
 }
 

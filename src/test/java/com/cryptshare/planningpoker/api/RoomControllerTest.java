@@ -113,29 +113,6 @@ class RoomControllerTest {
 	}
 
 	@Test
-	@DisplayName("POST `/api/rooms/{room-name}` creates room with topic")
-	@WithMockUser("John Doe")
-	void createRoomCreatesRoomTopic() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
-		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
-
-		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
-				{
-					"topic": "Foo!",
-					"cardSetName": "My Set 1"
-				}
-				""")).andExpect(status().isOk());
-
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getName()).isEqualTo("my-room");
-		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
-		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
-		final Set<RoomMember> members = captor.getValue().getMembers();
-	}
-
-	@Test
 	@DisplayName("DELETE `/api/rooms/{room-name}` throws for unknown name")
 	@WithMockUser
 	void deleteRoomUnknownName() throws Exception {

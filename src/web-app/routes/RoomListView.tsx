@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { useLoaderData } from "react-router";
-import { CardSet, createRoom, deleteRoom, editRoom, loadRooms, Room } from "../api";
+import { createRoom, deleteRoom, editRoom, loadRooms, Room, RoomCreationOptions, RoomEditOptions } from "../api";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
@@ -38,15 +38,15 @@ export const RoomListView: FC = () => {
 		setRooms(await loadRooms());
 	};
 
-	const handleCreationSubmit = (newRoomName: string, newRoomTopic: string, cardSet: CardSet) => {
+	const handleCreationSubmit = (newRoomName: string, newRoomOptions: RoomCreationOptions) => {
 		hideCreationModal();
-		createRoom(newRoomName, newRoomTopic, cardSet.name)
+		createRoom(newRoomName, newRoomOptions)
 			.then(updateRooms)
 			.catch(handleError);
 	};
 
-	const handleEdit = (room: Room, roomTopic: string, cardSet: CardSet) => {
-		editRoom(room.name, roomTopic, cardSet.name).then(updateRooms).catch(handleError);
+	const handleEdit = (room: Room, roomChanges: RoomEditOptions) => {
+		editRoom(room.name, roomChanges).then(updateRooms).catch(handleError);
 	};
 
 	const handleDelete = (room: Room) => {
@@ -66,7 +66,7 @@ export const RoomListView: FC = () => {
 				<ul className="room-list">
 					{rooms.map(room =>
 						<li key={room.name}>
-							<RoomItem room={room} onEdit={(roomTopic, cardSet) => handleEdit(room, roomTopic, cardSet)} onDelete={() => handleDelete(room)}/>
+							<RoomItem room={room} onEdit={(changes) => handleEdit(room, changes)} onDelete={() => handleDelete(room)}/>
 						</li>,
 					)}
 				</ul>
