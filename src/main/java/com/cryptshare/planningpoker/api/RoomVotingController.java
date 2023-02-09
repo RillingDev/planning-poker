@@ -3,7 +3,6 @@ package com.cryptshare.planningpoker.api;
 import com.cryptshare.planningpoker.SummaryService;
 import com.cryptshare.planningpoker.api.exception.NotAMemberException;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
-import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.api.projection.VoteSummaryJson;
 import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.Room;
@@ -29,18 +28,6 @@ class RoomVotingController {
 	RoomVotingController(RoomRepository roomRepository, SummaryService summaryService) {
 		this.roomRepository = roomRepository;
 		this.summaryService = summaryService;
-	}
-
-	// TODO: move to another controller
-	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
-
-		// Only show own vote while voting is not complete
-		return RoomJson.convertToDetailed(room, rm -> room.getVotingState() == Room.VotingState.CLOSED || rm.equals(roomMember));
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/votes")

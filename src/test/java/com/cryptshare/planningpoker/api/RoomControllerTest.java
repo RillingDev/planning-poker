@@ -311,4 +311,100 @@ class RoomControllerTest {
 		final RoomExtensionConfig roomExtensionConfig = captor.getValue().getExtensionConfigs().iterator().next();
 		assertThat(roomExtensionConfig.getExtension()).isEqualTo(otherExtension);
 	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/` throws for unknown name")
+	@WithMockUser
+	void loadRoomUnknownName() throws Exception {
+		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
+
+		mockMvc.perform(get("/api/rooms/my-room/")).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/` throws when not a member")
+	@WithMockUser("John Doe")
+	void loadRoomNotMember() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember = new RoomMember("Alice");
+		room.getMembers().add(roomMember);
+
+		mockMvc.perform(get("/api/rooms/my-room/")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/` loads room")
+	@WithMockUser("John Doe")
+	void loadRoomLoads() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(card);
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(card);
+		room.getMembers().add(roomMember2);
+
+		final RoomMember roomMember3 = new RoomMember("Bob");
+		room.getMembers().add(roomMember3);
+
+		mockMvc.perform(get("/api/rooms/my-room/"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("my-room"))
+				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$.members.length()").value(3))
+				.andExpect(jsonPath("$.members[0].username").value("Alice"))
+				.andExpect(jsonPath("$.members[0].role").value("VOTER"))
+				.andExpect(jsonPath("$.members[0].vote.name").value("Voted"))
+				.andExpect(jsonPath("$.members[0].vote.value").value((Double) null))
+				.andExpect(jsonPath("$.members[1].username").value("Bob"))
+				.andExpect(jsonPath("$.members[1].role").value("VOTER"))
+				.andExpect(jsonPath("$.members[1].vote").value((Card) null))
+				.andExpect(jsonPath("$.members[2].username").value("John Doe"))
+				.andExpect(jsonPath("$.members[2].role").value("VOTER"))
+				.andExpect(jsonPath("$.members[2].vote.name").value("1"))
+				.andExpect(jsonPath("$.members[2].vote.value").value(1.0));
+	}
+
+	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/` shows votes when complete")
+	@WithMockUser("John Doe")
+	void loadRoomShowsVotes() throws Exception {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("my-room", cardSet);
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		final RoomMember roomMember1 = new RoomMember("John Doe");
+		roomMember1.setVote(card);
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(card);
+		room.getMembers().add(roomMember2);
+		room.setVotingState(Room.VotingState.CLOSED);
+
+		mockMvc.perform(get("/api/rooms/my-room/"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("my-room"))
+				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$.members.length()").value(2))
+				.andExpect(jsonPath("$.members[0].username").value("Alice"))
+				.andExpect(jsonPath("$.members[0].role").value("VOTER"))
+				.andExpect(jsonPath("$.members[0].vote.name").value("1"))
+				.andExpect(jsonPath("$.members[0].vote.value").value(1.0))
+				.andExpect(jsonPath("$.members[1].username").value("John Doe"))
+				.andExpect(jsonPath("$.members[1].role").value("VOTER"))
+				.andExpect(jsonPath("$.members[1].vote.name").value("1"))
+				.andExpect(jsonPath("$.members[1].vote.value").value(1.0));
+	}
 }
