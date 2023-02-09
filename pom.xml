@@ -79,20 +79,6 @@
 				<version>3.1.0</version>
 				<executions>
 					<execution>
-						<id>npm:build</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>run</argument>
-								<argument>build</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
 						<id>npm:test</id>
 						<phase>verify</phase>
 						<goals>
@@ -107,6 +93,20 @@
 							<workingDirectory>${project.basedir}</workingDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>npm:build</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -114,7 +114,7 @@
 				<executions>
 					<execution>
 						<id>copy-vite-resources</id>
-						<phase>compile</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
