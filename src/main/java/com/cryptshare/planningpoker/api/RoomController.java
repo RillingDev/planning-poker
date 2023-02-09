@@ -24,10 +24,12 @@ class RoomController {
 
 	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
+	private final ExtensionRepository extensionRepository;
 
-	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository) {
+	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, ExtensionRepository extensionRepository) {
 		this.roomRepository = roomRepository;
 		this.cardSetRepository = cardSetRepository;
+		this.extensionRepository = extensionRepository;
 	}
 
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,23 +74,59 @@ class RoomController {
 		if (roomOptions.cardSetName != null) {
 			room.setCardSet(cardSetRepository.findByName(roomOptions.cardSetName).orElseThrow(CardSetNotFoundException::new));
 		}
+		if (roomOptions.extensionKeys != null) {
+			applyExtensions(room, roomOptions.extensionKeys);
+		}
 		roomRepository.save(room);
 		logger.info("Edited room '{}' by user '{}'.", room, user.getUsername());
 	}
 
 	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName, @Nullable @JsonProperty("topic") String topic,
-									   @JsonProperty("extensions") List<String> extensionKeys) {
+									   @JsonProperty("extensions") Set<String> extensionKeys) {
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card-set.")
 	private static class CardSetNotFoundException extends RuntimeException {
 	}
 
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such extension.")
+	private static class ExtensionNotFoundException extends RuntimeException {
+	}
+
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "A room with this name exists.")
 	private static class RoomNameExistsException extends RuntimeException {
 	}
 
-	private record RoomOptionsJson(@JsonProperty("cardSetName") String cardSetName, @Nullable @JsonProperty("topic") String topic,
-								   @JsonProperty("extensions") List<String> extensions) {
+	private void applyExtensions(Room room, Set<String> newExtensionKeys) {
+		final Set<String> previousExtensionKeys = room.getExtensionConfigs()
+				.stream()
+				.map(RoomExtensionConfig::getExtension)
+				.map(Extension::getKey)
+				.collect(Collectors.toCollection(HashSet::new));
+
+		for (String newExtensionKey : newExtensionKeys) {
+			final Extension extension = extensionRepository.findByKey(newExtensionKey).orElseThrow(ExtensionNotFoundException::new);
+
+			if (previousExtensionKeys.contains(newExtensionKey)) {
+				// Extension unchanged.
+			} else {
+				// Extension added.
+				room.getExtensionConfigs().add(new RoomExtensionConfig(extension));
+				logger.info("Extension '{}' added to room '{}'.", newExtensionKey, room);
+
+				if (!extension.isEnabled()) {
+					logger.warn("Adding disabled extension '{}', it will not be available.", extension);
+				}
+			}
+			previousExtensionKeys.remove(newExtensionKey);
+		}
+
+		// Check values that were only in previous, not in new one.
+		for (String previousExtensionKey : previousExtensionKeys) {
+			// Extension removed.
+			room.getExtensionConfigs().removeIf(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey().equals(previousExtensionKey));
+			logger.info("Extension '{}' removed from room '{}'.", previousExtensionKey, room);
+		}
+
 	}
 }
