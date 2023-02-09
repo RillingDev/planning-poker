@@ -135,6 +135,7 @@ export async function editRoom(roomName: string, {topic, cardSetName, extensions
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "PATCH",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
+		// Note: `undefined` values mean the key will not be part of the JSON payload
 		body: JSON.stringify({topic, cardSetName, extensions})
 	}).then(assertStatusOk);
 }

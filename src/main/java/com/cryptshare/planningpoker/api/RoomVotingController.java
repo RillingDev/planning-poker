@@ -58,6 +58,7 @@ class RoomVotingController {
 		logger.debug("User '{}' voted with '{}' in '{}'.", user.getUsername(), card, room);
 	}
 
+	// TODO: Move room and member lookup to argument resolver or similar.
 	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
 	public void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);

@@ -1,8 +1,17 @@
+import { isEqual } from "lodash-es";
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { ExtensionKey, Room, RoomEditOptions } from "../../api";
 import { AppContext } from "../../AppContext";
 import { Extension } from "../../extension/Extension";
+
+/**
+ * Gets the new value, or undefined if it has not changed.
+ * This is useful when a value is only needed if it was modified.
+ */
+function getChange<T>(oldValue: T, newValue: T): T | undefined {
+	return isEqual(oldValue, newValue) ? undefined : newValue;
+}
 
 
 export const EditRoomModal: FC<{
@@ -13,13 +22,18 @@ export const EditRoomModal: FC<{
 }> = ({room, show, onHide, onSubmit}) => {
 	const {cardSets, extensionManager} = useContext(AppContext);
 
-	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
-	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
+	const [cardSetName, setCardSetName] = useState<string>(room.cardSetName);
+	const [topic, setTopic] = useState<string>(room.topic ?? "");
 	const [extensionKeys, setExtensionKeys] = useState<ReadonlyArray<ExtensionKey>>(room.extensions);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		onSubmit({topic: roomTopic, cardSetName: newCardSetName, extensions: extensionKeys});
+		// Only emit difference to initial.
+		onSubmit({
+			topic: getChange(room.topic, topic),
+			cardSetName: getChange(room.cardSetName, cardSetName),
+			extensions: getChange(room.extensions, extensionKeys),
+		});
 	};
 
 	const handleExtensionChange = (e: ChangeEvent<HTMLInputElement>, changedExtension: Extension) => {
@@ -41,13 +55,13 @@ export const EditRoomModal: FC<{
 				<Modal.Body>
 					<Form.Group className="mb-3" controlId="formEditRoomCardSet">
 						<Form.Label>Card Set</Form.Label>
-						<Form.Select required value={newCardSetName} onChange={(e) => setNewCardSetName(e.target.value)}>
+						<Form.Select required value={cardSetName} onChange={(e) => setCardSetName(e.target.value)}>
 							{cardSets.map(cardSet => <option key={cardSet.name}>{cardSet.name}</option>)}
 						</Form.Select>
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formEditRoomTopic">
 						<Form.Label>Topic</Form.Label>
-						<Form.Control as="textarea" value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)}/>
+						<Form.Control as="textarea" value={topic} onChange={(e) => setTopic(e.target.value)}/>
 					</Form.Group>
 					<Form.Group className="mb-3">
 						<fieldset>
