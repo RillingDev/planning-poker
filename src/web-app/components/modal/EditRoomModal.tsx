@@ -1,24 +1,38 @@
-import { FC, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { CardSet, Room } from "../../api";
+import { CardSet, ExtensionKey, Room } from "../../api";
 import { AppContext } from "../../AppContext";
+import { Extension } from "../../extension/Extension";
 
 
 export const EditRoomModal: FC<{
 	room: Room;
 	show: boolean;
 	onHide: () => void;
-	onSubmit: (roomTopic: string, cardSet: CardSet) => void;
+	onSubmit: (roomTopic: string, cardSet: CardSet, extensions: ReadonlyArray<string>) => void;
 }> = ({room, show, onHide, onSubmit}) => {
-	const {cardSets} = useContext(AppContext);
+	const {cardSets, extensionManager} = useContext(AppContext);
 
 	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
 	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
+	const [extensions, setExtensions] = useState<ReadonlyArray<ExtensionKey>>(room.extensions);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		onSubmit(roomTopic, cardSets.find(cardSet => cardSet.name == newCardSetName)!);
+		onSubmit(roomTopic, cardSets.find(cardSet => cardSet.name == newCardSetName)!, extensions);
 	};
+
+	function handleExtensionChange(e: ChangeEvent<HTMLInputElement>, changedExtension: Extension) {
+		setExtensions(prevState => {
+			if (e.target.checked) {
+				const newExtensions = Array.from(prevState);
+				newExtensions.push(changedExtension.key);
+				return newExtensions;
+			} else {
+				return prevState.filter(extension => extension != changedExtension.key);
+			}
+		});
+	}
 
 	return (
 		<Modal show={show} onHide={onHide} size="lg">
@@ -36,6 +50,21 @@ export const EditRoomModal: FC<{
 					<Form.Group className="mb-3" controlId="formEditRoomTopic">
 						<Form.Label>Topic</Form.Label>
 						<Form.Control as="textarea" value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)}/>
+					</Form.Group>
+					<Form.Group className="mb-3">
+						<fieldset>
+							<legend className="h6">Extensions</legend>
+							{extensionManager.getAll().map(extension =>
+								<Form.Check
+									inline
+									key={extension.key}
+									id={`extension-${extension.key}`}
+									label={extension.label}
+									checked={extensions.includes(extension.key)}
+									onChange={(e) => handleExtensionChange(e, extension)}
+								/>
+							)}
+						</fieldset>
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
