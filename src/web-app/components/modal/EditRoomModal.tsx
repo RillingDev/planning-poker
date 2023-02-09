@@ -2,7 +2,6 @@ import { FC, FormEvent, useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { CardSet, Room } from "../../api";
 import { AppContext } from "../../AppContext";
-import { ProposalTextArea, Suggestion } from "../ProposalTextArea";
 
 
 export const EditRoomModal: FC<{
@@ -11,7 +10,7 @@ export const EditRoomModal: FC<{
 	onHide: () => void;
 	onSubmit: (roomTopic: string, cardSet: CardSet) => void;
 }> = ({room, show, onHide, onSubmit}) => {
-	const {cardSets, extensionManager} = useContext(AppContext);
+	const {cardSets} = useContext(AppContext);
 
 	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
 	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
@@ -20,15 +19,6 @@ export const EditRoomModal: FC<{
 		e.preventDefault();
 		onSubmit(roomTopic, cardSets.find(cardSet => cardSet.name == newCardSetName)!);
 	};
-
-	async function loadSuggestions(newTopic: string): Promise<Suggestion[]> {
-		const suggestionResultPromises = extensionManager.getByRoom(room).map(extension => extension.loadSuggestion(newTopic).then(content => ({
-			key: extension.key,
-			content
-		})));
-		const lookupResults = await Promise.all(suggestionResultPromises);
-		return lookupResults.filter(result => result.content != null) as Suggestion[];
-	}
 
 	return (
 		<Modal show={show} onHide={onHide} size="lg">
@@ -45,7 +35,7 @@ export const EditRoomModal: FC<{
 					</Form.Group>
 					<Form.Group className="mb-3" controlId="formEditRoomTopic">
 						<Form.Label>Topic</Form.Label>
-						<ProposalTextArea value={roomTopic} onChange={setRoomTopic} loadProposals={loadSuggestions}/>
+						<Form.Control as="textarea" value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)}/>
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
