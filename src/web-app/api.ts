@@ -101,13 +101,10 @@ export async function loadRooms() {
 }
 
 export async function createRoom(roomName: string, roomTopic: string | null, cardSetName: string) {
-	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
-	if (roomTopic != null) {
-		url.searchParams.set("room-topic", roomTopic);
-	}
-	url.searchParams.set("card-set-name", cardSetName);
-	return fetch(url, {
-		method: "POST"
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
+		method: "POST",
+		headers: {"Content-Type": MEDIA_TYPE_JSON},
+		body: JSON.stringify({topic: roomTopic, cardSetName: cardSetName})
 	}).then(assertStatusOk);
 }
 
@@ -118,15 +115,10 @@ export async function deleteRoom(roomName: string) {
 }
 
 export async function editRoom(roomName: string, roomTopic: string | null, cardSetName: string | null) {
-	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}`, location.href);
-	if (roomTopic != null) {
-		url.searchParams.set("room-topic", roomTopic);
-	}
-	if (cardSetName != null) {
-		url.searchParams.set("card-set-name", cardSetName);
-	}
-	return fetch(url, {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "PATCH",
+		headers: {"Content-Type": MEDIA_TYPE_JSON},
+		body: JSON.stringify({topic: roomTopic, cardSetName: cardSetName})
 	}).then(assertStatusOk);
 }
 
@@ -181,16 +173,4 @@ export async function getSummary(roomName: string) {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<SummaryResult>);
-}
-
-export async function addExtension(roomName: string, extension: ExtensionKey) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${encodeURIComponent(extension)}`, {
-		method: "POST"
-	}).then(assertStatusOk);
-}
-
-export async function removeExtension(roomName: string, extension: ExtensionKey) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${encodeURIComponent(extension)}`, {
-		method: "DELETE"
-	}).then(assertStatusOk);
 }

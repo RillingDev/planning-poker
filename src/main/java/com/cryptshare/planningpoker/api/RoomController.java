@@ -6,6 +6,7 @@ import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.CardSetRepository;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomRepository;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -36,17 +37,16 @@ class RoomController {
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}")
-	public void createRoom(@PathVariable("room-name") String roomName,
-			@RequestParam(value = "room-topic", required = false) @Nullable String roomTopic, @RequestParam("card-set-name") String cardSetName,
+	public void createRoom(@PathVariable("room-name") String roomName, @RequestBody RoomOptionsJson roomOptions,
 			@AuthenticationPrincipal UserDetails user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
 
-		final CardSet cardSet = cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new);
+		final CardSet cardSet = cardSetRepository.findByName(roomOptions.cardSetName).orElseThrow(CardSetNotFoundException::new);
 
 		final Room room = new Room(roomName, cardSet);
-		room.setTopic(roomTopic);
+		room.setTopic(roomOptions.topic);
 		roomRepository.save(room);
 		logger.info("Created room '{}' by user '{}'.", room, user.getUsername());
 	}
@@ -59,17 +59,16 @@ class RoomController {
 		logger.info("Deleted room '{}' by user '{}'.", room, user.getUsername());
 	}
 
-	@PatchMapping(value = "/api/rooms/{room-name}")
-	public void editRoom(@PathVariable("room-name") String roomName,
-			@RequestParam(value = "room-topic", required = false) @Nullable String roomTopic,
-			@RequestParam(value = "card-set-name", required = false) String cardSetName, @AuthenticationPrincipal UserDetails user) {
+	@PatchMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void editRoom(@PathVariable("room-name") String roomName, @RequestBody RoomOptionsJson roomOptions,
+			@AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		if (roomTopic != null) {
-			room.setTopic(roomTopic);
+		if (roomOptions.topic != null) {
+			room.setTopic(roomOptions.topic);
 		}
-		if (cardSetName != null) {
-			room.setCardSet(cardSetRepository.findByName(cardSetName).orElseThrow(CardSetNotFoundException::new));
+		if (roomOptions.cardSetName != null) {
+			room.setCardSet(cardSetRepository.findByName(roomOptions.cardSetName).orElseThrow(CardSetNotFoundException::new));
 		}
 		roomRepository.save(room);
 		logger.info("Edited room '{}' by user '{}'.", room, user.getUsername());
@@ -83,4 +82,7 @@ class RoomController {
 	private static class RoomNameExistsException extends RuntimeException {
 	}
 
+	private record RoomOptionsJson(@JsonProperty("cardSetName") String cardSetName, @Nullable @JsonProperty("topic") String topic,
+								   @JsonProperty("extensions") List<String> extensions) {
+	}
 }

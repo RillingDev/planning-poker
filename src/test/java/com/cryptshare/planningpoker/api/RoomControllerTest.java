@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -68,8 +69,11 @@ class RoomControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(new Room("my-room", cardSet)));
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
 
-		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", cardSet.getName()))
-				.andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"cardSetName": "My Set 1"
+				}
+				""")).andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -79,7 +83,11 @@ class RoomControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.empty());
 
-		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", "My Set 1")).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"cardSetName": "My Set 1"
+				}
+				""")).andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -90,7 +98,11 @@ class RoomControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
 
-		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", cardSet.getName())).andExpect(status().isOk());
+		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"cardSetName": "My Set 1"
+				}
+				""")).andExpect(status().isOk());
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
@@ -108,8 +120,12 @@ class RoomControllerTest {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
 
-		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).queryParam("room-topic", "Foo!").queryParam("card-set-name", cardSet.getName()))
-				.andExpect(status().isOk());
+		mockMvc.perform(post("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"topic": "Foo!",
+					"cardSetName": "My Set 1"
+				}
+				""")).andExpect(status().isOk());
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
@@ -151,8 +167,11 @@ class RoomControllerTest {
 
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 
-		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", cardSet.getName()))
-				.andExpect(status().isNotFound());
+		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"cardSetName": "My Set 1"
+				}
+				""")).andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -165,7 +184,11 @@ class RoomControllerTest {
 
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.empty());
 
-		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", "My Set 1")).andExpect(status().isBadRequest());
+		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"cardSetName": "My Set 1"
+				}
+				""")).andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -181,7 +204,11 @@ class RoomControllerTest {
 		final CardSet newCardSet = new CardSet("My Set 1");
 		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(newCardSet));
 
-		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("card-set-name", newCardSet.getName())).andExpect(status().isOk());
+		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"cardSetName": "My Set 1"
+				}
+				""")).andExpect(status().isOk());
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
@@ -198,7 +225,11 @@ class RoomControllerTest {
 		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).queryParam("room-topic", "Foo!")).andExpect(status().isOk());
+		mockMvc.perform(patch("/api/rooms/my-room").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
+				{
+					"topic": "Foo!"
+				}
+				""")).andExpect(status().isOk());
 
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
