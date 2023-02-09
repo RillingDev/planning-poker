@@ -15,24 +15,22 @@ export const EditRoomModal: FC<{
 
 	const [newCardSetName, setNewCardSetName] = useState<string>(room.cardSetName);
 	const [roomTopic, setRoomTopic] = useState<string>(room.topic ?? "");
-	const [extensions, setExtensions] = useState<ReadonlyArray<ExtensionKey>>(room.extensions);
+	const [extensionKeys, setExtensionKeys] = useState<ReadonlyArray<ExtensionKey>>(room.extensions);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		onSubmit({topic: roomTopic, cardSetName: newCardSetName, extensions});
+		onSubmit({topic: roomTopic, cardSetName: newCardSetName, extensions: extensionKeys});
 	};
 
-	function handleExtensionChange(e: ChangeEvent<HTMLInputElement>, changedExtension: Extension) {
-		setExtensions(prevState => {
+	const handleExtensionChange = (e: ChangeEvent<HTMLInputElement>, changedExtension: Extension) => {
+		setExtensionKeys(prevState => {
 			if (e.target.checked) {
-				const newExtensions = Array.from(prevState);
-				newExtensions.push(changedExtension.key);
-				return newExtensions;
+				return [...prevState, changedExtension.key];
 			} else {
-				return prevState.filter(extension => extension != changedExtension.key);
+				return prevState.filter(extensionKey => extensionKey != changedExtension.key);
 			}
 		});
-	}
+	};
 
 	return (
 		<Modal show={show} onHide={onHide}>
@@ -60,7 +58,7 @@ export const EditRoomModal: FC<{
 									key={extension.key}
 									id={`extension-${extension.key}`}
 									label={extension.label}
-									checked={extensions.includes(extension.key)}
+									checked={extensionKeys.includes(extension.key)}
 									onChange={(e) => handleExtensionChange(e, extension)}
 								/>
 							)}

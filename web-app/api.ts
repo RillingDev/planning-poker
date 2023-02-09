@@ -79,12 +79,14 @@ export async function loadIdentity() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<User>);
 }
 
+
 export async function loadExtensions() {
 	return fetch("/api/extensions", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<ExtensionKey>>);
 }
+
 
 export async function loadCardSets() {
 	return fetch("/api/card-sets", {
@@ -110,6 +112,15 @@ export async function createRoom(roomName: string, {cardSetName}: RoomCreationOp
 		body: JSON.stringify({cardSetName})
 	}).then(assertStatusOk);
 }
+
+
+export async function getRoom(roomName: string) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/`, {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
+	}).then(assertStatusOk).then(res => res.json() as Promise<Room>);
+}
+
 
 export async function deleteRoom(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
@@ -152,13 +163,6 @@ export async function editMember(roomName: string, memberUsername: string, actio
 }
 
 
-export async function getRoom(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/`, {
-		method: "GET",
-		headers: {"Accept": MEDIA_TYPE_JSON}
-	}).then(assertStatusOk).then(res => res.json() as Promise<Room>);
-}
-
 export async function createVote(roomName: string, cardName: string) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/votes`, location.href);
 	url.searchParams.set("card-name", cardName);
@@ -166,6 +170,7 @@ export async function createVote(roomName: string, cardName: string) {
 		method: "POST",
 	}).then(assertStatusOk);
 }
+
 
 export async function clearVotes(roomName: string) {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes`, {

@@ -7,7 +7,6 @@ const AVAILABLE_EXTENSIONS = [ahaExtension];
 export class ExtensionManager {
 	readonly #extensions: Extension[];
 
-
 	constructor(enabledExtensionKeys: ReadonlyArray<ExtensionKey>) {
 		this.#extensions = AVAILABLE_EXTENSIONS.filter(availableExtension => enabledExtensionKeys.includes(availableExtension.key));
 	}
