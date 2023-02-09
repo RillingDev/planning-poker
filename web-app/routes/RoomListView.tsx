@@ -6,7 +6,7 @@ import { createRoom, deleteRoom, editRoom, loadRooms, Room, RoomCreationOptions,
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { RoomItem } from "../components/RoomItem";
-import { useBooleanState, useDocumentTitle, useErrorHandler, useInterval } from "../hooks";
+import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
 import "./RoomListView.css";
 
 interface LoaderResult {
@@ -18,8 +18,6 @@ export async function loader(): Promise<LoaderResult> {
 	return {rooms};
 }
 
-const originalDocumentTitle = document.title;
-
 export const RoomListView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
 
@@ -27,8 +25,6 @@ export const RoomListView: FC = () => {
 	const [rooms, setRooms] = useState<Room[]>(loaderData.rooms);
 
 	const [creationModalVisible, showCreationModal, hideCreationModal] = useBooleanState(false);
-
-	useDocumentTitle(originalDocumentTitle);
 
 	useInterval(() => {
 		updateRooms().catch(handleError);
