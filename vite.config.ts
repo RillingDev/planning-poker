@@ -12,7 +12,7 @@ export default defineConfig({
 		outDir: "./.local/vite-build",
 		// https://vitejs.dev/guide/backend-integration.html
 		rollupOptions: {
-			input: "src/web-app/main.tsx",
+			input: "./web-app/main.tsx",
 			output: {
 				// Remove hashes from file name so we have an easier time including them
 				entryFileNames: "[name].js",
@@ -30,7 +30,7 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: "jsdom",
-		setupFiles: "./src/web-app/test/setup.ts",
+		setupFiles: "./web-app/test/setup.ts",
 		coverage: {
 			provider: "c8",
 			reportsDirectory: "./.local/coverage"
