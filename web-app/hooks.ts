@@ -22,12 +22,21 @@ export const useBooleanState = (initialState = false): [boolean, () => void, () 
 	return [state, setTrue, setFalse];
 };
 
+// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+export const useInterval = (callback: () => void, delay: number): void => {
+	const savedCallback = useRef<() => void>();
 
-export const useInterval = (callback: () => void, timeout: number): void =>
+	// Remember the latest callback.
 	useEffect(() => {
-		const interval = setInterval(callback, timeout);
-		return () => clearInterval(interval);
-	}, [callback, timeout]);
+		savedCallback.current = callback;
+	}, [callback]);
+
+	// Set up the interval.
+	useEffect(() => {
+		const id = setInterval(() => savedCallback.current!(), delay);
+		return () => clearInterval(id);
+	}, [delay]);
+};
 
 
 export const useDocumentTitle = (title: string): void => {
