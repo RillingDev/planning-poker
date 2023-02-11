@@ -24,7 +24,8 @@ The following properties must be set:
 The following properties are optional:
 
 - `planning-poker.auth.active-directory.search-filter` A custom search filter.
-  See `org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider.setSearchFilter` for details.
+  See `org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider.setSearchFilter`
+  for details.
 
 ### Extensions
 
@@ -33,19 +34,23 @@ by [starting the application with additional profiles](https://docs.spring.io/sp
 
 #### Aha!
 
-The [Aha!](https://www.aha.io/ideas/overview) extension can be enabled by starting the application with the profile `extension:aha`.
+The [Aha!](https://www.aha.io/ideas/overview) extension can be enabled by starting the application with the
+profile `extension:aha`.
 The following additional properties must be set:
 
-- `planning-poker.extension.aha.account-domain`: The subdomain part that the target Aha! instance is running on. For example, if you
+- `planning-poker.extension.aha.account-domain`: The subdomain part that the target Aha! instance is running on. For
+  example, if you
   use `https://example.aha.io`, this would be `example`.
 - `planning-poker.extension.aha.client-id`: The Aha! OAuth2 client ID. See <https://www.aha.io/api/oauth2> for details.
-- `planning-poker.extension.aha.redirect-uri`: The Aha! OAuth2 redirect URI. Should be the address the application is running on.
+- `planning-poker.extension.aha.redirect-uri`: The Aha! OAuth2 redirect URI. Should be the address the application is
+  running on.
 
 Note that the Aha! Integration only works when the application is available under HTTPS.
 
 ##### Usage
 
-If the topic of a room is set to an Aha! idea ID or URL, a button to submit the average score to Aha! will show up after voting completes.
+If the topic of a room is set to an Aha! idea ID or URL, a button to submit the average score to Aha! will show up after
+voting completes.
 
 ## Development
 
@@ -58,7 +63,8 @@ If the topic of a room is set to an Aha! idea ID or URL, a button to submit the 
 
 ### HTTPS
 
-Create a keystore with a self-signed certificate (https://www.baeldung.com/spring-boot-https-self-signed-certificate) and adapt
+Create a keystore with a self-signed certificate (https://www.baeldung.com/spring-boot-https-self-signed-certificate)
+and adapt
 the `application-development.properties` parameters.
 Then export the certificate and its key, and make them available for Vite (`vite.config.ts`).
 
@@ -78,7 +84,8 @@ This will:
 
 ### Known Issues
 
-Problem: The web app does not reflect changes to the code, and the React dev tools report that it is running in production mode.
+Problem: The web app does not reflect changes to the code, and the React dev tools report that it is running in
+production mode.
 
 Solution: Delete the `target` folder, it probably contains old build artifacts of the web app.
 
@@ -86,11 +93,19 @@ Solution: Delete the `target` folder, it probably contains old build artifacts o
 
 #### Validation & State Transitions
 
-The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or voting).
+The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or
+voting).
 Integrity related validation is done in the persistence layer, such as clearing votes of observers.
 
 The persistence layer is treated as the single-source-of-truth.
 
 #### Extensions
 
-Extensions are primarily controlled using spring profiles that start with the prefix `extension:`. This is then delegated to the web app.
+Extensions are primarily controlled using spring profiles that start with the prefix `extension:`. This is then
+delegated to the web app.
+
+## Background
+
+This project was developed for my "Ausbildung (Externenprüfung) Fachinformatiker Anwendungsentwicklung" (Form of
+apprenticeship in Germany).
+Thanks to [Pointsharp GmbH](https://www.cryptshare.com) for letting me work on this project during my employment.
