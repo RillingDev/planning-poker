@@ -6,7 +6,7 @@ import { readFileSync } from "fs";
 import { defineConfig, UserConfig } from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig(({command}) => {
+export default defineConfig(({command, mode}) => {
 	const config: UserConfig = {
 		plugins: [react()],
 		build: {
@@ -32,7 +32,7 @@ export default defineConfig(({command}) => {
 	};
 
 	// Only read SSL related files if needed.
-	if (command == "serve") {
+	if (command == "serve" && mode != "test") {
 		config.server = {
 			host: "127.0.0.1",
 			https: {
