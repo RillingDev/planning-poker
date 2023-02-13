@@ -55,14 +55,17 @@ const findCardSet = (cardSets: ReadonlyArray<CardSet>, room: Room): CardSet => {
 export const RoomView: FC = () => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-
 	const [editModalVisible, showEditModel, hideEditModal] = useBooleanState(false);
-	const handleEdit = (changes: RoomEditOptions) => {
+	const handleModalEdit = (changes: RoomEditOptions) => {
 		hideEditModal();
-		editRoom(room.name, changes).then(updateRoom).catch(handleError);
+		doEdit(changes);
 	};
 
-	const {user, cardSets} = useContext(AppContext);
+	const handleExtensionEdit = (changes: RoomEditOptions) => {
+		doEdit(changes);
+	};
+
+	const {user, cardSets, extensionManager} = useContext(AppContext);
 	const loaderData = useLoaderData() as LoaderResult;
 
 	const [room, setRoom] = useState<Room>(loaderData.room);
@@ -73,6 +76,10 @@ export const RoomView: FC = () => {
 	const [summaryResult, setSummaryResult] = useState<SummaryResult | null>(loaderData.summaryResult);
 
 	useDocumentTitle(room.name);
+
+	const doEdit = (changes: RoomEditOptions) => {
+		editRoom(room.name, changes).then(updateRoom).catch(handleError);
+	};
 
 	useInterval(() => {
 		updateRoom().catch(handleError);
@@ -120,7 +127,9 @@ export const RoomView: FC = () => {
 						<Button variant="warning" size="sm" onClick={showEditModel}>
 							<FontAwesomeIcon icon={faEdit} title="Edit Room"/>
 						</Button>
-						<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={hideEditModal}/>
+						<EditRoomModal onSubmit={handleModalEdit} room={room} show={editModalVisible} onHide={hideEditModal}/>
+						{extensionManager.getByRoom(room).map(extension =>
+							<extension.RoomComponent key={extension.key} room={room} onChange={handleExtensionEdit}/>)}
 					</div>
 					<nav>
 						<Link to={"/"} onClick={handleLeave} className="btn btn-secondary btn-sm">

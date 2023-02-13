@@ -1,4 +1,5 @@
 import type { Extension } from "../Extension";
+import { AhaRoomButton } from "./AhaRoomButton";
 import { AhaSubmitButton } from "./AhaSubmitButton";
 import { AhaClient, getAhaConfig } from "./api";
 
@@ -8,22 +9,10 @@ export class AhaExtension implements Extension {
 	key = "aha";
 	label = "Aha!";
 
+	RoomComponent = AhaRoomButton;
 	SubmitComponent = AhaSubmitButton;
 
 	#client: AhaClient | null = null;
-
-	async loadSuggestion(newTopic: string) {
-		const ideaId = AhaExtension.extractIdeaId(newTopic);
-		if (ideaId == null) {
-			return null;
-		}
-
-		const idea = await this.getClient().then(client => client.getIdea(ideaId));
-		if (idea == null) {
-			return null;
-		}
-		return `${idea.reference_num}: ${idea.name}`;
-	}
 
 	async getClient(): Promise<AhaClient> {
 		if (this.#client == null) {
