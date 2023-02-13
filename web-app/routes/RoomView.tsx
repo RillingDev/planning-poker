@@ -39,7 +39,7 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 const findMemberForUser = (room: Room, user: User): RoomMember => {
 	const roomMember = room.members.find(member => member.username == user.username);
 	if (roomMember == null) {
-		throw new TypeError("Could not find member.", roomMember);
+		throw new TypeError(`Could not find member for '${user.username}'`);
 	}
 	return roomMember;
 };
@@ -47,7 +47,7 @@ const findMemberForUser = (room: Room, user: User): RoomMember => {
 const findCardSet = (cardSets: ReadonlyArray<CardSet>, room: Room): CardSet => {
 	const cardSet = cardSets.find(cs => cs.name == room.cardSetName);
 	if (cardSet == null) {
-		throw new TypeError("Invalid card set.", cardSet);
+		throw new TypeError(`Invalid card set '${room.cardSetName}'.`);
 	}
 	return cardSet;
 };
