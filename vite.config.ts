@@ -24,6 +24,7 @@ export default defineConfig(({command, mode}) => {
 			globals: true,
 			environment: "jsdom",
 			setupFiles: "./web-app/test/setup.ts",
+			include: ["./web-app/**/*.test.{ts,tsx}"],
 			coverage: {
 				provider: "c8",
 				reportsDirectory: "./.local/coverage"
