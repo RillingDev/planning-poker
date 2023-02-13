@@ -1,4 +1,3 @@
-import { debounce, DebouncedFunc } from "lodash-es";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useErrorHandler = (): [Error | null, (e: Error) => void, () => void] => {
@@ -49,8 +48,3 @@ export const useDocumentTitle = (title: string): void => {
 		};
 	}, [title]);
 };
-
-
-// This is probably a false positive? maybe? I think?
-// eslint-disable-next-line react-hooks/exhaustive-deps
-export const useDebounce = <T extends (...args: never[]) => unknown>(fn: T, wait: number): DebouncedFunc<T> => useCallback(debounce(fn, wait), []);
