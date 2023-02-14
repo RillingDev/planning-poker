@@ -11,11 +11,6 @@ const deriveTopic = (idea: Idea): string => {
 	return `${idea.reference_num}: ${idea.name}`;
 };
 
-const loadIdea = async (ideaId: string) => {
-	const client = await ahaExtension.getClient();
-	return client.getIdea(ideaId);
-};
-
 const AhaIdeaLoadingModal: FC<{
 	show: boolean;
 	onHide: () => void;
@@ -38,7 +33,7 @@ const AhaIdeaLoadingModal: FC<{
 		}
 
 		setIdeaLoading(true);
-		loadIdea(extractedIdeaId).then(result => {
+		ahaExtension.getIdea(extractedIdeaId).then(result => {
 			setIdea(result);
 			e.target.setCustomValidity(result == null ? "Idea not found." : "");
 		}).catch(handleError).finally(() => setIdeaLoading(false));

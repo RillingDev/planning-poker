@@ -20,7 +20,7 @@ const AhaSubmissionModal: FC<{
 	const [ideaLoading, setIdeaLoading] = useState(false);
 	useEffect(() => {
 		setIdeaLoading(true);
-		ahaExtension.getClient().then(client => client.getIdea(ideaId)).then(idea => {
+		ahaExtension.getIdea(ideaId).then(idea => {
 			if (idea == null) {
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
 				return;
@@ -35,7 +35,7 @@ const AhaSubmissionModal: FC<{
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setScoreSubmissionPending(true);
-		ahaExtension.getClient().then(client => client.putIdeaScore(ideaId, scoreFactName, score)).then(onSubmit).catch(handleError).finally(() => setScoreSubmissionPending(false));
+		ahaExtension.putIdeaScore(ideaId, scoreFactName, score).then(onSubmit).catch(handleError).finally(() => setScoreSubmissionPending(false));
 	};
 
 	const handleExit = (): void => {
