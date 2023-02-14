@@ -44,7 +44,7 @@ const AhaSubmissionModal: FC<{
 				<Modal.Title>Save to Aha!</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
-				<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
+				<ErrorPanel error={error} onClose={resetError} dismissible={false}></ErrorPanel>
 				<Spinner
 					hidden={!ideaLoading}
 					as="span"

@@ -62,7 +62,7 @@ const AhaIdeaLoadingModal: FC<{
 				<Modal.Title>Load from Aha!</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
-				<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
+				<ErrorPanel error={error} onClose={resetError} dismissible={false}></ErrorPanel>
 				<p>Please enter an Aha! Idea ID or URL to load its details into the application.</p>
 				<Form.Group className="mb-3" controlId="formAhaUrl">
 					<Form.Label>Aha! URL/ID</Form.Label>
