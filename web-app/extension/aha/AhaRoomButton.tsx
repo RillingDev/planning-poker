@@ -23,7 +23,7 @@ const AhaIdeaLoadingModal: FC<{
 }> = ({show, onHide, onSubmit}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	const [loadingPending, setLoadingPending] = useState(false);
+	const [ideaLoading, setIdeaLoading] = useState(false);
 	const [idea, setIdea] = useState<Idea | null>(null);
 
 	const [input, setInput] = useState("");
@@ -35,18 +35,13 @@ const AhaIdeaLoadingModal: FC<{
 		if (extractedIdeaId == null) {
 			e.target.setCustomValidity("Not a valid Aha! idea URL/ID.");
 			return;
-		} else {
-			e.target.setCustomValidity("");
 		}
 
-		setLoadingPending(true);
+		setIdeaLoading(true);
 		loadIdea(extractedIdeaId).then(result => {
 			setIdea(result);
 			e.target.setCustomValidity(result == null ? "Idea not found." : "");
-		}).catch(err => {
-			handleError(err as Error);
-			e.target.setCustomValidity("Could not load idea.");
-		}).finally(() => setLoadingPending(false));
+		}).catch(handleError).finally(() => setIdeaLoading(false));
 	};
 
 	const handleSubmit = (e: FormEvent) => {
@@ -74,7 +69,7 @@ const AhaIdeaLoadingModal: FC<{
 					<Form.Control type="search" required onChange={handleChange} value={input}/>
 				</Form.Group>
 				<Spinner
-					hidden={!loadingPending}
+					hidden={!ideaLoading}
 					as="span"
 					animation="border"
 					size="sm"
@@ -88,7 +83,7 @@ const AhaIdeaLoadingModal: FC<{
 				</Card>
 			</Modal.Body>
 			<Modal.Footer>
-				<Button type="submit" variant="primary">Import Idea</Button>
+				<Button type="submit" variant="primary" disabled={ideaLoading || error != null}>Import Idea</Button>
 			</Modal.Footer>
 		</Form>
 	</Modal>);

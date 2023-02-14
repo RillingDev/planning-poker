@@ -65,7 +65,7 @@ const AhaSubmissionModal: FC<{
 				</>}
 			</Modal.Body>
 			<Modal.Footer>
-				<Button type="submit" variant="primary" disabled={idea == null}>
+				<Button type="submit" variant="primary" disabled={ideaLoading || scoreSubmissionPending || error != null}>
 					<Spinner
 						hidden={!scoreSubmissionPending}
 						as="span"
