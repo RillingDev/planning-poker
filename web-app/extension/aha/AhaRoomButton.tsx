@@ -1,5 +1,5 @@
-import { ChangeEvent, FC, useState } from "react";
-import { Button, Form, Modal, Spinner } from "react-bootstrap";
+import { ChangeEvent, FC, FormEvent, useState } from "react";
+import { Button, Card, Form, Modal, Spinner } from "react-bootstrap";
 import { Room, RoomEditOptions } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
@@ -11,6 +11,11 @@ const deriveTopic = (idea: Idea): string => {
 	return `${idea.reference_num}: ${idea.name}`;
 };
 
+const loadIdea = async (ideaId: string) => {
+	const client = await ahaExtension.getClient();
+	return client.getIdea(ideaId);
+};
+
 const AhaIdeaLoadingModal: FC<{
 	show: boolean;
 	onHide: () => void;
@@ -19,47 +24,54 @@ const AhaIdeaLoadingModal: FC<{
 	const [error, handleError, resetError] = useErrorHandler();
 
 	const [loadingPending, setLoadingPending] = useState(false);
+	const [idea, setIdea] = useState<Idea | null>(null);
 
-	const loadIdea = async (ideaId: string) => {
-		const client = await ahaExtension.getClient();
-		const idea = await client.getIdea(ideaId);
-		if (idea == null) {
-			handleError(new Error("Idea not found."));
-			return;
-		}
-		onSubmit({topic: deriveTopic(idea)});
-	};
-
+	const [input, setInput] = useState("");
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const extractIdeaId = AhaExtension.extractIdeaId(e.target.value);
-		if (extractIdeaId == null) {
+		const newValue = e.target.value;
+		setInput(newValue);
+
+		const extractedIdeaId = AhaExtension.extractIdeaId(newValue);
+		if (extractedIdeaId == null) {
 			e.target.setCustomValidity("Not a valid Aha! idea URL/ID.");
-			e.target.reportValidity();
 			return;
 		} else {
 			e.target.setCustomValidity("");
 		}
 
 		setLoadingPending(true);
-		loadIdea(extractIdeaId).catch(handleError).finally(() => setLoadingPending(false));
+		loadIdea(extractedIdeaId).then(result => {
+			setIdea(result);
+			e.target.setCustomValidity(result == null ? "Idea not found." : "");
+		}).catch(err => {
+			handleError(err as Error);
+			e.target.setCustomValidity("Could not load idea.");
+		}).finally(() => setLoadingPending(false));
+	};
+
+	const handleSubmit = (e: FormEvent) => {
+		e.preventDefault();
+
+		onSubmit({topic: deriveTopic(idea!)});
 	};
 
 	const handleHide = (): void => {
 		onHide();
-		resetError();
+		setInput("");
+		setIdea(null);
 	};
 
 	return (<Modal show={show} onHide={handleHide}>
-		<Form>
+		<Form onSubmit={handleSubmit}>
 			<Modal.Header closeButton>
 				<Modal.Title>Load from Aha!</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
 				<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
-				<p>Please paste an Aha! Idea ID or URL to load its details into the application.</p>
+				<p>Please enter an Aha! Idea ID or URL to load its details into the application.</p>
 				<Form.Group className="mb-3" controlId="formAhaUrl">
 					<Form.Label>Aha! URL/ID</Form.Label>
-					<Form.Control type="search" required onChange={handleChange}/>
+					<Form.Control type="search" required onChange={handleChange} value={input}/>
 				</Form.Group>
 				<Spinner
 					hidden={!loadingPending}
@@ -68,7 +80,16 @@ const AhaIdeaLoadingModal: FC<{
 					size="sm"
 					role="status"
 					aria-hidden="true"><span className="visually-hidden">Loading Idea</span></Spinner>
+				<Card hidden={idea == null}>
+					<Card.Header>Preview</Card.Header>
+					<Card.Body>
+						{idea != null ? deriveTopic(idea) : ""}
+					</Card.Body>
+				</Card>
 			</Modal.Body>
+			<Modal.Footer>
+				<Button type="submit" variant="primary">Import Idea</Button>
+			</Modal.Footer>
 		</Form>
 	</Modal>);
 };
