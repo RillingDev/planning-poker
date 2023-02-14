@@ -39,8 +39,7 @@ profile `extension:aha`.
 The following additional properties must be set:
 
 - `planning-poker.extension.aha.account-domain`: The subdomain part that the target Aha! instance is running on. For
-  example, if you
-  use `https://example.aha.io`, this would be `example`.
+  example, if you use `https://example.aha.io`, this would be `example`.
 - `planning-poker.extension.aha.client-id`: The Aha! OAuth2 client ID. See <https://www.aha.io/api/oauth2> for details.
 - `planning-poker.extension.aha.redirect-uri`: The Aha! OAuth2 redirect URI. Should be the address the application is
   running on.
@@ -49,6 +48,7 @@ Note that the Aha! Integration only works when the application is available unde
 
 ##### Usage
 
+A button "Load from Aha!" will appear next to the room name. It can be used to load the details of an Aha! ID or URL into the room.
 If the topic of a room is set to an Aha! idea ID or URL, a button to submit the average score to Aha! will show up after
 voting completes.
 
