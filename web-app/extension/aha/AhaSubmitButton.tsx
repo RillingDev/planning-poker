@@ -16,7 +16,7 @@ const AhaSubmissionModal: FC<{
 }> = ({ideaId, score, show, onHide, onSubmit}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	const [idea, setIdea] = useState<Idea>();
+	const [idea, setIdea] = useState<Idea | null>(null);
 	const [ideaLoading, setIdeaLoading] = useState(false);
 	useEffect(() => {
 		setIdeaLoading(true);
@@ -38,7 +38,12 @@ const AhaSubmissionModal: FC<{
 		ahaExtension.getClient().then(client => client.putIdeaScore(ideaId, scoreFactName, score)).then(onSubmit).catch(handleError).finally(() => setScoreSubmissionPending(false));
 	};
 
-	return (<Modal show={show} onHide={onHide}>
+	const handleExit = (): void => {
+		resetError();
+		setIdea(null);
+	};
+
+	return (<Modal show={show} onExit={handleExit} onHide={onHide}>
 		<Form onSubmit={handleSubmit}>
 			<Modal.Header closeButton>
 				<Modal.Title>Save to Aha!</Modal.Title>

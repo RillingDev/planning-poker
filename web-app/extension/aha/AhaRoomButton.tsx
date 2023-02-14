@@ -50,13 +50,13 @@ const AhaIdeaLoadingModal: FC<{
 		onSubmit({topic: deriveTopic(idea!)});
 	};
 
-	const handleHide = (): void => {
-		onHide();
+	const handleExit = (): void => {
+		resetError();
 		setInput("");
 		setIdea(null);
 	};
 
-	return (<Modal show={show} onHide={handleHide}>
+	return (<Modal show={show} onExit={handleExit} onHide={onHide}>
 		<Form onSubmit={handleSubmit}>
 			<Modal.Header closeButton>
 				<Modal.Title>Load from Aha!</Modal.Title>
