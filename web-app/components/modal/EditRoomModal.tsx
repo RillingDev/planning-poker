@@ -22,9 +22,10 @@ export const EditRoomModal: FC<{
 }> = ({room, show, onHide, onSubmit}) => {
 	const {cardSets, extensionManager} = useContext(AppContext);
 
-	const [cardSetName, setCardSetName] = useState<string>(room.cardSetName);
-	const [topic, setTopic] = useState<string>(room.topic ?? "");
-	const [extensionKeys, setExtensionKeys] = useState<ReadonlyArray<ExtensionKey>>(room.extensions);
+	// Initial state is filled in handleShow, to ensure is reset when opening the modal.
+	const [cardSetName, setCardSetName] = useState<string>("");
+	const [topic, setTopic] = useState<string>("");
+	const [extensionKeys, setExtensionKeys] = useState<ReadonlyArray<ExtensionKey>>([]);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -46,8 +47,14 @@ export const EditRoomModal: FC<{
 		});
 	};
 
+	const handleShow = () => {
+		setCardSetName(room.cardSetName);
+		setTopic(room.topic ?? "");
+		setExtensionKeys(room.extensions);
+	};
+
 	return (
-		<Modal show={show} onHide={onHide}>
+		<Modal show={show} onHide={onHide} onShow={handleShow}>
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>

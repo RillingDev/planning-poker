@@ -23,12 +23,15 @@ export const CreateRoomModal: FC<{
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		onSubmit(roomName, {cardSetName});
+	};
 
+	const handleExit = (): void => {
 		setRoomName("");
+		setCardSetName("");
 	};
 
 	return (
-		<Modal show={show} onHide={onHide}>
+		<Modal show={show} onHide={onHide} onExit={handleExit}>
 			<Form onSubmit={handleSubmit}>
 				<Modal.Header closeButton>
 					<Modal.Title>Create Room</Modal.Title>
