@@ -19,26 +19,34 @@ const AhaIdeaLoadingModal: FC<{
 	const [error, handleError, resetError] = useErrorHandler();
 
 	const [loadingPending, setLoadingPending] = useState(false);
+
+	const loadIdea = async (ideaId: string) => {
+		const client = await ahaExtension.getClient();
+		const idea = await client.getIdea(ideaId);
+		if (idea == null) {
+			handleError(new Error("Idea not found."));
+			return;
+		}
+		onSubmit({topic: deriveTopic(idea)});
+	};
+
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const extractIdeaId = AhaExtension.extractIdeaId(e.target.value);
 		if (extractIdeaId == null) {
-			handleError(new Error("Not a valid Aha! idea URL/ID.")); // TODO: nicer indicator?
+			e.target.setCustomValidity("Not a valid Aha! idea URL/ID.");
+			e.target.reportValidity();
 			return;
+		} else {
+			e.target.setCustomValidity("");
 		}
 
 		setLoadingPending(true);
-		ahaExtension.getClient().then(client => client.getIdea(extractIdeaId)).then(idea => {
-			if (idea == null) {
-				handleError(new Error("Idea not found."));
-				return;
-			}
-			onSubmit({topic: deriveTopic(idea)});
-		}).catch(handleError).finally(() => setLoadingPending(false));
+		loadIdea(extractIdeaId).catch(handleError).finally(() => setLoadingPending(false));
 	};
 
 	const handleHide = (): void => {
-		resetError();
 		onHide();
+		resetError();
 	};
 
 	return (<Modal show={show} onHide={handleHide}>
@@ -48,7 +56,7 @@ const AhaIdeaLoadingModal: FC<{
 			</Modal.Header>
 			<Modal.Body>
 				<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
-				<p>Please enter an Aha! Idea ID or URL to load its details into the application.</p>
+				<p>Please paste an Aha! Idea ID or URL to load its details into the application.</p>
 				<Form.Group className="mb-3" controlId="formAhaUrl">
 					<Form.Label>Aha! URL/ID</Form.Label>
 					<Form.Control type="search" required onChange={handleChange}/>
@@ -75,8 +83,7 @@ export const AhaRoomButton: FC<{ room: Room, onChange: (changes: RoomEditOptions
 
 	return (<>
 			<Button size="sm" onClick={showModal}>Load from Aha!</Button>
-			{modalVisible && // Delay mount until click to ensure modal data loading is not done prematurely. FIXME: this should not be required
-				<AhaIdeaLoadingModal show={modalVisible} onHide={hideModal} onSubmit={handleSubmit}/>}
+			<AhaIdeaLoadingModal show={modalVisible} onHide={hideModal} onSubmit={handleSubmit}/>
 		</>
 	);
 };
