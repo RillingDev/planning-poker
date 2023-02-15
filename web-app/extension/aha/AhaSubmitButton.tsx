@@ -43,6 +43,7 @@ const AhaSubmissionModal: FC<{
 		setIdea(null);
 	};
 
+	// TODO: show previous score
 	return (<Modal show={show} onExit={handleExit} onHide={onHide}>
 		<Form onSubmit={handleSubmit}>
 			<Modal.Header closeButton>
@@ -59,7 +60,8 @@ const AhaSubmissionModal: FC<{
 					aria-hidden="true"><span className="visually-hidden">Loading Idea</span></Spinner>
 				{idea != null && <>
 					<p>You are about to save the score <strong>{score}</strong> to Aha! for the
-						idea &quot;<strong>{idea.name}</strong>&quot; with the ID <strong>{ideaId}</strong>.</p>
+						idea &quot;<strong>{ideaId}: {idea.name}</strong>&quot;.</p>
+
 					<Form.Group className="mb-3" controlId="formAhaScoreFact">
 						<Form.Label>Score Fact Name</Form.Label>
 						<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)}>
