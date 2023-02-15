@@ -15,9 +15,15 @@ const getOffsetVisuals = (offset: number): { label: string, color: Color } => {
 			color: "warning"
 		};
 	}
+	if (offset > 0) {
+		return {
+			label: "Low",
+			color: "success"
+		};
+	}
 	return {
-		label: "Low",
-		color: "success"
+		label: "None! 🎉",
+		color: "info"
 	};
 };
 

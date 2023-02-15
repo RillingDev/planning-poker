@@ -3,11 +3,18 @@ import { DisagreementMeter } from "./DisagreementMeter";
 
 
 describe("DisagreementMeter", () => {
-	it("shows low disagreement", () => {
+	it("shows none disagreement", () => {
 		render(<DisagreementMeter offset={0}/>);
+
+		expect(screen.getByText("None! 🎉")).toBeInTheDocument();
+	});
+
+	it("shows low disagreement", () => {
+		render(<DisagreementMeter offset={1}/>);
 
 		expect(screen.getByText("Low")).toBeInTheDocument();
 	});
+
 
 	it("shows medium disagreement", () => {
 		render(<DisagreementMeter offset={2}/>);
