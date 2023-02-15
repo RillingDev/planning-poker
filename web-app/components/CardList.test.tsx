@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import { createCard, createCardSet } from "../test/dataFactory";
 import { CardList } from "./CardList";
@@ -45,7 +46,7 @@ describe("CardList", () => {
 	});
 
 
-	it("invokes click handler", () => {
+	it("invokes click handler", async () => {
 		const card1 = createCard({name: "Card 1"});
 		const cardSet = createCardSet({cards: [card1, createCard({name: "Card 2"})]});
 
@@ -53,7 +54,7 @@ describe("CardList", () => {
 
 		render(<CardList cardSet={cardSet} activeCard={null} disabled={false} onClick={handleClick}/>);
 
-		fireEvent.click(screen.getByText("Card 1"));
+		await userEvent.click(screen.getByText("Card 1"));
 
 		expect(handleClick).toBeCalledWith(card1);
 	});
