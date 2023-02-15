@@ -9,11 +9,15 @@ import { Extension } from "../../extension/Extension";
  * Gets the new value, or undefined if it has not changed.
  * This is useful when a value is only needed if it was modified.
  */
-function getChange<T>(oldValue: T, newValue: T): T | undefined {
+function getDelta<T>(oldValue: T, newValue: T): T | undefined {
 	return isEqual(oldValue, newValue) ? undefined : newValue;
 }
 
+const getEffectiveTopic = (room: Room): string => room.topic ?? "";
 
+/**
+ * @param onSubmit Invoked upon submission with delta of changes values.
+ */
 export const EditRoomModal: FC<{
 	room: Room;
 	show: boolean;
@@ -31,9 +35,9 @@ export const EditRoomModal: FC<{
 		e.preventDefault();
 		// Only emit difference to initial.
 		onSubmit({
-			topic: getChange(room.topic, topic),
-			cardSetName: getChange(room.cardSetName, cardSetName),
-			extensions: getChange(room.extensions, extensionKeys),
+			topic: getDelta(getEffectiveTopic(room), topic),
+			cardSetName: getDelta(room.cardSetName, cardSetName),
+			extensions: getDelta(room.extensions, extensionKeys),
 		});
 	};
 
@@ -49,7 +53,7 @@ export const EditRoomModal: FC<{
 
 	const handleShow = () => {
 		setCardSetName(room.cardSetName);
-		setTopic(room.topic ?? "");
+		setTopic(getEffectiveTopic(room));
 		setExtensionKeys(room.extensions);
 	};
 
