@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { Badge } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
 
 const getOffsetVisuals = (offset: number): { label: string, color: Color } => {
@@ -30,5 +29,5 @@ const getOffsetVisuals = (offset: number): { label: string, color: Color } => {
 export const DisagreementMeter: FC<{ offset: number }> = ({offset}) => {
 	const {label, color} = getOffsetVisuals(offset);
 
-	return (<Badge bg={color} className="text-uppercase">{label}</Badge>);
+	return (<span className={`text-uppercase badge bg-${color}`}>{label}</span>);
 };

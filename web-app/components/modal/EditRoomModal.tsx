@@ -1,6 +1,6 @@
 import { isEqual } from "lodash-es";
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Form, Modal } from "react-bootstrap";
 import { ExtensionKey, Room, RoomEditOptions } from "../../api";
 import { AppContext } from "../../AppContext";
 import { Extension } from "../../extension/Extension";
@@ -91,7 +91,7 @@ export const EditRoomModal: FC<{
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button type="submit" variant="primary">Update</Button>
+					<button type="submit" className="btn btn-primary">Update</button>
 				</Modal.Footer>
 			</Form>
 		</Modal>

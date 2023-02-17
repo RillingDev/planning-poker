@@ -2,7 +2,6 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useState } from "react";
-import { Button } from "react-bootstrap";
 import { useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
 import { createRoom, deleteRoom, editRoom, loadRooms, Room, RoomCreationOptions, RoomEditOptions } from "../api";
@@ -44,10 +43,14 @@ const RoomItem: FC<{
 		<div className="card room-item">
 			<Link to={`/rooms/${encodeURIComponent(room.name)}`}>{room.name}</Link>
 
-			<Button size="sm" variant="warning" onClick={showEditModal}><FontAwesomeIcon icon={faEdit} title="Edit Room"/></Button>
+			<button type="button" className="btn btn-warning btn-sm" onClick={showEditModal}>
+				<FontAwesomeIcon icon={faEdit} title="Edit Room"/>
+			</button>
 			<EditRoomModal onSubmit={handleEdit} room={room} show={editModalVisible} onHide={hideEditModal}/>
 
-			<Button size="sm" variant="danger" onClick={showDeleteModal}><FontAwesomeIcon icon={faTrash} title="Delete Room"/></Button>
+			<button type="button" className="btn btn-danger btn-sm" onClick={showDeleteModal}>
+				<FontAwesomeIcon icon={faTrash} title="Delete Room"/>
+			</button>
 			<DeleteRoomModal onSubmit={handleDelete} room={room} show={deleteModalVisible} onHide={hideDeleteModal}/>
 		</div>
 	);
@@ -90,7 +93,7 @@ export const RoomListView: FC = () => {
 
 			<header className="d-flex justify-content-between align-items-center">
 				<h2 className="mb-0">Rooms</h2>
-				<Button variant="primary" size="sm" onClick={showCreationModal}>Create Room</Button>
+				<button type="button" className="btn btn-primary btn-sm" onClick={showCreationModal}>Create Room</button>
 				<CreateRoomModal show={creationModalVisible} existingRooms={rooms} onSubmit={handleCreationSubmit} onHide={hideCreationModal}/>
 			</header>
 			<nav>

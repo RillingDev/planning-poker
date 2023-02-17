@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
-import { Button, Card, Form, Modal, Spinner } from "react-bootstrap";
+import { Form, Modal, Spinner } from "react-bootstrap";
 import { Room, RoomEditOptions } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
@@ -70,15 +70,17 @@ const AhaIdeaLoadingModal: FC<{
 					size="sm"
 					role="status"
 					aria-hidden="true"><span className="visually-hidden">Loading Idea</span></Spinner>
-				<Card hidden={idea == null}>
-					<Card.Header>Preview</Card.Header>
-					<Card.Body>
+				<div className="card" hidden={idea == null}>
+					<div className="card-header">
+						Preview
+					</div>
+					<div className="card-body">
 						{idea != null ? deriveTopic(idea) : ""}
-					</Card.Body>
-				</Card>
+					</div>
+				</div>
 			</Modal.Body>
 			<Modal.Footer>
-				<Button type="submit" variant="primary" disabled={ideaLoading || error != null}>Import Idea</Button>
+				<button type="submit" className="btn btn-primary" disabled={ideaLoading || error != null}>Import Idea</button>
 			</Modal.Footer>
 		</Form>
 	</Modal>);
@@ -93,7 +95,7 @@ export const AhaRoomButton: FC<{ room: Room, onChange: (changes: RoomEditOptions
 	};
 
 	return (<>
-			<Button size="sm" onClick={showModal}>Load from Aha!</Button>
+			<button type="button" className="btn btn-primary btn-sm" onClick={showModal}>Load from Aha!</button>
 			<AhaIdeaLoadingModal show={modalVisible} onHide={hideModal} onSubmit={handleSubmit}/>
 		</>
 	);
