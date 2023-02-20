@@ -8,8 +8,14 @@ export interface AhaConfig {
 	readonly redirectUri: string;
 }
 
+type ScoreFactName = string;
+
+export interface AhaRoomConfig {
+	readonly scoreFactName: ScoreFactName;
+}
+
 interface ScoreFact {
-	readonly name: string,
+	readonly name: ScoreFactName,
 	readonly value: number
 }
 
