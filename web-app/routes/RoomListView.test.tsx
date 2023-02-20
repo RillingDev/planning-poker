@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, useLoaderData } from "react-router";
 import { vi } from "vitest";
-import { loadRooms } from "../api";
+import { getRooms } from "../api";
 import { createRoom } from "../test/dataFactory";
 import { loader, RoomListView } from "./RoomListView";
 
@@ -24,7 +24,7 @@ describe("RoomListView", () => {
 	it("loader loads", async () => {
 		const room1 = createRoom({name: "My Room"});
 		const room2 = createRoom({name: "Some Other Room"});
-		vi.mocked(loadRooms).mockResolvedValue([room1, room2]);
+		vi.mocked(getRooms).mockResolvedValue([room1, room2]);
 
 		const loaderResult = await loader();
 		expect(loaderResult.rooms).toEqual([room1, room2]);

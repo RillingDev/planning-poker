@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "vite/modulepreload-polyfill";
-import { loadCardSets, loadExtensions, loadIdentity } from "./api";
+import { getCardSets, getExtensions, getIdentity } from "./api";
 import { AppContext, AppContextState } from "./AppContext";
 import { Header } from "./components/Header";
 import { ExtensionManager } from "./extension/ExtensionManager";
@@ -11,7 +11,7 @@ import { router } from "./router";
 
 
 async function createContextState(): Promise<AppContextState> {
-	const [user, enabledExtensionKeys, cardSets] = await Promise.all([loadIdentity(), loadExtensions(), loadCardSets()]);
+	const [user, enabledExtensionKeys, cardSets] = await Promise.all([getIdentity(), getExtensions(), getCardSets()]);
 
 	const extensionManager = new ExtensionManager(enabledExtensionKeys);
 

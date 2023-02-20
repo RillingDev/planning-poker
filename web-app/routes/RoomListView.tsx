@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
-import { createRoom, deleteRoom, editRoom, loadRooms, Room, RoomCreationOptions, RoomEditOptions } from "../api";
+import { createRoom, deleteRoom, editRoom, getRooms, Room, RoomCreationOptions, RoomEditOptions } from "../api";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { DeleteRoomModal } from "../components/modal/DeleteRoomModal";
@@ -17,7 +17,7 @@ interface LoaderResult {
 }
 
 export async function loader(): Promise<LoaderResult> {
-	const rooms = await loadRooms();
+	const rooms = await getRooms();
 	return {rooms};
 }
 
@@ -69,7 +69,7 @@ export const RoomListView: FC = () => {
 	}, 3000); // Poll for deletions/creations
 
 	const updateRooms = async () => {
-		setRooms(await loadRooms());
+		setRooms(await getRooms());
 	};
 
 	const handleCreationSubmit = (newRoomName: string, newRoomOptions: RoomCreationOptions) => {
