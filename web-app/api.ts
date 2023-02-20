@@ -87,6 +87,13 @@ export async function loadExtensions() {
 	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<ExtensionKey>>);
 }
 
+export async function getExtensionConfig<T>(extensionKey: ExtensionKey) {
+	return fetch(`/api/extensions/${extensionKey}/config`, {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
+	}).then(assertStatusOk).then(res => res.json() as Promise<T>);
+}
+
 
 export async function loadCardSets() {
 	return fetch("/api/card-sets", {
@@ -186,3 +193,4 @@ export async function getSummary(roomName: string) {
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<SummaryResult>);
 }
+

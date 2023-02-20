@@ -8,13 +8,6 @@ export interface AhaConfig {
 	readonly redirectUri: string;
 }
 
-export async function getAhaConfig() {
-	return fetch("/api/extensions/aha/config", {
-		method: "GET",
-		headers: {"Accept": MEDIA_TYPE_JSON}
-	}).then(assertStatusOk).then(res => res.json() as Promise<AhaConfig>);
-}
-
 interface ScoreFact {
 	readonly name: string,
 	readonly value: number
