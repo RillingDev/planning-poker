@@ -1,5 +1,9 @@
 # Architecture
 
+## Structure
+
+![High Level Deployment UML Diagram](./docs/deployment.svg)
+
 ## Concepts
 
 ### Validation & State Transitions
