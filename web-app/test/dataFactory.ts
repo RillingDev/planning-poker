@@ -1,4 +1,4 @@
-import { Card, CardSet, Role, Room, RoomMember } from "../api";
+import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../api";
 import { AppContextState } from "../AppContext";
 import { ExtensionManager } from "../extension/ExtensionManager";
 
@@ -30,5 +30,21 @@ export function createRoom(values: Partial<Room>): Room {
 		extensions: values.extensions ?? [],
 		votingClosed: values.votingClosed ?? false,
 		topic: values.topic ?? null
+	};
+}
+
+export function createVoteSummary(values: Partial<VoteSummary>): VoteSummary {
+	const card1 = createCard({name: "1", value: 1});
+	const card3 = createCard({name: "3", value: 3});
+	const memberLow = createRoomMember({username: "Foo", vote: card1});
+	const memberHigh = createRoomMember({username: "Bar", vote: card3});
+	return {
+		average: values.average ?? 2,
+		highestVote: values.highestVote ?? card3,
+		highestVoters: values.highestVoters ?? [memberHigh],
+		lowestVote: values.lowestVote ?? card1,
+		lowestVoters: values.lowestVoters ?? [memberLow],
+		nearestCard: values.nearestCard ?? card3,
+		offset: values.offset ?? 1,
 	};
 }
