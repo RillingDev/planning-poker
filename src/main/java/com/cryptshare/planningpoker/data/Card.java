@@ -8,6 +8,9 @@ import org.springframework.lang.Nullable;
 import java.util.Comparator;
 import java.util.StringJoiner;
 
+/**
+ * Card in a {@link CardSet}.
+ */
 @Entity
 @Table(name = "card")
 public class Card extends BaseEntity {

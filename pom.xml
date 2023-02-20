@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cryptshare</groupId>
@@ -79,20 +79,6 @@
 				<version>3.1.0</version>
 				<executions>
 					<execution>
-						<id>npm:build</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>run</argument>
-								<argument>build</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
 						<id>npm:test</id>
 						<phase>verify</phase>
 						<goals>
@@ -105,6 +91,41 @@
 								<argument>test</argument>
 							</arguments>
 							<workingDirectory>${project.basedir}</workingDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm:build</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-vite-resources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>./.local/vite-build</directory>
+								</resource>
+							</resources>
+							<overwrite>true</overwrite>
 						</configuration>
 					</execution>
 				</executions>

@@ -16,14 +16,18 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class RoomRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
 
 	@Autowired
 	CardSetRepository cardSetRepository;
+
+	@Autowired
+	ExtensionRepository extensionRepository;
 
 	@Autowired
 	PlatformTransactionManager transactionManager;
@@ -35,12 +39,12 @@ class RoomRepositoryIT {
 	void setUp() {
 		cardSetRepository.deleteAll();
 		roomRepository.deleteAll();
+		extensionRepository.deleteAll();
 		createExampleUser();
 	}
 
 	@Test
 	@DisplayName("can be saved and loaded")
-	@DirtiesContext
 	void saveAndLoad() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -55,6 +59,12 @@ class RoomRepositoryIT {
 		room.getMembers().add(member);
 		member.setVote(card);
 
+		final Extension extension = new Extension("aha");
+		extensionRepository.save(extension);
+
+		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(extension);
+		room.getExtensionConfigs().add(roomExtensionConfig);
+
 		roomRepository.save(room);
 
 		final Room loaded = roomRepository.findByName("My Room").orElseThrow();
@@ -62,12 +72,12 @@ class RoomRepositoryIT {
 		assertThat(loaded.getCardSet()).isEqualTo(cardSet);
 		assertThat(loaded.getTopic()).isEqualTo("topic!");
 		assertThat(loaded.getMembers()).containsExactly(member);
+		assertThat(loaded.getExtensionConfigs()).containsExactly(roomExtensionConfig);
 		assertThat(loaded.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
 	@Test
 	@DisplayName("cascades delete to members")
-	@DirtiesContext
 	void cascadesMemberDeletion() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -92,7 +102,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("cascades detach to members")
-	@DirtiesContext
 	void cascadesMemberDetach() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -119,7 +128,6 @@ class RoomRepositoryIT {
 
 	@Test
 	@DisplayName("does not cascade delete to card set")
-	@DirtiesContext
 	void doesNotCascadeCardSet() {
 		final CardSet cardSet = new CardSet("Set #1");
 		final Card card = new Card("1", 1.0);
@@ -132,6 +140,56 @@ class RoomRepositoryIT {
 		roomRepository.delete(room);
 
 		assertThat(cardSetRepository.findByName("Set #1")).isPresent();
+	}
+
+	@Test
+	@DisplayName("cascades delete to extension config")
+	void cascadesExtensionDeletion() {
+		final CardSet cardSet = new CardSet("Set #1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		cardSetRepository.save(cardSet);
+
+		final Room room = new Room("My Room", cardSet);
+
+		final Extension extension = new Extension("aha");
+		extensionRepository.save(extension);
+
+		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(extension);
+		room.getExtensionConfigs().add(roomExtensionConfig);
+
+		roomRepository.save(room);
+
+		roomRepository.delete(room);
+
+		assertThat(em.createQuery("SELECT COUNT(*) FROM RoomExtensionConfig ref", Long.class).getSingleResult()).isZero();
+		assertThat(em.createQuery("SELECT COUNT(*) FROM Extension ref", Long.class).getSingleResult()).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("cascades detach to extension config")
+	void cascadesExtensionDetach() {
+		final CardSet cardSet = new CardSet("Set #1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		cardSetRepository.save(cardSet);
+
+		final Room room = new Room("My Room", cardSet);
+
+		final Extension extension = new Extension("aha");
+		extensionRepository.save(extension);
+
+		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(extension);
+		room.getExtensionConfigs().add(roomExtensionConfig);
+
+		roomRepository.save(room);
+
+		room.getExtensionConfigs().clear();
+
+		roomRepository.save(room);
+
+		assertThat(em.createQuery("SELECT COUNT(*) FROM RoomExtensionConfig ref", Long.class).getSingleResult()).isZero();
+		assertThat(em.createQuery("SELECT COUNT(*) FROM Extension ref", Long.class).getSingleResult()).isEqualTo(1);
 	}
 
 	private void createExampleUser() {

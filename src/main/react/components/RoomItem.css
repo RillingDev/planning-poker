@@ -1,7 +1,0 @@
-.room-item {
-	display: grid;
-	align-items: center;
-	padding: 1rem;
-	grid-template-columns: 1fr min-content min-content;
-	gap: 0.5rem;
-}

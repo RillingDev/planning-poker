@@ -13,7 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -69,6 +71,19 @@ class RoomMemberControllerTest {
 	}
 
 	@Test
+	@DisplayName("POST `/api/rooms/{room-name}/members` does not throw when already in room")
+	@WithMockUser("John Doe")
+	void joinRoomAlreadyJoined() throws Exception {
+		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		room.getMembers().add(new RoomMember("John Doe"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(post("/api/rooms/my-room/members").with(csrf())).andExpect(status().isOk());
+
+		verify(roomRepository, never()).save(any());
+	}
+
+	@Test
 	@DisplayName("DELETE `/api/rooms/{room-name}/members` throws for unknown name")
 	@WithMockUser
 	void leaveRoomUnknownName() throws Exception {
@@ -110,6 +125,18 @@ class RoomMemberControllerTest {
 		final Room actual = captor.getValue();
 		assertThat(actual.getMembers()).isEmpty();
 		assertThat(actual.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
+	}
+
+	@Test
+	@DisplayName("DELETE `/api/rooms/{room-name}/members` does not throw when not joined")
+	@WithMockUser("John Doe")
+	void leaveRoomNotJoined() throws Exception {
+		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(delete("/api/rooms/my-room/members").with(csrf())).andExpect(status().isOk());
+
+		verify(roomRepository, never()).save(any());
 	}
 
 	@Test
@@ -268,7 +295,7 @@ class RoomMemberControllerTest {
 		final RoomMember alice = new RoomMember("Alice");
 		room.getMembers().add(alice);
 		final RoomMember johnDoe = new RoomMember("John Doe");
-		johnDoe.setVote( card);
+		johnDoe.setVote(card);
 		room.getMembers().add(johnDoe);
 
 		mockMvc.perform(patch("/api/rooms/my-room/members/Alice").queryParam("action", "KICK").with(csrf())).andExpect(status().isOk());
