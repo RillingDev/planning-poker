@@ -91,18 +91,7 @@ Solution: Delete the `target` folder, it probably contains old build artifacts o
 
 ### Architecture
 
-#### Validation & State Transitions
-
-The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or
-voting).
-Integrity related validation is done in the persistence layer, such as clearing votes of observers.
-
-The persistence layer is treated as the single-source-of-truth.
-
-#### Extensions
-
-Extensions are primarily controlled using spring profiles that start with the prefix `extension:`. This is then
-delegated to the web app.
+See [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## Background
 
