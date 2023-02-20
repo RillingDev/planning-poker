@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { Room } from "../../api";
 
 
@@ -18,7 +18,7 @@ export const DeleteRoomModal: FC<{
 				Are you sure you want to delete this room?
 			</Modal.Body>
 			<Modal.Footer>
-				<Button variant="danger" onClick={onSubmit}>Permanently Delete This Room</Button>
+				<button type="button" className="btn btn-danger" onClick={onSubmit}>Permanently Delete This Room</button>
 			</Modal.Footer>
 		</Modal>
 	);

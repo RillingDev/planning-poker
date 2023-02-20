@@ -1,5 +1,5 @@
 import { FC, useContext, useId } from "react";
-import { Badge, ButtonGroup, Dropdown } from "react-bootstrap";
+import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
 import { EditAction, Role, RoomMember } from "../api";
 import { AppContext } from "../AppContext";
@@ -8,11 +8,10 @@ import { PokerCard } from "./PokerCard";
 
 
 const mapRoleToColor = (role: Role): Color => {
-	switch (role) {
-		case Role.VOTER:
-			return "dark";
-		default:
-			return "secondary";
+	if (role === Role.VOTER) {
+		return "dark";
+	} else {
+		return "secondary";
 	}
 };
 
@@ -24,7 +23,7 @@ const Member: FC<{
 	const dropdownId = useId();
 
 	return (<li className={`card member member--${member.role}`}>
-		<span>{member.username} <Badge bg="light" text={mapRoleToColor(member.role)}>{member.role}</Badge></span>
+		<span>{member.username} <span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>{member.role}</span></span>
 		<Dropdown size="sm" as={ButtonGroup}>
 			<Dropdown.Toggle variant="secondary" id={dropdownId} aria-label="Edit member"/>
 

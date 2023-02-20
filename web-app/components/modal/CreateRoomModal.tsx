@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Form, Modal } from "react-bootstrap";
 import { Room, RoomCreationOptions } from "../../api";
 import { AppContext } from "../../AppContext";
 
@@ -58,7 +58,7 @@ export const CreateRoomModal: FC<{
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button type="submit" variant="primary">Create</Button>
+					<button type="submit" className="btn btn-primary">Create</button>
 				</Modal.Footer>
 			</Form>
 		</Modal>

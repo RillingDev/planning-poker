@@ -2,7 +2,6 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
-import { Button } from "react-bootstrap";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
 import type { Card, EditAction, Room, RoomEditOptions, RoomMember, SummaryResult, User } from "../api";
@@ -64,9 +63,9 @@ const RoomViewHeader: FC<{ room: Room, onChange: (changes: RoomEditOptions) => v
 	return <div className="room-view__header">
 		<h2 className="mb-0">{room.name}</h2>
 
-		<Button variant="warning" size="sm" onClick={showEditModel}>
+		<button type="button" className="btn btn-warning btn-sm" onClick={showEditModel}>
 			<FontAwesomeIcon icon={faEdit} title="Edit Room"/>
-		</Button>
+		</button>
 		<EditRoomModal onSubmit={handleModalEdit} room={room} show={editModalVisible} onHide={hideEditModal}/>
 
 		{extensionManager.getByRoom(room).map(extension =>
@@ -148,7 +147,7 @@ export const RoomView: FC = () => {
 				<main>
 					<header className="d-flex justify-content-between align-items-center mb-2">
 						<h3 className="mb-0">Vote</h3>
-						<Button variant="warning" onClick={handleRestart} size="sm">Restart</Button>
+						<button type="button" className="btn btn-warning btn-sm" onClick={handleRestart}>Restart</button>
 					</header>
 					<div className="card">
 						{summaryResult != null ?

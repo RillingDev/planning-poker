@@ -1,5 +1,5 @@
 import { FC, FormEvent, useEffect, useState } from "react";
-import { Button, Form, Modal, Spinner } from "react-bootstrap";
+import { Form, Modal, Spinner } from "react-bootstrap";
 import { Room, VoteSummary } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
@@ -72,14 +72,15 @@ const AhaSubmissionModal: FC<{
 				</>}
 			</Modal.Body>
 			<Modal.Footer>
-				<Button type="submit" variant="primary" disabled={ideaLoading || scoreSubmissionPending || error != null}>
+				<button type="submit" className="btn btn-primary" disabled={ideaLoading || scoreSubmissionPending || error != null}>
 					<Spinner
 						hidden={!scoreSubmissionPending}
 						as="span"
 						animation="border"
 						size="sm"
 						role="status"
-						aria-hidden="true"><span className="visually-hidden">Submitting Idea Score</span></Spinner> Submit</Button>
+						aria-hidden="true"><span className="visually-hidden">Submitting Idea Score</span></Spinner> Submit
+				</button>
 			</Modal.Footer>
 		</Form>
 	</Modal>);
@@ -93,7 +94,9 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 	const score = Math.round(voteSummary.average);
 
 	return (<>
-			<Button size="sm" onClick={showModal} hidden={ideaId == null}>Save to Aha!</Button>
+			<button type="button" className="btn btn-primary btn-sm" onClick={showModal} hidden={ideaId == null}>
+				Save to Aha!
+			</button>
 			{ideaId && modalVisible && // Delay mount until click to ensure modal data loading is not done prematurely
 				<AhaSubmissionModal ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
 		</>
