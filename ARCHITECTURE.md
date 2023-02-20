@@ -19,6 +19,9 @@ The persistence layer is treated as the single-source-of-truth.
 Extensions are primarily controlled using spring profiles that start with the prefix `extension:`. This is then
 delegated to the web app.
 
+Extensions may use the REST API resources at `/api/extensions/{extension-key}` and `/api/rooms/{room-name}/extensions/{extension-key}` to
+implement own endpoints, with the first being for global, and the second for per-room options.
+
 ## Guidelines
 
 ### Frontend
