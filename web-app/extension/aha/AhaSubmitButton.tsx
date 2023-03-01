@@ -19,6 +19,7 @@ const AhaSubmissionModal: FC<{
 	const [idea, setIdea] = useState<Idea | null>(null);
 	const [ideaLoading, setIdeaLoading] = useState(false);
 	useEffect(() => {
+		setIdea(null);
 		setIdeaLoading(true);
 		ahaExtension.getIdea(ideaId).then(idea => {
 			if (idea == null) {
