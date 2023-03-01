@@ -46,17 +46,18 @@ export class AhaClient {
 	async #authenticate(): Promise<void> {
 		if (this.#accessToken == null) {
 			this.#accessToken = await this.#requestAuthorization();
-			console.log("Authenticated client.");
 		}
 	}
 
 	async #requestAuthorization(): Promise<string> {
 		return new Promise((resolve, reject) => {
+			console.debug("Opening Aha! Auth window.");
 			const newWindow = window.open(this.#authUrl, "aha-auth-window", "width=940, height=650");
 			const completionTimer = setInterval(() => {
+				console.debug("Checking Aha! Auth window.");
+
 				if (newWindow == null) {
 					clearInterval(completionTimer);
-
 					reject(new Error("Could not open window."));
 					return;
 				}
@@ -69,16 +70,18 @@ export class AhaClient {
 					return;
 				}
 
-				if (windowUrl == this.#redirectUri.host) {
-					newWindow.close();
-					clearInterval(completionTimer);
-
+				if (windowUrl != this.#redirectUri.host) {
+					console.debug("Not redirected yet, sleeping.");
+				} else {
 					const exec = ACCESS_TOKEN_REGEX.exec(newWindow.location.hash);
 					if (exec == null) {
 						reject(new TypeError(`Unexpected response URI: ${newWindow.location.href}`));
 						return;
 					}
 					const accessToken = exec[1];
+					newWindow.close();
+					clearInterval(completionTimer);
+					console.log("Authenticated client.");
 					resolve(accessToken);
 				}
 			}, 500);
@@ -109,6 +112,7 @@ export class AhaClient {
 		const body = await response.json() as {
 			idea: Idea;
 		};
+		console.log("Retrieved idea.", body);
 		return body.idea;
 	}
 
@@ -116,19 +120,26 @@ export class AhaClient {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
-		const body: Partial<Idea> = {
+
+		const idea_payload: Partial<Idea> = {
 			score_facts: [{name: scoreFactName, value: value}]
 		};
-		await fetch(url, {
+		const body = {
+			idea: idea_payload
+		};
+
+		const response = await fetch(url, {
 			method: "PUT",
-			body: JSON.stringify({
-				idea: body
-			}),
+			body: JSON.stringify(body),
 			headers: {
 				...this.#getBaseHeaders(),
 				"Content-Type": MEDIA_TYPE_JSON
 			}
-		}).then(assertStatusOk);
+		});
+
+		await assertStatusOk(response);
+
+		console.log("Submitted idea score.", body);
 	}
 }
 
