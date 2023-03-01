@@ -38,7 +38,7 @@ class AhaController {
 						 @JsonProperty("redirectUri") String redirectUri) {
 	}
 
-	@PatchMapping(value = "/api/rooms/{room-name}/extensions/aha", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/api/rooms/{room-name}/extensions/aha", produces = MediaType.APPLICATION_JSON_VALUE)
 	public AhaRoomConfigJson getRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		final RoomExtensionConfig extensionConfig = room.getExtensionConfig("aha").orElseThrow(ExtensionUnavailableException::new);
@@ -46,10 +46,19 @@ class AhaController {
 		return new AhaRoomConfigJson("impact");
 	}
 
+	@PatchMapping(value = "/api/rooms/{room-name}/extensions/aha", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void editRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user,
+			@RequestBody AhaRoomConfigJson changes) {
+		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+		final RoomExtensionConfig extensionConfig = room.getExtensionConfig("aha").orElseThrow(ExtensionUnavailableException::new);
+
+	}
+
 	record AhaRoomConfigJson(@JsonProperty("scoreFactName") String scoreFactName) {
 	}
 
 	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Extension unavailable.")
 	public class ExtensionUnavailableException extends RuntimeException {
+
 	}
 }
