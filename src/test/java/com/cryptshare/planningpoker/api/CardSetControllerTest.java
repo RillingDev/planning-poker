@@ -30,7 +30,7 @@ class CardSetControllerTest {
 	@Test
 	@DisplayName("GET `/api/card-sets` returns card sets")
 	@WithMockUser
-	void loadCardSets() throws Exception {
+	void getCardSets() throws Exception {
 		final CardSet cardSet1 = new CardSet("My Set 1");
 		cardSet1.getCards().add(new Card("Coffee", 0.0));
 		cardSet1.getCards().add(new Card("1", 1.0));
@@ -39,8 +39,7 @@ class CardSetControllerTest {
 		final CardSet cardSet2 = new CardSet("My Set 2");
 		given(cardSetRepository.findAll()).willReturn(List.of(cardSet1, cardSet2));
 
-		mockMvc.perform(get("/api/card-sets"))
-				.andExpect(status().isOk())
+		mockMvc.perform(get("/api/card-sets")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("My Set 1"))
 				.andExpect(jsonPath("$[0].cards.length()").value(4))

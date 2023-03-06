@@ -32,6 +32,7 @@ const AhaIdeaLoadingModal: FC<{
 			return;
 		}
 
+		setIdea(null);
 		setIdeaLoading(true);
 		ahaExtension.getIdea(extractedIdeaId).then(result => {
 			setIdea(result);

@@ -41,7 +41,7 @@ class RoomControllerTest {
 	@Test
 	@DisplayName("GET `/api/rooms` loads rooms")
 	@WithMockUser
-	void loadRooms() throws Exception {
+	void getRooms() throws Exception {
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Room room1 = new Room("Room #1", cardSet);
 		room1.setTopic("Foo!");
@@ -49,9 +49,7 @@ class RoomControllerTest {
 		final Room room2 = new Room("Room #2", cardSet);
 		given(roomRepository.findAll()).willReturn(List.of(room1, room2));
 
-		mockMvc.perform(get("/api/rooms"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.length()").value(2))
+		mockMvc.perform(get("/api/rooms")).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("Room #1"))
 				.andExpect(jsonPath("$[0].topic").value("Foo!"))
 				.andExpect(jsonPath("$[0].cardSetName").value("My Set 1"))

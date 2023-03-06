@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Color } from "react-bootstrap/types";
 
 const getOffsetVisuals = (offset: number): { label: string, color: Color } => {
-	if (offset > 3) {
+	if (offset > 2) {
 		return {
 			label: "High",
 			color: "danger"

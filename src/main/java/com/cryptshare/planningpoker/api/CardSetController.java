@@ -21,7 +21,7 @@ class CardSetController {
 
 	@GetMapping(value = "/api/card-sets", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<CardSetJson> loadCardSets() {
+	public List<CardSetJson> getCardSets() {
 		return cardSetRepository.findAll().stream().sorted(CardSet.ALPHABETIC_COMPARATOR).map(CardSetJson::convert).toList();
 	}
 

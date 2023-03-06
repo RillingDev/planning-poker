@@ -72,7 +72,7 @@ async function assertStatusOk(res: Response): Promise<Response> {
 	);
 }
 
-export async function loadIdentity() {
+export async function getIdentity() {
 	return fetch("/api/identity", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
@@ -80,15 +80,22 @@ export async function loadIdentity() {
 }
 
 
-export async function loadExtensions() {
+export async function getExtensions() {
 	return fetch("/api/extensions", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<ExtensionKey>>);
 }
 
+export async function getExtensionConfig<T>(extensionKey: ExtensionKey) {
+	return fetch(`/api/extensions/${extensionKey}/config`, {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
+	}).then(assertStatusOk).then(res => res.json() as Promise<T>);
+}
 
-export async function loadCardSets() {
+
+export async function getCardSets() {
 	return fetch("/api/card-sets", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON},
@@ -96,7 +103,7 @@ export async function loadCardSets() {
 }
 
 
-export async function loadRooms() {
+export async function getRooms() {
 	return fetch("/api/rooms", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
@@ -186,3 +193,4 @@ export async function getSummary(roomName: string) {
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<SummaryResult>);
 }
+
