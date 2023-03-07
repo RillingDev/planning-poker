@@ -7,7 +7,7 @@ import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 
 async function getIdeaWithScoreFacts(ideaId: string): Promise<Idea | null> {
-	const result = await ahaExtension.getIdea(ideaId);
+	const result = await ahaExtension.getClient().then(client => client.getIdea(ideaId));
 	if (result == null) {
 		return null;
 	}
@@ -17,7 +17,7 @@ async function getIdeaWithScoreFacts(ideaId: string): Promise<Idea | null> {
 	}
 	// For ideas whose score was never changed, Aha! does not return the name of the score fact names.
 	// Because we need them to submit scores, we attempt to load them from other ideas for the same product.
-	const ideasForProduct = await ahaExtension.getIdeasForProduct(result.idea.product_id, 1, 100);
+	const ideasForProduct = await ahaExtension.getClient().then(client => client.getIdeasForProduct(result.idea.product_id, 1, 100));
 	const ideaWithScoreFacts = ideasForProduct.ideas.find(i => i.score_facts.length > 0);
 	if (ideaWithScoreFacts == null) {
 		throw new Error("Unable to determine the score fact names of this idea. Please manually click 'Update' in the score dialog for the idea and try again.");
@@ -62,7 +62,11 @@ const AhaSubmissionModal: FC<{
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setScoreSubmissionPending(true);
-		ahaExtension.putIdeaScore(ideaId, scoreFactName, score).then(onSubmit).catch(handleError).finally(() => setScoreSubmissionPending(false));
+		ahaExtension.getClient()
+			.then(client => client.putIdeaScore(ideaId, scoreFactName, score))
+			.then(onSubmit)
+			.catch(handleError)
+			.finally(() => setScoreSubmissionPending(false));
 	};
 
 	const handleExit = (): void => {
