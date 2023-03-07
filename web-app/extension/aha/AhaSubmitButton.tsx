@@ -7,28 +7,29 @@ import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 
 async function getIdeaWithScoreFacts(ideaId: string): Promise<Idea | null> {
-	const result = await ahaExtension.getClient().then(client => client.getIdea(ideaId));
+	const result = await ahaExtension.getClient().then(c => c.getIdea(ideaId));
 	if (result == null) {
 		return null;
 	}
 
-	if (result.idea.score_facts.length > 0) {
-		return result.idea;
-	}
-	// For ideas whose score was never changed, Aha! does not return the name of the score fact names.
+	// For ideas whose score was never changed, Aha! does not return the score fact names.
 	// Because we need them to submit scores, we attempt to load them from other ideas for the same product.
-	const ideasForProduct = await ahaExtension.getClient().then(client => client.getIdeasForProduct(result.idea.product_id, 1, 100));
-	const ideaWithScoreFacts = ideasForProduct.ideas.find(i => i.score_facts.length > 0);
-	if (ideaWithScoreFacts == null) {
-		throw new Error("Unable to determine the score fact names of this idea. Please manually click 'Update' in the score dialog for the idea and try again.");
+	if (result.idea.score_facts.length == 0) {
+		const ideasForProduct = await ahaExtension.getClient().then(c => c.getIdeasForProduct(result.idea.product_id, 1, 100));
+		const ideaWithScoreFacts = ideasForProduct.ideas.find(idea => idea.score_facts.length > 0);
+		if (ideaWithScoreFacts == null) {
+			throw new Error("Unable to determine the score fact names of this idea. Please manually click 'Update' in the score dialog for the idea and try again.");
+		}
+		const artificialScoreFacts = ideaWithScoreFacts.score_facts.map(scoreFact => {
+			return {name: scoreFact.name, value: 0};
+		});
+		return {
+			...result.idea,
+			score_facts: artificialScoreFacts
+		};
 	}
-	const artificialScoreFacts = ideaWithScoreFacts.score_facts.map(scoreFact => {
-		return {name: scoreFact.name, value: 0};
-	});
-	return {
-		...result.idea,
-		score_facts: artificialScoreFacts
-	};
+
+	return result.idea;
 }
 
 const AhaSubmissionModal: FC<{
@@ -63,7 +64,7 @@ const AhaSubmissionModal: FC<{
 		e.preventDefault();
 		setScoreSubmissionPending(true);
 		ahaExtension.getClient()
-			.then(client => client.putIdeaScore(ideaId, scoreFactName, score))
+			.then(c => c.putIdeaScore(ideaId, scoreFactName, score))
 			.then(onSubmit)
 			.catch(handleError)
 			.finally(() => setScoreSubmissionPending(false));
