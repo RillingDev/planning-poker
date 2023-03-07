@@ -95,7 +95,7 @@ export class AhaClient {
 	#getBaseHeaders() {
 		return {
 			"Authorization": `Bearer ${this.#accessToken!}`,
-			"User-Agent": "planning-poker (felix.rilling@pointsharp.de)"
+			// According to the docs, user-agent should be set here, but the CORS configuration of the Aha! REST API forbids this.
 		};
 	}
 
