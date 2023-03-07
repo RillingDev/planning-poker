@@ -15,6 +15,9 @@ interface ScoreFact {
 
 export interface Idea {
 	name: string,
+	/**
+	 * Empty if Aha! idea score was never updated.
+	 */
 	score_facts: ScoreFact[]
 	reference_num: string
 }
@@ -49,6 +52,7 @@ export class AhaClient {
 		}
 	}
 
+	// https://www.aha.io/api/oauth2
 	async #requestAuthorization(): Promise<string> {
 		return new Promise((resolve, reject) => {
 			console.debug("Opening Aha! Auth window.");
@@ -89,9 +93,13 @@ export class AhaClient {
 	}
 
 	#getBaseHeaders() {
-		return {"Authorization": `Bearer ${this.#accessToken!}`};
+		return {
+			"Authorization": `Bearer ${this.#accessToken!}`,
+			"User-Agent": "planning-poker (felix.rilling@pointsharp.de)"
+		};
 	}
 
+	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
 	async getIdea(ideaId: string): Promise<Idea | null> {
 		await this.#authenticate();
 
@@ -116,16 +124,17 @@ export class AhaClient {
 		return body.idea;
 	}
 
+	// https://www.aha.io/api/resources/ideas/update_an_idea
 	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {
 		await this.#authenticate();
 
 		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
 
-		const idea_payload: Partial<Idea> = {
+		const ideaPayload: Partial<Idea> = {
 			score_facts: [{name: scoreFactName, value: value}]
 		};
 		const body = {
-			idea: idea_payload
+			idea: ideaPayload
 		};
 
 		const response = await fetch(url, {
