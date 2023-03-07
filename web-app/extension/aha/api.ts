@@ -33,11 +33,11 @@ type Paginated<T> = T & {
 	}
 }
 
-interface IdeaResponse {
+export interface IdeaResponse {
 	readonly idea: Idea;
 }
 
-type IdeasResponse = Paginated<{
+export type IdeasResponse = Paginated<{
 	readonly ideas: ReadonlyArray<Idea>;
 }>;
 
@@ -67,7 +67,10 @@ export class AhaClient {
 
 	async #authenticate(): Promise<void> {
 		if (this.#accessToken == null) {
+			console.debug("No access token exists, requesting authorization.");
 			this.#accessToken = await this.#requestAuthorization();
+		} else {
+			console.debug("Access token exists, skipping authorization.");
 		}
 	}
 

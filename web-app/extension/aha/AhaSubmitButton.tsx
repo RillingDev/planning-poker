@@ -6,6 +6,30 @@ import { useBooleanState, useErrorHandler } from "../../hooks";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 
+async function getIdeaWithScoreFacts(ideaId: string): Promise<Idea | null> {
+	const idea = await ahaExtension.getIdea(ideaId);
+	if (idea == null) {
+		return null;
+	}
+
+	if (idea.score_facts.length > 0) {
+		return idea;
+	}
+	// For ideas whose score was never changed, Aha! does not return the name of the score fact names.
+	// Because we need them to submit scores, we attempt to load them from other ideas for the same product.
+	const ideasForProduct = await ahaExtension.getIdeasForProduct(idea.product_id, 1, 100);
+	const ideaWithScoreFacts = ideasForProduct.ideas.find(i => i.score_facts.length > 0);
+	if (ideaWithScoreFacts == null) {
+		throw new Error("Unable to determine the score fact names of this idea. Please manually click 'Update' in the score dialog for the idea and try again.");
+	}
+	const artificialScoreFacts = ideaWithScoreFacts.score_facts.map(scoreFact => {
+		return {name: scoreFact.name, value: 0};
+	});
+	return {
+		...idea,
+		score_facts: artificialScoreFacts
+	};
+}
 
 const AhaSubmissionModal: FC<{
 	ideaId: string,
@@ -18,10 +42,12 @@ const AhaSubmissionModal: FC<{
 
 	const [idea, setIdea] = useState<Idea | null>(null);
 	const [ideaLoading, setIdeaLoading] = useState(false);
+
+
 	useEffect(() => {
 		setIdea(null);
 		setIdeaLoading(true);
-		ahaExtension.getIdea(ideaId).then(idea => {
+		getIdeaWithScoreFacts(ideaId).then(idea => {
 			if (idea == null) {
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
 				return;

@@ -2,7 +2,7 @@ import { getExtensionConfig } from "../../api";
 import type { Extension } from "../Extension";
 import { AhaRoomButton } from "./AhaRoomButton";
 import { AhaSubmitButton } from "./AhaSubmitButton";
-import { AhaClient, AhaConfig, Idea } from "./api";
+import { AhaClient, AhaConfig, Idea, IdeasResponse } from "./api";
 
 const IDEA_PATTERN = /(\w+-(?:I-)?\d+)/;
 
@@ -20,6 +20,10 @@ export class AhaExtension implements Extension {
 			this.#client = new AhaClient(await getExtensionConfig<AhaConfig>(this.key));
 		}
 		return this.#client;
+	}
+
+	async getIdeasForProduct(productId: string, page: number, perPage: number): Promise<IdeasResponse> {
+		return this.#getClient().then(client => client.getIdeasForProduct(productId, page, perPage));
 	}
 
 	async getIdea(ideaId: string): Promise<Idea | null> {
