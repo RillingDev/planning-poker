@@ -25,6 +25,18 @@ export interface Idea {
 	readonly score_facts: ScoreFact[];
 }
 
+type Paginated<T> = T & {
+	readonly pagination: {
+		readonly total_records: number;
+		readonly total_pages: number;
+		readonly current_page: number;
+	}
+}
+
+type IdeasResponse = Paginated<{
+	readonly ideas: ReadonlyArray<Idea>;
+}>;
+
 export class AhaClient {
 	readonly #clientId: string;
 	readonly #redirectUri: URL;
@@ -103,11 +115,13 @@ export class AhaClient {
 	}
 
 	// https://www.aha.io/api/resources/ideas/list_ideas_for_a_product
-	async getIdeasForProduct(productId: string): Promise<ReadonlyArray<Idea>> {
+	async getIdeasForProduct(productId: string, page: number, perPage: number): Promise<IdeasResponse> {
 		await this.#authenticate();
 
 		const url = new URL(`products/${encodeURIComponent(productId)}/ideas`, this.#apiUrl);
 		url.searchParams.set("fields", IDEA_FIELDS);
+		url.searchParams.set("page", String(page));
+		url.searchParams.set("per_page", String(perPage));
 
 		const response = await fetch(url, {
 			method: "GET",
@@ -119,13 +133,12 @@ export class AhaClient {
 
 		await assertStatusOk(response);
 
-		const body = await response.json() as {
-			ideas: ReadonlyArray<Idea>;
-		};
+		const body = await response.json() as IdeasResponse;
 
 		console.log("Retrieved ideas.", body);
-		return body.ideas;
+		return body;
 	}
+
 
 	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
 	async getIdea(ideaId: string): Promise<Idea | null> {
