@@ -103,7 +103,8 @@ export class AhaClient {
 	async getIdea(ideaId: string): Promise<Idea | null> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
+		const url = new URL("ideas/" + encodeURIComponent(ideaId), this.#apiUrl);
+		url.searchParams.set("fields", "name,reference_num,score_facts");
 		const response = await fetch(url, {
 			method: "GET",
 			headers: {
@@ -128,7 +129,7 @@ export class AhaClient {
 	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
+		const url = new URL("ideas/" + encodeURIComponent(ideaId), this.#apiUrl);
 
 		const ideaPayload: Partial<Idea> = {
 			score_facts: [{name: scoreFactName, value: value}]
