@@ -2,6 +2,8 @@ import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 
+const IDEA_FIELDS = "name,reference_num,score_facts,product_id";
+
 export interface AhaConfig {
 	readonly accountDomain: string;
 	readonly clientId: string;
@@ -9,17 +11,18 @@ export interface AhaConfig {
 }
 
 interface ScoreFact {
-	readonly name: string,
-	readonly value: number
+	readonly name: string;
+	readonly value: number;
 }
 
 export interface Idea {
-	name: string,
+	readonly name: string;
+	readonly reference_num: string;
+	readonly product_id: string;
 	/**
 	 * Empty if Aha! idea score was never updated.
 	 */
-	score_facts: ScoreFact[]
-	reference_num: string
+	readonly score_facts: ScoreFact[];
 }
 
 export class AhaClient {
@@ -99,12 +102,38 @@ export class AhaClient {
 		};
 	}
 
+	// https://www.aha.io/api/resources/ideas/list_ideas_for_a_product
+	async getIdeasForProduct(productId: string): Promise<ReadonlyArray<Idea>> {
+		await this.#authenticate();
+
+		const url = new URL(`products/${encodeURIComponent(productId)}/ideas`, this.#apiUrl);
+		url.searchParams.set("fields", IDEA_FIELDS);
+
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				...this.#getBaseHeaders(),
+				"Accept": MEDIA_TYPE_JSON
+			}
+		});
+
+		await assertStatusOk(response);
+
+		const body = await response.json() as {
+			ideas: ReadonlyArray<Idea>;
+		};
+
+		console.log("Retrieved ideas.", body);
+		return body.ideas;
+	}
+
 	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
 	async getIdea(ideaId: string): Promise<Idea | null> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId), this.#apiUrl);
-		url.searchParams.set("fields", "name,reference_num,score_facts");
+		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
+		url.searchParams.set("fields", IDEA_FIELDS);
+
 		const response = await fetch(url, {
 			method: "GET",
 			headers: {
@@ -121,6 +150,7 @@ export class AhaClient {
 		const body = await response.json() as {
 			idea: Idea;
 		};
+
 		console.log("Retrieved idea.", body);
 		return body.idea;
 	}
@@ -129,7 +159,7 @@ export class AhaClient {
 	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId), this.#apiUrl);
+		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
 
 		const ideaPayload: Partial<Idea> = {
 			score_facts: [{name: scoreFactName, value: value}]
