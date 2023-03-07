@@ -6,15 +6,16 @@ import { useBooleanState, useErrorHandler } from "../../hooks";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 
-async function getIdeaWithScoreFacts(ideaId: string): Promise<Idea | null> {
+const getIdeaWithScoreFacts = async (ideaId: string): Promise<Idea | null> => {
 	const result = await ahaExtension.getClient().then(c => c.getIdea(ideaId));
 	if (result == null) {
 		return null;
 	}
 
-	// For ideas whose score was never changed, Aha! does not return the score fact names.
+	// For ideas whose score was never changed, Aha! does not return the score facts.
 	// Because we need them to submit scores, we attempt to load them from other ideas for the same product.
 	if (result.idea.score_facts.length == 0) {
+		console.log("No score facts found, attempting to look them up from other ideas for the same product.");
 		const ideasForProduct = await ahaExtension.getClient().then(c => c.getIdeasForProduct(result.idea.product_id, 1, 100));
 		const ideaWithScoreFacts = ideasForProduct.ideas.find(idea => idea.score_facts.length > 0);
 		if (ideaWithScoreFacts == null) {
@@ -30,7 +31,7 @@ async function getIdeaWithScoreFacts(ideaId: string): Promise<Idea | null> {
 	}
 
 	return result.idea;
-}
+};
 
 const AhaSubmissionModal: FC<{
 	ideaId: string,

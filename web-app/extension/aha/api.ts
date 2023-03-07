@@ -25,6 +25,7 @@ export interface Idea {
 	readonly score_facts: ScoreFact[];
 }
 
+// https://www.aha.io/api#pagination
 type Paginated<T> = T & {
 	readonly pagination: {
 		readonly total_records: number;
