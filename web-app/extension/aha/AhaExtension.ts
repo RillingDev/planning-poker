@@ -23,11 +23,14 @@ export class AhaExtension implements Extension {
 	}
 
 	async getIdea(ideaId: string): Promise<Idea | null> {
-		return this.#getClient().then(c => c.getIdea(ideaId));
+		return this.#getClient().then(async (client) => {
+			const res = await client.getIdea(ideaId);
+			return res?.idea ?? null;
+		});
 	}
 
 	async putIdeaScore(ideaId: string, scoreFactName: string, score: number): Promise<void> {
-		return this.#getClient().then(c => c.putIdeaScore(ideaId, scoreFactName, score));
+		return this.#getClient().then(client => client.putIdeaScore(ideaId, scoreFactName, score));
 	}
 
 	static extractIdeaId(val: string): string | null {

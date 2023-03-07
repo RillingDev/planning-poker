@@ -33,6 +33,10 @@ type Paginated<T> = T & {
 	}
 }
 
+interface IdeaResponse {
+	readonly idea: Idea;
+}
+
 type IdeasResponse = Paginated<{
 	readonly ideas: ReadonlyArray<Idea>;
 }>;
@@ -134,14 +138,13 @@ export class AhaClient {
 		await assertStatusOk(response);
 
 		const body = await response.json() as IdeasResponse;
-
 		console.log("Retrieved ideas.", body);
 		return body;
 	}
 
 
 	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
-	async getIdea(ideaId: string): Promise<Idea | null> {
+	async getIdea(ideaId: string): Promise<IdeaResponse | null> {
 		await this.#authenticate();
 
 		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
@@ -160,12 +163,9 @@ export class AhaClient {
 		}
 		await assertStatusOk(response);
 
-		const body = await response.json() as {
-			idea: Idea;
-		};
-
+		const body = await response.json() as IdeaResponse;
 		console.log("Retrieved idea.", body);
-		return body.idea;
+		return body;
 	}
 
 	// https://www.aha.io/api/resources/ideas/update_an_idea
