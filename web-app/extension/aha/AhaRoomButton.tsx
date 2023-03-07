@@ -35,7 +35,7 @@ const AhaIdeaLoadingModal: FC<{
 		setIdea(null);
 		setIdeaLoading(true);
 		ahaExtension.getIdea(extractedIdeaId).then(result => {
-			setIdea(result);
+			setIdea(result?.idea ?? null);
 			e.target.setCustomValidity(result == null ? "Idea not found." : "");
 		}).catch(handleError).finally(() => setIdeaLoading(false));
 	};
