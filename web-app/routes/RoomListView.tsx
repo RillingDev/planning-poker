@@ -91,13 +91,13 @@ export const RoomListView: FC = () => {
 		<>
 			<ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
-			<header className="d-flex justify-content-between align-items-center">
+			<header className="room-list__header">
 				<h2 className="mb-0">Rooms</h2>
 				<button type="button" className="btn btn-primary btn-sm" onClick={showCreationModal}>Create Room</button>
 				<CreateRoomModal show={creationModalVisible} existingRooms={rooms} onSubmit={handleCreationSubmit} onHide={hideCreationModal}/>
 			</header>
 			<nav>
-				<ul className="room-list">
+				<ul className="room-list__contents">
 					{rooms.map(room =>
 						<li key={room.name}>
 							<RoomItem room={room} onEdit={(changes) => handleEdit(room, changes)} onDelete={() => handleDelete(room)}/>
