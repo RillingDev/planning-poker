@@ -4,7 +4,7 @@ import { AhaRoomButton } from "./AhaRoomButton";
 import { AhaSubmitButton } from "./AhaSubmitButton";
 import { AhaClient, AhaConfig } from "./api";
 
-const IDEA_PATTERN = /(\w+-(?:I-)?\d+)/;
+const IDEA_PATTERN = /(\w+-I-?\d+)/;
 
 export class AhaExtension implements Extension {
 	key = "aha";
