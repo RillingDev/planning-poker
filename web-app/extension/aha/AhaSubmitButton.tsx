@@ -5,15 +5,7 @@ import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
-
-// Aha does only return the existing score facts for an idea if they were saved before.
-// In order to also support other ideas, we manually have to check which score fact names exist.
-// If https://big.ideas.aha.io/ideas/A-I-14234 gets implemented, this should be replaced
-async function getScoreFactNames(productId: string): Promise<ReadonlyArray<string>> {
-	const ideasForProduct = await ahaExtension.getClient().then(c => c.getIdeasForProduct(productId, 1, 200));
-	const accumulatedScoreFactNames = ideasForProduct.ideas.flatMap(idea => idea.score_facts.map(scoreFact => scoreFact.name));
-	return Array.from(new Set(accumulatedScoreFactNames)); // only return unique.
-}
+import { loadScoreFactNames } from "./utils";
 
 const AhaSubmissionModal: FC<{
 	ideaId: string,
@@ -35,7 +27,7 @@ const AhaSubmissionModal: FC<{
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
 				return;
 			}
-			setScoreFactNames(await getScoreFactNames(result.idea.product_id));
+			setScoreFactNames(await loadScoreFactNames(result.idea.product_id));
 			setIdea(result.idea);
 		}).catch(handleError).finally(() => setIdeaLoading(false));
 	}, [ideaId, handleError]);
