@@ -7,6 +7,8 @@ import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 import { loadScoreFactNames } from "./utils";
 
+type LoadedIdea = Idea<"name" | "reference_num">;
+
 const AhaSubmissionModal: FC<{
 	ideaId: string,
 	score: number
@@ -16,13 +18,13 @@ const AhaSubmissionModal: FC<{
 }> = ({ideaId, score, show, onHide, onSubmit}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
-	const [idea, setIdea] = useState<Idea | null>(null);
+	const [idea, setIdea] = useState<LoadedIdea | null>(null);
 	const [ideaLoading, setIdeaLoading] = useState(false);
 
 	useEffect(() => {
 		setIdea(null);
 		setIdeaLoading(true);
-		ahaExtension.getClient().then(c => c.getIdea(ideaId)).then(async (result) => {
+		ahaExtension.getClient().then(c => c.getIdea(ideaId, ["name", "reference_num"])).then(async (result) => {
 			if (result == null) {
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
 				return;

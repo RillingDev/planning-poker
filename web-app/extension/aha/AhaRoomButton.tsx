@@ -7,7 +7,9 @@ import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 
 
-const deriveTopic = (idea: Idea): string => {
+type LoadedIdea = Idea<"name" | "reference_num">;
+
+const deriveTopic = (idea: LoadedIdea): string => {
 	return `${idea.reference_num}: ${idea.name}`;
 };
 
@@ -19,7 +21,7 @@ const AhaIdeaLoadingModal: FC<{
 	const [error, handleError, resetError] = useErrorHandler();
 
 	const [ideaLoading, setIdeaLoading] = useState(false);
-	const [idea, setIdea] = useState<Idea | null>(null);
+	const [idea, setIdea] = useState<LoadedIdea | null>(null);
 
 	const [input, setInput] = useState("");
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +37,7 @@ const AhaIdeaLoadingModal: FC<{
 		setIdea(null);
 		setIdeaLoading(true);
 		ahaExtension.getClient()
-			.then(c => c.getIdea(extractedIdeaId))
+			.then(c => c.getIdea(extractedIdeaId, ["name", "reference_num"]))
 			.then(result => {
 				setIdea(result?.idea ?? null);
 				e.target.setCustomValidity(result == null ? "Idea not found." : "");

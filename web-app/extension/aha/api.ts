@@ -2,7 +2,6 @@ import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 
-const IDEA_FIELDS = "name,reference_num,score_facts";
 
 export interface AhaConfig {
 	readonly accountDomain: string;
@@ -18,20 +17,30 @@ interface ScoreFact {
 interface FullIdea {
 	readonly id: string;
 	readonly name: string;
+
 	readonly reference_num: string;
 	readonly product_id: string;
 	/**
 	 * Empty if Aha! idea score was never updated.
 	 */
 	readonly score_facts: ScoreFact[];
+
+	readonly description: {
+		id: string;
+		/**
+		 * HTML.
+		 */
+		body: string;
+		created_at: string;
+		attachments: unknown[];
+	};
 }
 
 
 // Aha! Responses can be filtered to only contain some fields.
-type IdeaInitialKey = "id" | "product_id";
-type IdeaFilterKey = keyof Omit<FullIdea, IdeaInitialKey>;
-export type Idea<T extends IdeaFilterKey = "name" | "reference_num" | "score_facts"> = Pick<FullIdea, T> & Pick<FullIdea, IdeaInitialKey>
-
+type BaseIdea = Pick<FullIdea, "id" | "product_id">;
+type IdeaFilterField = keyof Omit<FullIdea, keyof BaseIdea>;
+export type Idea<T extends IdeaFilterField> = BaseIdea & Pick<FullIdea, T>;
 
 // https://www.aha.io/api#pagination
 type Paginated<T> = T & {
@@ -42,12 +51,12 @@ type Paginated<T> = T & {
 	}
 }
 
-export interface IdeaResponse {
-	readonly idea: Idea;
+export interface IdeaResponse<T extends IdeaFilterField> {
+	readonly idea: Idea<T>;
 }
 
-export type IdeasResponse = Paginated<{
-	readonly ideas: ReadonlyArray<Idea>;
+export type IdeasResponse<T extends IdeaFilterField> = Paginated<{
+	readonly ideas: ReadonlyArray<Idea<T>>;
 }>;
 
 export class AhaClient {
@@ -131,11 +140,11 @@ export class AhaClient {
 	}
 
 	// https://www.aha.io/api/resources/ideas/list_ideas_for_a_product
-	async getIdeasForProduct(productId: string, page: number, perPage: number): Promise<IdeasResponse> {
+	async getIdeasForProduct<T extends IdeaFilterField>(productId: string, page: number, perPage: number, fields: T[]): Promise<IdeasResponse<T>> {
 		await this.#authenticate();
 
 		const url = new URL(`products/${encodeURIComponent(productId)}/ideas`, this.#apiUrl);
-		url.searchParams.set("fields", IDEA_FIELDS);
+		url.searchParams.set("fields", fields.join(","));
 		url.searchParams.set("page", String(page));
 		url.searchParams.set("per_page", String(perPage));
 
@@ -149,18 +158,18 @@ export class AhaClient {
 
 		await assertStatusOk(response);
 
-		const body = await response.json() as IdeasResponse;
+		const body = await response.json() as IdeasResponse<T>;
 		console.log("Retrieved ideas.", body);
 		return body;
 	}
 
 
 	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
-	async getIdea(ideaId: string): Promise<IdeaResponse | null> {
+	async getIdea<T extends IdeaFilterField>(ideaId: string, fields: T[]): Promise<IdeaResponse<T> | null> {
 		await this.#authenticate();
 
 		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
-		url.searchParams.set("fields", IDEA_FIELDS);
+		url.searchParams.set("fields", fields.join(","));
 
 		const response = await fetch(url, {
 			method: "GET",
@@ -175,7 +184,7 @@ export class AhaClient {
 		}
 		await assertStatusOk(response);
 
-		const body = await response.json() as IdeaResponse;
+		const body = await response.json() as IdeaResponse<T>;
 		console.log("Retrieved idea.", body);
 		return body;
 	}
