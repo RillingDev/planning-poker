@@ -2,7 +2,7 @@ import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 
-const IDEA_FIELDS = "name,reference_num,score_facts,product_id";
+const IDEA_FIELDS = "name,reference_num,score_facts";
 
 export interface AhaConfig {
 	readonly accountDomain: string;
@@ -15,7 +15,8 @@ interface ScoreFact {
 	readonly value: number;
 }
 
-export interface Idea {
+interface FullIdea {
+	readonly id: string;
 	readonly name: string;
 	readonly reference_num: string;
 	readonly product_id: string;
@@ -24,6 +25,13 @@ export interface Idea {
 	 */
 	readonly score_facts: ScoreFact[];
 }
+
+
+// Aha! Responses can be filtered to only contain some fields.
+type IdeaInitialKey = "id" | "product_id";
+type IdeaFilterKey = keyof Omit<FullIdea, IdeaInitialKey>;
+export type Idea<T extends IdeaFilterKey = "name" | "reference_num" | "score_facts"> = Pick<FullIdea, T> & Pick<FullIdea, IdeaInitialKey>
+
 
 // https://www.aha.io/api#pagination
 type Paginated<T> = T & {
@@ -178,7 +186,7 @@ export class AhaClient {
 
 		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
 
-		const ideaPayload: Partial<Idea> = {
+		const ideaPayload: Partial<FullIdea> = {
 			score_facts: [{name: scoreFactName, value: value}]
 		};
 		const body = {
