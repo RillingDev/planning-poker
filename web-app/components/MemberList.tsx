@@ -23,7 +23,8 @@ const Member: FC<{
 	const dropdownId = useId();
 
 	return (<li className={`card member member--${member.role}`}>
-		<span>{member.username} <span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>{member.role}</span></span>
+		<span className="member__name">{member.username}&nbsp;
+			<span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>{member.role}</span></span>
 		<Dropdown size="sm" as={ButtonGroup}>
 			<Dropdown.Toggle variant="secondary" id={dropdownId} aria-label="Edit member"/>
 

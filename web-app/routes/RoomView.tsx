@@ -7,10 +7,10 @@ import { Link } from "react-router-dom";
 import type { Card, EditAction, Room, RoomEditOptions, RoomMember, SummaryResult, User } from "../api";
 import { CardSet, clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, Role, } from "../api";
 import { AppContext } from "../AppContext";
-import { CardList } from "../components/CardList";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
+import { PokerCardList } from "../components/PokerCardList";
 import { Summary } from "../components/Summary";
 import { useBooleanState, useDocumentTitle, useErrorHandler, useInterval } from "../hooks";
 import "./RoomView.css";
@@ -152,7 +152,7 @@ export const RoomView: FC = () => {
 					<div className="card">
 						{summaryResult != null ?
 							<Summary voteSummary={summaryResult.votes} room={room} cardSet={cardSet}/> :
-							<CardList cardSet={cardSet} activeCard={activeCard} disabled={member.role == Role.OBSERVER} onClick={handleCardClick}/>
+							<PokerCardList cardSet={cardSet} activeCard={activeCard} disabled={member.role == Role.OBSERVER} onClick={handleCardClick}/>
 						}
 					</div>
 				</main>
