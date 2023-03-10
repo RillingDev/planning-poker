@@ -3,7 +3,7 @@ import { Form, Modal, Spinner } from "react-bootstrap";
 import { Room, RoomEditOptions } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
-import { AhaExtension, ahaExtension } from "./AhaExtension";
+import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 
 
@@ -34,10 +34,14 @@ const AhaIdeaLoadingModal: FC<{
 
 		setIdea(null);
 		setIdeaLoading(true);
-		ahaExtension.getIdea(extractedIdeaId).then(result => {
-			setIdea(result);
-			e.target.setCustomValidity(result == null ? "Idea not found." : "");
-		}).catch(handleError).finally(() => setIdeaLoading(false));
+		ahaExtension.getClient()
+			.then(c => c.getIdea(extractedIdeaId))
+			.then(result => {
+				setIdea(result?.idea ?? null);
+				e.target.setCustomValidity(result == null ? "Idea not found." : "");
+			})
+			.catch(handleError)
+			.finally(() => setIdeaLoading(false));
 	};
 
 	const handleSubmit = (e: FormEvent) => {

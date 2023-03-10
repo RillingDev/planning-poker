@@ -5,7 +5,7 @@ import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
-
+import { loadScoreFactNames } from "./utils";
 
 const AhaSubmissionModal: FC<{
 	ideaId: string,
@@ -18,17 +18,21 @@ const AhaSubmissionModal: FC<{
 
 	const [idea, setIdea] = useState<Idea | null>(null);
 	const [ideaLoading, setIdeaLoading] = useState(false);
+
 	useEffect(() => {
 		setIdea(null);
 		setIdeaLoading(true);
-		ahaExtension.getIdea(ideaId).then(idea => {
-			if (idea == null) {
+		ahaExtension.getClient().then(c => c.getIdea(ideaId)).then(async (result) => {
+			if (result == null) {
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
 				return;
 			}
-			setIdea(idea);
+			setScoreFactNames(await loadScoreFactNames(result.idea.product_id));
+			setIdea(result.idea);
 		}).catch(handleError).finally(() => setIdeaLoading(false));
 	}, [ideaId, handleError]);
+
+	const [scoreFactNames, setScoreFactNames] = useState<ReadonlyArray<string>>([]);
 
 	const [scoreFactName, setScoreFactName] = useState("");
 
@@ -36,12 +40,17 @@ const AhaSubmissionModal: FC<{
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setScoreSubmissionPending(true);
-		ahaExtension.putIdeaScore(ideaId, scoreFactName, score).then(onSubmit).catch(handleError).finally(() => setScoreSubmissionPending(false));
+		ahaExtension.getClient()
+			.then(c => c.putIdeaScore(ideaId, scoreFactName, score))
+			.then(onSubmit)
+			.catch(handleError)
+			.finally(() => setScoreSubmissionPending(false));
 	};
 
 	const handleExit = (): void => {
 		resetError();
 		setIdea(null);
+		setScoreFactNames([]);
 	};
 
 	// TODO: show previous score
@@ -67,7 +76,7 @@ const AhaSubmissionModal: FC<{
 						<Form.Label>Score Fact Name</Form.Label>
 						<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)}>
 							<option disabled value=""></option>
-							{idea.score_facts.map(fact => <option key={fact.name}>{fact.name}</option>)}
+							{scoreFactNames.map(factName => <option key={factName}>{factName}</option>)}
 						</Form.Select>
 					</Form.Group>
 				</>}

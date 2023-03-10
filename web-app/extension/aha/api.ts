@@ -2,6 +2,8 @@ import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 
+const IDEA_FIELDS = "name,reference_num,score_facts,product_id";
+
 export interface AhaConfig {
 	readonly accountDomain: string;
 	readonly clientId: string;
@@ -9,18 +11,36 @@ export interface AhaConfig {
 }
 
 interface ScoreFact {
-	readonly name: string,
-	readonly value: number
+	readonly name: string;
+	readonly value: number;
 }
 
 export interface Idea {
-	name: string,
+	readonly name: string;
+	readonly reference_num: string;
+	readonly product_id: string;
 	/**
 	 * Empty if Aha! idea score was never updated.
 	 */
-	score_facts: ScoreFact[]
-	reference_num: string
+	readonly score_facts: ScoreFact[];
 }
+
+// https://www.aha.io/api#pagination
+type Paginated<T> = T & {
+	readonly pagination: {
+		readonly total_records: number;
+		readonly total_pages: number;
+		readonly current_page: number;
+	}
+}
+
+export interface IdeaResponse {
+	readonly idea: Idea;
+}
+
+export type IdeasResponse = Paginated<{
+	readonly ideas: ReadonlyArray<Idea>;
+}>;
 
 export class AhaClient {
 	readonly #clientId: string;
@@ -48,7 +68,10 @@ export class AhaClient {
 
 	async #authenticate(): Promise<void> {
 		if (this.#accessToken == null) {
+			console.debug("No access token exists, requesting authorization.");
 			this.#accessToken = await this.#requestAuthorization();
+		} else {
+			console.debug("Access token exists, skipping authorization.");
 		}
 	}
 
@@ -99,12 +122,38 @@ export class AhaClient {
 		};
 	}
 
-	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
-	async getIdea(ideaId: string): Promise<Idea | null> {
+	// https://www.aha.io/api/resources/ideas/list_ideas_for_a_product
+	async getIdeasForProduct(productId: string, page: number, perPage: number): Promise<IdeasResponse> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId), this.#apiUrl);
-		url.searchParams.set("fields", "name,reference_num,score_facts");
+		const url = new URL(`products/${encodeURIComponent(productId)}/ideas`, this.#apiUrl);
+		url.searchParams.set("fields", IDEA_FIELDS);
+		url.searchParams.set("page", String(page));
+		url.searchParams.set("per_page", String(perPage));
+
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				...this.#getBaseHeaders(),
+				"Accept": MEDIA_TYPE_JSON
+			}
+		});
+
+		await assertStatusOk(response);
+
+		const body = await response.json() as IdeasResponse;
+		console.log("Retrieved ideas.", body);
+		return body;
+	}
+
+
+	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
+	async getIdea(ideaId: string): Promise<IdeaResponse | null> {
+		await this.#authenticate();
+
+		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
+		url.searchParams.set("fields", IDEA_FIELDS);
+
 		const response = await fetch(url, {
 			method: "GET",
 			headers: {
@@ -118,18 +167,16 @@ export class AhaClient {
 		}
 		await assertStatusOk(response);
 
-		const body = await response.json() as {
-			idea: Idea;
-		};
+		const body = await response.json() as IdeaResponse;
 		console.log("Retrieved idea.", body);
-		return body.idea;
+		return body;
 	}
 
 	// https://www.aha.io/api/resources/ideas/update_an_idea
 	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId), this.#apiUrl);
+		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
 
 		const ideaPayload: Partial<Idea> = {
 			score_facts: [{name: scoreFactName, value: value}]
