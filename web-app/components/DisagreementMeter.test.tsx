@@ -23,7 +23,7 @@ describe("DisagreementMeter", () => {
 	});
 
 	it("shows high disagreement", () => {
-		render(<DisagreementMeter offset={100}/>);
+		render(<DisagreementMeter offset={3}/>);
 
 		expect(screen.getByText("High")).toBeInTheDocument();
 	});

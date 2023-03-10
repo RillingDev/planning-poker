@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cryptshare</groupId>
@@ -15,7 +15,7 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<build.version>2.0.0</build.version>
+		<build.version>2.0.1</build.version>
 		<build.number>0</build.number>
 		<revision>${build.version}.${build.number}</revision>
 	</properties>

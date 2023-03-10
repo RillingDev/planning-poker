@@ -1,4 +1,10 @@
-.room-list {
+.room-list__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.room-list__contents {
 	display: flex;
 	flex-direction: column;
 	margin: 0;

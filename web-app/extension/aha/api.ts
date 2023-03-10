@@ -15,15 +15,56 @@ export interface AhaRoomConfig {
 }
 
 interface ScoreFact {
+	readonly name: ScoreFactName;
+	readonly value: number;
+}
+
+interface FullIdea {
+	readonly id: string;
+	readonly name: string;
+
+	readonly reference_num: string;
+	readonly product_id: string;
+	/**
+	 * Empty if Aha! idea score was never updated.
+	 */
+	readonly score_facts: ScoreFact[];
+
+	readonly description: {
+		id: string;
+		/**
+		 * HTML.
+		 */
+		body: string;
+		created_at: string;
+		attachments: unknown[];
+	};
+}
+
+
+// Aha! Responses can be filtered to only contain some fields.
+type BaseIdea = Pick<FullIdea, "id" | "product_id">;
+type IdeaFilterField = keyof Omit<FullIdea, keyof BaseIdea>;
+export type Idea<T extends IdeaFilterField> = BaseIdea & Pick<FullIdea, T>;
+
+// https://www.aha.io/api#pagination
+type Paginated<T> = T & {
+	readonly pagination: {
+		readonly total_records: number;
+		readonly total_pages: number;
+		readonly current_page: number;
+	}
 	readonly name: ScoreFactName,
 	readonly value: number
 }
 
-export interface Idea {
-	name: string,
-	score_facts: ScoreFact[]
-	reference_num: string
+export interface IdeaResponse<T extends IdeaFilterField> {
+	readonly idea: Idea<T>;
 }
+
+export type IdeasResponse<T extends IdeaFilterField> = Paginated<{
+	readonly ideas: ReadonlyArray<Idea<T>>;
+}>;
 
 export class AhaClient {
 	readonly #clientId: string;
@@ -51,10 +92,14 @@ export class AhaClient {
 
 	async #authenticate(): Promise<void> {
 		if (this.#accessToken == null) {
+			console.debug("No access token exists, requesting authorization.");
 			this.#accessToken = await this.#requestAuthorization();
+		} else {
+			console.debug("Access token exists, skipping authorization.");
 		}
 	}
 
+	// https://www.aha.io/api/oauth2
 	async #requestAuthorization(): Promise<string> {
 		return new Promise((resolve, reject) => {
 			console.debug("Opening Aha! Auth window.");
@@ -95,13 +140,44 @@ export class AhaClient {
 	}
 
 	#getBaseHeaders() {
-		return {"Authorization": `Bearer ${this.#accessToken!}`};
+		return {
+			"Authorization": `Bearer ${this.#accessToken!}`,
+			// According to the docs, user-agent should be set here, but the CORS configuration of the Aha! REST API forbids this.
+		};
 	}
 
-	async getIdea(ideaId: string): Promise<Idea | null> {
+	// https://www.aha.io/api/resources/ideas/list_ideas_for_a_product
+	async getIdeasForProduct<T extends IdeaFilterField>(productId: string, page: number, perPage: number, fields: T[]): Promise<IdeasResponse<T>> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
+		const url = new URL(`products/${encodeURIComponent(productId)}/ideas`, this.#apiUrl);
+		url.searchParams.set("fields", fields.join(","));
+		url.searchParams.set("page", String(page));
+		url.searchParams.set("per_page", String(perPage));
+
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				...this.#getBaseHeaders(),
+				"Accept": MEDIA_TYPE_JSON
+			}
+		});
+
+		await assertStatusOk(response);
+
+		const body = await response.json() as IdeasResponse<T>;
+		console.log("Retrieved ideas.", body);
+		return body;
+	}
+
+
+	// https://www.aha.io/api/resources/ideas/get_a_specific_idea
+	async getIdea<T extends IdeaFilterField>(ideaId: string, fields: T[]): Promise<IdeaResponse<T> | null> {
+		await this.#authenticate();
+
+		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
+		url.searchParams.set("fields", fields.join(","));
+
 		const response = await fetch(url, {
 			method: "GET",
 			headers: {
@@ -115,23 +191,22 @@ export class AhaClient {
 		}
 		await assertStatusOk(response);
 
-		const body = await response.json() as {
-			idea: Idea;
-		};
+		const body = await response.json() as IdeaResponse<T>;
 		console.log("Retrieved idea.", body);
-		return body.idea;
+		return body;
 	}
 
+	// https://www.aha.io/api/resources/ideas/update_an_idea
 	async putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void> {
 		await this.#authenticate();
 
-		const url = new URL("ideas/" + encodeURIComponent(ideaId) + "/", this.#apiUrl);
+		const url = new URL(`ideas/${encodeURIComponent(ideaId)}`, this.#apiUrl);
 
-		const idea_payload: Partial<Idea> = {
+		const ideaPayload: Partial<FullIdea> = {
 			score_facts: [{name: scoreFactName, value: value}]
 		};
 		const body = {
-			idea: idea_payload
+			idea: ideaPayload
 		};
 
 		const response = await fetch(url, {
