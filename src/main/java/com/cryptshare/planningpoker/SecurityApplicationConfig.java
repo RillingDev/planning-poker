@@ -8,6 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -31,7 +32,9 @@ class SecurityApplicationConfig {
 	// https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html#mvc-enablewebmvcsecurity
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).formLogin(withDefaults()).csrf().disable();
+		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).formLogin(withDefaults()).csrf().disable()
+				// Allow usage of H2 console
+				.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 		return http.build();
 	}
 
