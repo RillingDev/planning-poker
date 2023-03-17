@@ -5,6 +5,8 @@ import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomExtensionConfig;
 import com.cryptshare.planningpoker.data.RoomRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Profile("extension:aha")
 class AhaController {
+	private static final Logger logger = LoggerFactory.getLogger(AhaController.class);
 
 	private final RoomRepository roomRepository;
 	private final AhaConfigJson ahaConfigJson;
@@ -52,6 +55,11 @@ class AhaController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		final RoomExtensionConfig extensionConfig = room.getExtensionConfig("aha").orElseThrow(ExtensionUnavailableException::new);
 
+		if (changes.scoreFactName() != null) {
+			extensionConfig.getAttributes().put("scoreFactName", changes.scoreFactName());
+			roomRepository.save(room);
+			logger.info("Set scoreFactName to '{}' in '{}'.", changes.scoreFactName(), room);
+		}
 	}
 
 	record AhaRoomConfigJson(@JsonProperty("scoreFactName") String scoreFactName) {

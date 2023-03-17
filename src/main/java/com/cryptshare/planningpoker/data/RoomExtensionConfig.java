@@ -21,7 +21,7 @@ public class RoomExtensionConfig extends BaseEntity {
 	private Extension extension;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@JoinTable(name = "room_extension_config_attribute", joinColumns = {
+	@CollectionTable(name = "room_extension_config_attribute", joinColumns = {
 			@JoinColumn(name = "room_extension_config_id", referencedColumnName = "id", nullable = false) })
 	@MapKeyColumn(name = "attribute_key")
 	@Column(name = "attribute_value", nullable = false)
@@ -52,6 +52,8 @@ public class RoomExtensionConfig extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", RoomExtensionConfig.class.getSimpleName() + "[", "]").add("extension='" + extension + "'").toString();
+		return new StringJoiner(", ", RoomExtensionConfig.class.getSimpleName() + "[", "]").add("extension='" + extension + "'")
+				.add("attributes=" + attributes.size())
+				.toString();
 	}
 }
