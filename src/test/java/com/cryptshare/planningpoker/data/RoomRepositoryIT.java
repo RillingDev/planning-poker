@@ -63,6 +63,7 @@ class RoomRepositoryIT {
 		extensionRepository.save(extension);
 
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(extension);
+		roomExtensionConfig.getAttributes().put("foo", "bar");
 		room.getExtensionConfigs().add(roomExtensionConfig);
 
 		roomRepository.save(room);

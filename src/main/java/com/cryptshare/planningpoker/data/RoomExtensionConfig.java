@@ -1,11 +1,10 @@
 package com.cryptshare.planningpoker.data;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringJoiner;
 
 /**
@@ -21,6 +20,13 @@ public class RoomExtensionConfig extends BaseEntity {
 	@JoinColumn(name = "extension_id", nullable = false)
 	private Extension extension;
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@JoinTable(name = "room_extension_config_attribute", joinColumns = {
+			@JoinColumn(name = "room_extension_config_id", referencedColumnName = "id", nullable = false) })
+	@MapKeyColumn(name = "attribute_key")
+	@Column(name = "attribute_value", nullable = false)
+	private Map<String, String> attributes = new HashMap<>(4);
+
 	protected RoomExtensionConfig() {
 	}
 
@@ -34,6 +40,14 @@ public class RoomExtensionConfig extends BaseEntity {
 
 	public void setExtension(Extension extension) {
 		this.extension = extension;
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	void setAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
 	}
 
 	@Override

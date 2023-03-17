@@ -43,7 +43,7 @@ class AhaController {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 		final RoomExtensionConfig extensionConfig = room.getExtensionConfig("aha").orElseThrow(ExtensionUnavailableException::new);
 
-		return new AhaRoomConfigJson("impact");
+		return new AhaRoomConfigJson(extensionConfig.getAttributes().getOrDefault("scoreFactName", "DEFAULT"));
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}/extensions/aha", consumes = MediaType.APPLICATION_JSON_VALUE)
