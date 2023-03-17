@@ -1,11 +1,9 @@
 package com.cryptshare.planningpoker.data;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.util.Comparator;
 import java.util.StringJoiner;
@@ -23,10 +21,6 @@ public class RoomExtensionConfig extends BaseEntity {
 	@JoinColumn(name = "extension_id", nullable = false)
 	private Extension extension;
 
-	@Column(name = "entries", nullable = false)
-	@Convert(converter = ObjectNodeConverter.class)
-	private ObjectNode entries = new ObjectNode(JsonNodeFactory.instance);
-
 	protected RoomExtensionConfig() {
 	}
 
@@ -42,50 +36,8 @@ public class RoomExtensionConfig extends BaseEntity {
 		this.extension = extension;
 	}
 
-	public ObjectNode getEntries() {
-		return entries;
-	}
-
-	public void setEntries(ObjectNode entries) {
-		this.entries = entries;
-	}
-
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", RoomExtensionConfig.class.getSimpleName() + "[", "]").add("extension='" + extension + "'")
-				.add("entries=" + entries.size() + "")
-				.toString();
+		return new StringJoiner(", ", RoomExtensionConfig.class.getSimpleName() + "[", "]").add("extension='" + extension + "'").toString();
 	}
-
-	@Converter
-	public static class ObjectNodeConverter implements AttributeConverter<ObjectNode, String> {
-
-		private final ObjectMapper objectMapper = new ObjectMapper();
-
-		public ObjectNodeConverter() {
-		}
-
-		@Override
-		public String convertToDatabaseColumn(ObjectNode attribute) {
-			try {
-				return objectMapper.writeValueAsString(attribute);
-			} catch (JsonProcessingException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		@Override
-		public ObjectNode convertToEntityAttribute(String dbData) {
-			try {
-				final JsonNode jsonNode = objectMapper.readTree(dbData);
-				if (!(jsonNode instanceof ObjectNode)) {
-					throw new IllegalStateException("Expected object node but found " + jsonNode);
-				}
-				return (ObjectNode) jsonNode;
-			} catch (JsonProcessingException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
 }
