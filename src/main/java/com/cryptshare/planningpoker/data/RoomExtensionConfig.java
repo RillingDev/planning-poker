@@ -25,6 +25,7 @@ public class RoomExtensionConfig extends BaseEntity {
 			@JoinColumn(name = "room_extension_config_id", referencedColumnName = "id", nullable = false) })
 	@MapKeyColumn(name = "attribute_key")
 	@Column(name = "attribute_value", nullable = false)
+	// TODO: type safety
 	private Map<String, String> attributes = new HashMap<>(4);
 
 	protected RoomExtensionConfig() {

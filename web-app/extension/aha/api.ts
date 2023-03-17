@@ -11,7 +11,7 @@ export interface AhaConfig {
 type ScoreFactName = string;
 
 export interface AhaRoomConfig {
-	readonly scoreFactName: ScoreFactName;
+	readonly scoreFactName: ScoreFactName | null;
 }
 
 interface ScoreFact {
