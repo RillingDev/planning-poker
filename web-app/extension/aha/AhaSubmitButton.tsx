@@ -1,21 +1,22 @@
 import { FC, FormEvent, useEffect, useState } from "react";
 import { Form, Modal, Spinner } from "react-bootstrap";
-import { Room, VoteSummary } from "../../api";
+import { editExtensionRoomConfig, getExtensionRoomConfig, Room, VoteSummary } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
-import { Idea } from "./api";
+import { AhaRoomConfig, Idea } from "./api";
 import { loadScoreFactNames } from "./utils";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 
 const AhaSubmissionModal: FC<{
+	roomName: string,
 	ideaId: string,
 	score: number
 	show: boolean;
 	onHide: () => void;
 	onSubmit: () => void;
-}> = ({ideaId, score, show, onHide, onSubmit}) => {
+}> = ({roomName, ideaId, score, show, onHide, onSubmit}) => {
 	const [error, handleError, resetError] = useErrorHandler();
 
 	const [idea, setIdea] = useState<LoadedIdea | null>(null);
@@ -29,10 +30,22 @@ const AhaSubmissionModal: FC<{
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
 				return;
 			}
-			setScoreFactNames(await loadScoreFactNames(result.idea.product_id));
 			setIdea(result.idea);
+
+			const loadedScoreFactNames = await loadScoreFactNames(result.idea.product_id);
+			setScoreFactNames(loadedScoreFactNames);
+
+			const ahaRoomConfig = await getExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key);
+			if (ahaRoomConfig.scoreFactName != null) {
+				if (loadedScoreFactNames.includes(ahaRoomConfig.scoreFactName)) {
+					setScoreFactName(ahaRoomConfig.scoreFactName);
+				} else {
+					console.warn(`Received outdated score fact name '${ahaRoomConfig.scoreFactName}', ignoring it.`);
+				}
+			}
 		}).catch(handleError).finally(() => setIdeaLoading(false));
-	}, [ideaId, handleError]);
+	}, [ideaId, roomName, handleError]);
+
 
 	const [scoreFactNames, setScoreFactNames] = useState<ReadonlyArray<string>>([]);
 
@@ -42,11 +55,15 @@ const AhaSubmissionModal: FC<{
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		setScoreSubmissionPending(true);
+
 		ahaExtension.getClient()
 			.then(c => c.putIdeaScore(ideaId, scoreFactName, score))
 			.then(onSubmit)
 			.catch(handleError)
 			.finally(() => setScoreSubmissionPending(false));
+
+		// Is ok to be done in parallel
+		editExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key, {scoreFactName}).catch(handleError);
 	};
 
 	const handleExit = (): void => {
@@ -110,7 +127,7 @@ export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({r
 				Save to Aha!
 			</button>
 			{ideaId && modalVisible && // Delay mount until click to ensure modal data loading is not done prematurely
-				<AhaSubmissionModal ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
+				<AhaSubmissionModal roomName={room.name} ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
 		</>
 	);
 };
