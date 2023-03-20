@@ -74,12 +74,7 @@ class RoomRepositoryIT {
 		assertThat(loaded.getTopic()).isEqualTo("topic!");
 		assertThat(loaded.getMembers()).containsExactly(member);
 		assertThat(loaded.getExtensionConfigs()).containsExactly(roomExtensionConfig);
-		final RoomExtensionConfig extensionConfig = loaded.getExtensionConfigs()
-				.stream()
-				.filter(roomExtensionConfig1 -> roomExtensionConfig1.getExtension().getKey().equals("aha"))
-				.findFirst()
-				.orElseThrow();
-		assertThat(extensionConfig.getAttributes()).containsEntry("foo", "bar");
+		assertThat(roomExtensionConfig.getAttributes()).containsEntry("foo", "bar");
 		assertThat(loaded.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
