@@ -107,12 +107,6 @@ public class Room extends BaseEntity {
 		return extensionConfigs;
 	}
 
-	public Optional<RoomExtensionConfig> getExtensionConfig(String extensionKey) {
-		return extensionConfigs.stream()
-				.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey().equals(extensionKey))
-				.findFirst();
-	}
-
 	protected void setExtensionConfigs(Set<RoomExtensionConfig> extensions) {
 		this.extensionConfigs = extensions;
 	}

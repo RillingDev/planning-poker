@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 class AhaController {
 	private static final Logger logger = LoggerFactory.getLogger(AhaController.class);
 
+	private static final String ATTR_SCORE_FACT_NAME = "scoreFactName";
+
 	private final RoomRepository roomRepository;
 	private final AhaConfigJson ahaConfigJson;
 
@@ -45,29 +47,39 @@ class AhaController {
 	@GetMapping(value = "/api/rooms/{room-name}/extensions/aha", produces = MediaType.APPLICATION_JSON_VALUE)
 	public AhaRoomConfigJson getRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-		final RoomExtensionConfig extensionConfig = room.getExtensionConfig("aha").orElseThrow(ExtensionUnavailableException::new);
+		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 
-		return new AhaRoomConfigJson(extensionConfig.getAttributes().get("scoreFactName"));
+		return new AhaRoomConfigJson(extensionConfig.getAttributes().get(ATTR_SCORE_FACT_NAME));
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}/extensions/aha", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void editRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user,
 			@RequestBody AhaRoomConfigJson changes) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-		final RoomExtensionConfig extensionConfig = room.getExtensionConfig("aha").orElseThrow(ExtensionUnavailableException::new);
+		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 
 		if (changes.scoreFactName() != null) {
-			extensionConfig.getAttributes().put("scoreFactName", changes.scoreFactName());
+			extensionConfig.getAttributes().put(ATTR_SCORE_FACT_NAME, changes.scoreFactName());
 			roomRepository.save(room);
 			logger.info("Set scoreFactName to '{}' in '{}'.", changes.scoreFactName(), room);
 		}
 	}
 
 	record AhaRoomConfigJson(@JsonProperty("scoreFactName") @Nullable String scoreFactName) {
+
 	}
 
 	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Extension unavailable.")
 	public class ExtensionUnavailableException extends RuntimeException {
 
+	}
+
+	private RoomExtensionConfig getAhaExtensionConfig(Room room) {
+		// No need to check if extension is enabled. If it wasn't, this controller would not be active.
+		return room.getExtensionConfigs()
+				.stream()
+				.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey().equals("aha"))
+				.findFirst()
+				.orElseThrow(ExtensionUnavailableException::new);
 	}
 }
