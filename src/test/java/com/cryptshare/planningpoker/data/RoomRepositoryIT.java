@@ -63,6 +63,7 @@ class RoomRepositoryIT {
 		extensionRepository.save(extension);
 
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(extension);
+		roomExtensionConfig.getAttributes().put("foo", "bar");
 		room.getExtensionConfigs().add(roomExtensionConfig);
 
 		roomRepository.save(room);
@@ -73,6 +74,7 @@ class RoomRepositoryIT {
 		assertThat(loaded.getTopic()).isEqualTo("topic!");
 		assertThat(loaded.getMembers()).containsExactly(member);
 		assertThat(loaded.getExtensionConfigs()).containsExactly(roomExtensionConfig);
+		assertThat(roomExtensionConfig.getAttributes()).containsEntry("foo", "bar");
 		assertThat(loaded.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
@@ -156,6 +158,7 @@ class RoomRepositoryIT {
 		extensionRepository.save(extension);
 
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(extension);
+		roomExtensionConfig.getAttributes().put("foo", "bar");
 		room.getExtensionConfigs().add(roomExtensionConfig);
 
 		roomRepository.save(room);
@@ -163,6 +166,7 @@ class RoomRepositoryIT {
 		roomRepository.delete(room);
 
 		assertThat(em.createQuery("SELECT COUNT(*) FROM RoomExtensionConfig ref", Long.class).getSingleResult()).isZero();
+		assertThat(em.createNativeQuery("SELECT COUNT(*) FROM room_extension_config_attribute", Long.class).getSingleResult()).isEqualTo(0L);
 		assertThat(em.createQuery("SELECT COUNT(*) FROM Extension ref", Long.class).getSingleResult()).isEqualTo(1);
 	}
 

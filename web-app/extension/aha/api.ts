@@ -2,15 +2,20 @@ import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 
-
 export interface AhaConfig {
 	readonly accountDomain: string;
 	readonly clientId: string;
 	readonly redirectUri: string;
 }
 
+type ScoreFactName = string;
+
+export interface AhaRoomConfig {
+	readonly scoreFactName: ScoreFactName | null;
+}
+
 interface ScoreFact {
-	readonly name: string;
+	readonly name: ScoreFactName;
 	readonly value: number;
 }
 

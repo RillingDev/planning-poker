@@ -88,10 +88,26 @@ export async function getExtensions() {
 }
 
 export async function getExtensionConfig<T>(extensionKey: ExtensionKey) {
-	return fetch(`/api/extensions/${extensionKey}/config`, {
+	return fetch(`/api/extensions/${extensionKey}`, {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<T>);
+}
+
+
+export async function getExtensionRoomConfig<T>(roomName: string, extensionKey: ExtensionKey) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`, {
+		method: "GET",
+		headers: {"Accept": MEDIA_TYPE_JSON}
+	}).then(assertStatusOk).then(res => res.json() as Promise<T>);
+}
+
+export async function editExtensionRoomConfig<T>(roomName: string, extensionKey: ExtensionKey, config: Partial<T>) {
+	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`, {
+		method: "PATCH",
+		headers: {"Content-Type": MEDIA_TYPE_JSON},
+		body: JSON.stringify(config)
+	}).then(assertStatusOk);
 }
 
 
