@@ -54,8 +54,6 @@ type Paginated<T> = T & {
 		readonly total_pages: number;
 		readonly current_page: number;
 	}
-	readonly name: ScoreFactName,
-	readonly value: number
 }
 
 export interface IdeaResponse<T extends IdeaFilterField> {
