@@ -72,7 +72,6 @@ const AhaSubmissionModal: FC<{
 		setScoreFactNames([]);
 	};
 
-	// TODO: show previous score
 	return (<Modal show={show} onExit={handleExit} onHide={onHide}>
 		<Form onSubmit={handleSubmit}>
 			<Modal.Header closeButton>
