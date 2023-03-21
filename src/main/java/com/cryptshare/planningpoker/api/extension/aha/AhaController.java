@@ -1,5 +1,6 @@
 package com.cryptshare.planningpoker.api.extension.aha;
 
+import com.cryptshare.planningpoker.api.exception.NotAMemberException;
 import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomExtensionConfig;
@@ -47,6 +48,9 @@ class AhaController {
 	@GetMapping(value = "/api/rooms/{room-name}/extensions/aha", produces = MediaType.APPLICATION_JSON_VALUE)
 	public AhaRoomConfigJson getRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+
+		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+
 		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 
 		return new AhaRoomConfigJson(extensionConfig.getAttributes().get(ATTR_SCORE_FACT_NAME));
@@ -56,6 +60,9 @@ class AhaController {
 	public void editRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user,
 			@RequestBody AhaRoomConfigJson changes) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+
+		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+
 		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 
 		if (changes.scoreFactName() != null) {

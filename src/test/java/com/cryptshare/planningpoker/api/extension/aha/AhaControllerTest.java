@@ -57,19 +57,32 @@ class AhaControllerTest {
 
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` throws if room has extension not active")
-	@WithMockUser
+	@WithMockUser("John Doe")
 	void getRoomConfigNotActive() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(get("/api/rooms/my-room/extensions/aha")).andExpect(status().isNotFound());
 	}
 
 	@Test
+	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` throws if not a member")
+	@WithMockUser("John Doe")
+	void getRoomConfigNotMember() throws Exception {
+		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		room.getMembers().add(new RoomMember("Alice"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(get("/api/rooms/my-room/extensions/aha")).andExpect(status().isForbidden());
+	}
+
+	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` returns config")
-	@WithMockUser
+	@WithMockUser("John Doe")
 	void getRoomConfigReturns() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		room.getMembers().add(new RoomMember("John Doe"));
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(new Extension("aha"));
 		roomExtensionConfig.getAttributes().put("scoreFactName", "Effort");
 		room.getExtensionConfigs().add(roomExtensionConfig);
@@ -92,9 +105,10 @@ class AhaControllerTest {
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` throws if room has extension not active")
-	@WithMockUser
+	@WithMockUser("John Doe")
 	void editRoomConfigNotActive() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		room.getMembers().add(new RoomMember("John Doe"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
@@ -102,10 +116,24 @@ class AhaControllerTest {
 	}
 
 	@Test
+	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` throws if not a member")
+	@WithMockUser("John Doe")
+	void editRoomConfigNotMember() throws Exception {
+		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		room.getMembers().add(new RoomMember("Alice"));
+		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
+
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+				.andExpect(status().isForbidden());
+		;
+	}
+
+	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` updates config")
-	@WithMockUser
+	@WithMockUser("John Doe")
 	void editRoomConfigReturns() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		room.getMembers().add(new RoomMember("John Doe"));
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(new Extension("aha"));
 		roomExtensionConfig.getAttributes().put("scoreFactName", "Effort");
 		room.getExtensionConfigs().add(roomExtensionConfig);
