@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		"planning-poker.extension.aha.client-id=abc", "planning-poker.extension.aha.redirect-uri=https://example.com",
 		"planning-poker.extension.aha.score-fact-names=Fact Name 1,Fact Name 2" })
 @ActiveProfiles("extension:aha")
-class AhaControllerTest {
+class AhaControllerIT {
 
 	@Autowired
 	MockMvc mockMvc;

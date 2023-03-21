@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = ExtensionController.class)
-class ExtensionControllerTest {
+class ExtensionControllerIT {
 
 	@MockBean
 	ExtensionRepository extensionRepository;
