@@ -49,7 +49,7 @@ describe("AhaRoomButton", () => {
 		const input = screen.getByLabelText<HTMLInputElement>("Aha! URL/ID");
 		await userEvent.type(input, "X");
 
-		expect(input.validity.valid).toBe(false);
+		expect(input).not.toBeValid();
 		expect(input.validity.customError).toBe(true);
 		expect(ahaClient.getIdea).not.toBeCalled();
 	});
@@ -71,7 +71,7 @@ describe("AhaRoomButton", () => {
 
 		expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", ["name", "reference_num"]);
 		expect(screen.getByText("Preview")).not.toBeVisible();
-		expect(input.validity.valid).toBe(false);
+		expect(input).not.toBeValid();
 		expect(input.validity.customError).toBe(true);
 	});
 
@@ -103,7 +103,7 @@ describe("AhaRoomButton", () => {
 		expect(screen.getByText("Loading Idea")).not.toBeVisible();
 		expect(screen.getByText("Preview")).toBeVisible();
 		expect(screen.getByText("Import Idea")).toBeEnabled();
-		expect(input.validity.valid).toBe(true);
+		expect(input).toBeValid();
 	});
 
 	it("submits idea", async () => {
