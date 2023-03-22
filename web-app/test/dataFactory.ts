@@ -1,6 +1,6 @@
-import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../api";
 import { AppContextState } from "../AppContext";
 import { ExtensionManager } from "../extension/ExtensionManager";
+import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../model";
 
 export function createContextState(values: Partial<AppContextState>): AppContextState {
 	return {

@@ -1,9 +1,9 @@
 import { isEqual } from "lodash-es";
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Form, Modal } from "react-bootstrap";
-import { ExtensionKey, Room, RoomEditOptions } from "../../api";
 import { AppContext } from "../../AppContext";
 import { Extension } from "../../extension/Extension";
+import { ExtensionKey, Room, RoomEditOptions } from "../../model";
 
 /**
  * Gets the new value, or undefined if it has not changed.

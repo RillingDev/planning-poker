@@ -1,6 +1,6 @@
 import { FC, useContext } from "react";
-import { Card, CardSet, Room, RoomMember, VoteSummary } from "../api";
 import { AppContext } from "../AppContext";
+import { Card, CardSet, Room, RoomMember, VoteSummary } from "../model";
 import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./Summary.css";

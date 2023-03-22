@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ExtensionKey, Room, RoomEditOptions, VoteSummary } from "../api";
+import { ExtensionKey, Room, RoomEditOptions, VoteSummary } from "../model";
 
 export type RoomComponent = FC<{ room: Room, onChange: (room: RoomEditOptions) => void }>;
 export type SubmitComponent = FC<{ room: Room, voteSummary: VoteSummary }>;

@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Mocked, vi } from "vitest";
-import { RoomEditOptions } from "../../api";
 import { AppContext } from "../../AppContext";
 import { ExtensionManager } from "../../extension/ExtensionManager";
+import { RoomEditOptions } from "../../model";
 import { createCardSet, createContextState, createRoom } from "../../test/dataFactory";
 import { EditRoomModal } from "./EditRoomModal";
 

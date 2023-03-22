@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { VoteSummary } from "../api";
+import { VoteSummary } from "../model";
 import { createCard, createCardSet, createRoom, createRoomMember } from "../test/dataFactory";
 import { Summary } from "./Summary";
 
