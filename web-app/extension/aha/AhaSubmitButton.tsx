@@ -5,7 +5,7 @@ import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
 import { Room, VoteSummary } from "../../model";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
-import { AhaRoomConfig, Idea } from "./api";
+import { AhaRoomConfig, Idea } from "./model";
 import { getProductScoreFactNames } from "./utils";
 
 type LoadedIdea = Idea<"name" | "reference_num">;

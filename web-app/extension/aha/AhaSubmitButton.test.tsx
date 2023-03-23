@@ -6,7 +6,7 @@ import { createRoom, createVoteSummary } from "../../test/dataFactory";
 import { ahaExtension } from "./AhaExtension";
 import { AhaSubmitButton } from "./AhaSubmitButton";
 import type { AhaClient } from "./api";
-import { AhaRoomConfig } from "./api";
+import { AhaRoomConfig } from "./model";
 import { getProductScoreFactNames } from "./utils";
 
 vi.mock("./AhaExtension");

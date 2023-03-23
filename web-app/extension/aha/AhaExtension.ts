@@ -2,7 +2,8 @@ import { getExtensionConfig } from "../../api";
 import type { Extension } from "../Extension";
 import { AhaRoomButton } from "./AhaRoomButton";
 import { AhaSubmitButton } from "./AhaSubmitButton";
-import { AhaClient, AhaConfig, AuthenticatingAhaClient } from "./api";
+import { AhaClient, AuthenticatingAhaClient } from "./api";
+import { AhaConfig } from "./model";
 
 const IDEA_PATTERN = /(\w+-I-?\d+)/;
 

@@ -1,51 +1,8 @@
 import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
+import { AhaConfig, FullIdea, Idea, IdeaFilterField } from "./model";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 
-export interface AhaConfig {
-	readonly accountDomain: string;
-	readonly clientId: string;
-	readonly redirectUri: string;
-}
-
-type ScoreFactName = string;
-
-export interface AhaRoomConfig {
-	readonly scoreFactName: ScoreFactName | null;
-}
-
-interface ScoreFact {
-	readonly name: ScoreFactName;
-	readonly value: number;
-}
-
-interface FullIdea {
-	readonly id: string;
-	readonly name: string;
-
-	readonly reference_num: string;
-	readonly product_id: string;
-	/**
-	 * Empty if Aha! idea score was never updated.
-	 */
-	readonly score_facts: ScoreFact[];
-
-	readonly description: {
-		id: string;
-		/**
-		 * HTML.
-		 */
-		body: string;
-		created_at: string;
-		attachments: unknown[];
-	};
-}
-
-
-// Aha! Responses can be filtered to only contain some fields.
-type BaseIdea = Pick<FullIdea, "id" | "product_id">;
-type IdeaFilterField = keyof Omit<FullIdea, keyof BaseIdea>;
-export type Idea<T extends IdeaFilterField> = BaseIdea & Pick<FullIdea, T>;
 
 // https://www.aha.io/api#pagination
 type Paginated<T> = T & {
