@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Mocked, vi } from "vitest";
-import { Room, RoomCreationOptions } from "../../api";
 import { AppContext } from "../../AppContext";
+import { Room, RoomCreationOptions } from "../../model";
 import { createCardSet, createContextState, createRoom } from "../../test/dataFactory";
 import { CreateRoomModal } from "../modal/CreateRoomModal";
 

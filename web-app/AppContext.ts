@@ -1,6 +1,6 @@
 import { createContext } from "react";
-import { CardSet, User } from "./api";
 import { ExtensionManager } from "./extension/ExtensionManager";
+import { CardSet, User } from "./model";
 
 export interface AppContextState {
 	user: User;

@@ -64,7 +64,15 @@ export type IdeasResponse<T extends IdeaFilterField> = Paginated<{
 	readonly ideas: ReadonlyArray<Idea<T>>;
 }>;
 
-export class AhaClient {
+export interface AhaClient {
+	getIdeasForProduct<T extends IdeaFilterField>(productId: string, page: number, perPage: number, fields: T[]): Promise<IdeasResponse<T>>;
+
+	getIdea<T extends IdeaFilterField>(ideaId: string, fields: T[]): Promise<IdeaResponse<T> | null>;
+
+	putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void>;
+}
+
+export class AuthenticatingAhaClient implements AhaClient {
 	readonly #clientId: string;
 	readonly #redirectUri: URL;
 	readonly #apiUrl: URL;

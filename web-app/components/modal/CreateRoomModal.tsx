@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Form, Modal } from "react-bootstrap";
-import { Room, RoomCreationOptions } from "../../api";
 import { AppContext } from "../../AppContext";
+import { Room, RoomCreationOptions } from "../../model";
 
 export const CreateRoomModal: FC<{
 	show: boolean;

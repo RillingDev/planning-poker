@@ -1,8 +1,8 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
 import { Form, Modal, Spinner } from "react-bootstrap";
-import { Room, RoomEditOptions } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
+import { Room, RoomEditOptions } from "../../model";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { Idea } from "./api";
 

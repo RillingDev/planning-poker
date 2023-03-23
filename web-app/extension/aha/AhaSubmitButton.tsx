@@ -1,11 +1,12 @@
 import { FC, FormEvent, useEffect, useState } from "react";
 import { Form, Modal, Spinner } from "react-bootstrap";
-import { editExtensionRoomConfig, getExtensionRoomConfig, Room, VoteSummary } from "../../api";
+import { editExtensionRoomConfig, getExtensionRoomConfig } from "../../api";
 import { ErrorPanel } from "../../components/ErrorPanel";
 import { useBooleanState, useErrorHandler } from "../../hooks";
+import { Room, VoteSummary } from "../../model";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { AhaRoomConfig, Idea } from "./api";
-import { loadScoreFactNames } from "./utils";
+import { getProductScoreFactNames } from "./utils";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 
@@ -32,7 +33,7 @@ const AhaSubmissionModal: FC<{
 			}
 			setIdea(result.idea);
 
-			const loadedScoreFactNames = await loadScoreFactNames(result.idea.product_id);
+			const loadedScoreFactNames = await getProductScoreFactNames(result.idea.product_id);
 			setScoreFactNames(loadedScoreFactNames);
 
 			const ahaRoomConfig = await getExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key);
@@ -56,14 +57,14 @@ const AhaSubmissionModal: FC<{
 		e.preventDefault();
 		setScoreSubmissionPending(true);
 
-		ahaExtension.getClient()
-			.then(c => c.putIdeaScore(ideaId, scoreFactName, score))
+		Promise.all([
+			ahaExtension.getClient()
+				.then(c => c.putIdeaScore(ideaId, scoreFactName, score)),
+			editExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key, {scoreFactName})
+		])
 			.then(onSubmit)
 			.catch(handleError)
 			.finally(() => setScoreSubmissionPending(false));
-
-		// Is ok to be done in parallel
-		editExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key, {scoreFactName}).catch(handleError);
 	};
 
 	const handleExit = (): void => {
@@ -94,7 +95,7 @@ const AhaSubmissionModal: FC<{
 						<Form.Label>Score Fact Name</Form.Label>
 						<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)}>
 							<option disabled value=""></option>
-							{scoreFactNames.map(factName => <option key={factName}>{factName}</option>)}
+							{scoreFactNames.map(factName => <option key={factName} value={factName}>{factName}</option>)}
 						</Form.Select>
 					</Form.Group>
 				</>}

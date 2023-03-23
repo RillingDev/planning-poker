@@ -4,8 +4,7 @@ import type { FC } from "react";
 import { useContext, useState } from "react";
 import { LoaderFunctionArgs, useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
-import type { Card, EditAction, Room, RoomEditOptions, RoomMember, SummaryResult, User } from "../api";
-import { CardSet, clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, Role, } from "../api";
+import { clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom, } from "../api";
 import { AppContext } from "../AppContext";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
@@ -13,6 +12,7 @@ import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { PokerCardList } from "../components/PokerCardList";
 import { Summary } from "../components/Summary";
 import { useBooleanState, useDocumentTitle, useErrorHandler, useInterval } from "../hooks";
+import { Card, CardSet, EditAction, Role, Room, RoomEditOptions, RoomMember, SummaryResult, User } from "../model";
 import "./RoomView.css";
 
 interface LoaderResult {

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Card, CardSet } from "../api";
+import { Card, CardSet } from "../model";
 import { PokerCard } from "./PokerCard";
 import "./PokerCardList.css";
 

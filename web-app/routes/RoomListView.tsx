@@ -4,12 +4,13 @@ import type { FC } from "react";
 import { useState } from "react";
 import { useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
-import { createRoom, deleteRoom, editRoom, getRooms, Room, RoomCreationOptions, RoomEditOptions } from "../api";
+import { createRoom, deleteRoom, editRoom, getRooms } from "../api";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { DeleteRoomModal } from "../components/modal/DeleteRoomModal";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
+import { Room, RoomCreationOptions, RoomEditOptions } from "../model";
 import "./RoomListView.css";
 
 interface LoaderResult {

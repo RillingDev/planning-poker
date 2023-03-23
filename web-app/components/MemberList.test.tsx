@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { Role } from "../api";
+import { Role } from "../model";
 import { createCard, createRoomMember } from "../test/dataFactory";
 import { MemberList } from "./MemberList";
 

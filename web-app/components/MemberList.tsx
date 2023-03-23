@@ -1,8 +1,8 @@
 import { FC, useContext, useId } from "react";
 import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
-import { EditAction, Role, RoomMember } from "../api";
 import { AppContext } from "../AppContext";
+import { EditAction, Role, RoomMember } from "../model";
 import "./MemberList.css";
 import { PokerCard } from "./PokerCard";
 
