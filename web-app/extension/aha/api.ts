@@ -29,6 +29,16 @@ export interface AhaClient {
 	putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void>;
 }
 
+async function assertStatusOk(res: Response): Promise<Response> {
+	if (isStatusOk(res)) {
+		return res;
+	}
+	const body = await res.text();
+	throw new Error(
+		`Unexpected status code '${res.status}':\n\n${body}.`,
+	);
+}
+
 export class AuthenticatingAhaClient implements AhaClient {
 	readonly #clientId: string;
 	readonly #redirectUri: URL;
@@ -185,14 +195,4 @@ export class AuthenticatingAhaClient implements AhaClient {
 
 		console.log("Submitted idea score.", body);
 	}
-}
-
-async function assertStatusOk(res: Response): Promise<Response> {
-	if (isStatusOk(res)) {
-		return res;
-	}
-	const body = await res.text();
-	throw new Error(
-		`Unexpected status code '${res.status}':\n\n${body}.`,
-	);
 }

@@ -21,7 +21,7 @@ async function assertStatusOk(res: Response): Promise<Response> {
 	);
 }
 
-export async function getIdentity() {
+export async function getIdentity(): Promise<User> {
 	return fetch("/api/identity", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
@@ -29,14 +29,14 @@ export async function getIdentity() {
 }
 
 
-export async function getExtensions() {
+export async function getExtensions(): Promise<ReadonlyArray<ExtensionKey>> {
 	return fetch("/api/extensions", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<ReadonlyArray<ExtensionKey>>);
 }
 
-export async function getExtensionConfig<T>(extensionKey: ExtensionKey) {
+export async function getExtensionConfig<T>(extensionKey: ExtensionKey): Promise<T> {
 	return fetch(`/api/extensions/${extensionKey}`, {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
@@ -44,14 +44,14 @@ export async function getExtensionConfig<T>(extensionKey: ExtensionKey) {
 }
 
 
-export async function getExtensionRoomConfig<T>(roomName: string, extensionKey: ExtensionKey) {
+export async function getExtensionRoomConfig<T>(roomName: string, extensionKey: ExtensionKey): Promise<T> {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`, {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<T>);
 }
 
-export async function editExtensionRoomConfig<T>(roomName: string, extensionKey: ExtensionKey, config: Partial<T>) {
+export async function editExtensionRoomConfig<T>(roomName: string, extensionKey: ExtensionKey, config: Partial<T>): Promise<void> {
 	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`, {
 		method: "PATCH",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
@@ -60,7 +60,7 @@ export async function editExtensionRoomConfig<T>(roomName: string, extensionKey:
 }
 
 
-export async function getCardSets() {
+export async function getCardSets(): Promise<CardSet[]> {
 	return fetch("/api/card-sets", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON},
@@ -68,14 +68,14 @@ export async function getCardSets() {
 }
 
 
-export async function getRooms() {
+export async function getRooms(): Promise<Room[]> {
 	return fetch("/api/rooms", {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
 	}).then(assertStatusOk).then(res => res.json() as Promise<Room[]>);
 }
 
-export async function createRoom(roomName: string, {cardSetName}: RoomCreationOptions) {
+export async function createRoom(roomName: string, {cardSetName}: RoomCreationOptions): Promise<void> {
 	await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "POST",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
@@ -84,7 +84,7 @@ export async function createRoom(roomName: string, {cardSetName}: RoomCreationOp
 }
 
 
-export async function getRoom(roomName: string) {
+export async function getRoom(roomName: string): Promise<Room> {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/`, {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
@@ -92,14 +92,14 @@ export async function getRoom(roomName: string) {
 }
 
 
-export async function deleteRoom(roomName: string) {
+export async function deleteRoom(roomName: string): Promise<void> {
 	await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
 }
 
 
-export async function editRoom(roomName: string, {topic, cardSetName, extensions}: RoomEditOptions) {
+export async function editRoom(roomName: string, {topic, cardSetName, extensions}: RoomEditOptions): Promise<Response> {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "PATCH",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
@@ -109,19 +109,19 @@ export async function editRoom(roomName: string, {topic, cardSetName, extensions
 }
 
 
-export async function joinRoom(roomName: string) {
+export async function joinRoom(roomName: string): Promise<void> {
 	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
 		method: "POST",
 	}).then(assertStatusOk);
 }
 
-export async function leaveRoom(roomName: string) {
+export async function leaveRoom(roomName: string): Promise<void> {
 	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
 }
 
-export async function editMember(roomName: string, memberUsername: string, action: EditAction) {
+export async function editMember(roomName: string, memberUsername: string, action: EditAction): Promise<void> {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/members/${encodeURIComponent(memberUsername)}`, location.href);
 	url.searchParams.set("action", action);
 	await fetch(url, {
@@ -130,7 +130,7 @@ export async function editMember(roomName: string, memberUsername: string, actio
 }
 
 
-export async function createVote(roomName: string, cardName: string) {
+export async function createVote(roomName: string, cardName: string): Promise<void> {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/votes`, location.href);
 	url.searchParams.set("card-name", cardName);
 	await fetch(url, {
@@ -139,14 +139,14 @@ export async function createVote(roomName: string, cardName: string) {
 }
 
 
-export async function clearVotes(roomName: string) {
+export async function clearVotes(roomName: string): Promise<void> {
 	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
 }
 
 
-export async function getSummary(roomName: string) {
+export async function getSummary(roomName: string): Promise<SummaryResult> {
 	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes/summary`, {
 		method: "GET",
 		headers: {"Accept": MEDIA_TYPE_JSON}
