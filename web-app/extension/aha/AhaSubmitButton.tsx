@@ -6,7 +6,7 @@ import { useBooleanState, useErrorHandler } from "../../hooks";
 import { Room, VoteSummary } from "../../model";
 import { ahaExtension, AhaExtension } from "./AhaExtension";
 import { AhaRoomConfig, Idea } from "./api";
-import { loadScoreFactNames } from "./utils";
+import { getProductScoreFactNames } from "./utils";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 
@@ -33,7 +33,7 @@ const AhaSubmissionModal: FC<{
 			}
 			setIdea(result.idea);
 
-			const loadedScoreFactNames = await loadScoreFactNames(result.idea.product_id);
+			const loadedScoreFactNames = await getProductScoreFactNames(result.idea.product_id);
 			setScoreFactNames(loadedScoreFactNames);
 
 			const ahaRoomConfig = await getExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key);

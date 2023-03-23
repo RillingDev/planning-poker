@@ -7,6 +7,7 @@ import { ahaExtension } from "./AhaExtension";
 import { AhaSubmitButton } from "./AhaSubmitButton";
 import type { AhaClient } from "./api";
 import { AhaRoomConfig } from "./api";
+import { getProductScoreFactNames } from "./utils";
 
 vi.mock("./AhaExtension");
 
@@ -14,6 +15,12 @@ vi.mock("../../api", () => {
 	return {
 		getExtensionRoomConfig: vi.fn(),
 		editExtensionRoomConfig: vi.fn(),
+	};
+});
+
+vi.mock("./utils", () => {
+	return {
+		getProductScoreFactNames: vi.fn()
 	};
 });
 
@@ -69,6 +76,7 @@ describe("AhaSubmissionModal", () => {
 
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
+		expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", ["name", "reference_num"]);
 		expect(screen.getByText("Could not find idea 'ABC-I-123'.")).toBeInTheDocument();
 		expect(screen.getByText("Submit")).toBeDisabled();
 	});
@@ -79,14 +87,7 @@ describe("AhaSubmissionModal", () => {
 				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
 			}
 		});
-		vi.mocked(ahaClient.getIdeasForProduct<"score_facts">).mockResolvedValue({
-			ideas: [],
-			pagination: {
-				total_records: 0,
-				total_pages: 0,
-				current_page: 1,
-			}
-		});
+		vi.mocked(getProductScoreFactNames).mockResolvedValue([]);
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
 
 		render(<AhaSubmitButton
@@ -98,6 +99,7 @@ describe("AhaSubmissionModal", () => {
 
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
+		expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", ["name", "reference_num"]);
 		expect(screen.getByText("ABC-I-123: Foo")).toBeInTheDocument();
 		// Rounded score
 		expect(screen.getByText("11")).toBeInTheDocument();
@@ -111,20 +113,7 @@ describe("AhaSubmissionModal", () => {
 				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
 			}
 		});
-		vi.mocked(ahaClient.getIdeasForProduct<"score_facts">).mockResolvedValue({
-			ideas: [{
-				id: "123",
-				product_id: "456",
-				score_facts: [
-					{name: "Lorem", value: 0}, {name: "Ipsum", value: 0}
-				]
-			}],
-			pagination: {
-				total_records: 0,
-				total_pages: 0,
-				current_page: 1,
-			}
-		});
+		vi.mocked(getProductScoreFactNames).mockResolvedValue(["Lorem", "Ipsum"]);
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
 
 		render(<AhaSubmitButton
@@ -136,6 +125,7 @@ describe("AhaSubmissionModal", () => {
 
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
+		expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
 		const scoreFactNames = screen.getByLabelText<HTMLSelectElement>("Score Fact Name");
 		// Placeholder + 2 values
 		expect(scoreFactNames.options.length).toBe(3);
@@ -151,20 +141,7 @@ describe("AhaSubmissionModal", () => {
 				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
 			}
 		});
-		vi.mocked(ahaClient.getIdeasForProduct<"score_facts">).mockResolvedValue({
-			ideas: [{
-				id: "123",
-				product_id: "456",
-				score_facts: [
-					{name: "Lorem", value: 0}, {name: "Ipsum", value: 0}
-				]
-			}],
-			pagination: {
-				total_records: 0,
-				total_pages: 0,
-				current_page: 1,
-			}
-		});
+		vi.mocked(getProductScoreFactNames).mockResolvedValue(["Lorem", "Ipsum"]);
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: "Ipsum"});
 
 		render(<AhaSubmitButton
@@ -176,6 +153,8 @@ describe("AhaSubmissionModal", () => {
 
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
+		expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
+		expect(getExtensionRoomConfig).toHaveBeenCalled();
 		expect(screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value).toBe("Ipsum");
 	});
 
@@ -185,20 +164,7 @@ describe("AhaSubmissionModal", () => {
 				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
 			}
 		});
-		vi.mocked(ahaClient.getIdeasForProduct<"score_facts">).mockResolvedValue({
-			ideas: [{
-				id: "123",
-				product_id: "456",
-				score_facts: [
-					{name: "Lorem", value: 0}, {name: "Ipsum", value: 0}
-				]
-			}],
-			pagination: {
-				total_records: 0,
-				total_pages: 0,
-				current_page: 1,
-			}
-		});
+		vi.mocked(getProductScoreFactNames).mockResolvedValue(["Lorem", "Ipsum"]);
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: "Fizz"});
 
 		render(<AhaSubmitButton
@@ -210,6 +176,8 @@ describe("AhaSubmissionModal", () => {
 
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
+		expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
+		expect(getExtensionRoomConfig).toHaveBeenCalled();
 		expect(screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value).toBe("");
 	});
 });
