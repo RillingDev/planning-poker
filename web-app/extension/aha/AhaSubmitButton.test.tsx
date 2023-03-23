@@ -100,9 +100,116 @@ describe("AhaSubmissionModal", () => {
 
 		expect(screen.getByText("ABC-I-123: Foo")).toBeInTheDocument();
 		// Rounded score
-		expect(screen.getAllByDisplayValue("11")).toBeInTheDocument();
+		expect(screen.getByText("11")).toBeInTheDocument();
 		expect(screen.getByText("Submit")).toBeEnabled();
 	});
 
 
+	it("loads score fact names", async () => {
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
+			}
+		});
+		vi.mocked(ahaClient.getIdeasForProduct<"score_facts">).mockResolvedValue({
+			ideas: [{
+				id: "123",
+				product_id: "456",
+				score_facts: [
+					{name: "Lorem", value: 0}, {name: "Ipsum", value: 0}
+				]
+			}],
+			pagination: {
+				total_records: 0,
+				total_pages: 0,
+				current_page: 1,
+			}
+		});
+		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
+
+		render(<AhaSubmitButton
+			room={createRoom({topic: "ABC-I-123"})}
+			voteSummary={createVoteSummary({average: 10.9})}
+		/>);
+
+		await userEvent.click(screen.getByText("Save to Aha!"));
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		const scoreFactNames = screen.getByLabelText<HTMLSelectElement>("Score Fact Name");
+		// Placeholder + 2 values
+		expect(scoreFactNames.options.length).toBe(3);
+		expect(scoreFactNames.options.item(1)?.value).toBe("Lorem");
+		expect(scoreFactNames.options.item(2)?.value).toBe("Ipsum");
+		expect(scoreFactNames.value).toBe("");
+	});
+
+
+	it("loads previously selected score fact name", async () => {
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
+			}
+		});
+		vi.mocked(ahaClient.getIdeasForProduct<"score_facts">).mockResolvedValue({
+			ideas: [{
+				id: "123",
+				product_id: "456",
+				score_facts: [
+					{name: "Lorem", value: 0}, {name: "Ipsum", value: 0}
+				]
+			}],
+			pagination: {
+				total_records: 0,
+				total_pages: 0,
+				current_page: 1,
+			}
+		});
+		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: "Ipsum"});
+
+		render(<AhaSubmitButton
+			room={createRoom({topic: "ABC-I-123"})}
+			voteSummary={createVoteSummary({average: 10.9})}
+		/>);
+
+		await userEvent.click(screen.getByText("Save to Aha!"));
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		expect(screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value).toBe("Ipsum");
+	});
+
+	it("ignores previously selected score fact name if its not present in the loaded options", async () => {
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
+			}
+		});
+		vi.mocked(ahaClient.getIdeasForProduct<"score_facts">).mockResolvedValue({
+			ideas: [{
+				id: "123",
+				product_id: "456",
+				score_facts: [
+					{name: "Lorem", value: 0}, {name: "Ipsum", value: 0}
+				]
+			}],
+			pagination: {
+				total_records: 0,
+				total_pages: 0,
+				current_page: 1,
+			}
+		});
+		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: "Fizz"});
+
+		render(<AhaSubmitButton
+			room={createRoom({topic: "ABC-I-123"})}
+			voteSummary={createVoteSummary({average: 10.9})}
+		/>);
+
+		await userEvent.click(screen.getByText("Save to Aha!"));
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		expect(screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value).toBe("");
+	});
 });

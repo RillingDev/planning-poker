@@ -95,7 +95,7 @@ const AhaSubmissionModal: FC<{
 						<Form.Label>Score Fact Name</Form.Label>
 						<Form.Select required value={scoreFactName} onChange={(e) => setScoreFactName(e.target.value)}>
 							<option disabled value=""></option>
-							{scoreFactNames.map(factName => <option key={factName}>{factName}</option>)}
+							{scoreFactNames.map(factName => <option key={factName} value={factName}>{factName}</option>)}
 						</Form.Select>
 					</Form.Group>
 				</>}
