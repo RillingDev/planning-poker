@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MockedObject, vi } from "vitest";
-import { getExtensionRoomConfig } from "../../api";
+import { editExtensionRoomConfig, getExtensionRoomConfig } from "../../api";
 import { createRoom, createVoteSummary } from "../../test/dataFactory";
 import { ahaExtension } from "./AhaExtension";
 import { AhaSubmitButton } from "./AhaSubmitButton";
@@ -77,7 +77,7 @@ describe("AhaSubmissionModal", () => {
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
 		expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", ["name", "reference_num"]);
-		expect(screen.getByText("Could not find idea 'ABC-I-123'.")).toBeInTheDocument();
+		expect(screen.getByRole("alert")).toHaveTextContent("Could not find idea 'ABC-I-123'.");
 		expect(screen.getByText("Submit")).toBeDisabled();
 	});
 
@@ -145,7 +145,7 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: "Ipsum"});
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123"})}
+			room={createRoom({topic: "ABC-I-123", name: "Room"})}
 			voteSummary={createVoteSummary({average: 10.9})}
 		/>);
 
@@ -154,7 +154,7 @@ describe("AhaSubmissionModal", () => {
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
 		expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
-		expect(getExtensionRoomConfig).toHaveBeenCalled();
+		expect(getExtensionRoomConfig).toHaveBeenCalledWith("Room", ahaExtension.key);
 		expect(screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value).toBe("Ipsum");
 	});
 
@@ -177,7 +177,101 @@ describe("AhaSubmissionModal", () => {
 		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
 		expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
-		expect(getExtensionRoomConfig).toHaveBeenCalled();
+		expect(getExtensionRoomConfig).toHaveBeenCalledWith("Room", ahaExtension.key);
 		expect(screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value).toBe("");
+	});
+
+	it("submits", async () => {
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
+			}
+		});
+		vi.mocked(getProductScoreFactNames).mockResolvedValue(["Lorem", "Ipsum"]);
+		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
+		vi.mocked(ahaClient.putIdeaScore).mockImplementation(() => Promise.resolve());
+		vi.mocked(editExtensionRoomConfig).mockImplementation(() => Promise.resolve());
+
+		render(<AhaSubmitButton
+			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
+			voteSummary={createVoteSummary({average: 10.9})}
+		/>);
+
+		await userEvent.click(screen.getByText("Save to Aha!"));
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		await userEvent.selectOptions(screen.getByLabelText("Score Fact Name"), "Lorem");
+
+		await userEvent.click(screen.getByText("Submit"));
+
+		await waitFor(() => expect(screen.queryByText("Submitting Idea Score")).not.toBeInTheDocument());
+
+		expect(ahaClient.putIdeaScore).toHaveBeenCalledWith("ABC-I-123", "Lorem", 11);
+		expect(editExtensionRoomConfig).toHaveBeenCalledWith("My Room", "aha", {scoreFactName: "Lorem"});
+	});
+
+
+	it("shows error if submission fails", async () => {
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
+			}
+		});
+		vi.mocked(getProductScoreFactNames).mockResolvedValue(["Lorem", "Ipsum"]);
+		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
+		vi.mocked(ahaClient.putIdeaScore).mockRejectedValue(new Error("Beeb Boop"));
+		vi.mocked(editExtensionRoomConfig).mockImplementation(() => Promise.resolve());
+
+		render(<AhaSubmitButton
+			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
+			voteSummary={createVoteSummary({average: 10.9})}
+		/>);
+
+		await userEvent.click(screen.getByText("Save to Aha!"));
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		await userEvent.selectOptions(screen.getByLabelText("Score Fact Name"), "Lorem");
+
+		await userEvent.click(screen.getByText("Submit"));
+
+		await waitFor(() => expect(screen.getByText("Submitting Idea Score")).not.toBeVisible());
+		expect(screen.getByRole("alert")).toBeVisible();
+		expect(screen.getByText("Submit")).toBeDisabled();
+	});
+
+	it("clears values after submit", async () => {
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
+			}
+		});
+		vi.mocked(getProductScoreFactNames).mockResolvedValue(["Lorem", "Ipsum"]);
+		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
+		vi.mocked(ahaClient.putIdeaScore).mockImplementation(() => Promise.resolve());
+		vi.mocked(editExtensionRoomConfig).mockImplementation(() => Promise.resolve());
+
+		render(<AhaSubmitButton
+			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
+			voteSummary={createVoteSummary({average: 10.9})}
+		/>);
+
+		await userEvent.click(screen.getByText("Save to Aha!"));
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		await userEvent.selectOptions(screen.getByLabelText("Score Fact Name"), "Lorem");
+
+		await userEvent.click(screen.getByText("Submit"));
+
+		await waitFor(() => expect(screen.queryByText("Submitting Idea Score")).not.toBeInTheDocument());
+
+		await userEvent.click(screen.getByText("Save to Aha!"));
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		expect(ahaClient.getIdea).toHaveBeenCalledTimes(2);
+		expect(getProductScoreFactNames).toHaveBeenCalledTimes(2);
 	});
 });

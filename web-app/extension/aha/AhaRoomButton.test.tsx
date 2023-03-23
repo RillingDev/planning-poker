@@ -107,15 +107,10 @@ describe("AhaRoomButton", () => {
 	});
 
 	it("submits idea", async () => {
-		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockImplementation(ideaId => {
-			if (ideaId === "ABC-I-123") {
-				return Promise.resolve({
-					idea: {
-						id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
-					}
-				});
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
 			}
-			return Promise.resolve(null);
 		});
 
 		const onChange = vi.fn();
@@ -139,16 +134,31 @@ describe("AhaRoomButton", () => {
 	});
 
 
+	it("reacts to error", async () => {
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockRejectedValue(new Error("Beep Boop"));
+
+		const onChange = vi.fn();
+		render(<AhaRoomButton
+			room={createRoom({})}
+			onChange={onChange}
+		/>);
+
+		await userEvent.click(screen.getByText("Load from Aha!"));
+
+		const input = screen.getByLabelText<HTMLInputElement>("Aha! URL/ID");
+		await userEvent.type(input, "A");
+
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
+
+		expect(screen.getByRole("alert")).toBeVisible();
+		expect(screen.getByText("Import Idea")).toBeDisabled();
+	});
+
 	it("clears idea after submit", async () => {
-		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockImplementation(ideaId => {
-			if (ideaId === "ABC-I-123") {
-				return Promise.resolve({
-					idea: {
-						id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
-					}
-				});
+		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue({
+			idea: {
+				id: "123", product_id: "456", reference_num: "ABC-I-123", name: "Foo"
 			}
-			return Promise.resolve(null);
 		});
 
 		render(<AhaRoomButton
@@ -170,25 +180,5 @@ describe("AhaRoomButton", () => {
 		expect(input.value).toBe("");
 		expect(screen.getByText("Loading Idea")).not.toBeVisible();
 		expect(screen.getByText("Preview")).not.toBeVisible();
-	});
-
-	it("reacts to error", async () => {
-		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockRejectedValue(new Error("beep boop"));
-
-		const onChange = vi.fn();
-		render(<AhaRoomButton
-			room={createRoom({})}
-			onChange={onChange}
-		/>);
-
-		await userEvent.click(screen.getByText("Load from Aha!"));
-
-		const input = screen.getByLabelText<HTMLInputElement>("Aha! URL/ID");
-		await userEvent.type(input, "A");
-
-		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
-
-		expect(screen.getByText("beep boop")).toBeInTheDocument();
-		expect(screen.getByText("Import Idea")).toBeDisabled();
 	});
 });
