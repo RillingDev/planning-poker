@@ -52,7 +52,7 @@ export async function getExtensionRoomConfig<T>(roomName: string, extensionKey: 
 }
 
 export async function editExtensionRoomConfig<T>(roomName: string, extensionKey: ExtensionKey, config: Partial<T>) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`, {
+	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`, {
 		method: "PATCH",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
 		body: JSON.stringify(config)
@@ -76,7 +76,7 @@ export async function getRooms() {
 }
 
 export async function createRoom(roomName: string, {cardSetName}: RoomCreationOptions) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
+	await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "POST",
 		headers: {"Content-Type": MEDIA_TYPE_JSON},
 		body: JSON.stringify({cardSetName})
@@ -93,7 +93,7 @@ export async function getRoom(roomName: string) {
 
 
 export async function deleteRoom(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
+	await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
 }
@@ -110,13 +110,13 @@ export async function editRoom(roomName: string, {topic, cardSetName, extensions
 
 
 export async function joinRoom(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
+	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
 		method: "POST",
 	}).then(assertStatusOk);
 }
 
 export async function leaveRoom(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
+	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
 }
@@ -124,7 +124,7 @@ export async function leaveRoom(roomName: string) {
 export async function editMember(roomName: string, memberUsername: string, action: EditAction) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/members/${encodeURIComponent(memberUsername)}`, location.href);
 	url.searchParams.set("action", action);
-	return fetch(url, {
+	await fetch(url, {
 		method: "PATCH",
 	}).then(assertStatusOk);
 }
@@ -133,14 +133,14 @@ export async function editMember(roomName: string, memberUsername: string, actio
 export async function createVote(roomName: string, cardName: string) {
 	const url = new URL(`/api/rooms/${encodeURIComponent(roomName)}/votes`, location.href);
 	url.searchParams.set("card-name", cardName);
-	return fetch(url, {
+	await fetch(url, {
 		method: "POST",
 	}).then(assertStatusOk);
 }
 
 
 export async function clearVotes(roomName: string) {
-	return fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes`, {
+	await fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes`, {
 		method: "DELETE",
 	}).then(assertStatusOk);
 }

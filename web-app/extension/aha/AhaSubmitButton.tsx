@@ -57,14 +57,14 @@ const AhaSubmissionModal: FC<{
 		e.preventDefault();
 		setScoreSubmissionPending(true);
 
-		ahaExtension.getClient()
-			.then(c => c.putIdeaScore(ideaId, scoreFactName, score))
+		Promise.all([
+			ahaExtension.getClient()
+				.then(c => c.putIdeaScore(ideaId, scoreFactName, score)),
+			editExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key, {scoreFactName})
+		])
 			.then(onSubmit)
 			.catch(handleError)
 			.finally(() => setScoreSubmissionPending(false));
-
-		// Is ok to be done in parallel
-		editExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key, {scoreFactName}).catch(handleError);
 	};
 
 	const handleExit = (): void => {
