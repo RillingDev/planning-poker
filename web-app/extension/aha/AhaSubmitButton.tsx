@@ -53,6 +53,7 @@ const AhaSubmissionModal: FC<{
 	const [scoreFactName, setScoreFactName] = useState("");
 
 	const [scoreSubmissionPending, setScoreSubmissionPending] = useState(false);
+
 	function handleSubmit(e: FormEvent) {
 		e.preventDefault();
 		setScoreSubmissionPending(true);
@@ -67,13 +68,8 @@ const AhaSubmissionModal: FC<{
 			.finally(() => setScoreSubmissionPending(false));
 	}
 
-	function handleExit(): void {
-		resetError();
-		setIdea(null);
-		setScoreFactNames([]);
-	}
-
-	return (<Modal show={show} onExit={handleExit} onHide={onHide}>
+	// No onExit needed, component is destroyed when not visible
+	return (<Modal show={show} onHide={onHide}>
 		<Form onSubmit={handleSubmit}>
 			<Modal.Header closeButton>
 				<Modal.Title>Save to Aha!</Modal.Title>
