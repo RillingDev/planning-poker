@@ -9,9 +9,9 @@ import { Idea } from "./model";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 
-const deriveTopic = (idea: LoadedIdea): string => {
+function deriveTopic(idea: LoadedIdea): string {
 	return `${idea.reference_num}: ${idea.name}`;
-};
+}
 
 const AhaIdeaLoadingModal: FC<{
 	show: boolean;
@@ -24,7 +24,8 @@ const AhaIdeaLoadingModal: FC<{
 	const [idea, setIdea] = useState<LoadedIdea | null>(null);
 
 	const [input, setInput] = useState("");
-	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+	function handleChange(e: ChangeEvent<HTMLInputElement>) {
 		const newValue = e.target.value;
 		setInput(newValue);
 
@@ -44,19 +45,19 @@ const AhaIdeaLoadingModal: FC<{
 			})
 			.catch(handleError)
 			.finally(() => setIdeaLoading(false));
-	};
+	}
 
-	const handleSubmit = (e: FormEvent) => {
+	function handleSubmit(e: FormEvent) {
 		e.preventDefault();
 
 		onSubmit({topic: deriveTopic(idea!)});
-	};
+	}
 
-	const handleExit = (): void => {
+	function handleExit(): void {
 		resetError();
 		setInput("");
 		setIdea(null);
-	};
+	}
 
 	return (<Modal show={show} onExit={handleExit} onHide={onHide}>
 		<Form onSubmit={handleSubmit}>
@@ -96,10 +97,10 @@ const AhaIdeaLoadingModal: FC<{
 export const AhaRoomButton: FC<{ room: Room, onChange: (changes: RoomEditOptions) => void }> = ({onChange}) => {
 	const [modalVisible, showModal, hideModal] = useBooleanState(false);
 
-	const handleSubmit = (changes: RoomEditOptions) => {
+	function handleSubmit(changes: RoomEditOptions) {
 		onChange(changes);
 		hideModal();
-	};
+	}
 
 	return (<>
 			<button type="button" className="btn btn-primary btn-sm" onClick={showModal}>Load from Aha!</button>

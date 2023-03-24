@@ -14,21 +14,21 @@ export const CreateRoomModal: FC<{
 	const [roomName, setRoomName] = useState<string>("");
 	const [cardSetName, setCardSetName] = useState<string>("");
 
-	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+	function handleNameChange(e: ChangeEvent<HTMLInputElement>) {
 		const value = e.target.value;
 		e.target.setCustomValidity(existingRooms.some(room => room.name == value) ? "This room name is already in use." : "");
 		setRoomName(value);
-	};
+	}
 
-	const handleSubmit = (e: FormEvent) => {
+	function handleSubmit(e: FormEvent) {
 		e.preventDefault();
 		onSubmit(roomName, {cardSetName});
-	};
+	}
 
-	const handleExit = (): void => {
+	function handleExit(): void {
 		setRoomName("");
 		setCardSetName("");
-	};
+	}
 
 	return (
 		<Modal show={show} onHide={onHide} onExit={handleExit}>

@@ -31,7 +31,7 @@ export const EditRoomModal: FC<{
 	const [topic, setTopic] = useState<string>("");
 	const [extensionKeys, setExtensionKeys] = useState<ReadonlyArray<ExtensionKey>>([]);
 
-	const handleSubmit = (e: FormEvent) => {
+	function handleSubmit(e: FormEvent) {
 		e.preventDefault();
 		// Only emit difference to initial.
 		onSubmit({
@@ -39,9 +39,9 @@ export const EditRoomModal: FC<{
 			cardSetName: getDelta(room.cardSetName, cardSetName),
 			extensions: getDelta(room.extensions, extensionKeys),
 		});
-	};
+	}
 
-	const handleExtensionChange = (e: ChangeEvent<HTMLInputElement>, changedExtension: Extension) => {
+	function handleExtensionChange(e: ChangeEvent<HTMLInputElement>, changedExtension: Extension) {
 		setExtensionKeys(prevState => {
 			if (e.target.checked) {
 				return [...prevState, changedExtension.key];
@@ -49,13 +49,13 @@ export const EditRoomModal: FC<{
 				return prevState.filter(extensionKey => extensionKey != changedExtension.key);
 			}
 		});
-	};
+	}
 
-	const handleShow = () => {
+	function handleShow() {
 		setCardSetName(room.cardSetName);
 		setTopic(getEffectiveTopic(room));
 		setExtensionKeys(room.extensions);
-	};
+	}
 
 	return (
 		<Modal show={show} onHide={onHide} onShow={handleShow}>

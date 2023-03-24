@@ -7,13 +7,13 @@ import "./MemberList.css";
 import { PokerCard } from "./PokerCard";
 
 
-const mapRoleToColor = (role: Role): Color => {
+function mapRoleToColor(role: Role): Color {
 	if (role === Role.VOTER) {
 		return "dark";
 	} else {
 		return "secondary";
 	}
-};
+}
 
 const Member: FC<{
 	member: RoomMember, onAction: (action: EditAction) => void

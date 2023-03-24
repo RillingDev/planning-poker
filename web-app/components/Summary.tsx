@@ -25,10 +25,12 @@ const ExtremeSummaryDetails: FC<{
 	);
 };
 
-const createFormatter = (cardSet: CardSet) => new Intl.NumberFormat("en-US", {
-	style: "decimal",
-	maximumFractionDigits: cardSet.relevantFractionDigits
-});
+function createFormatter(cardSet: CardSet) {
+	return new Intl.NumberFormat("en-US", {
+		style: "decimal",
+		maximumFractionDigits: cardSet.relevantFractionDigits
+	});
+}
 
 export const Summary: FC<{
 	room: Room,
