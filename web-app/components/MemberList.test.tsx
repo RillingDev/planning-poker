@@ -21,8 +21,8 @@ describe("MemberList", () => {
 
 		render(<MemberList members={[roomMember1, roomMember2]} onAction={() => ({})}/>);
 
-		expect(screen.getByText("VOTER")).toBeInTheDocument();
-		expect(screen.getByText("OBSERVER")).toBeInTheDocument();
+		expect(screen.getByText("Voter")).toBeInTheDocument();
+		expect(screen.getByText("Observer")).toBeInTheDocument();
 	});
 
 	it("shows vote", () => {
