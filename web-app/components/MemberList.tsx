@@ -15,6 +15,14 @@ function mapRoleToColor(role: Role): Color {
 	}
 }
 
+function mapRoleToName(role: Role): string {
+	if (role === Role.VOTER) {
+		return "Voter";
+	} else {
+		return "Observer";
+	}
+}
+
 const Member: FC<{
 	member: RoomMember, onAction: (action: EditAction) => void
 }> = ({member, onAction}) => {
@@ -24,7 +32,7 @@ const Member: FC<{
 
 	return (<li className={`card member member--${member.role}`}>
 		<span className="member__name">{member.username}&nbsp;
-			<span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>{member.role}</span></span>
+			<span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>{mapRoleToName(member.role)}</span></span>
 		<Dropdown size="sm" as={ButtonGroup}>
 			<Dropdown.Toggle variant="secondary" id={dropdownId} aria-label="Edit member"/>
 
