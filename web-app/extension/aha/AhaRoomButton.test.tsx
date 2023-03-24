@@ -97,11 +97,11 @@ describe("AhaRoomButton", () => {
 		const input = screen.getByLabelText<HTMLInputElement>("Aha! URL/ID");
 		await userEvent.type(input, "ABC-I-123");
 
-		await waitFor(() => expect(screen.getByText("ABC-I-123: Foo")).toBeInTheDocument());
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
 		expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", ["name", "reference_num"]);
-		expect(screen.getByText("Loading Idea")).not.toBeVisible();
 		expect(screen.getByText("Preview")).toBeVisible();
+		expect(screen.getByText("ABC-I-123: Foo")).toBeInTheDocument();
 		expect(screen.getByText("Import Idea")).toBeEnabled();
 		expect(input).toBeValid();
 	});
@@ -124,7 +124,7 @@ describe("AhaRoomButton", () => {
 		const input = screen.getByLabelText<HTMLInputElement>("Aha! URL/ID");
 		await userEvent.type(input, "ABC-I-123");
 
-		await waitFor(() => expect(screen.getByText("ABC-I-123: Foo")).toBeInTheDocument());
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
 		await userEvent.click(screen.getByText("Import Idea"));
 
@@ -171,7 +171,7 @@ describe("AhaRoomButton", () => {
 		const input = screen.getByLabelText<HTMLInputElement>("Aha! URL/ID");
 		await userEvent.type(input, "ABC-I-123");
 
-		await waitFor(() => expect(screen.getByText("ABC-I-123: Foo")).toBeInTheDocument());
+		await waitFor(() => expect(screen.getByText("Loading Idea")).not.toBeVisible());
 
 		await userEvent.click(screen.getByText("Import Idea"));
 
