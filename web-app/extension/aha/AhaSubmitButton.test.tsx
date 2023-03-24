@@ -11,18 +11,9 @@ import { getProductScoreFactNames } from "./utils";
 
 vi.mock("./AhaExtension");
 
-vi.mock("../../api", () => {
-	return {
-		getExtensionRoomConfig: vi.fn(),
-		editExtensionRoomConfig: vi.fn(),
-	};
-});
+vi.mock("../../api");
 
-vi.mock("./utils", () => {
-	return {
-		getProductScoreFactNames: vi.fn()
-	};
-});
+vi.mock("./utils");
 
 describe("AhaSubmissionModal", () => {
 
