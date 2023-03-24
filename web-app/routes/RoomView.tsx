@@ -137,7 +137,7 @@ export const RoomView: FC = () => {
 				<div className="d-flex justify-content-between align-items-center mb-1">
 					<RoomViewHeader room={room} onChange={handleEdit}/>
 					<nav>
-						<Link to={"/"} onClick={handleLeave} className="btn btn-secondary btn-sm">
+						<Link to={"/"} onClick={handleLeave} className="btn btn-link btn-sm">
 							Back to Room List
 						</Link>
 					</nav>
