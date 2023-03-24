@@ -27,6 +27,7 @@ export default defineConfig(({command, mode}) => {
 			include: ["./web-app/**/*.test.{ts,tsx}"],
 			coverage: {
 				provider: "c8",
+				reporter: ["lcovonly"],
 				reportsDirectory: "./.local/coverage"
 			}
 		}
