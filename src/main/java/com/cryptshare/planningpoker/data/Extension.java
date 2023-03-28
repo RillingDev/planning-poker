@@ -24,13 +24,14 @@ public class Extension extends BaseEntity {
 	 * If false, it should be hidden from clients.
 	 */
 	@Column(name = "extension_enabled", nullable = false)
-	private boolean enabled = true;
+	private boolean enabled;
 
 	protected Extension() {
 	}
 
 	public Extension(String key) {
 		this.key = key;
+		enabled = true;
 	}
 
 	public String getKey() {

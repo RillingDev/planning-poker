@@ -31,7 +31,7 @@ public class Room extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "voting_state", nullable = false)
-	private VotingState votingState = VotingState.OPEN;
+	private VotingState votingState;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "room_id", nullable = false)
@@ -48,6 +48,7 @@ public class Room extends BaseEntity {
 	public Room(String name, CardSet cardSet) {
 		this.name = name;
 		this.cardSet = cardSet;
+		votingState = VotingState.OPEN;
 	}
 
 	public String getName() {

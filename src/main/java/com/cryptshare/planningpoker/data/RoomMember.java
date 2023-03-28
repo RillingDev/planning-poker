@@ -24,7 +24,7 @@ public class RoomMember extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "user_role", nullable = false)
-	private Role role = Role.VOTER;
+	private Role role;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinTable(name = "vote", joinColumns = { @JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
@@ -40,6 +40,7 @@ public class RoomMember extends BaseEntity {
 	 */
 	public RoomMember(String username) {
 		this.username = username;
+		role = Role.VOTER;
 	}
 
 	public String getUsername() {

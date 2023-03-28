@@ -9,6 +9,9 @@ import java.util.StringJoiner;
 
 /**
  * The configuration of an {@link Extension} for a {@link Room}.
+ * <p>
+ * The presence of an instance implies that this extension is active in this room.
+ * Note that this can also be the case if the extension is disabled globally.
  */
 @Entity
 @Table(name = "room_extension_config")
