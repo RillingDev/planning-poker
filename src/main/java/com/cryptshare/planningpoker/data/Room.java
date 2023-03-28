@@ -31,7 +31,7 @@ public class Room extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "voting_state", nullable = false)
-	private VotingState votingState = VotingState.OPEN;
+	private VotingState votingState;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "room_id", nullable = false)
@@ -48,6 +48,7 @@ public class Room extends BaseEntity {
 	public Room(String name, CardSet cardSet) {
 		this.name = name;
 		this.cardSet = cardSet;
+		votingState = VotingState.OPEN;
 	}
 
 	public String getName() {
@@ -107,18 +108,13 @@ public class Room extends BaseEntity {
 		return extensionConfigs;
 	}
 
-	public Optional<RoomExtensionConfig> getExtensionConfig(Extension extension) {
-		return extensionConfigs.stream().filter(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(extension)).findFirst();
-	}
-
 	protected void setExtensionConfigs(Set<RoomExtensionConfig> extensions) {
 		this.extensionConfigs = extensions;
 	}
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'")
-				.add("topic='" + topic + "'")
+		return new StringJoiner(", ", Room.class.getSimpleName() + "[", "]").add("name='" + name + "'").add("topic='" + topic + "'")
 				.add("cardSet='" + cardSet.getName() + "'")
 				.add("members=" + members.size())
 				.add("votingState='" + votingState + "'")

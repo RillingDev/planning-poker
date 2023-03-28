@@ -76,18 +76,18 @@ class RoomController {
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void editRoom(@PathVariable("room-name") String roomName, @RequestBody RoomEditOptionsJson roomOptions,
+	public void editRoom(@PathVariable("room-name") String roomName, @RequestBody RoomEditOptionsJson changes,
 			@AuthenticationPrincipal UserDetails user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		if (roomOptions.topic != null) {
-			room.setTopic(roomOptions.topic);
+		if (changes.topic != null) {
+			room.setTopic(changes.topic);
 		}
-		if (roomOptions.cardSetName != null) {
-			room.setCardSet(cardSetRepository.findByName(roomOptions.cardSetName).orElseThrow(CardSetNotFoundException::new));
+		if (changes.cardSetName != null) {
+			room.setCardSet(cardSetRepository.findByName(changes.cardSetName).orElseThrow(CardSetNotFoundException::new));
 		}
-		if (roomOptions.extensionKeys != null) {
-			applyExtensions(room, roomOptions.extensionKeys);
+		if (changes.extensionKeys != null) {
+			applyExtensions(room, changes.extensionKeys);
 		}
 		roomRepository.save(room);
 		logger.info("Edited room '{}' by user '{}'.", room, user.getUsername());

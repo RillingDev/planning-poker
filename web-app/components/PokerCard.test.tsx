@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { Card } from "../api";
+import { Card } from "../model";
 import { PokerCard } from "./PokerCard";
 
 

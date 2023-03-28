@@ -1,4 +1,4 @@
-import { ExtensionKey, Room } from "../api";
+import { ExtensionKey, Room } from "../model";
 import { ahaExtension } from "./aha/AhaExtension";
 import { Extension } from "./Extension";
 

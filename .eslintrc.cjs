@@ -21,5 +21,13 @@ module.exports = {
 	settings: {react: {"version": "detect"}},
 	rules: {
 		"@typescript-eslint/no-non-null-assertion": "off"
-	}
+	},
+	overrides: [
+		{
+			files: ["**/*.test.ts?(x)"],
+			rules: {
+				"@typescript-eslint/unbound-method": "off"
+			},
+		},
+	],
 };

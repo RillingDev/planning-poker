@@ -4,12 +4,13 @@ import type { FC } from "react";
 import { useState } from "react";
 import { useLoaderData } from "react-router";
 import { Link } from "react-router-dom";
-import { createRoom, deleteRoom, editRoom, getRooms, Room, RoomCreationOptions, RoomEditOptions } from "../api";
+import { createRoom, deleteRoom, editRoom, getRooms } from "../api";
 import { ErrorPanel } from "../components/ErrorPanel";
 import { CreateRoomModal } from "../components/modal/CreateRoomModal";
 import { DeleteRoomModal } from "../components/modal/DeleteRoomModal";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
+import { Room, RoomCreationOptions, RoomEditOptions } from "../model";
 import "./RoomListView.css";
 
 interface LoaderResult {
@@ -28,16 +29,17 @@ const RoomItem: FC<{
 	onDelete: () => void;
 }> = ({room, onEdit, onDelete}) => {
 	const [editModalVisible, showEditModal, hideEditModal] = useBooleanState(false);
-	const handleEdit = (changes: RoomEditOptions) => {
+	function handleEdit(changes: RoomEditOptions) {
 		hideEditModal();
 		onEdit(changes);
-	};
+	}
 
 	const [deleteModalVisible, showDeleteModal, hideDeleteModal] = useBooleanState(false);
-	const handleDelete = () => {
+
+	function handleDelete() {
 		hideDeleteModal();
 		onDelete();
-	};
+	}
 
 	return (
 		<div className="card room-item">
@@ -68,24 +70,24 @@ export const RoomListView: FC = () => {
 		updateRooms().catch(handleError);
 	}, 3000); // Poll for deletions/creations
 
-	const updateRooms = async () => {
+	async function updateRooms() {
 		setRooms(await getRooms());
-	};
+	}
 
-	const handleCreationSubmit = (newRoomName: string, newRoomOptions: RoomCreationOptions) => {
+	function handleCreationSubmit(newRoomName: string, newRoomOptions: RoomCreationOptions) {
 		hideCreationModal();
 		createRoom(newRoomName, newRoomOptions)
 			.then(updateRooms)
 			.catch(handleError);
-	};
+	}
 
-	const handleEdit = (room: Room, roomChanges: RoomEditOptions) => {
+	function handleEdit(room: Room, roomChanges: RoomEditOptions) {
 		editRoom(room.name, roomChanges).then(updateRooms).catch(handleError);
-	};
+	}
 
-	const handleDelete = (room: Room) => {
+	function handleDelete(room: Room) {
 		deleteRoom(room.name).then(updateRooms).catch(handleError);
-	};
+	}
 
 	return (
 		<>

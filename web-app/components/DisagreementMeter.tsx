@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Color } from "react-bootstrap/types";
 
-const getOffsetVisuals = (offset: number): { label: string, color: Color } => {
+function getOffsetVisuals(offset: number): { label: string, color: Color } {
 	if (offset > 2) {
 		return {
 			label: "High",
@@ -24,10 +24,10 @@ const getOffsetVisuals = (offset: number): { label: string, color: Color } => {
 		label: "None! 🎉",
 		color: "info"
 	};
-};
+}
 
 export const DisagreementMeter: FC<{ offset: number }> = ({offset}) => {
 	const {label, color} = getOffsetVisuals(offset);
 
-	return (<span className={`text-uppercase badge bg-${color}`}>{label}</span>);
+	return (<span className={`badge bg-${color}`}>{label}</span>);
 };

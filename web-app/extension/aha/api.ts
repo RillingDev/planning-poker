@@ -1,46 +1,8 @@
 import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
+import { AhaConfig, FullIdea, Idea, IdeaFilterField } from "./model";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 
-
-export interface AhaConfig {
-	readonly accountDomain: string;
-	readonly clientId: string;
-	readonly redirectUri: string;
-}
-
-interface ScoreFact {
-	readonly name: string;
-	readonly value: number;
-}
-
-interface FullIdea {
-	readonly id: string;
-	readonly name: string;
-
-	readonly reference_num: string;
-	readonly product_id: string;
-	/**
-	 * Empty if Aha! idea score was never updated.
-	 */
-	readonly score_facts: ScoreFact[];
-
-	readonly description: {
-		id: string;
-		/**
-		 * HTML.
-		 */
-		body: string;
-		created_at: string;
-		attachments: unknown[];
-	};
-}
-
-
-// Aha! Responses can be filtered to only contain some fields.
-type BaseIdea = Pick<FullIdea, "id" | "product_id">;
-type IdeaFilterField = keyof Omit<FullIdea, keyof BaseIdea>;
-export type Idea<T extends IdeaFilterField> = BaseIdea & Pick<FullIdea, T>;
 
 // https://www.aha.io/api#pagination
 type Paginated<T> = T & {
@@ -59,7 +21,25 @@ export type IdeasResponse<T extends IdeaFilterField> = Paginated<{
 	readonly ideas: ReadonlyArray<Idea<T>>;
 }>;
 
-export class AhaClient {
+export interface AhaClient {
+	getIdeasForProduct<T extends IdeaFilterField>(productId: string, page: number, perPage: number, fields: T[]): Promise<IdeasResponse<T>>;
+
+	getIdea<T extends IdeaFilterField>(ideaId: string, fields: T[]): Promise<IdeaResponse<T> | null>;
+
+	putIdeaScore(ideaId: string, scoreFactName: string, value: number): Promise<void>;
+}
+
+async function assertStatusOk(res: Response): Promise<Response> {
+	if (isStatusOk(res)) {
+		return res;
+	}
+	const body = await res.text();
+	throw new Error(
+		`Unexpected status code '${res.status}':\n\n${body}.`,
+	);
+}
+
+export class AuthenticatingAhaClient implements AhaClient {
 	readonly #clientId: string;
 	readonly #redirectUri: URL;
 	readonly #apiUrl: URL;
@@ -215,14 +195,4 @@ export class AhaClient {
 
 		console.log("Submitted idea score.", body);
 	}
-}
-
-async function assertStatusOk(res: Response): Promise<Response> {
-	if (isStatusOk(res)) {
-		return res;
-	}
-	const body = await res.text();
-	throw new Error(
-		`Unexpected status code '${res.status}':\n\n${body}.`,
-	);
 }

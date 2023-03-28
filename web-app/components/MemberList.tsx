@@ -1,19 +1,27 @@
 import { FC, useContext, useId } from "react";
 import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
-import { EditAction, Role, RoomMember } from "../api";
 import { AppContext } from "../AppContext";
+import { EditAction, Role, RoomMember } from "../model";
 import "./MemberList.css";
 import { PokerCard } from "./PokerCard";
 
 
-const mapRoleToColor = (role: Role): Color => {
+function mapRoleToColor(role: Role): Color {
 	if (role === Role.VOTER) {
 		return "dark";
 	} else {
 		return "secondary";
 	}
-};
+}
+
+function mapRoleToName(role: Role): string {
+	if (role === Role.VOTER) {
+		return "Voter";
+	} else {
+		return "Observer";
+	}
+}
 
 const Member: FC<{
 	member: RoomMember, onAction: (action: EditAction) => void
@@ -24,7 +32,7 @@ const Member: FC<{
 
 	return (<li className={`card member member--${member.role}`}>
 		<span className="member__name">{member.username}&nbsp;
-			<span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>{member.role}</span></span>
+			<span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>{mapRoleToName(member.role)}</span></span>
 		<Dropdown size="sm" as={ButtonGroup}>
 			<Dropdown.Toggle variant="secondary" id={dropdownId} aria-label="Edit member"/>
 

@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = RoomController.class)
-class RoomControllerTest {
+class RoomControllerIT {
 
 	@MockBean
 	RoomRepository roomRepository;

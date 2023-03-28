@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = CardSetController.class)
-class CardSetControllerTest {
+class CardSetControllerIT {
 
 	@MockBean
 	CardSetRepository cardSetRepository;
