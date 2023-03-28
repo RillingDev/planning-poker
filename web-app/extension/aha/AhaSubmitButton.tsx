@@ -21,11 +21,11 @@ const AhaSubmissionModal: FC<{
 	const [error, handleError, resetError] = useErrorHandler();
 
 	const [idea, setIdea] = useState<LoadedIdea | null>(null);
-	const [ideaLoading, setIdeaLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		setIdea(null);
-		setIdeaLoading(true);
+		setLoading(true);
 		ahaExtension.getClient().then(c => c.getIdea(ideaId, ["name", "reference_num"])).then(async (result) => {
 			if (result == null) {
 				handleError(new Error(`Could not find idea '${ideaId}'.`));
@@ -33,10 +33,10 @@ const AhaSubmissionModal: FC<{
 			}
 			setIdea(result.idea);
 
-			const loadedScoreFactNames = await getProductScoreFactNames(result.idea.product_id);
+			const [loadedScoreFactNames, ahaRoomConfig] = await Promise.all([
+				getProductScoreFactNames(result.idea.product_id), getExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key)
+			]);
 			setScoreFactNames(loadedScoreFactNames);
-
-			const ahaRoomConfig = await getExtensionRoomConfig<AhaRoomConfig>(roomName, ahaExtension.key);
 			if (ahaRoomConfig.scoreFactName != null) {
 				if (loadedScoreFactNames.includes(ahaRoomConfig.scoreFactName)) {
 					setScoreFactName(ahaRoomConfig.scoreFactName);
@@ -44,7 +44,7 @@ const AhaSubmissionModal: FC<{
 					console.warn(`Received outdated score fact name '${ahaRoomConfig.scoreFactName}', ignoring it.`);
 				}
 			}
-		}).catch(handleError).finally(() => setIdeaLoading(false));
+		}).catch(handleError).finally(() => setLoading(false));
 	}, [ideaId, roomName, handleError]);
 
 
@@ -76,14 +76,7 @@ const AhaSubmissionModal: FC<{
 			</Modal.Header>
 			<Modal.Body>
 				<ErrorPanel error={error} onClose={resetError} dismissible={false}></ErrorPanel>
-				<Spinner
-					hidden={!ideaLoading}
-					as="span"
-					animation="border"
-					size="sm"
-					role="status"
-					aria-hidden="true"><span className="visually-hidden">Loading Idea</span></Spinner>
-				{idea != null && <>
+				{!loading && idea != null && <>
 					<p>You are about to save the score <strong>{score}</strong> to Aha! for the
 						idea &quot;<strong>{ideaId}: {idea.name}</strong>&quot;.</p>
 
@@ -95,9 +88,16 @@ const AhaSubmissionModal: FC<{
 						</Form.Select>
 					</Form.Group>
 				</>}
+				<Spinner
+					hidden={!loading}
+					as="span"
+					animation="border"
+					size="sm"
+					role="status"
+					aria-hidden="true"><span className="visually-hidden">Loading Idea</span></Spinner>
 			</Modal.Body>
 			<Modal.Footer>
-				<button type="submit" className="btn btn-primary" disabled={ideaLoading || scoreSubmissionPending || error != null}>
+				<button type="submit" className="btn btn-primary" disabled={loading || scoreSubmissionPending || error != null}>
 					<Spinner
 						hidden={!scoreSubmissionPending}
 						as="span"
