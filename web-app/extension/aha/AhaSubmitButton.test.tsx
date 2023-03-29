@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MockedObject, vi } from "vitest";
-import { editExtensionRoomConfig, getExtensionRoomConfig } from "../../api";
+import { editExtensionRoomConfig, getExtensionRoomConfig,clearVotes } from "../../api";
 import { createRoom, createVoteSummary } from "../../test/dataFactory";
 import { ahaExtension } from "./AhaExtension";
 import { AhaSubmitButton } from "./AhaSubmitButton";
@@ -198,8 +198,15 @@ describe("AhaSubmissionModal", () => {
 
 		await waitFor(() => expect(screen.queryByText("Submitting Idea Score")).not.toBeInTheDocument());
 
-		expect(ahaClient.putIdeaScore).toHaveBeenCalledWith("ABC-I-123", "Lorem", 11);
-		expect(editExtensionRoomConfig).toHaveBeenCalledWith("My Room", "aha", {scoreFactName: "Lorem"});
+    expect(ahaClient.putIdeaScore).toHaveBeenCalledWith(
+      "ABC-I-123",
+      "Lorem",
+      11
+    );
+    expect(editExtensionRoomConfig).toHaveBeenCalledWith("My Room", "aha", {
+      scoreFactName: "Lorem",
+    });
+    expect(clearVotes).toHaveBeenCalledWith("My Room");
 	});
 
 
@@ -230,6 +237,8 @@ describe("AhaSubmissionModal", () => {
 		await waitFor(() => expect(screen.getByText("Submitting Idea Score")).not.toBeVisible());
 		expect(screen.getByRole("alert")).toBeVisible();
 		expect(screen.getByText("Submit")).toBeDisabled();
+
+    expect(clearVotes).not.toHaveBeenCalled();
 	});
 
 	it("clears values after submit", async () => {
