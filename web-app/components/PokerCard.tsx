@@ -4,24 +4,27 @@ import { Card } from "../model";
 import "./PokerCard.css";
 
 interface Props extends ButtonProps {
-	card: Card;
+  card: Card;
 }
 
-export const PokerCard: FC<Props> = ({card, ...props}) => {
-	const button = <Button className="btn-poker-card" variant="outline-dark" {...props}>{card.name}</Button>;
+export const PokerCard: FC<Props> = ({ card, ...props }) => {
+  const button = (
+    <Button className="btn-poker-card" variant="outline-dark" {...props}>
+      {card.name}
+    </Button>
+  );
 
-	const tooltipId = useId();
+  const tooltipId = useId();
 
-	if (card.description == null) {
-		return button;
-	}
+  if (card.description == null) {
+    return button;
+  }
 
-	return (
-		<OverlayTrigger overlay={
-			<Tooltip id={tooltipId}>
-				{card.description}
-			</Tooltip>}>
-			{button}
-		</OverlayTrigger>
-	);
+  return (
+    <OverlayTrigger
+      overlay={<Tooltip id={tooltipId}>{card.description}</Tooltip>}
+    >
+      {button}
+    </OverlayTrigger>
+  );
 };

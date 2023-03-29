@@ -17,10 +17,12 @@ The persistence layer is treated as the single-source-of-truth.
 ### Extensions
 
 Extensions are primarily controlled using spring profiles that start with the prefix `extension:`. This is then
-delegated to the web app. Extensions are globally categorized as either "enabled" or "disabled". If they are enabled, they may further be
+delegated to the web app. Extensions are globally categorized as either "enabled" or "disabled". If they are enabled,
+they may further be
 activated or deactivated on a per-room basis.
 
-Extensions MAY use the REST API resources at `/api/extensions/{extension-key}` and `/api/rooms/{room-name}/extensions/{extension-key}` to
+Extensions MAY use the REST API resources at `/api/extensions/{extension-key}`
+and `/api/rooms/{room-name}/extensions/{extension-key}` to
 implement own endpoints, with the first being for global, and the second for per-room options.
 
 Extensions MAY use the attributes associated with their `RoomExtensionConfig` to persist data for rooms.

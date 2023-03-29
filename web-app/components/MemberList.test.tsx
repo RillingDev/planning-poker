@@ -3,35 +3,52 @@ import { Role } from "../model";
 import { createCard, createRoomMember } from "../test/dataFactory";
 import { MemberList } from "./MemberList";
 
-
 describe("MemberList", () => {
-	it("shows members", () => {
-		const roomMember1 = createRoomMember({username: "John Doe"});
-		const roomMember2 = createRoomMember({username: "Alice"});
+  it("shows members", () => {
+    const roomMember1 = createRoomMember({ username: "John Doe" });
+    const roomMember2 = createRoomMember({ username: "Alice" });
 
-		render(<MemberList members={[roomMember1, roomMember2]} onAction={() => ({})}/>);
+    render(
+      <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
+    );
 
-		expect(screen.getByText("John Doe")).toBeInTheDocument();
-		expect(screen.getByText("Alice")).toBeInTheDocument();
-	});
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("Alice")).toBeInTheDocument();
+  });
 
-	it("shows role", () => {
-		const roomMember1 = createRoomMember({username: "John Doe", role: Role.VOTER});
-		const roomMember2 = createRoomMember({username: "Alice", role: Role.OBSERVER});
+  it("shows role", () => {
+    const roomMember1 = createRoomMember({
+      username: "John Doe",
+      role: Role.VOTER,
+    });
+    const roomMember2 = createRoomMember({
+      username: "Alice",
+      role: Role.OBSERVER,
+    });
 
-		render(<MemberList members={[roomMember1, roomMember2]} onAction={() => ({})}/>);
+    render(
+      <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
+    );
 
-		expect(screen.getByText("Voter")).toBeInTheDocument();
-		expect(screen.getByText("Observer")).toBeInTheDocument();
-	});
+    expect(screen.getByText("Voter")).toBeInTheDocument();
+    expect(screen.getByText("Observer")).toBeInTheDocument();
+  });
 
-	it("shows vote", () => {
-		const roomMember1 = createRoomMember({username: "John Doe", vote: createCard({name: "Coffee"})});
-		const roomMember2 = createRoomMember({username: "Alice", vote: createCard({name: "?"})});
+  it("shows vote", () => {
+    const roomMember1 = createRoomMember({
+      username: "John Doe",
+      vote: createCard({ name: "Coffee" }),
+    });
+    const roomMember2 = createRoomMember({
+      username: "Alice",
+      vote: createCard({ name: "?" }),
+    });
 
-		render(<MemberList members={[roomMember1, roomMember2]} onAction={() => ({})}/>);
+    render(
+      <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
+    );
 
-		expect(screen.getByText("Coffee")).toBeInTheDocument();
-		expect(screen.getByText("?")).toBeInTheDocument();
-	});
+    expect(screen.getByText("Coffee")).toBeInTheDocument();
+    expect(screen.getByText("?")).toBeInTheDocument();
+  });
 });

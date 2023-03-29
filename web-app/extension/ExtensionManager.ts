@@ -5,17 +5,21 @@ import { Extension } from "./Extension";
 const AVAILABLE_EXTENSIONS = [ahaExtension];
 
 export class ExtensionManager {
-	readonly #extensions: Extension[];
+  readonly #extensions: Extension[];
 
-	constructor(enabledExtensionKeys: ReadonlyArray<ExtensionKey>) {
-		this.#extensions = AVAILABLE_EXTENSIONS.filter(availableExtension => enabledExtensionKeys.includes(availableExtension.key));
-	}
+  constructor(enabledExtensionKeys: ReadonlyArray<ExtensionKey>) {
+    this.#extensions = AVAILABLE_EXTENSIONS.filter((availableExtension) =>
+      enabledExtensionKeys.includes(availableExtension.key)
+    );
+  }
 
-	getByRoom(room: Room): ReadonlyArray<Extension> {
-		return this.#extensions.filter(extension => room.extensions.includes(extension.key));
-	}
+  getByRoom(room: Room): ReadonlyArray<Extension> {
+    return this.#extensions.filter((extension) =>
+      room.extensions.includes(extension.key)
+    );
+  }
 
-	getAll(): ReadonlyArray<Extension> {
-		return this.#extensions;
-	}
+  getAll(): ReadonlyArray<Extension> {
+    return this.#extensions;
+  }
 }

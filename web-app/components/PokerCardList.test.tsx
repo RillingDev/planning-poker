@@ -4,58 +4,79 @@ import { vi } from "vitest";
 import { createCard, createCardSet } from "../test/dataFactory";
 import { PokerCardList } from "./PokerCardList";
 
-
 describe("PokerCardList", () => {
-	it("shows cards", () => {
-		const cardSet = createCardSet({cards: [createCard({name: "Card 1"}), createCard({name: "Card 2"})]});
+  it("shows cards", () => {
+    const cardSet = createCardSet({
+      cards: [createCard({ name: "Card 1" }), createCard({ name: "Card 2" })],
+    });
 
-		render(<PokerCardList cardSet={cardSet} activeCard={null} disabled={true}/>);
+    render(
+      <PokerCardList cardSet={cardSet} activeCard={null} disabled={true} />
+    );
 
-		expect(screen.getByText("Card 1")).toBeInTheDocument();
-		expect(screen.getByText("Card 2")).toBeInTheDocument();
-	});
+    expect(screen.getByText("Card 1")).toBeInTheDocument();
+    expect(screen.getByText("Card 2")).toBeInTheDocument();
+  });
 
+  it("disables buttons", () => {
+    const cardSet = createCardSet({
+      cards: [createCard({ name: "Card 1" }), createCard({ name: "Card 2" })],
+    });
 
-	it("disables buttons", () => {
-		const cardSet = createCardSet({cards: [createCard({name: "Card 1"}), createCard({name: "Card 2"})]});
+    render(
+      <PokerCardList cardSet={cardSet} activeCard={null} disabled={true} />
+    );
 
-		render(<PokerCardList cardSet={cardSet} activeCard={null} disabled={true}/>);
+    expect(screen.getByText("Card 1")).toBeDisabled();
+    expect(screen.getByText("Card 2")).toBeDisabled();
+  });
 
-		expect(screen.getByText("Card 1")).toBeDisabled();
-		expect(screen.getByText("Card 2")).toBeDisabled();
-	});
+  it("enables buttons", () => {
+    const cardSet = createCardSet({
+      cards: [createCard({ name: "Card 1" }), createCard({ name: "Card 2" })],
+    });
 
-	it("enables buttons", () => {
-		const cardSet = createCardSet({cards: [createCard({name: "Card 1"}), createCard({name: "Card 2"})]});
+    render(
+      <PokerCardList cardSet={cardSet} activeCard={null} disabled={false} />
+    );
 
-		render(<PokerCardList cardSet={cardSet} activeCard={null} disabled={false}/>);
+    expect(screen.getByText("Card 1")).not.toBeDisabled();
+    expect(screen.getByText("Card 2")).not.toBeDisabled();
+  });
 
-		expect(screen.getByText("Card 1")).not.toBeDisabled();
-		expect(screen.getByText("Card 2")).not.toBeDisabled();
-	});
+  it("sets active card", () => {
+    const card1 = createCard({ name: "Card 1" });
+    const cardSet = createCardSet({
+      cards: [card1, createCard({ name: "Card 2" })],
+    });
 
-	it("sets active card", () => {
-		const card1 = createCard({name: "Card 1"});
-		const cardSet = createCardSet({cards: [card1, createCard({name: "Card 2"})]});
+    render(
+      <PokerCardList cardSet={cardSet} activeCard={card1} disabled={false} />
+    );
 
+    expect(screen.getByText("Card 1")).toHaveClass("active");
+    expect(screen.getByText("Card 2")).not.toHaveClass("active");
+  });
 
-		render(<PokerCardList cardSet={cardSet} activeCard={card1} disabled={false}/>);
+  it("invokes click handler", async () => {
+    const card1 = createCard({ name: "Card 1" });
+    const cardSet = createCardSet({
+      cards: [card1, createCard({ name: "Card 2" })],
+    });
 
-		expect(screen.getByText("Card 1")).toHaveClass("active");
-		expect(screen.getByText("Card 2")).not.toHaveClass("active");
-	});
+    const handleClick = vi.fn();
 
+    render(
+      <PokerCardList
+        cardSet={cardSet}
+        activeCard={null}
+        disabled={false}
+        onClick={handleClick}
+      />
+    );
 
-	it("invokes click handler", async () => {
-		const card1 = createCard({name: "Card 1"});
-		const cardSet = createCardSet({cards: [card1, createCard({name: "Card 2"})]});
+    await userEvent.click(screen.getByText("Card 1"));
 
-		const handleClick = vi.fn();
-
-		render(<PokerCardList cardSet={cardSet} activeCard={null} disabled={false} onClick={handleClick}/>);
-
-		await userEvent.click(screen.getByText("Card 1"));
-
-		expect(handleClick).toBeCalledWith(card1);
-	});
+    expect(handleClick).toBeCalledWith(card1);
+  });
 });
