@@ -182,6 +182,7 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
 		vi.mocked(ahaClient.putIdeaScore).mockImplementation(() => Promise.resolve());
 		vi.mocked(editExtensionRoomConfig).mockImplementation(() => Promise.resolve());
+		vi.mocked(clearVotes).mockImplementation(() => Promise.resolve());
 
 		render(<AhaSubmitButton
 			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
@@ -235,9 +236,9 @@ describe("AhaSubmissionModal", () => {
 		await userEvent.click(screen.getByText("Submit"));
 
 		await waitFor(() => expect(screen.getByText("Submitting Idea Score")).not.toBeVisible());
+
 		expect(screen.getByRole("alert")).toBeVisible();
 		expect(screen.getByText("Submit")).toBeDisabled();
-
     expect(clearVotes).not.toHaveBeenCalled();
 	});
 
@@ -251,6 +252,7 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
 		vi.mocked(ahaClient.putIdeaScore).mockImplementation(() => Promise.resolve());
 		vi.mocked(editExtensionRoomConfig).mockImplementation(() => Promise.resolve());
+    vi.mocked(clearVotes).mockImplementation(() => Promise.resolve());
 
 		render(<AhaSubmitButton
 			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
