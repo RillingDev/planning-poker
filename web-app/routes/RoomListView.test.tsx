@@ -7,26 +7,26 @@ import {
   createMockRoom,
 } from "../test/dataFactory";
 import { loader, RoomListView } from "./RoomListView";
-import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import {
+  createMemoryRouter,
+  RouteObject,
+  RouterProvider,
+} from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { AppContext } from "../AppContext";
 
 vi.mock("../api");
 
-function createTestRouter() {
-  return createMemoryRouter(
-    [
-      {
-        path: "/",
-        element: <RoomListView />,
-        loader: loader,
-      },
-    ],
-    {
-      initialEntries: ["/"],
-      initialIndex: 0,
-    }
-  );
+const TEST_ROUTES: RouteObject[] = [
+  {
+    path: "/",
+    element: <RoomListView />,
+    loader: loader,
+  },
+];
+
+function waitForLoaderResolved(): Promise<unknown> {
+  return waitFor(() => screen.getByText("Rooms"));
 }
 
 describe("RoomListView", () => {
@@ -36,9 +36,9 @@ describe("RoomListView", () => {
       createMockRoom({ name: "Some Other Room" }),
     ]);
 
-    const router = createTestRouter();
+    const router = createMemoryRouter(TEST_ROUTES);
     render(<RouterProvider router={router} />);
-    await waitFor(() => screen.getByText("Rooms"));
+    await waitForLoaderResolved();
 
     expect(screen.getByText("My Room")).toBeInTheDocument();
     expect(screen.getByText("Some Other Room")).toBeInTheDocument();
@@ -47,9 +47,9 @@ describe("RoomListView", () => {
   it("opens creation modal", async () => {
     vi.mocked(getRooms).mockResolvedValue([]);
 
-    const router = createTestRouter();
+    const router = createMemoryRouter(TEST_ROUTES);
     render(<RouterProvider router={router} />);
-    await waitFor(() => screen.getByText("Rooms"));
+    await waitForLoaderResolved();
 
     expect(screen.queryByText("Create a New Room")).not.toBeInTheDocument();
 
@@ -65,13 +65,13 @@ describe("RoomListView", () => {
     vi.mocked(getRooms).mockResolvedValue([]);
     vi.mocked(createRoom).mockImplementation(() => Promise.resolve());
 
-    const router = createTestRouter();
+    const router = createMemoryRouter(TEST_ROUTES);
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
       </AppContext.Provider>
     );
-    await waitFor(() => screen.getByText("Rooms"));
+    await waitForLoaderResolved();
 
     await userEvent.click(screen.getByText("Create Room"));
 
@@ -92,13 +92,13 @@ describe("RoomListView", () => {
 
     vi.mocked(getRooms).mockResolvedValue([room]);
 
-    const router = createTestRouter();
+    const router = createMemoryRouter(TEST_ROUTES);
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
       </AppContext.Provider>
     );
-    await waitFor(() => screen.getByText("Rooms"));
+    await waitForLoaderResolved();
 
     expect(screen.queryByText("Edit Room 'My Room'")).not.toBeInTheDocument();
 
@@ -115,13 +115,13 @@ describe("RoomListView", () => {
     vi.mocked(getRooms).mockResolvedValue([room]);
     vi.mocked(editRoom).mockImplementation(() => Promise.resolve());
 
-    const router = createTestRouter();
+    const router = createMemoryRouter(TEST_ROUTES);
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
       </AppContext.Provider>
     );
-    await waitFor(() => screen.getByText("Rooms"));
+    await waitForLoaderResolved();
 
     await userEvent.click(screen.getByText("Edit Room"));
 
@@ -135,19 +135,13 @@ describe("RoomListView", () => {
   });
 
   it("opens deletion modal", async () => {
-    const cardSet = createMockCardSet({ name: "Set 1" });
-    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({ name: "My Room" });
 
     vi.mocked(getRooms).mockResolvedValue([room]);
 
-    const router = createTestRouter();
-    render(
-      <AppContext.Provider value={contextState}>
-        <RouterProvider router={router} />
-      </AppContext.Provider>
-    );
-    await waitFor(() => screen.getByText("Rooms"));
+    const router = createMemoryRouter(TEST_ROUTES);
+    render(<RouterProvider router={router} />);
+    await waitForLoaderResolved();
 
     expect(screen.queryByText("Delete Room 'My Room'")).not.toBeInTheDocument();
 
@@ -157,20 +151,14 @@ describe("RoomListView", () => {
   });
 
   it("handles room deletion", async () => {
-    const cardSet = createMockCardSet({ name: "Set 1" });
-    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({ name: "My Room" });
 
     vi.mocked(getRooms).mockResolvedValue([room]);
     vi.mocked(deleteRoom).mockImplementation(() => Promise.resolve());
 
-    const router = createTestRouter();
-    render(
-      <AppContext.Provider value={contextState}>
-        <RouterProvider router={router} />
-      </AppContext.Provider>
-    );
-    await waitFor(() => screen.getByText("Rooms"));
+    const router = createMemoryRouter(TEST_ROUTES);
+    render(<RouterProvider router={router} />);
+    await waitForLoaderResolved();
 
     await userEvent.click(screen.getByText("Delete Room"));
 
