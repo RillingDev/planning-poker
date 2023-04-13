@@ -5,21 +5,21 @@ import { AppContext } from "../../AppContext";
 import { ExtensionManager } from "../../extension/ExtensionManager";
 import { RoomEditOptions } from "../../model";
 import {
-  createCardSet,
-  createContextState,
-  createRoom,
+  createMockCardSet,
+  createMockContextState,
+  createMockRoom,
 } from "../../test/dataFactory";
 import { EditRoomModal } from "./EditRoomModal";
 
 describe("EditRoomModal", () => {
   it("shows card sets", () => {
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const cardSet2 = createCardSet({ name: "Set 2" });
-    const room = createRoom({ name: "Room", cardSetName: cardSet1.name });
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const cardSet2 = createMockCardSet({ name: "Set 2" });
+    const room = createMockRoom({ name: "Room", cardSetName: cardSet1.name });
 
     render(
       <AppContext.Provider
-        value={createContextState({ cardSets: [cardSet1, cardSet2] })}
+        value={createMockContextState({ cardSets: [cardSet1, cardSet2] })}
       >
         <EditRoomModal
           show={true}
@@ -36,8 +36,8 @@ describe("EditRoomModal", () => {
 
   it("prefills current", () => {
     const extensionManager = new ExtensionManager(["aha"]);
-    const cardSet = createCardSet({ name: "Set 1" });
-    const room = createRoom({
+    const cardSet = createMockCardSet({ name: "Set 1" });
+    const room = createMockRoom({
       name: "Room",
       cardSetName: cardSet.name,
       topic: "Foo!",
@@ -46,7 +46,7 @@ describe("EditRoomModal", () => {
 
     render(
       <AppContext.Provider
-        value={createContextState({
+        value={createMockContextState({
           cardSets: [cardSet],
           extensionManager: extensionManager,
         })}
@@ -66,14 +66,14 @@ describe("EditRoomModal", () => {
   });
 
   it("changes card sets", async () => {
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const cardSet2 = createCardSet({ name: "Set 2" });
-    const room = createRoom({ name: "Room", cardSetName: cardSet1.name });
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const cardSet2 = createMockCardSet({ name: "Set 2" });
+    const room = createMockRoom({ name: "Room", cardSetName: cardSet1.name });
     const onSubmit: Mocked<(changes: RoomEditOptions) => void> = vi.fn();
 
     render(
       <AppContext.Provider
-        value={createContextState({ cardSets: [cardSet1, cardSet2] })}
+        value={createMockContextState({ cardSets: [cardSet1, cardSet2] })}
       >
         <EditRoomModal
           show={true}
@@ -94,12 +94,12 @@ describe("EditRoomModal", () => {
   });
 
   it("changes topic", async () => {
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const room = createRoom({ name: "Room", cardSetName: cardSet1.name });
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const room = createMockRoom({ name: "Room", cardSetName: cardSet1.name });
     const onSubmit: Mocked<(changes: RoomEditOptions) => void> = vi.fn();
 
     render(
-      <AppContext.Provider value={createContextState({ cardSets: [cardSet1] })}>
+      <AppContext.Provider value={createMockContextState({ cardSets: [cardSet1] })}>
         <EditRoomModal
           show={true}
           room={room}
@@ -120,8 +120,8 @@ describe("EditRoomModal", () => {
 
   it("enables extensions", async () => {
     const extensionManager = new ExtensionManager(["aha"]);
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const room = createRoom({
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const room = createMockRoom({
       name: "Room",
       cardSetName: cardSet1.name,
       extensions: [],
@@ -130,7 +130,7 @@ describe("EditRoomModal", () => {
 
     render(
       <AppContext.Provider
-        value={createContextState({ cardSets: [cardSet1], extensionManager })}
+        value={createMockContextState({ cardSets: [cardSet1], extensionManager })}
       >
         <EditRoomModal
           show={true}
@@ -155,8 +155,8 @@ describe("EditRoomModal", () => {
 
   it("disables extensions", async () => {
     const extensionManager = new ExtensionManager(["aha"]);
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const room = createRoom({
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const room = createMockRoom({
       name: "Room",
       cardSetName: cardSet1.name,
       extensions: ["aha"],
@@ -165,7 +165,7 @@ describe("EditRoomModal", () => {
 
     render(
       <AppContext.Provider
-        value={createContextState({ cardSets: [cardSet1], extensionManager })}
+        value={createMockContextState({ cardSets: [cardSet1], extensionManager })}
       >
         <EditRoomModal
           show={true}
@@ -190,8 +190,8 @@ describe("EditRoomModal", () => {
 
   it("changes multiple", async () => {
     const extensionManager = new ExtensionManager(["aha"]);
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const room = createRoom({
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const room = createMockRoom({
       name: "Room",
       cardSetName: cardSet1.name,
       extensions: [],
@@ -200,7 +200,7 @@ describe("EditRoomModal", () => {
 
     render(
       <AppContext.Provider
-        value={createContextState({ cardSets: [cardSet1], extensionManager })}
+        value={createMockContextState({ cardSets: [cardSet1], extensionManager })}
       >
         <EditRoomModal
           show={true}
@@ -223,12 +223,12 @@ describe("EditRoomModal", () => {
 
   it("resets contents upon open", async () => {
     const extensionManager = new ExtensionManager(["aha"]);
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const contextState = createContextState({
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const contextState = createMockContextState({
       cardSets: [cardSet1],
       extensionManager,
     });
-    const room = createRoom({
+    const room = createMockRoom({
       name: "Room",
       cardSetName: cardSet1.name,
       topic: "Foo!",

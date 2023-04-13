@@ -1,17 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { VoteSummary } from "../model";
 import {
-  createCard,
-  createCardSet,
-  createRoom,
-  createRoomMember,
+  createMockCard,
+  createMockCardSet,
+  createMockRoom,
+  createMockRoomMember,
 } from "../test/dataFactory";
 import { Summary } from "./Summary";
 
 describe("Summary", () => {
   it("shows 'no results' if no summary exists", () => {
-    const cardSet = createCardSet({});
-    const room = createRoom({ cardSetName: cardSet.name });
+    const cardSet = createMockCardSet({});
+    const room = createMockRoom({ cardSetName: cardSet.name });
 
     render(<Summary room={room} voteSummary={null} cardSet={cardSet} />);
 
@@ -19,16 +19,16 @@ describe("Summary", () => {
   });
 
   it("shows average", () => {
-    const card1 = createCard({ value: 1 });
-    const card5 = createCard({ value: 5 });
-    const cardSet = createCardSet({ cards: [card1, card5] });
+    const card1 = createMockCard({ value: 1 });
+    const card5 = createMockCard({ value: 5 });
+    const cardSet = createMockCardSet({ cards: [card1, card5] });
 
-    const memberJohnDoe = createRoomMember({
+    const memberJohnDoe = createMockRoomMember({
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createRoomMember({ username: "Alice", vote: card5 });
-    const room = createRoom({
+    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
       members: [memberJohnDoe, memberAlice],
@@ -49,19 +49,19 @@ describe("Summary", () => {
   });
 
   it("formats average", () => {
-    const card1 = createCard({ value: 1 });
-    const card5 = createCard({ value: 5 });
-    const cardSet = createCardSet({
+    const card1 = createMockCard({ value: 1 });
+    const card5 = createMockCard({ value: 5 });
+    const cardSet = createMockCardSet({
       cards: [card1, card5],
       relevantFractionDigits: 0,
     });
 
-    const memberJohnDoe = createRoomMember({
+    const memberJohnDoe = createMockRoomMember({
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createRoomMember({ username: "Alice", vote: card5 });
-    const room = createRoom({
+    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
       members: [memberJohnDoe, memberAlice],
@@ -82,17 +82,17 @@ describe("Summary", () => {
   });
 
   it("shows nearest", () => {
-    const card1 = createCard({ value: 1 });
-    const card5 = createCard({ value: 5 });
-    const card3 = createCard({ value: 3, name: "Three" });
-    const cardSet = createCardSet({ cards: [card1, card3, card5] });
+    const card1 = createMockCard({ value: 1 });
+    const card5 = createMockCard({ value: 5 });
+    const card3 = createMockCard({ value: 3, name: "Three" });
+    const cardSet = createMockCardSet({ cards: [card1, card3, card5] });
 
-    const memberJohnDoe = createRoomMember({
+    const memberJohnDoe = createMockRoomMember({
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createRoomMember({ username: "Alice", vote: card5 });
-    const room = createRoom({
+    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
       members: [memberJohnDoe, memberAlice],
@@ -113,17 +113,17 @@ describe("Summary", () => {
   });
 
   it("shows extremes", () => {
-    const card1 = createCard({ value: 1, name: "Low Card" });
-    const card5 = createCard({ value: 5, name: "High Card" });
-    const card3 = createCard({ value: 3 });
-    const cardSet = createCardSet({ cards: [card1, card3, card5] });
+    const card1 = createMockCard({ value: 1, name: "Low Card" });
+    const card5 = createMockCard({ value: 5, name: "High Card" });
+    const card3 = createMockCard({ value: 3 });
+    const cardSet = createMockCardSet({ cards: [card1, card3, card5] });
 
-    const memberJohnDoe = createRoomMember({
+    const memberJohnDoe = createMockRoomMember({
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createRoomMember({ username: "Alice", vote: card5 });
-    const room = createRoom({
+    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
       members: [memberJohnDoe, memberAlice],
@@ -147,16 +147,16 @@ describe("Summary", () => {
   });
 
   it("shows offset", () => {
-    const card1 = createCard({ value: 1 });
-    const card5 = createCard({ value: 5 });
-    const cardSet = createCardSet({ cards: [card1, card5] });
+    const card1 = createMockCard({ value: 1 });
+    const card5 = createMockCard({ value: 5 });
+    const cardSet = createMockCardSet({ cards: [card1, card5] });
 
-    const memberJohnDoe = createRoomMember({
+    const memberJohnDoe = createMockRoomMember({
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createRoomMember({ username: "Alice", vote: card5 });
-    const room = createRoom({
+    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
       members: [memberJohnDoe, memberAlice],

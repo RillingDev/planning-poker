@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MockedObject, vi } from "vitest";
 import { editExtensionRoomConfig, getExtensionRoomConfig,clearVotes } from "../../api";
-import { createRoom, createVoteSummary } from "../../test/dataFactory";
+import { createMockRoom, createMockVoteSummary } from "../../test/dataFactory";
 import { ahaExtension } from "./AhaExtension";
 import { AhaSubmitButton } from "./AhaSubmitButton";
 import type { AhaClient } from "./api";
@@ -24,8 +24,8 @@ describe("AhaSubmissionModal", () => {
 
 	it("shows button", () => {
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		expect(screen.getByText("Save to Aha!")).toBeInTheDocument();
@@ -36,8 +36,8 @@ describe("AhaSubmissionModal", () => {
 
 	it("hides button if topic is not in the right syntax", () => {
 		render(<AhaSubmitButton
-			room={createRoom({topic: "X"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "X"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		expect(screen.getByText("Save to Aha!")).not.toBeVisible();
@@ -45,8 +45,8 @@ describe("AhaSubmissionModal", () => {
 
 	it("shows modal", async () => {
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -59,8 +59,8 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue(null);
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -82,8 +82,8 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -108,8 +108,8 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: null});
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -136,8 +136,8 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: "Ipsum"});
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123", name: "Room"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123", name: "Room"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -159,8 +159,8 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(getExtensionRoomConfig<AhaRoomConfig>).mockResolvedValue({scoreFactName: "Fizz"});
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -185,8 +185,8 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(clearVotes).mockImplementation(() => Promise.resolve());
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123", name: "My Room"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -223,8 +223,8 @@ describe("AhaSubmissionModal", () => {
 		vi.mocked(editExtensionRoomConfig).mockImplementation(() => Promise.resolve());
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123", name: "My Room"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));
@@ -255,8 +255,8 @@ describe("AhaSubmissionModal", () => {
     vi.mocked(clearVotes).mockImplementation(() => Promise.resolve());
 
 		render(<AhaSubmitButton
-			room={createRoom({topic: "ABC-I-123", name: "My Room"})}
-			voteSummary={createVoteSummary({average: 10.9})}
+			room={createMockRoom({topic: "ABC-I-123", name: "My Room"})}
+			voteSummary={createMockVoteSummary({average: 10.9})}
 		/>);
 
 		await userEvent.click(screen.getByText("Save to Aha!"));

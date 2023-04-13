@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Mocked, vi } from "vitest";
-import { createRoom } from "../../test/dataFactory";
+import { createMockRoom } from "../../test/dataFactory";
 import { DeleteRoomModal } from "./DeleteRoomModal";
 
 describe("DeleteRoomModal", () => {
   it("shows room name", () => {
-    const room = createRoom({ name: "My Room" });
+    const room = createMockRoom({ name: "My Room" });
 
     render(
       <DeleteRoomModal
@@ -22,7 +22,7 @@ describe("DeleteRoomModal", () => {
 
   it("submits", async () => {
     const onSubmit: Mocked<() => void> = vi.fn();
-    const room = createRoom({ name: "My Room" });
+    const room = createMockRoom({ name: "My Room" });
 
     render(
       <DeleteRoomModal

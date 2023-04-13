@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { Role } from "../model";
-import { createCard, createRoomMember } from "../test/dataFactory";
+import { createMockCard, createMockRoomMember } from "../test/dataFactory";
 import { MemberList } from "./MemberList";
 
 describe("MemberList", () => {
   it("shows members", () => {
-    const roomMember1 = createRoomMember({ username: "John Doe" });
-    const roomMember2 = createRoomMember({ username: "Alice" });
+    const roomMember1 = createMockRoomMember({ username: "John Doe" });
+    const roomMember2 = createMockRoomMember({ username: "Alice" });
 
     render(
       <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
@@ -17,11 +17,11 @@ describe("MemberList", () => {
   });
 
   it("shows role", () => {
-    const roomMember1 = createRoomMember({
+    const roomMember1 = createMockRoomMember({
       username: "John Doe",
       role: Role.VOTER,
     });
-    const roomMember2 = createRoomMember({
+    const roomMember2 = createMockRoomMember({
       username: "Alice",
       role: Role.OBSERVER,
     });
@@ -35,13 +35,13 @@ describe("MemberList", () => {
   });
 
   it("shows vote", () => {
-    const roomMember1 = createRoomMember({
+    const roomMember1 = createMockRoomMember({
       username: "John Doe",
-      vote: createCard({ name: "Coffee" }),
+      vote: createMockCard({ name: "Coffee" }),
     });
-    const roomMember2 = createRoomMember({
+    const roomMember2 = createMockRoomMember({
       username: "Alice",
-      vote: createCard({ name: "?" }),
+      vote: createMockCard({ name: "?" }),
     });
 
     render(

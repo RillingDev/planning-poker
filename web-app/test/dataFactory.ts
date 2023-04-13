@@ -2,7 +2,7 @@ import { AppContextState } from "../AppContext";
 import { ExtensionManager } from "../extension/ExtensionManager";
 import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../model";
 
-export function createContextState(
+export function createMockContextState(
   values: Partial<AppContextState>
 ): AppContextState {
   return {
@@ -12,7 +12,7 @@ export function createContextState(
   };
 }
 
-export function createCard(values: Partial<Card>): Card {
+export function createMockCard(values: Partial<Card>): Card {
   return {
     name: values.name ?? "Card",
     description: values.description ?? null,
@@ -20,7 +20,7 @@ export function createCard(values: Partial<Card>): Card {
   };
 }
 
-export function createCardSet(values: Partial<CardSet>): CardSet {
+export function createMockCardSet(values: Partial<CardSet>): CardSet {
   return {
     name: values.name ?? "Card Set",
     cards: values.cards ?? [],
@@ -28,7 +28,7 @@ export function createCardSet(values: Partial<CardSet>): CardSet {
   };
 }
 
-export function createRoomMember(values: Partial<RoomMember>): RoomMember {
+export function createMockRoomMember(values: Partial<RoomMember>): RoomMember {
   return {
     username: values.username ?? "John Doe",
     vote: values.vote ?? null,
@@ -36,7 +36,7 @@ export function createRoomMember(values: Partial<RoomMember>): RoomMember {
   };
 }
 
-export function createRoom(values: Partial<Room>): Room {
+export function createMockRoom(values: Partial<Room>): Room {
   return {
     name: values.name ?? "Room",
     cardSetName: values.cardSetName ?? "Card Set",
@@ -47,11 +47,11 @@ export function createRoom(values: Partial<Room>): Room {
   };
 }
 
-export function createVoteSummary(values: Partial<VoteSummary>): VoteSummary {
-  const card1 = createCard({ name: "1", value: 1 });
-  const card3 = createCard({ name: "3", value: 3 });
-  const memberLow = createRoomMember({ username: "Foo", vote: card1 });
-  const memberHigh = createRoomMember({ username: "Bar", vote: card3 });
+export function createMockVoteSummary(values: Partial<VoteSummary>): VoteSummary {
+  const card1 = createMockCard({ name: "1", value: 1 });
+  const card3 = createMockCard({ name: "3", value: 3 });
+  const memberLow = createMockRoomMember({ username: "Foo", vote: card1 });
+  const memberHigh = createMockRoomMember({ username: "Bar", vote: card3 });
   return {
     average: values.average ?? 2,
     highestVote: values.highestVote ?? card3,

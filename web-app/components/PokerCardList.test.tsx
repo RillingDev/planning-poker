@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
-import { createCard, createCardSet } from "../test/dataFactory";
+import { createMockCard, createMockCardSet } from "../test/dataFactory";
 import { PokerCardList } from "./PokerCardList";
 
 describe("PokerCardList", () => {
   it("shows cards", () => {
-    const cardSet = createCardSet({
-      cards: [createCard({ name: "Card 1" }), createCard({ name: "Card 2" })],
+    const cardSet = createMockCardSet({
+      cards: [createMockCard({ name: "Card 1" }), createMockCard({ name: "Card 2" })],
     });
 
     render(
@@ -19,8 +19,8 @@ describe("PokerCardList", () => {
   });
 
   it("disables buttons", () => {
-    const cardSet = createCardSet({
-      cards: [createCard({ name: "Card 1" }), createCard({ name: "Card 2" })],
+    const cardSet = createMockCardSet({
+      cards: [createMockCard({ name: "Card 1" }), createMockCard({ name: "Card 2" })],
     });
 
     render(
@@ -32,8 +32,8 @@ describe("PokerCardList", () => {
   });
 
   it("enables buttons", () => {
-    const cardSet = createCardSet({
-      cards: [createCard({ name: "Card 1" }), createCard({ name: "Card 2" })],
+    const cardSet = createMockCardSet({
+      cards: [createMockCard({ name: "Card 1" }), createMockCard({ name: "Card 2" })],
     });
 
     render(
@@ -45,9 +45,9 @@ describe("PokerCardList", () => {
   });
 
   it("sets active card", () => {
-    const card1 = createCard({ name: "Card 1" });
-    const cardSet = createCardSet({
-      cards: [card1, createCard({ name: "Card 2" })],
+    const card1 = createMockCard({ name: "Card 1" });
+    const cardSet = createMockCardSet({
+      cards: [card1, createMockCard({ name: "Card 2" })],
     });
 
     render(
@@ -59,9 +59,9 @@ describe("PokerCardList", () => {
   });
 
   it("invokes click handler", async () => {
-    const card1 = createCard({ name: "Card 1" });
-    const cardSet = createCardSet({
-      cards: [card1, createCard({ name: "Card 2" })],
+    const card1 = createMockCard({ name: "Card 1" });
+    const cardSet = createMockCardSet({
+      cards: [card1, createMockCard({ name: "Card 2" })],
     });
 
     const handleClick = vi.fn();
