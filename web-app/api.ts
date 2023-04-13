@@ -139,8 +139,8 @@ export async function deleteRoom(roomName: string): Promise<void> {
 export async function editRoom(
   roomName: string,
   { topic, cardSetName, extensions }: RoomEditOptions
-): Promise<Response> {
-  return fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
+): Promise<void> {
+  await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "PATCH",
     headers: { "Content-Type": MEDIA_TYPE_JSON },
     // Note: `undefined` values mean the key will not be part of the JSON payload

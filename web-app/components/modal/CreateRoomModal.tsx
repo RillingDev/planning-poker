@@ -38,7 +38,7 @@ export const CreateRoomModal: FC<{
     <Modal show={show} onHide={onHide} onExit={handleExit}>
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Create Room</Modal.Title>
+          <Modal.Title>Create a New Room</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3" controlId="formCreateRoomName">
