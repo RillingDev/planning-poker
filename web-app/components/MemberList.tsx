@@ -31,7 +31,7 @@ const Member: FC<{
   const dropdownId = useId();
 
   return (
-    <li className={`card member member--${member.role}`}>
+    <li className="card member">
       <span className="member__name">
         {member.username}&nbsp;
         <span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>
