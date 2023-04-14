@@ -38,7 +38,7 @@ export const CreateRoomModal: FC<{
     <Modal show={show} onHide={onHide} onExit={handleExit}>
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Create Room</Modal.Title>
+          <Modal.Title>Create a New Room</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3" controlId="formCreateRoomName">
@@ -48,7 +48,7 @@ export const CreateRoomModal: FC<{
               required
               maxLength={50}
               title="May not contain the following: ;%\/"
-              pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
+              pattern="^[^;%\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
               value={roomName}
               onChange={handleNameChange}
             />

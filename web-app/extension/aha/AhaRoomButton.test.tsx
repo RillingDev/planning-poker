@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MockedObject, vi } from "vitest";
-import { createRoom } from "../../test/dataFactory";
+import { createMockRoom } from "../../test/dataFactory";
 import { ahaExtension } from "./AhaExtension";
 import { AhaRoomButton } from "./AhaRoomButton";
 import type { AhaClient } from "./api";
@@ -15,7 +15,7 @@ describe("AhaRoomButton", () => {
   });
 
   it("shows button", () => {
-    render(<AhaRoomButton room={createRoom({})} onChange={vi.fn()} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
 
     expect(screen.getByText("Load from Aha!")).toBeInTheDocument();
 
@@ -24,7 +24,7 @@ describe("AhaRoomButton", () => {
   });
 
   it("shows modal", async () => {
-    render(<AhaRoomButton room={createRoom({})} onChange={vi.fn()} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
 
     await userEvent.click(screen.getByText("Load from Aha!"));
 
@@ -32,7 +32,7 @@ describe("AhaRoomButton", () => {
   });
 
   it("validates that the syntax of the input is correct", async () => {
-    render(<AhaRoomButton room={createRoom({})} onChange={vi.fn()} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
 
     await userEvent.click(screen.getByText("Load from Aha!"));
 
@@ -47,7 +47,7 @@ describe("AhaRoomButton", () => {
   it("validates that a matching idea exists", async () => {
     ahaClient.getIdea.mockResolvedValue(null);
 
-    render(<AhaRoomButton room={createRoom({})} onChange={vi.fn()} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
 
     await userEvent.click(screen.getByText("Load from Aha!"));
 
@@ -84,7 +84,7 @@ describe("AhaRoomButton", () => {
       }
     );
 
-    render(<AhaRoomButton room={createRoom({})} onChange={vi.fn()} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
 
     await userEvent.click(screen.getByText("Load from Aha!"));
 
@@ -116,7 +116,7 @@ describe("AhaRoomButton", () => {
     });
 
     const onChange = vi.fn();
-    render(<AhaRoomButton room={createRoom({})} onChange={onChange} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={onChange} />);
 
     await userEvent.click(screen.getByText("Load from Aha!"));
 
@@ -140,7 +140,7 @@ describe("AhaRoomButton", () => {
     );
 
     const onChange = vi.fn();
-    render(<AhaRoomButton room={createRoom({})} onChange={onChange} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={onChange} />);
 
     await userEvent.click(screen.getByText("Load from Aha!"));
 
@@ -165,7 +165,7 @@ describe("AhaRoomButton", () => {
       },
     });
 
-    render(<AhaRoomButton room={createRoom({})} onChange={vi.fn()} />);
+    render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
 
     await userEvent.click(screen.getByText("Load from Aha!"));
 

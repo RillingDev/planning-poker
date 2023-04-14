@@ -4,20 +4,20 @@ import { Mocked, vi } from "vitest";
 import { AppContext } from "../../AppContext";
 import { Room, RoomCreationOptions } from "../../model";
 import {
-  createCardSet,
-  createContextState,
-  createRoom,
+  createMockCardSet,
+  createMockContextState,
+  createMockRoom,
 } from "../../test/dataFactory";
-import { CreateRoomModal } from "../modal/CreateRoomModal";
+import { CreateRoomModal } from "./CreateRoomModal";
 
 describe("CreateRoomModal", () => {
   it("shows card sets", () => {
-    const cardSet1 = createCardSet({ name: "Set 1" });
-    const cardSet2 = createCardSet({ name: "Set 2" });
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const cardSet2 = createMockCardSet({ name: "Set 2" });
 
     render(
       <AppContext.Provider
-        value={createContextState({ cardSets: [cardSet1, cardSet2] })}
+        value={createMockContextState({ cardSets: [cardSet1, cardSet2] })}
       >
         <CreateRoomModal
           show={true}
@@ -34,10 +34,12 @@ describe("CreateRoomModal", () => {
 
   it("blocks bad room name characters", async () => {
     const onSubmit = vi.fn();
-    const cardSet = createCardSet({ name: "Set 1" });
+    const cardSet = createMockCardSet({ name: "Set 1" });
 
     render(
-      <AppContext.Provider value={createContextState({ cardSets: [cardSet] })}>
+      <AppContext.Provider
+        value={createMockContextState({ cardSets: [cardSet] })}
+      >
         <CreateRoomModal
           show={true}
           existingRooms={[]}
@@ -57,11 +59,13 @@ describe("CreateRoomModal", () => {
 
   it("blocks duplicate room name", async () => {
     const onSubmit = vi.fn();
-    const cardSet = createCardSet({ name: "Set 1" });
-    const room = createRoom({ name: "My Room" });
+    const cardSet = createMockCardSet({ name: "Set 1" });
+    const room = createMockRoom({ name: "My Room" });
 
     render(
-      <AppContext.Provider value={createContextState({ cardSets: [cardSet] })}>
+      <AppContext.Provider
+        value={createMockContextState({ cardSets: [cardSet] })}
+      >
         <CreateRoomModal
           show={true}
           existingRooms={[room]}
@@ -83,10 +87,12 @@ describe("CreateRoomModal", () => {
     const onSubmit: Mocked<
       (roomName: string, options: RoomCreationOptions) => void
     > = vi.fn();
-    const cardSet = createCardSet({ name: "Set 1" });
+    const cardSet = createMockCardSet({ name: "Set 1" });
 
     render(
-      <AppContext.Provider value={createContextState({ cardSets: [cardSet] })}>
+      <AppContext.Provider
+        value={createMockContextState({ cardSets: [cardSet] })}
+      >
         <CreateRoomModal
           show={true}
           existingRooms={[]}
@@ -106,8 +112,8 @@ describe("CreateRoomModal", () => {
     const onSubmit = () => ({});
     const onHide = () => ({});
     const existingRooms: Room[] = [];
-    const cardSet = createCardSet({ name: "Set 1" });
-    const contextState = createContextState({ cardSets: [cardSet] });
+    const cardSet = createMockCardSet({ name: "Set 1" });
+    const contextState = createMockContextState({ cardSets: [cardSet] });
 
     const { rerender } = render(
       <AppContext.Provider value={contextState}>

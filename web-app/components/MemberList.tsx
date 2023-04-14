@@ -31,7 +31,7 @@ const Member: FC<{
   const dropdownId = useId();
 
   return (
-    <li className={`card member member--${member.role}`}>
+    <li className="card member">
       <span className="member__name">
         {member.username}&nbsp;
         <span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>
@@ -42,24 +42,27 @@ const Member: FC<{
         <Dropdown.Toggle
           variant="secondary"
           id={dropdownId}
-          aria-label="Edit member"
+          aria-label="Edit Member"
         />
 
         <Dropdown.Menu>
           <Dropdown.Item
+            as="button"
             onClick={() => onAction(EditAction.SET_OBSERVER)}
             disabled={member.role == Role.OBSERVER}
           >
-            Set To Observer
+            Set to Observer
           </Dropdown.Item>
           <Dropdown.Item
+            as="button"
             onClick={() => onAction(EditAction.SET_VOTER)}
             disabled={member.role == Role.VOTER}
           >
-            Set To Voter
+            Set to Voter
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
+            as="button"
             onClick={() => onAction(EditAction.KICK)}
             disabled={member.username == user.username}
           >

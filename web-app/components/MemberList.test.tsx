@@ -1,12 +1,19 @@
 import { render, screen } from "@testing-library/react";
-import { Role } from "../model";
-import { createCard, createRoomMember } from "../test/dataFactory";
+import { EditAction, Role } from "../model";
+import {
+  createMockCard,
+  createMockContextState,
+  createMockRoomMember,
+} from "../test/dataFactory";
 import { MemberList } from "./MemberList";
+import { vi } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { AppContext } from "../AppContext";
 
 describe("MemberList", () => {
   it("shows members", () => {
-    const roomMember1 = createRoomMember({ username: "John Doe" });
-    const roomMember2 = createRoomMember({ username: "Alice" });
+    const roomMember1 = createMockRoomMember({ username: "John Doe" });
+    const roomMember2 = createMockRoomMember({ username: "Alice" });
 
     render(
       <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
@@ -17,11 +24,11 @@ describe("MemberList", () => {
   });
 
   it("shows role", () => {
-    const roomMember1 = createRoomMember({
+    const roomMember1 = createMockRoomMember({
       username: "John Doe",
       role: Role.VOTER,
     });
-    const roomMember2 = createRoomMember({
+    const roomMember2 = createMockRoomMember({
       username: "Alice",
       role: Role.OBSERVER,
     });
@@ -35,13 +42,13 @@ describe("MemberList", () => {
   });
 
   it("shows vote", () => {
-    const roomMember1 = createRoomMember({
+    const roomMember1 = createMockRoomMember({
       username: "John Doe",
-      vote: createCard({ name: "Coffee" }),
+      vote: createMockCard({ name: "Coffee" }),
     });
-    const roomMember2 = createRoomMember({
+    const roomMember2 = createMockRoomMember({
       username: "Alice",
-      vote: createCard({ name: "?" }),
+      vote: createMockCard({ name: "?" }),
     });
 
     render(
@@ -50,5 +57,106 @@ describe("MemberList", () => {
 
     expect(screen.getByText("Coffee")).toBeInTheDocument();
     expect(screen.getByText("?")).toBeInTheDocument();
+  });
+
+  it("sets to observer", async () => {
+    const roomMember = createMockRoomMember({
+      username: "John Doe",
+      role: Role.VOTER,
+    });
+
+    const onAction = vi.fn();
+
+    render(<MemberList members={[roomMember]} onAction={onAction} />);
+
+    await userEvent.click(screen.getByLabelText("Edit Member"));
+    await userEvent.click(screen.getByText("Set to Observer"));
+
+    expect(onAction).toHaveBeenCalledWith(roomMember, EditAction.SET_OBSERVER);
+  });
+
+  it("blocks setting to observer if already observer", async () => {
+    const roomMember = createMockRoomMember({
+      username: "John Doe",
+      role: Role.OBSERVER,
+    });
+
+    render(<MemberList members={[roomMember]} onAction={() => ({})} />);
+
+    await userEvent.click(screen.getByLabelText("Edit Member"));
+
+    expect(screen.getByText("Set to Observer")).toHaveClass("disabled");
+  });
+
+  it("sets to voter", async () => {
+    const roomMember = createMockRoomMember({
+      username: "John Doe",
+      role: Role.OBSERVER,
+    });
+
+    const onAction = vi.fn();
+
+    render(<MemberList members={[roomMember]} onAction={onAction} />);
+
+    await userEvent.click(screen.getByLabelText("Edit Member"));
+    await userEvent.click(screen.getByText("Set to Voter"));
+
+    expect(onAction).toHaveBeenCalledWith(roomMember, EditAction.SET_VOTER);
+  });
+
+  it("blocks setting to voter if already voter", async () => {
+    const roomMember = createMockRoomMember({
+      username: "John Doe",
+      role: Role.VOTER,
+    });
+
+    render(<MemberList members={[roomMember]} onAction={() => ({})} />);
+
+    await userEvent.click(screen.getByLabelText("Edit Member"));
+
+    expect(screen.getByText("Set to Voter")).toHaveClass("disabled");
+  });
+
+  it("kicking member", async () => {
+    const otherMember = createMockRoomMember({
+      username: "John Doe",
+      role: Role.VOTER,
+    });
+
+    const onAction = vi.fn();
+
+    const appContextState = createMockContextState({
+      user: { username: "Me" }, // Not part of members in this case to make testing easier.
+    });
+    render(
+      <AppContext.Provider value={appContextState}>
+        <MemberList members={[otherMember]} onAction={onAction} />
+      </AppContext.Provider>
+    );
+
+    await userEvent.click(screen.getByLabelText("Edit Member"));
+    await userEvent.click(screen.getByText("Kick"));
+
+    expect(onAction).toHaveBeenCalledWith(otherMember, EditAction.KICK);
+  });
+
+  it("blocks kicking yourself", async () => {
+    const thisMember = createMockRoomMember({
+      username: "Me",
+      role: Role.VOTER,
+    });
+
+    const appContextState = createMockContextState({
+      user: { username: thisMember.username },
+    });
+    render(
+      <AppContext.Provider value={appContextState}>
+        <MemberList members={[thisMember]} onAction={() => ({})} />
+      </AppContext.Provider>
+    );
+
+    await userEvent.click(screen.getByLabelText("Edit Member"));
+
+    expect(screen.getByText("Kick")).toHaveClass("disabled");
   });
 });

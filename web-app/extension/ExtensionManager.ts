@@ -1,16 +1,11 @@
-import { ExtensionKey, Room } from "../model";
-import { ahaExtension } from "./aha/AhaExtension";
+import { Room } from "../model";
 import { Extension } from "./Extension";
 
-const AVAILABLE_EXTENSIONS = [ahaExtension];
-
 export class ExtensionManager {
-  readonly #extensions: Extension[];
+  readonly #extensions: ReadonlyArray<Extension>;
 
-  constructor(enabledExtensionKeys: ReadonlyArray<ExtensionKey>) {
-    this.#extensions = AVAILABLE_EXTENSIONS.filter((availableExtension) =>
-      enabledExtensionKeys.includes(availableExtension.key)
-    );
+  constructor(enabledExtensions: ReadonlyArray<Extension>) {
+    this.#extensions = enabledExtensions;
   }
 
   getByRoom(room: Room): ReadonlyArray<Extension> {
