@@ -70,6 +70,32 @@ describe("RoomView", () => {
     expect(screen.getByText("John Doe")).toBeInTheDocument();
   });
 
+  it("shows placeholder for empty topic", async () => {
+    const cardSet = createMockCardSet({ name: "My Set" });
+    const contextState = createMockContextState({ cardSets: [cardSet] });
+    const room = createMockRoom({
+      name: "My Room",
+      topic: null,
+      cardSetName: cardSet.name,
+      votingClosed: false,
+      members: [createMockRoomMember({ username: "John Doe" })],
+    });
+    vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
+    vi.mocked(getRoom).mockResolvedValue(room);
+
+    const router = createMemoryRouter(TEST_ROUTES, {
+      initialEntries: ["/rooms/My Room"],
+    });
+    render(
+      <AppContext.Provider value={contextState}>
+        <RouterProvider router={router} />
+      </AppContext.Provider>
+    );
+    await waitForLoaderResolved();
+
+    expect(screen.getByText("-")).toBeInTheDocument();
+  });
+
   it("shows voting elements if voting is open", async () => {
     const cardSet = createMockCardSet({
       name: "My Set",
@@ -294,7 +320,7 @@ describe("RoomView", () => {
     expect(screen.getByText("Card 1")).toBeInTheDocument();
     expect(screen.queryByText("Card 2")).not.toBeInTheDocument();
     expect(screen.queryByText("Custom Topic")).not.toBeInTheDocument();
-    
+
     await userEvent.click(screen.getByText("Edit Room"));
 
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
@@ -309,5 +335,21 @@ describe("RoomView", () => {
     expect(screen.queryByText("Card 1")).not.toBeInTheDocument();
     expect(screen.getByText("Card 2")).toBeInTheDocument();
     expect(screen.getByText("Custom Topic")).toBeInTheDocument();
+  });
+
+  it("shows extensions", async () => {
+    // TODO
+  });
+
+  it("handles member actions", async () => {
+    // TODO
+  });
+
+  it("handles clicking a card", async () => {
+    // TODO
+  });
+
+  it("disables clicking a card for observer", async () => {
+    // TODO
   });
 });

@@ -175,4 +175,8 @@ describe("Summary", () => {
 
     expect(screen.getByText("High")).toBeInTheDocument();
   });
+
+  it("shows extensions", async () => {
+    // TODO
+  });
 });

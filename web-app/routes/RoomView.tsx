@@ -196,7 +196,7 @@ export const RoomView: FC = () => {
           </nav>
         </div>
         <span>
-          <strong>Topic:</strong> {room.topic != null ? room.topic : "-"}
+          <strong>Topic:</strong> {room.topic ?? "-"}
         </span>
       </header>
       <div className="room-view">
@@ -230,7 +230,7 @@ export const RoomView: FC = () => {
         </main>
         <div>
           <h3 className="mb-2">Members</h3>
-          <MemberList members={room.members ?? []} onAction={handleAction} />
+          <MemberList members={room.members} onAction={handleAction} />
         </div>
       </div>
     </>
