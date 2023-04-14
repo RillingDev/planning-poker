@@ -10,4 +10,8 @@ describe("PokerCard", () => {
 
     expect(screen.getByText("Foo")).toBeInTheDocument();
   });
+
+  it("shows description", () => {
+    // TODO
+  });
 });

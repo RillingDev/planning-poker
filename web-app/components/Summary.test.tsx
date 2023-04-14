@@ -157,6 +157,7 @@ describe("Summary", () => {
 
     render(<Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />);
 
+    // TODO: make more specific
     expect(screen.getByText("John Doe")).toBeInTheDocument();
     expect(screen.getByText("Low Card")).toBeInTheDocument();
     expect(screen.getByText("Alice")).toBeInTheDocument();

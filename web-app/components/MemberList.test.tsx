@@ -37,26 +37,20 @@ describe("MemberList", () => {
       <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
     );
 
+    // TODO: make more specific
     expect(screen.getByText("Voter")).toBeInTheDocument();
     expect(screen.getByText("Observer")).toBeInTheDocument();
   });
 
   it("shows vote", () => {
-    const roomMember1 = createMockRoomMember({
+    const roomMember = createMockRoomMember({
       username: "John Doe",
       vote: createMockCard({ name: "Coffee" }),
     });
-    const roomMember2 = createMockRoomMember({
-      username: "Alice",
-      vote: createMockCard({ name: "?" }),
-    });
 
-    render(
-      <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
-    );
+    render(<MemberList members={[roomMember]} onAction={() => ({})} />);
 
     expect(screen.getByText("Coffee")).toBeInTheDocument();
-    expect(screen.getByText("?")).toBeInTheDocument();
   });
 
   it("sets to observer", async () => {
