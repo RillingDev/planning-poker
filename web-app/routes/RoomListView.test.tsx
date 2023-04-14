@@ -84,6 +84,7 @@ describe("RoomListView", () => {
     expect(screen.queryByText("My Room")).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByText("Create Room"));
+
     await userEvent.type(screen.getByLabelText("Room Name"), "My Room");
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 1");
     await userEvent.click(screen.getByText("Create"));
@@ -95,7 +96,7 @@ describe("RoomListView", () => {
     expect(screen.getByText("My Room")).toBeInTheDocument();
   });
 
-  it("opens modification modal", async () => {
+  it("opens edit modal", async () => {
     const cardSet = createMockCardSet({ name: "Set 1" });
     const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({ name: "My Room" });
@@ -117,7 +118,7 @@ describe("RoomListView", () => {
     expect(screen.getByText("Edit Room 'My Room'")).toBeVisible();
   });
 
-  it("handles room modification", async () => {
+  it("handles room editing", async () => {
     const cardSet1 = createMockCardSet({ name: "Set 1" });
     const cardSet2 = createMockCardSet({ name: "Set 2" });
     const contextState = createMockContextState({
@@ -169,12 +170,20 @@ describe("RoomListView", () => {
   it("handles room deletion", async () => {
     const room = createMockRoom({ name: "My Room" });
 
-    vi.mocked(getRooms).mockResolvedValue([room]);
-    vi.mocked(deleteRoom).mockImplementation(() => Promise.resolve());
+    let roomDeleted = false;
+    vi.mocked(getRooms).mockImplementation(() =>
+      Promise.resolve(roomDeleted ? [] : [room])
+    );
+    vi.mocked(deleteRoom).mockImplementation(() => {
+      roomDeleted = true;
+      return Promise.resolve();
+    });
 
     const router = createMemoryRouter(TEST_ROUTES);
     render(<RouterProvider router={router} />);
     await waitForLoaderResolved();
+
+    expect(screen.getByText("My Room")).toBeInTheDocument();
 
     await userEvent.click(screen.getByText("Delete Room"));
 
@@ -182,6 +191,7 @@ describe("RoomListView", () => {
 
     expect(screen.queryByText("Delete Room 'My Room'")).not.toBeInTheDocument();
     expect(deleteRoom).toHaveBeenCalledWith("My Room");
+    expect(screen.queryByText("My Room")).not.toBeInTheDocument();
   });
 
   it("joins room", async () => {
