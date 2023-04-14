@@ -42,24 +42,27 @@ const Member: FC<{
         <Dropdown.Toggle
           variant="secondary"
           id={dropdownId}
-          aria-label="Edit member"
+          aria-label="Edit Member"
         />
 
         <Dropdown.Menu>
           <Dropdown.Item
+            as="button"
             onClick={() => onAction(EditAction.SET_OBSERVER)}
             disabled={member.role == Role.OBSERVER}
           >
-            Set To Observer
+            Set to Observer
           </Dropdown.Item>
           <Dropdown.Item
+            as="button"
             onClick={() => onAction(EditAction.SET_VOTER)}
             disabled={member.role == Role.VOTER}
           >
-            Set To Voter
+            Set to Voter
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
+            as="button"
             onClick={() => onAction(EditAction.KICK)}
             disabled={member.username == user.username}
           >

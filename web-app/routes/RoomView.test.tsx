@@ -1,6 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
-import { clearVotes, editRoom, getRoom, getSummary, joinRoom, leaveRoom, } from "../api";
+import {
+  clearVotes,
+  editMember,
+  editRoom,
+  getRoom,
+  getSummary,
+  joinRoom,
+  leaveRoom,
+} from "../api";
 import {
   createMockCard,
   createMockCardSet,
@@ -11,18 +19,23 @@ import {
   createMockVoteSummary,
 } from "../test/dataFactory";
 import { loader, RoomView } from "./RoomView";
-import { createMemoryRouter, RouteObject, RouterProvider, } from "react-router-dom";
+import {
+  createMemoryRouter,
+  RouteObject,
+  RouterProvider,
+} from "react-router-dom";
 import { AppContext } from "../AppContext";
 import userEvent from "@testing-library/user-event";
 import { FC } from "react";
 import { ExtensionManager } from "../extension/ExtensionManager";
+import { EditAction, Role } from "../model";
 
 vi.mock("../api");
 
 const TEST_ROUTES: RouteObject[] = [
   {
     path: "/rooms/:roomName",
-    element: <RoomView/>,
+    element: <RoomView />,
     loader: loader,
   },
 ];
@@ -33,14 +46,14 @@ function waitForLoaderResolved(): Promise<unknown> {
 
 describe("RoomView", () => {
   it("shows room", async () => {
-    const cardSet = createMockCardSet({name: "My Set"});
-    const contextState = createMockContextState({cardSets: [cardSet]});
+    const cardSet = createMockCardSet({ name: "My Set" });
+    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
       topic: "My Topic",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({username: "John Doe"})],
+      members: [createMockRoomMember({ username: "John Doe" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -50,7 +63,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -63,14 +76,14 @@ describe("RoomView", () => {
   });
 
   it("shows placeholder for empty topic", async () => {
-    const cardSet = createMockCardSet({name: "My Set"});
-    const contextState = createMockContextState({cardSets: [cardSet]});
+    const cardSet = createMockCardSet({ name: "My Set" });
+    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
       topic: null,
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({username: "John Doe"})],
+      members: [createMockRoomMember({ username: "John Doe" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -80,7 +93,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -91,14 +104,14 @@ describe("RoomView", () => {
   it("shows voting elements if voting is open", async () => {
     const cardSet = createMockCardSet({
       name: "My Set",
-      cards: [createMockCard({name: "Card 1"})],
+      cards: [createMockCard({ name: "Card 1" })],
     });
-    const contextState = createMockContextState({cardSets: [cardSet]});
+    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({username: "John Doe"})],
+      members: [createMockRoomMember({ username: "John Doe" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -108,7 +121,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -121,14 +134,14 @@ describe("RoomView", () => {
   it("shows summary elements if voting is not open", async () => {
     const cardSet = createMockCardSet({
       name: "My Set",
-      cards: [createMockCard({name: "Card 1"})],
+      cards: [createMockCard({ name: "Card 1" })],
     });
-    const contextState = createMockContextState({cardSets: [cardSet]});
+    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [createMockRoomMember({username: "John Doe"})],
+      members: [createMockRoomMember({ username: "John Doe" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -141,7 +154,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -155,12 +168,12 @@ describe("RoomView", () => {
     const cardSet = createMockCardSet({
       name: "My Set",
     });
-    const contextState = createMockContextState({cardSets: [cardSet]});
+    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({username: "John Doe"})],
+      members: [createMockRoomMember({ username: "John Doe" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(leaveRoom).mockImplementation(() => Promise.resolve());
@@ -180,7 +193,7 @@ describe("RoomView", () => {
     );
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -194,9 +207,9 @@ describe("RoomView", () => {
   it("restarts voting", async () => {
     const cardSet = createMockCardSet({
       name: "My Set",
-      cards: [createMockCard({name: "Card 1"})],
+      cards: [createMockCard({ name: "Card 1" })],
     });
-    const contextState = createMockContextState({cardSets: [cardSet]});
+    const contextState = createMockContextState({ cardSets: [cardSet] });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getSummary).mockResolvedValue({
       votes: createMockVoteSummary({}),
@@ -209,7 +222,7 @@ describe("RoomView", () => {
           name: "My Room",
           cardSetName: cardSet.name,
           votingClosed: votingClosed,
-          members: [createMockRoomMember({username: "John Doe"})],
+          members: [createMockRoomMember({ username: "John Doe" })],
         })
       )
     );
@@ -223,7 +236,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -241,12 +254,12 @@ describe("RoomView", () => {
     const cardSet = createMockCardSet({
       name: "My Set",
     });
-    const contextState = createMockContextState({cardSets: [cardSet]});
+    const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({username: "John Doe"})],
+      members: [createMockRoomMember({ username: "John Doe" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -256,7 +269,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -271,11 +284,11 @@ describe("RoomView", () => {
   it("handles room editing", async () => {
     const cardSet1 = createMockCardSet({
       name: "Set 1",
-      cards: [createMockCard({name: "Card 1"})],
+      cards: [createMockCard({ name: "Card 1" })],
     });
     const cardSet2 = createMockCardSet({
       name: "Set 2",
-      cards: [createMockCard({name: "Card 2"})],
+      cards: [createMockCard({ name: "Card 2" })],
     });
     const contextState = createMockContextState({
       cardSets: [cardSet1, cardSet2],
@@ -290,7 +303,7 @@ describe("RoomView", () => {
           topic: roomEdited ? "Custom Topic" : null,
           cardSetName: (roomEdited ? cardSet2 : cardSet1).name,
           votingClosed: false,
-          members: [createMockRoomMember({username: "John Doe"})],
+          members: [createMockRoomMember({ username: "John Doe" })],
         })
       )
     );
@@ -304,7 +317,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -339,18 +352,17 @@ describe("RoomView", () => {
     });
     const extensionManager = new ExtensionManager([extension]);
 
-    const cardSet = createMockCardSet({name: "My Set"});
+    const cardSet = createMockCardSet({ name: "My Set" });
     const contextState = createMockContextState({
       cardSets: [cardSet],
       extensionManager,
     });
     const room = createMockRoom({
       name: "My Room",
-      topic: "My Topic",
       cardSetName: cardSet.name,
       votingClosed: false,
       extensions: ["mockExtension"],
-      members: [createMockRoomMember({username: "John Doe"})],
+      members: [createMockRoomMember({ username: "John Doe" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -360,7 +372,7 @@ describe("RoomView", () => {
     });
     render(
       <AppContext.Provider value={contextState}>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     );
     await waitForLoaderResolved();
@@ -371,7 +383,43 @@ describe("RoomView", () => {
   });
 
   it("handles member actions", async () => {
-    // TODO
+    const cardSet = createMockCardSet({ name: "My Set" });
+    const contextState = createMockContextState({
+      cardSets: [cardSet],
+    });
+    const room = createMockRoom({
+      name: "My Room",
+      cardSetName: cardSet.name,
+      votingClosed: false,
+      members: [
+        createMockRoomMember({ username: "John Doe", role: Role.OBSERVER }),
+      ],
+    });
+    vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
+    vi.mocked(getRoom).mockResolvedValue(room);
+    vi.mocked(editMember).mockImplementation(() => Promise.resolve());
+
+    const router = createMemoryRouter(TEST_ROUTES, {
+      initialEntries: ["/rooms/My Room"],
+    });
+    render(
+      <AppContext.Provider value={contextState}>
+        <RouterProvider router={router} />
+      </AppContext.Provider>
+    );
+    await waitForLoaderResolved();
+
+    expect(screen.queryByText("Voter")).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByLabelText("Edit Member"));
+    await userEvent.click(screen.getByText("Set to Voter"));
+
+    expect(editMember).toHaveBeenCalledWith(
+      "My Room",
+      "John Doe",
+      EditAction.SET_VOTER
+    );
+    expect(screen.getByText("Voter")).toBeInTheDocument();
   });
 
   it("handles clicking a card", async () => {
