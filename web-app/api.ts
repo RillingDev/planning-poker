@@ -205,4 +205,3 @@ export async function getSummary(roomName: string): Promise<SummaryResult> {
     .then(assertStatusOk)
     .then((res) => res.json() as Promise<SummaryResult>);
 }
-

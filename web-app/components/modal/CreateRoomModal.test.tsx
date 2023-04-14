@@ -37,7 +37,9 @@ describe("CreateRoomModal", () => {
     const cardSet = createMockCardSet({ name: "Set 1" });
 
     render(
-      <AppContext.Provider value={createMockContextState({ cardSets: [cardSet] })}>
+      <AppContext.Provider
+        value={createMockContextState({ cardSets: [cardSet] })}
+      >
         <CreateRoomModal
           show={true}
           existingRooms={[]}
@@ -61,7 +63,9 @@ describe("CreateRoomModal", () => {
     const room = createMockRoom({ name: "My Room" });
 
     render(
-      <AppContext.Provider value={createMockContextState({ cardSets: [cardSet] })}>
+      <AppContext.Provider
+        value={createMockContextState({ cardSets: [cardSet] })}
+      >
         <CreateRoomModal
           show={true}
           existingRooms={[room]}
@@ -86,7 +90,9 @@ describe("CreateRoomModal", () => {
     const cardSet = createMockCardSet({ name: "Set 1" });
 
     render(
-      <AppContext.Provider value={createMockContextState({ cardSets: [cardSet] })}>
+      <AppContext.Provider
+        value={createMockContextState({ cardSets: [cardSet] })}
+      >
         <CreateRoomModal
           show={true}
           existingRooms={[]}

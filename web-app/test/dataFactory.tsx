@@ -1,16 +1,8 @@
 import { AppContextState } from "../AppContext";
 import { ExtensionManager } from "../extension/ExtensionManager";
 import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../model";
-
-export function createMockContextState(
-  values: Partial<AppContextState>
-): AppContextState {
-  return {
-    user: values.user ?? { username: "John Doe" },
-    cardSets: values.cardSets ?? [],
-    extensionManager: values.extensionManager ?? new ExtensionManager([]),
-  };
-}
+import { Extension } from "../extension/Extension";
+import { FC } from "react";
 
 export function createMockCard(values: Partial<Card>): Card {
   return {
@@ -47,7 +39,9 @@ export function createMockRoom(values: Partial<Room>): Room {
   };
 }
 
-export function createMockVoteSummary(values: Partial<VoteSummary>): VoteSummary {
+export function createMockVoteSummary(
+  values: Partial<VoteSummary>
+): VoteSummary {
   const card1 = createMockCard({ name: "1", value: 1 });
   const card3 = createMockCard({ name: "3", value: 3 });
   const memberLow = createMockRoomMember({ username: "Foo", vote: card1 });
@@ -60,5 +54,32 @@ export function createMockVoteSummary(values: Partial<VoteSummary>): VoteSummary
     lowestVoters: values.lowestVoters ?? [memberLow],
     nearestCard: values.nearestCard ?? card3,
     offset: values.offset ?? 1,
+  };
+}
+
+const MockRoomComponent: FC = () => {
+  return <span>Mock Extension Room Component</span>;
+};
+
+const MockSubmitComponent: FC = () => {
+  return <span>Mock Extension Submit Component</span>;
+};
+
+export function createMockExtension(values: Partial<Extension>): Extension {
+  return {
+    RoomComponent: values.RoomComponent ?? MockRoomComponent,
+    SubmitComponent: values.SubmitComponent ?? MockSubmitComponent,
+    key: values.key ?? "mockExtension",
+    label: values.label ?? "Mock Extension",
+  };
+}
+
+export function createMockContextState(
+  values: Partial<AppContextState>
+): AppContextState {
+  return {
+    user: values.user ?? { username: "John Doe" },
+    cardSets: values.cardSets ?? [],
+    extensionManager: values.extensionManager ?? new ExtensionManager([], []),
   };
 }

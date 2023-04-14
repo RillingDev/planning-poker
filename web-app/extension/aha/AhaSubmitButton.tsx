@@ -161,19 +161,37 @@ const AhaSubmissionModal: FC<{
   );
 };
 
+export const AhaSubmitButton: FC<{ room: Room; voteSummary: VoteSummary }> = ({
+  room,
+  voteSummary,
+}) => {
+  const [modalVisible, showModal, hideModal] = useBooleanState(false);
 
-export const AhaSubmitButton: FC<{ room: Room, voteSummary: VoteSummary }> = ({room, voteSummary}) => {
-	const [modalVisible, showModal, hideModal] = useBooleanState(false);
+  const ideaId =
+    room.topic != null ? AhaExtension.extractIdeaId(room.topic) : null;
+  const score = Math.round(voteSummary.average);
 
-	const ideaId = room.topic != null ? AhaExtension.extractIdeaId(room.topic) : null;
-	const score = Math.round(voteSummary.average);
-
-	return (<>
-			<button type="button" className="btn btn-primary btn-sm" onClick={showModal} hidden={ideaId == null}>
-				Save to Aha!
-			</button>
-			{ideaId && modalVisible && // Delay mount until click to ensure modal data loading is not done prematurely
-				<AhaSubmissionModal roomName={room.name} ideaId={ideaId} score={score} show={modalVisible} onHide={hideModal} onSubmit={hideModal}/>}
-		</>
-	);
+  return (
+    <>
+      <button
+        type="button"
+        className="btn btn-primary btn-sm"
+        onClick={showModal}
+        hidden={ideaId == null}
+      >
+        Save to Aha!
+      </button>
+      {ideaId &&
+        modalVisible && ( // Delay mount until click to ensure modal data loading is not done prematurely
+          <AhaSubmissionModal
+            roomName={room.name}
+            ideaId={ideaId}
+            score={score}
+            show={modalVisible}
+            onHide={hideModal}
+            onSubmit={hideModal}
+          />
+        )}
+    </>
+  );
 };

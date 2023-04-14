@@ -3,10 +3,15 @@ import { VoteSummary } from "../model";
 import {
   createMockCard,
   createMockCardSet,
+  createMockContextState,
+  createMockExtension,
   createMockRoom,
   createMockRoomMember,
 } from "../test/dataFactory";
 import { Summary } from "./Summary";
+import { AppContext } from "../AppContext";
+import { ExtensionManager } from "../extension/ExtensionManager";
+import { FC } from "react";
 
 describe("Summary", () => {
   it("shows 'no results' if no summary exists", () => {
@@ -27,7 +32,10 @@ describe("Summary", () => {
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const memberAlice = createMockRoomMember({
+      username: "Alice",
+      vote: card5,
+    });
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
@@ -60,7 +68,10 @@ describe("Summary", () => {
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const memberAlice = createMockRoomMember({
+      username: "Alice",
+      vote: card5,
+    });
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
@@ -91,7 +102,10 @@ describe("Summary", () => {
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const memberAlice = createMockRoomMember({
+      username: "Alice",
+      vote: card5,
+    });
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
@@ -122,7 +136,10 @@ describe("Summary", () => {
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const memberAlice = createMockRoomMember({
+      username: "Alice",
+      vote: card5,
+    });
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
@@ -155,7 +172,10 @@ describe("Summary", () => {
       username: "John Doe",
       vote: card1,
     });
-    const memberAlice = createMockRoomMember({ username: "Alice", vote: card5 });
+    const memberAlice = createMockRoomMember({
+      username: "Alice",
+      vote: card5,
+    });
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
@@ -176,7 +196,56 @@ describe("Summary", () => {
     expect(screen.getByText("High")).toBeInTheDocument();
   });
 
-  it("shows extensions", async () => {
-    // TODO
+  it("shows extensions", () => {
+    const MockSubmitComponent: FC = () => {
+      return <span>Mock Extension Submit Component</span>;
+    };
+    const extension = createMockExtension({
+      SubmitComponent: MockSubmitComponent,
+      key: "mockExtension",
+    });
+    const extensionManager = new ExtensionManager([extension]);
+
+    const card1 = createMockCard({ value: 1 });
+    const card5 = createMockCard({ value: 5 });
+    const cardSet = createMockCardSet({ cards: [card1, card5] });
+
+    const memberJohnDoe = createMockRoomMember({
+      username: "John Doe",
+      vote: card1,
+    });
+    const memberAlice = createMockRoomMember({
+      username: "Alice",
+      vote: card5,
+    });
+    const room = createMockRoom({
+      cardSetName: cardSet.name,
+      votingClosed: true,
+      members: [memberJohnDoe, memberAlice],
+      extensions: ["mockExtension"],
+    });
+    const voteSummary: VoteSummary = {
+      average: 2.5,
+      lowestVote: card1,
+      lowestVoters: [memberJohnDoe],
+      highestVote: card5,
+      highestVoters: [memberAlice],
+      nearestCard: card1,
+      offset: 999,
+    };
+
+    render(
+      <AppContext.Provider
+        value={createMockContextState({
+          extensionManager,
+        })}
+      >
+        <Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />
+      </AppContext.Provider>
+    );
+
+    expect(
+      screen.getByText("Mock Extension Submit Component")
+    ).toBeInTheDocument();
   });
 });

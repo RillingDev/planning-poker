@@ -7,7 +7,10 @@ import { PokerCardList } from "./PokerCardList";
 describe("PokerCardList", () => {
   it("shows cards", () => {
     const cardSet = createMockCardSet({
-      cards: [createMockCard({ name: "Card 1" }), createMockCard({ name: "Card 2" })],
+      cards: [
+        createMockCard({ name: "Card 1" }),
+        createMockCard({ name: "Card 2" }),
+      ],
     });
 
     render(
@@ -20,7 +23,10 @@ describe("PokerCardList", () => {
 
   it("disables buttons", () => {
     const cardSet = createMockCardSet({
-      cards: [createMockCard({ name: "Card 1" }), createMockCard({ name: "Card 2" })],
+      cards: [
+        createMockCard({ name: "Card 1" }),
+        createMockCard({ name: "Card 2" }),
+      ],
     });
 
     render(
@@ -33,7 +39,10 @@ describe("PokerCardList", () => {
 
   it("enables buttons", () => {
     const cardSet = createMockCardSet({
-      cards: [createMockCard({ name: "Card 1" }), createMockCard({ name: "Card 2" })],
+      cards: [
+        createMockCard({ name: "Card 1" }),
+        createMockCard({ name: "Card 2" }),
+      ],
     });
 
     render(

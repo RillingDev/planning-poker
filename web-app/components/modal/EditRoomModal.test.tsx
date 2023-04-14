@@ -7,6 +7,7 @@ import { RoomEditOptions } from "../../model";
 import {
   createMockCardSet,
   createMockContextState,
+  createMockExtension,
   createMockRoom,
 } from "../../test/dataFactory";
 import { EditRoomModal } from "./EditRoomModal";
@@ -35,13 +36,18 @@ describe("EditRoomModal", () => {
   });
 
   it("prefills current", () => {
-    const extensionManager = new ExtensionManager(["aha"]);
+    const extension = createMockExtension({
+      key: "mockExtension",
+      label: "Mock Extension",
+    });
+    const extensionManager = new ExtensionManager([extension]);
+
     const cardSet = createMockCardSet({ name: "Set 1" });
     const room = createMockRoom({
       name: "Room",
       cardSetName: cardSet.name,
       topic: "Foo!",
-      extensions: ["aha"],
+      extensions: ["mockExtension"],
     });
 
     render(
@@ -62,7 +68,7 @@ describe("EditRoomModal", () => {
 
     expect(screen.getByLabelText("Card Set")).toHaveValue("Set 1");
     expect(screen.getByLabelText("Topic")).toHaveValue("Foo!");
-    expect(screen.getByLabelText("Aha!")).toBeChecked();
+    expect(screen.getByLabelText("Mock Extension")).toBeChecked();
   });
 
   it("changes card sets", async () => {
@@ -84,7 +90,7 @@ describe("EditRoomModal", () => {
       </AppContext.Provider>
     );
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
-    await userEvent.click(screen.getByText("Update"));
+    await userEvent.click(screen.getByText("Edit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: "Set 2",
@@ -99,7 +105,9 @@ describe("EditRoomModal", () => {
     const onSubmit: Mocked<(changes: RoomEditOptions) => void> = vi.fn();
 
     render(
-      <AppContext.Provider value={createMockContextState({ cardSets: [cardSet1] })}>
+      <AppContext.Provider
+        value={createMockContextState({ cardSets: [cardSet1] })}
+      >
         <EditRoomModal
           show={true}
           room={room}
@@ -109,7 +117,7 @@ describe("EditRoomModal", () => {
       </AppContext.Provider>
     );
     await userEvent.type(screen.getByLabelText("Topic"), "Bar?");
-    await userEvent.click(screen.getByText("Update"));
+    await userEvent.click(screen.getByText("Edit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
@@ -119,7 +127,12 @@ describe("EditRoomModal", () => {
   });
 
   it("enables extensions", async () => {
-    const extensionManager = new ExtensionManager(["aha"]);
+    const mockExtension = createMockExtension({
+      key: "mockExtension",
+      label: "Mock Extension",
+    });
+    const extensionManager = new ExtensionManager([mockExtension]);
+
     const cardSet1 = createMockCardSet({ name: "Set 1" });
     const room = createMockRoom({
       name: "Room",
@@ -130,7 +143,10 @@ describe("EditRoomModal", () => {
 
     render(
       <AppContext.Provider
-        value={createMockContextState({ cardSets: [cardSet1], extensionManager })}
+        value={createMockContextState({
+          cardSets: [cardSet1],
+          extensionManager,
+        })}
       >
         <EditRoomModal
           show={true}
@@ -140,32 +156,41 @@ describe("EditRoomModal", () => {
         />
       </AppContext.Provider>
     );
-    const ahaCheckbox = screen.getByLabelText<HTMLInputElement>("Aha!");
-    expect(ahaCheckbox).not.toBeChecked();
-    await userEvent.click(ahaCheckbox);
-    expect(ahaCheckbox).toBeChecked();
-    await userEvent.click(screen.getByText("Update"));
+    const extensionCheckbox =
+      screen.getByLabelText<HTMLInputElement>("Mock Extension");
+    expect(extensionCheckbox).not.toBeChecked();
+    await userEvent.click(extensionCheckbox);
+    expect(extensionCheckbox).toBeChecked();
+    await userEvent.click(screen.getByText("Edit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
-      extensions: ["aha"],
+      extensions: ["mockExtension"],
       topic: undefined,
     });
   });
 
   it("disables extensions", async () => {
-    const extensionManager = new ExtensionManager(["aha"]);
+    const mockExtension = createMockExtension({
+      key: "mockExtension",
+      label: "Mock Extension",
+    });
+    const extensionManager = new ExtensionManager([mockExtension]);
+
     const cardSet1 = createMockCardSet({ name: "Set 1" });
     const room = createMockRoom({
       name: "Room",
       cardSetName: cardSet1.name,
-      extensions: ["aha"],
+      extensions: ["mockExtension"],
     });
     const onSubmit: Mocked<(changes: RoomEditOptions) => void> = vi.fn();
 
     render(
       <AppContext.Provider
-        value={createMockContextState({ cardSets: [cardSet1], extensionManager })}
+        value={createMockContextState({
+          cardSets: [cardSet1],
+          extensionManager,
+        })}
       >
         <EditRoomModal
           show={true}
@@ -175,11 +200,12 @@ describe("EditRoomModal", () => {
         />
       </AppContext.Provider>
     );
-    const ahaCheckbox = screen.getByLabelText<HTMLInputElement>("Aha!");
-    expect(ahaCheckbox).toBeChecked();
-    await userEvent.click(ahaCheckbox);
-    expect(ahaCheckbox).not.toBeChecked();
-    await userEvent.click(screen.getByText("Update"));
+    const extensionCheckbox =
+      screen.getByLabelText<HTMLInputElement>("Mock Extension");
+    expect(extensionCheckbox).toBeChecked();
+    await userEvent.click(extensionCheckbox);
+    expect(extensionCheckbox).not.toBeChecked();
+    await userEvent.click(screen.getByText("Edit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
@@ -189,7 +215,12 @@ describe("EditRoomModal", () => {
   });
 
   it("changes multiple", async () => {
-    const extensionManager = new ExtensionManager(["aha"]);
+    const mockExtension = createMockExtension({
+      key: "mockExtension",
+      label: "Mock Extension",
+    });
+    const extensionManager = new ExtensionManager([mockExtension]);
+
     const cardSet1 = createMockCardSet({ name: "Set 1" });
     const room = createMockRoom({
       name: "Room",
@@ -200,7 +231,10 @@ describe("EditRoomModal", () => {
 
     render(
       <AppContext.Provider
-        value={createMockContextState({ cardSets: [cardSet1], extensionManager })}
+        value={createMockContextState({
+          cardSets: [cardSet1],
+          extensionManager,
+        })}
       >
         <EditRoomModal
           show={true}
@@ -211,18 +245,25 @@ describe("EditRoomModal", () => {
       </AppContext.Provider>
     );
     await userEvent.type(screen.getByLabelText("Topic"), "Bar?");
-    await userEvent.click(screen.getByLabelText<HTMLInputElement>("Aha!"));
-    await userEvent.click(screen.getByText("Update"));
+    await userEvent.click(
+      screen.getByLabelText<HTMLInputElement>("Mock Extension")
+    );
+    await userEvent.click(screen.getByText("Edit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
-      extensions: ["aha"],
+      extensions: ["mockExtension"],
       topic: "Bar?",
     });
   });
 
   it("resets contents upon open", async () => {
-    const extensionManager = new ExtensionManager(["aha"]);
+    const mockExtension = createMockExtension({
+      key: "mockExtension",
+      label: "Mock Extension",
+    });
+    const extensionManager = new ExtensionManager([mockExtension]);
+
     const cardSet1 = createMockCardSet({ name: "Set 1" });
     const contextState = createMockContextState({
       cardSets: [cardSet1],
