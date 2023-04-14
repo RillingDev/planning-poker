@@ -11,9 +11,11 @@ import {
   createMemoryRouter,
   RouteObject,
   RouterProvider,
+  useParams,
 } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { AppContext } from "../AppContext";
+import { FC } from "react";
 
 vi.mock("../api");
 
@@ -62,8 +64,14 @@ describe("RoomListView", () => {
     const cardSet = createMockCardSet({ name: "Set 1" });
     const contextState = createMockContextState({ cardSets: [cardSet] });
 
-    vi.mocked(getRooms).mockResolvedValue([]);
-    vi.mocked(createRoom).mockImplementation(() => Promise.resolve());
+    let roomCreated = false;
+    vi.mocked(getRooms).mockImplementation(() =>
+      Promise.resolve(roomCreated ? [createMockRoom({ name: "My Room" })] : [])
+    );
+    vi.mocked(createRoom).mockImplementation(() => {
+      roomCreated = true;
+      return Promise.resolve();
+    });
 
     const router = createMemoryRouter(TEST_ROUTES);
     render(
@@ -73,8 +81,9 @@ describe("RoomListView", () => {
     );
     await waitForLoaderResolved();
 
-    await userEvent.click(screen.getByText("Create Room"));
+    expect(screen.queryByText("My Room")).not.toBeInTheDocument();
 
+    await userEvent.click(screen.getByText("Create Room"));
     await userEvent.type(screen.getByLabelText("Room Name"), "My Room");
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 1");
     await userEvent.click(screen.getByText("Create"));
@@ -83,6 +92,7 @@ describe("RoomListView", () => {
     expect(createRoom).toHaveBeenCalledWith("My Room", {
       cardSetName: "Set 1",
     });
+    expect(screen.getByText("My Room")).toBeInTheDocument();
   });
 
   it("opens modification modal", async () => {
@@ -108,9 +118,15 @@ describe("RoomListView", () => {
   });
 
   it("handles room modification", async () => {
-    const cardSet = createMockCardSet({ name: "Set 1" });
-    const contextState = createMockContextState({ cardSets: [cardSet] });
-    const room = createMockRoom({ name: "My Room" });
+    const cardSet1 = createMockCardSet({ name: "Set 1" });
+    const cardSet2 = createMockCardSet({ name: "Set 2" });
+    const contextState = createMockContextState({
+      cardSets: [cardSet1, cardSet2],
+    });
+    const room = createMockRoom({
+      name: "My Room",
+      cardSetName: cardSet1.name,
+    });
 
     vi.mocked(getRooms).mockResolvedValue([room]);
     vi.mocked(editRoom).mockImplementation(() => Promise.resolve());
@@ -125,12 +141,12 @@ describe("RoomListView", () => {
 
     await userEvent.click(screen.getByText("Edit Room"));
 
-    await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 1");
+    await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
     await userEvent.click(screen.getByText("Edit"));
 
     expect(screen.queryByText("Edit Room 'My Room'")).not.toBeInTheDocument();
     expect(editRoom).toHaveBeenCalledWith("My Room", {
-      cardSetName: "Set 1",
+      cardSetName: "Set 2",
     });
   });
 
@@ -166,5 +182,30 @@ describe("RoomListView", () => {
 
     expect(screen.queryByText("Delete Room 'My Room'")).not.toBeInTheDocument();
     expect(deleteRoom).toHaveBeenCalledWith("My Room");
+  });
+
+  it("joins room", async () => {
+    const room = createMockRoom({ name: "My Room 😁" });
+
+    vi.mocked(getRooms).mockResolvedValue([room]);
+
+    const MockRoomView: FC = () => {
+      const { roomName } = useParams();
+
+      return <span>Welcome to: {roomName}</span>;
+    };
+    const router = createMemoryRouter([
+      ...TEST_ROUTES,
+      {
+        path: "/rooms/:roomName",
+        element: <MockRoomView />,
+      },
+    ]);
+    render(<RouterProvider router={router} />);
+    await waitForLoaderResolved();
+
+    await userEvent.click(screen.getByText("My Room 😁"));
+
+    expect(screen.getByText("Welcome to: My Room 😁")).toBeVisible();
   });
 });

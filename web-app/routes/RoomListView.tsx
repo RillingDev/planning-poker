@@ -106,7 +106,8 @@ export const RoomListView: FC = () => {
   }
 
   function handleEdit(room: Room, roomChanges: RoomEditOptions) {
-    editRoom(room.name, roomChanges).then(updateRooms).catch(handleError);
+    // No displayed data changes, so we do not need to re-fetch rooms.
+    editRoom(room.name, roomChanges).catch(handleError);
   }
 
   function handleDelete(room: Room) {
