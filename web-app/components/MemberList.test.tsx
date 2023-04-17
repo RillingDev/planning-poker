@@ -23,22 +23,23 @@ describe("MemberList", () => {
     expect(screen.getByText("Alice")).toBeInTheDocument();
   });
 
-  it("shows role", () => {
-    const roomMember1 = createMockRoomMember({
+  it("shows voter role", () => {
+    const roomMember = createMockRoomMember({
       username: "John Doe",
       role: Role.VOTER,
     });
-    const roomMember2 = createMockRoomMember({
-      username: "Alice",
+    render(<MemberList members={[roomMember]} onAction={() => ({})} />);
+
+    expect(screen.getByText("Voter")).toBeInTheDocument();
+  });
+
+  it("shows observer role", () => {
+    const roomMember = createMockRoomMember({
+      username: "John Doe",
       role: Role.OBSERVER,
     });
+    render(<MemberList members={[roomMember]} onAction={() => ({})} />);
 
-    render(
-      <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
-    );
-
-    // TODO: make more specific
-    expect(screen.getByText("Voter")).toBeInTheDocument();
     expect(screen.getByText("Observer")).toBeInTheDocument();
   });
 
