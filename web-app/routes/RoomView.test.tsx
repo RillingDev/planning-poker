@@ -216,21 +216,21 @@ describe("RoomView", () => {
       votes: createMockVoteSummary({}),
     });
 
-    let votingClosed = true;
+    let votingOpen = false;
+    vi.mocked(clearVotes).mockImplementation(() => {
+      votingOpen = true;
+      return Promise.resolve();
+    });
     vi.mocked(getRoom).mockImplementation(() =>
       Promise.resolve(
         createMockRoom({
           name: "My Room",
           cardSetName: cardSet.name,
-          votingClosed: votingClosed,
+          votingClosed: !votingOpen,
           members: [createMockRoomMember({ username: "John Doe" })],
         })
       )
     );
-    vi.mocked(clearVotes).mockImplementation(() => {
-      votingClosed = false;
-      return Promise.resolve();
-    });
 
     const router = createMemoryRouter(TEST_ROUTES, {
       initialEntries: ["/rooms/My Room"],
@@ -297,6 +297,10 @@ describe("RoomView", () => {
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
 
     let roomEdited = false;
+    vi.mocked(editRoom).mockImplementation(() => {
+      roomEdited = true;
+      return Promise.resolve();
+    });
     vi.mocked(getRoom).mockImplementation(() =>
       Promise.resolve(
         createMockRoom({
@@ -308,10 +312,6 @@ describe("RoomView", () => {
         })
       )
     );
-    vi.mocked(editRoom).mockImplementation(() => {
-      roomEdited = true;
-      return Promise.resolve();
-    });
 
     const router = createMemoryRouter(TEST_ROUTES, {
       initialEntries: ["/rooms/My Room"],

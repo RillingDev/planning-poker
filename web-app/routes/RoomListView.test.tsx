@@ -65,13 +65,13 @@ describe("RoomListView", () => {
     const contextState = createMockContextState({ cardSets: [cardSet] });
 
     let roomCreated = false;
-    vi.mocked(getRooms).mockImplementation(() =>
-      Promise.resolve(roomCreated ? [createMockRoom({ name: "My Room" })] : [])
-    );
     vi.mocked(createRoom).mockImplementation(() => {
       roomCreated = true;
       return Promise.resolve();
     });
+    vi.mocked(getRooms).mockImplementation(() =>
+      Promise.resolve(roomCreated ? [createMockRoom({ name: "My Room" })] : [])
+    );
 
     const router = createMemoryRouter(TEST_ROUTES);
     render(
@@ -171,13 +171,13 @@ describe("RoomListView", () => {
     const room = createMockRoom({ name: "My Room" });
 
     let roomDeleted = false;
-    vi.mocked(getRooms).mockImplementation(() =>
-      Promise.resolve(roomDeleted ? [] : [room])
-    );
     vi.mocked(deleteRoom).mockImplementation(() => {
       roomDeleted = true;
       return Promise.resolve();
     });
+    vi.mocked(getRooms).mockImplementation(() =>
+      Promise.resolve(roomDeleted ? [] : [room])
+    );
 
     const router = createMemoryRouter(TEST_ROUTES);
     render(<RouterProvider router={router} />);
