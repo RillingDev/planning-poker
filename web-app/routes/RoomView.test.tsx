@@ -379,7 +379,7 @@ describe("RoomView", () => {
     await waitForLoaderResolved();
 
     expect(
-      screen.getByText("Mock Extension Submit Component")
+      screen.getByText("Mock Extension Room Component")
     ).toBeInTheDocument();
   });
 
@@ -388,17 +388,28 @@ describe("RoomView", () => {
     const contextState = createMockContextState({
       cardSets: [cardSet],
     });
-    const room = createMockRoom({
-      name: "My Room",
-      cardSetName: cardSet.name,
-      votingClosed: false,
-      members: [
-        createMockRoomMember({ username: "John Doe", role: Role.OBSERVER }),
-      ],
-    });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
-    vi.mocked(getRoom).mockResolvedValue(room);
-    vi.mocked(editMember).mockImplementation(() => Promise.resolve());
+
+    let memberEdited = false;
+    vi.mocked(editMember).mockImplementation(() => {
+      memberEdited = true;
+      return Promise.resolve();
+    });
+    vi.mocked(getRoom).mockImplementation(() =>
+      Promise.resolve(
+        createMockRoom({
+          name: "My Room",
+          cardSetName: cardSet.name,
+          votingClosed: false,
+          members: [
+            createMockRoomMember({
+              username: "John Doe",
+              role: memberEdited ? Role.VOTER : Role.OBSERVER,
+            }),
+          ],
+        })
+      )
+    );
 
     const router = createMemoryRouter(TEST_ROUTES, {
       initialEntries: ["/rooms/My Room"],
