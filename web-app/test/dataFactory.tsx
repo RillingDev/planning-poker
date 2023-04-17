@@ -80,6 +80,6 @@ export function createMockContextState(
   return {
     user: values.user ?? { username: "John Doe" },
     cardSets: values.cardSets ?? [],
-    extensionManager: values.extensionManager ?? new ExtensionManager([], []),
+    extensionManager: values.extensionManager ?? new ExtensionManager([]),
   };
 }
