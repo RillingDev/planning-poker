@@ -13,13 +13,13 @@ describe("PokerCard", () => {
   });
 
   it("shows description", async () => {
-    const card: Card = {name: "Foo", value: 1, description: "Foo Bar!"};
+    const card: Card = { name: "Foo", value: 1, description: "Foo Bar!" };
 
-    render(<PokerCard card={card}/>);
+    render(<PokerCard card={card} />);
 
     expect(screen.queryByText("Foo Bar!")).not.toBeInTheDocument();
 
-    await userEvent.hover(screen.getByText("Foo"))
+    await userEvent.hover(screen.getByText("Foo"));
 
     expect(screen.queryByText("Foo Bar!")).toBeVisible();
   });

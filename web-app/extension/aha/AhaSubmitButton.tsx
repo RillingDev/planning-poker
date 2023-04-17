@@ -152,8 +152,8 @@ const AhaSubmissionModal: FC<{
               aria-hidden="true"
             >
               <span className="visually-hidden">Submitting Idea Score</span>
-            </Spinner>{" "}
-            Submit
+            </Spinner>
+            &nbsp;Submit
           </button>
         </Modal.Footer>
       </Form>
