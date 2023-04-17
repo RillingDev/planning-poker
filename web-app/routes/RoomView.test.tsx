@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import {
   clearVotes,
+  createVote,
   editMember,
   editRoom,
   getRoom,
@@ -423,10 +424,87 @@ describe("RoomView", () => {
   });
 
   it("handles clicking a card", async () => {
-    // TODO
+    const card = createMockCard({ name: "My Card" });
+    const cardSet = createMockCardSet({
+      name: "My Set",
+      cards: [card],
+    });
+    const contextState = createMockContextState({
+      cardSets: [cardSet],
+    });
+    vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
+
+    let voteCreated = false;
+    vi.mocked(createVote).mockImplementation(() => {
+      voteCreated = true;
+      return Promise.resolve();
+    });
+    vi.mocked(getRoom).mockImplementation(() =>
+      Promise.resolve(
+        createMockRoom({
+          name: "My Room",
+          cardSetName: cardSet.name,
+          votingClosed: false,
+          members: [
+            createMockRoomMember({
+              username: "John Doe",
+              role: Role.VOTER,
+              vote: voteCreated ? card : null,
+            }),
+          ],
+        })
+      )
+    );
+
+    const router = createMemoryRouter(TEST_ROUTES, {
+      initialEntries: ["/rooms/My Room"],
+    });
+    render(
+      <AppContext.Provider value={contextState}>
+        <RouterProvider router={router} />
+      </AppContext.Provider>
+    );
+    await waitForLoaderResolved();
+
+    const myCard = screen.getByText("My Card");
+    expect(myCard).toBeEnabled();
+    expect(myCard).not.toHaveClass("active");
+
+    await userEvent.click(myCard);
+
+    expect(createVote).toHaveBeenCalledWith("My Room", "My Card");
+    expect(myCard).toHaveClass("active");
   });
 
   it("disables clicking a card for observer", async () => {
-    // TODO
+    const cardSet = createMockCardSet({
+      name: "My Set",
+      cards: [createMockCard({ name: "My Card" })],
+    });
+    const contextState = createMockContextState({
+      cardSets: [cardSet],
+    });
+    const room = createMockRoom({
+      name: "My Room",
+      cardSetName: cardSet.name,
+      votingClosed: false,
+      members: [
+        createMockRoomMember({ username: "John Doe", role: Role.OBSERVER }),
+      ],
+    });
+    vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
+    vi.mocked(getRoom).mockResolvedValue(room);
+
+    const router = createMemoryRouter(TEST_ROUTES, {
+      initialEntries: ["/rooms/My Room"],
+    });
+    render(
+      <AppContext.Provider value={contextState}>
+        <RouterProvider router={router} />
+      </AppContext.Provider>
+    );
+    await waitForLoaderResolved();
+
+    expect(screen.getByText("My Card")).toBeDisabled();
   });
 });

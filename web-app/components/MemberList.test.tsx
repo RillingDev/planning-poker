@@ -64,7 +64,10 @@ describe("MemberList", () => {
     render(<MemberList members={[roomMember]} onAction={onAction} />);
 
     await userEvent.click(screen.getByLabelText("Edit Member"));
-    await userEvent.click(screen.getByText("Set to Observer"));
+
+    const setObserverButton = screen.getByText("Set to Observer");
+    expect(setObserverButton).not.toHaveClass("disabled");
+    await userEvent.click(setObserverButton);
 
     expect(onAction).toHaveBeenCalledWith(roomMember, EditAction.SET_OBSERVER);
   });
@@ -93,7 +96,10 @@ describe("MemberList", () => {
     render(<MemberList members={[roomMember]} onAction={onAction} />);
 
     await userEvent.click(screen.getByLabelText("Edit Member"));
-    await userEvent.click(screen.getByText("Set to Voter"));
+
+    const setVoterButton = screen.getByText("Set to Voter");
+    expect(setVoterButton).not.toHaveClass("disabled");
+    await userEvent.click(setVoterButton);
 
     expect(onAction).toHaveBeenCalledWith(roomMember, EditAction.SET_VOTER);
   });
@@ -129,7 +135,10 @@ describe("MemberList", () => {
     );
 
     await userEvent.click(screen.getByLabelText("Edit Member"));
-    await userEvent.click(screen.getByText("Kick"));
+
+    const kickButton = screen.getByText("Kick");
+    expect(kickButton).not.toHaveClass("disabled");
+    await userEvent.click(kickButton);
 
     expect(onAction).toHaveBeenCalledWith(otherMember, EditAction.KICK);
   });
