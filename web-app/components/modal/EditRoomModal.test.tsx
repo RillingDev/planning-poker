@@ -27,6 +27,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={() => ({})}
           onHide={() => ({})}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -62,6 +63,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={() => ({})}
           onHide={() => ({})}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -86,6 +88,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -113,6 +116,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -153,6 +157,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -197,6 +202,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -241,6 +247,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -284,6 +291,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={onHide}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -296,6 +304,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={onHide}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );
@@ -306,6 +315,7 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={onHide}
+          ariaLabelledBy="someId"
         />
       </AppContext.Provider>
     );

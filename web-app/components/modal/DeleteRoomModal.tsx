@@ -3,13 +3,14 @@ import { Modal } from "react-bootstrap";
 import { Room } from "../../model";
 
 export const DeleteRoomModal: FC<{
-  room: Room;
   show: boolean;
   onHide: () => void;
   onSubmit: () => void;
-}> = ({ room, show, onHide, onSubmit }) => {
+  ariaLabelledBy: string;
+  room: Room;
+}> = ({ room, show, onHide, onSubmit, ariaLabelledBy }) => {
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} aria-labelledby={ariaLabelledBy}>
       <Modal.Header closeButton>
         <Modal.Title>Delete Room &apos;{room.name}&apos;</Modal.Title>
       </Modal.Header>

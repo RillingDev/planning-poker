@@ -81,7 +81,7 @@ const RoomViewHeader: FC<{
   room: Room;
   onChange: (changes: RoomEditOptions) => void;
 }> = ({ room, onChange }) => {
-  const [editModalVisible, showEditModel, hideEditModal] =
+  const [editModalVisible, showEditModal, hideEditModal] =
     useBooleanState(false);
 
   function handleModalEdit(changes: RoomEditOptions) {
@@ -98,7 +98,8 @@ const RoomViewHeader: FC<{
       <button
         type="button"
         className="btn btn-warning btn-sm"
-        onClick={showEditModel}
+        onClick={showEditModal}
+        id="showEditModalButton"
       >
         <FontAwesomeIcon icon={faEdit} title="Edit Room" />
       </button>
@@ -107,6 +108,7 @@ const RoomViewHeader: FC<{
         room={room}
         show={editModalVisible}
         onHide={hideEditModal}
+        ariaLabelledBy="showEditModalButton"
       />
 
       {extensionManager.getByRoom(room).map((extension) => (
