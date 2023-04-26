@@ -30,8 +30,10 @@ const Member: FC<{
 
   const dropdownId = useId();
 
+  const currentUser = member.username == user.username;
+
   return (
-    <li className="card member">
+    <li className={`card member ${currentUser ? "border-primary-subtle border-2" : ""}`}>
       <span className="member__name">
         {member.username}&nbsp;
         <span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>
@@ -64,7 +66,7 @@ const Member: FC<{
           <Dropdown.Item
             as="button"
             onClick={() => onAction(EditAction.KICK)}
-            disabled={member.username == user.username}
+            disabled={currentUser}
           >
             Kick
           </Dropdown.Item>
