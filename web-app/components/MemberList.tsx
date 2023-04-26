@@ -40,6 +40,9 @@ const Member: FC<{
           {mapRoleToName(member.role)}
         </span>
       </span>
+      {member.vote != null && (
+        <PokerCard card={member.vote} disabled={true} size="sm" />
+      )}
       <Dropdown size="sm" as={ButtonGroup}>
         <Dropdown.Toggle
           variant="secondary"
@@ -72,9 +75,6 @@ const Member: FC<{
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      {member.vote != null && (
-        <PokerCard card={member.vote} disabled={true} size="sm" />
-      )}
     </li>
   );
 };
