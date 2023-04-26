@@ -3,6 +3,7 @@ import { Card, CardSet } from "../model";
 import { PokerCard } from "./PokerCard";
 import "./PokerCardList.css";
 
+// TODO: use listbox or radio buttons for a11y
 export const PokerCardList: FC<{
   cardSet: CardSet;
   activeCard: Card | null;
