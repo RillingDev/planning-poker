@@ -29,5 +29,5 @@ function getOffsetVisuals(offset: number): { label: string; color: Color } {
 export const DisagreementMeter: FC<{ offset: number }> = ({ offset }) => {
   const { label, color } = getOffsetVisuals(offset);
 
-  return <span className={`badge bg-${color}`}>{label}</span>;
+  return <span className={`badge rounded-pill bg-${color}`}>{label}</span>;
 };

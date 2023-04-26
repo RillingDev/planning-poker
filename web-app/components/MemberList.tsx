@@ -8,7 +8,7 @@ import { PokerCard } from "./PokerCard";
 
 function mapRoleToColor(role: Role): Color {
   if (role === Role.VOTER) {
-    return "dark";
+    return "info";
   } else {
     return "secondary";
   }
@@ -35,8 +35,8 @@ const Member: FC<{
   return (
     <li className={`card member ${currentUser ? "border-primary-subtle border-2" : ""}`}>
       <span className="member__name">
-        {member.username}&nbsp;
-        <span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>
+        <span>{member.username}</span>
+        <span className={`badge rounded-pill bg-${mapRoleToColor(member.role)} ms-1`}>
           {mapRoleToName(member.role)}
         </span>
       </span>
