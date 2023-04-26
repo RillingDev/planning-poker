@@ -144,6 +144,7 @@ const AhaSubmissionModal: FC<{
             className="btn btn-primary"
             disabled={loading || scoreSubmissionPending || error != null}
           >
+            Submit
             <Spinner
               hidden={!scoreSubmissionPending}
               as="span"
@@ -151,10 +152,10 @@ const AhaSubmissionModal: FC<{
               size="sm"
               role="status"
               aria-hidden="true"
+              className="ms-1"
             >
               <span className="visually-hidden">Submitting Idea Score</span>
             </Spinner>
-            &nbsp;Submit
           </button>
         </Modal.Footer>
       </Form>
