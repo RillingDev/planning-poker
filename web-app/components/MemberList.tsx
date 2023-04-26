@@ -33,7 +33,7 @@ const Member: FC<{
   const currentUser = member.username == user.username;
 
   return (
-    <li className={`card member ${currentUser ? "border-primary-subtle border-2" : ""}`}>
+    <li className={`card member ${currentUser ? "border-primary-subtle" : ""}`}>
       <span className="member__name">
         <span>{member.username}</span>
         <span className={`badge rounded-pill bg-${mapRoleToColor(member.role)} ms-1`}>
