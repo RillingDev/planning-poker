@@ -19,11 +19,12 @@ const getEffectiveTopic = (room: Room): string => room.topic ?? "";
  * @param onSubmit Invoked upon submission with delta of changes values.
  */
 export const EditRoomModal: FC<{
-  room: Room;
   show: boolean;
   onHide: () => void;
   onSubmit: (changes: RoomEditOptions) => void;
-}> = ({ room, show, onHide, onSubmit }) => {
+  ariaLabelledBy: string;
+  room: Room;
+}> = ({ room, show, onHide, onSubmit, ariaLabelledBy }) => {
   const { cardSets, extensionManager } = useContext(AppContext);
 
   // Initial state is filled in handleShow, to ensure is reset when opening the modal.
@@ -65,7 +66,12 @@ export const EditRoomModal: FC<{
   }
 
   return (
-    <Modal show={show} onHide={onHide} onShow={handleShow}>
+    <Modal
+      show={show}
+      onHide={onHide}
+      onShow={handleShow}
+      aria-labelledby={ariaLabelledBy}
+    >
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
@@ -91,12 +97,13 @@ export const EditRoomModal: FC<{
               onChange={(e) => setTopic(e.target.value)}
             />
           </Form.Group>
-          <Form.Group className="mb-3">
+          <div className="mb-3">
             <fieldset>
               <legend className="h6">Extensions</legend>
               {extensionManager.getAll().map((extension) => (
                 <Form.Check
                   inline
+                  type="checkbox"
                   key={extension.key}
                   id={`extension-${extension.key}`}
                   label={extension.label}
@@ -105,7 +112,7 @@ export const EditRoomModal: FC<{
                 />
               ))}
             </fieldset>
-          </Form.Group>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <button type="submit" className="btn btn-primary">

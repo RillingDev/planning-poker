@@ -5,10 +5,11 @@ import { Room, RoomCreationOptions } from "../../model";
 
 export const CreateRoomModal: FC<{
   show: boolean;
-  existingRooms: ReadonlyArray<Room>;
   onHide: () => void;
   onSubmit: (roomName: string, options: RoomCreationOptions) => void;
-}> = ({ show, existingRooms, onHide, onSubmit }) => {
+  ariaLabelledBy: string;
+  existingRooms: ReadonlyArray<Room>;
+}> = ({ show, existingRooms, onHide, onSubmit, ariaLabelledBy }) => {
   const { cardSets } = useContext(AppContext);
 
   const [roomName, setRoomName] = useState<string>("");
@@ -35,7 +36,12 @@ export const CreateRoomModal: FC<{
   }
 
   return (
-    <Modal show={show} onHide={onHide} onExit={handleExit}>
+    <Modal
+      show={show}
+      onHide={onHide}
+      onExit={handleExit}
+      aria-labelledby={ariaLabelledBy}
+    >
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
           <Modal.Title>Create a New Room</Modal.Title>

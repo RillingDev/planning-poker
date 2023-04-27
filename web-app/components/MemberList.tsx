@@ -8,7 +8,7 @@ import { PokerCard } from "./PokerCard";
 
 function mapRoleToColor(role: Role): Color {
   if (role === Role.VOTER) {
-    return "dark";
+    return "info";
   } else {
     return "secondary";
   }
@@ -30,14 +30,25 @@ const Member: FC<{
 
   const dropdownId = useId();
 
+  const currentUser = member.username == user.username;
+
   return (
     <li className="card member">
       <span className="member__name">
-        {member.username}&nbsp;
-        <span className={`badge bg-light text-${mapRoleToColor(member.role)}`}>
+        <span className={currentUser ? "fw-bolder" : ""}>
+          {member.username}
+        </span>
+        <span
+          className={`badge rounded-pill bg-${mapRoleToColor(
+            member.role
+          )} ms-1`}
+        >
           {mapRoleToName(member.role)}
         </span>
       </span>
+      {member.vote != null && (
+        <PokerCard card={member.vote} disabled={true} size="sm" />
+      )}
       <Dropdown size="sm" as={ButtonGroup}>
         <Dropdown.Toggle
           variant="secondary"
@@ -64,15 +75,12 @@ const Member: FC<{
           <Dropdown.Item
             as="button"
             onClick={() => onAction(EditAction.KICK)}
-            disabled={member.username == user.username}
+            disabled={currentUser}
           >
             Kick
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      {member.vote != null && (
-        <PokerCard card={member.vote} disabled={true} size="sm" />
-      )}
     </li>
   );
 };

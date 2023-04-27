@@ -15,13 +15,14 @@ import { getProductScoreFactNames } from "./utils";
 type LoadedIdea = Idea<"name" | "reference_num">;
 
 const AhaSubmissionModal: FC<{
-  roomName: string;
-  ideaId: string;
-  score: number;
   show: boolean;
   onHide: () => void;
   onSubmit: () => void;
-}> = ({ roomName, ideaId, score, show, onHide, onSubmit }) => {
+  ariaLabelledBy: string;
+  roomName: string;
+  ideaId: string;
+  score: number;
+}> = ({ roomName, ideaId, score, show, onHide, onSubmit, ariaLabelledBy }) => {
   const [error, handleError, resetError] = useErrorHandler();
 
   const [idea, setIdea] = useState<LoadedIdea | null>(null);
@@ -87,7 +88,7 @@ const AhaSubmissionModal: FC<{
 
   // No onExit needed, component is destroyed when not visible
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} aria-labelledby={ariaLabelledBy}>
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
           <Modal.Title>Save to Aha!</Modal.Title>
@@ -143,6 +144,7 @@ const AhaSubmissionModal: FC<{
             className="btn btn-primary"
             disabled={loading || scoreSubmissionPending || error != null}
           >
+            Submit
             <Spinner
               hidden={!scoreSubmissionPending}
               as="span"
@@ -150,10 +152,10 @@ const AhaSubmissionModal: FC<{
               size="sm"
               role="status"
               aria-hidden="true"
+              className="ms-1"
             >
               <span className="visually-hidden">Submitting Idea Score</span>
             </Spinner>
-            &nbsp;Submit
           </button>
         </Modal.Footer>
       </Form>
@@ -178,6 +180,7 @@ export const AhaSubmitButton: FC<{ room: Room; voteSummary: VoteSummary }> = ({
         className="btn btn-primary btn-sm"
         onClick={showModal}
         hidden={ideaId == null}
+        id="ahaShowSubmitModalButton"
       >
         Save to Aha!
       </button>
@@ -190,6 +193,7 @@ export const AhaSubmitButton: FC<{ room: Room; voteSummary: VoteSummary }> = ({
             show={modalVisible}
             onHide={hideModal}
             onSubmit={hideModal}
+            ariaLabelledBy="ahaShowSubmitModalButton"
           />
         )}
     </>
