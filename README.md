@@ -15,17 +15,8 @@ using [properties](https://docs.spring.io/spring-boot/docs/current/reference/htm
 
 ### Authentication
 
-Authentication is possible via AD (Active Directory).
-The following properties must be set:
-
-- `planning-poker.auth.active-directory.domain`: The domain name.
-- `planning-poker.auth.active-directory.url` The LDAP URL.
-
-The following properties are optional:
-
-- `planning-poker.auth.active-directory.search-filter` A custom search filter.
-  See `org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider.setSearchFilter`
-  for details.
+Authentication is possible via OAuth2. <https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html> gives a rough overview
+over the required configuration.
 
 ### Extensions
 
@@ -78,10 +69,10 @@ Start the run config `backend:dev` and `frontend:dev` and go to <https://localho
 Start the run config `package`.
 This will:
 
-1) compile the backend.
-2) compile the frontend.
-3) copy the compiled frontend into the compiled backend resources.
-4) package the whole bunch as JAR.
+1. compile the backend.
+2. compile the frontend.
+3. copy the compiled frontend into the compiled backend resources.
+4. package the whole bunch as JAR.
 
 ### Known Issues
 
