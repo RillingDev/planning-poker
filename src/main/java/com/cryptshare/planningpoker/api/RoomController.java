@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -41,7 +41,7 @@ class RoomController {
 
 	@PostMapping(value = "/api/rooms/{room-name}")
 	public void createRoom(@PathVariable("room-name") String roomName, @RequestBody RoomCreationOptionsJson roomOptions,
-			@AuthenticationPrincipal UserDetails user) {
+			@AuthenticationPrincipal OidcUser user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
@@ -50,7 +50,7 @@ class RoomController {
 
 		final Room room = new Room(roomName, cardSet);
 		roomRepository.save(room);
-		logger.info("Created room '{}' by user '{}'.", room, user.getUsername());
+		logger.info("Created room '{}' by user '{}'.", room, user.getPreferredUsername());
 	}
 
 	private record RoomCreationOptionsJson(@JsonProperty(value = "cardSetName", required = true) String cardSetName) {
@@ -58,26 +58,26 @@ class RoomController {
 
 	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+		final RoomMember roomMember = room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
 
 		// Only show own vote while voting is not complete
 		return RoomJson.convertToDetailed(room, rm -> room.getVotingState() == Room.VotingState.CLOSED || rm.equals(roomMember));
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}")
-	public void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		roomRepository.delete(room);
-		logger.info("Deleted room '{}' by user '{}'.", room, user.getUsername());
+		logger.info("Deleted room '{}' by user '{}'.", room, user.getPreferredUsername());
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void editRoom(@PathVariable("room-name") String roomName, @RequestBody RoomEditOptionsJson changes,
-			@AuthenticationPrincipal UserDetails user) {
+			@AuthenticationPrincipal OidcUser user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
 		if (changes.topic != null) {
@@ -90,7 +90,7 @@ class RoomController {
 			applyExtensions(room, changes.extensionKeys);
 		}
 		roomRepository.save(room);
-		logger.info("Edited room '{}' by user '{}'.", room, user.getUsername());
+		logger.info("Edited room '{}' by user '{}'.", room, user.getPreferredUsername());
 	}
 
 	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName, @Nullable @JsonProperty("topic") String topic,

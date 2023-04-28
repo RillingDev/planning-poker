@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,10 +46,10 @@ class AhaController {
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/extensions/aha", produces = MediaType.APPLICATION_JSON_VALUE)
-	public AhaRoomConfigJson getRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public AhaRoomConfigJson getRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+		room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
 
 		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 
@@ -57,11 +57,11 @@ class AhaController {
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}/extensions/aha", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void editRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user,
+	public void editRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user,
 			@RequestBody AhaRoomConfigJson changes) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+		room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
 
 		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 

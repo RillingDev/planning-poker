@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,37 +23,37 @@ class RoomMemberController {
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/members")
-	public void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		if (room.findMemberByUser(user.getUsername()).isPresent()) {
-			logger.debug("User '{}' is already in room '{}'.", user.getUsername(), room);
+		if (room.findMemberByUser(user.getPreferredUsername()).isPresent()) {
+			logger.debug("User '{}' is already in room '{}'.", user.getPreferredUsername(), room);
 			return;
 		}
 
-		addMember(room, user.getUsername());
+		addMember(room, user.getPreferredUsername());
 		roomRepository.save(room);
-		logger.info("User '{}' joined room '{}'.", user.getUsername(), room);
+		logger.info("User '{}' joined room '{}'.", user.getPreferredUsername(), room);
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/members")
-	public void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
+	public void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		room.findMemberByUser(user.getUsername()).ifPresentOrElse(roomMember -> {
+		room.findMemberByUser(user.getPreferredUsername()).ifPresentOrElse(roomMember -> {
 			removeMember(room, roomMember);
 			roomRepository.save(room);
-			logger.info("User '{}' left room '{}'.", user.getUsername(), room);
-		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getUsername(), room));
+			logger.info("User '{}' left room '{}'.", user.getPreferredUsername(), room);
+		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getPreferredUsername(), room));
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}/members/{member-username}")
 	@ResponseBody
 	public void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
-			@RequestParam("action") EditAction action, @AuthenticationPrincipal UserDetails user) {
+			@RequestParam("action") EditAction action, @AuthenticationPrincipal OidcUser user) {
 		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		final RoomMember actingMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+		final RoomMember actingMember = room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
 
 		final RoomMember targetMember = room.findMemberByUser(memberUsername).orElseThrow(MemberNotFoundException::new);
 
