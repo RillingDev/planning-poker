@@ -1,15 +1,12 @@
 package com.cryptshare.planningpoker;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
@@ -32,7 +29,9 @@ class SecurityApplicationConfig {
 	// https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html#mvc-enablewebmvcsecurity
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).formLogin(withDefaults()).csrf().disable()
+		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2Login(withDefaults())
+				// Makes AJAX messy, without too much of a security impact
+				.csrf().disable()
 				// Allow usage of H2 console
 				.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 		return http.build();
@@ -50,17 +49,4 @@ class SecurityApplicationConfig {
 		}
 	}
 
-	@Bean
-	@ConditionalOnProperty(value = { "planning-poker.auth.active-directory.domain", "planning-poker.auth.active-directory.url" })
-	public ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider(Environment environment) {
-		final ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(
-				environment.getRequiredProperty("planning-poker.auth.active-directory.domain"),
-				environment.getRequiredProperty("planning-poker.auth.active-directory.url"));
-
-		if (environment.containsProperty("planning-poker.auth.active-directory.search-filter")) {
-			authenticationProvider.setSearchFilter(environment.getRequiredProperty("planning-poker.auth.active-directory.search-filter"));
-		}
-
-		return authenticationProvider;
-	}
 }
