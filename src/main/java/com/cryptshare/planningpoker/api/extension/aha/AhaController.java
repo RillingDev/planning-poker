@@ -77,7 +77,7 @@ class AhaController {
 	}
 
 	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Extension unavailable.")
-	public class ExtensionUnavailableException extends RuntimeException {
+	public static class ExtensionUnavailableException extends RuntimeException {
 
 	}
 
