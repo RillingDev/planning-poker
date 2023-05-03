@@ -28,8 +28,8 @@ describe("Summary", () => {
     const card5 = createMockCard({ value: 5 });
     const cardSet = createMockCardSet({ cards: [card1, card5] });
 
-    const memberJohnDoe = createMockRoomMember({
-      username: "John Doe",
+    const memberBob = createMockRoomMember({
+      username: "Bob",
       vote: card1,
     });
     const memberAlice = createMockRoomMember({
@@ -39,12 +39,12 @@ describe("Summary", () => {
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [memberJohnDoe, memberAlice],
+      members: [memberBob, memberAlice],
     });
     const voteSummary: VoteSummary = {
       average: 2.5,
       lowestVote: card1,
-      lowestVoters: [memberJohnDoe],
+      lowestVoters: [memberBob],
       highestVote: card5,
       highestVoters: [memberAlice],
       nearestCard: card1,
@@ -64,8 +64,8 @@ describe("Summary", () => {
       relevantFractionDigits: 0,
     });
 
-    const memberJohnDoe = createMockRoomMember({
-      username: "John Doe",
+    const memberBob = createMockRoomMember({
+      username: "Bob",
       vote: card1,
     });
     const memberAlice = createMockRoomMember({
@@ -75,12 +75,12 @@ describe("Summary", () => {
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [memberJohnDoe, memberAlice],
+      members: [memberBob, memberAlice],
     });
     const voteSummary: VoteSummary = {
       average: 2.9,
       lowestVote: card1,
-      lowestVoters: [memberJohnDoe],
+      lowestVoters: [memberBob],
       highestVote: card5,
       highestVoters: [memberAlice],
       nearestCard: card1,
@@ -98,8 +98,8 @@ describe("Summary", () => {
     const card3 = createMockCard({ value: 3, name: "Three" });
     const cardSet = createMockCardSet({ cards: [card1, card3, card5] });
 
-    const memberJohnDoe = createMockRoomMember({
-      username: "John Doe",
+    const memberBob = createMockRoomMember({
+      username: "Bob",
       vote: card1,
     });
     const memberAlice = createMockRoomMember({
@@ -109,12 +109,12 @@ describe("Summary", () => {
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [memberJohnDoe, memberAlice],
+      members: [memberBob, memberAlice],
     });
     const voteSummary: VoteSummary = {
       average: 2.5,
       lowestVote: card1,
-      lowestVoters: [memberJohnDoe],
+      lowestVoters: [memberBob],
       highestVote: card5,
       highestVoters: [memberAlice],
       nearestCard: card3,
@@ -132,8 +132,8 @@ describe("Summary", () => {
     const card3 = createMockCard({ value: 3 });
     const cardSet = createMockCardSet({ cards: [card1, card3, card5] });
 
-    const memberJohnDoe = createMockRoomMember({
-      username: "John Doe",
+    const memberBob = createMockRoomMember({
+      username: "Bob",
       vote: card1,
     });
     const memberAlice = createMockRoomMember({
@@ -143,12 +143,12 @@ describe("Summary", () => {
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [memberJohnDoe, memberAlice],
+      members: [memberBob, memberAlice],
     });
     const voteSummary: VoteSummary = {
       average: 2.5,
       lowestVote: card1,
-      lowestVoters: [memberJohnDoe],
+      lowestVoters: [memberBob],
       highestVote: card5,
       highestVoters: [memberAlice],
       nearestCard: card3,
@@ -167,7 +167,7 @@ describe("Summary", () => {
     const summaryLowest = container.querySelector(
       ".summary__lowest"
     ) as HTMLElement;
-    expect(getByText(summaryLowest, "John Doe")).toBeInTheDocument();
+    expect(getByText(summaryLowest, "Bob")).toBeInTheDocument();
     expect(getByText(summaryLowest, "Low Card")).toBeInTheDocument();
   });
 
@@ -176,8 +176,8 @@ describe("Summary", () => {
     const card5 = createMockCard({ value: 5 });
     const cardSet = createMockCardSet({ cards: [card1, card5] });
 
-    const memberJohnDoe = createMockRoomMember({
-      username: "John Doe",
+    const memberBob = createMockRoomMember({
+      username: "Bob",
       vote: card1,
     });
     const memberAlice = createMockRoomMember({
@@ -187,12 +187,12 @@ describe("Summary", () => {
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [memberJohnDoe, memberAlice],
+      members: [memberBob, memberAlice],
     });
     const voteSummary: VoteSummary = {
       average: 2.5,
       lowestVote: card1,
-      lowestVoters: [memberJohnDoe],
+      lowestVoters: [memberBob],
       highestVote: card5,
       highestVoters: [memberAlice],
       nearestCard: card1,
@@ -218,8 +218,8 @@ describe("Summary", () => {
     const card5 = createMockCard({ value: 5 });
     const cardSet = createMockCardSet({ cards: [card1, card5] });
 
-    const memberJohnDoe = createMockRoomMember({
-      username: "John Doe",
+    const memberBob = createMockRoomMember({
+      username: "Bob",
       vote: card1,
     });
     const memberAlice = createMockRoomMember({
@@ -229,13 +229,13 @@ describe("Summary", () => {
     const room = createMockRoom({
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [memberJohnDoe, memberAlice],
+      members: [memberBob, memberAlice],
       extensions: ["mockExtension"],
     });
     const voteSummary: VoteSummary = {
       average: 2.5,
       lowestVote: card1,
-      lowestVoters: [memberJohnDoe],
+      lowestVoters: [memberBob],
       highestVote: card5,
       highestVoters: [memberAlice],
       nearestCard: card1,

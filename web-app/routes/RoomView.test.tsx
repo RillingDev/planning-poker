@@ -54,7 +54,7 @@ describe("RoomView", () => {
       topic: "My Topic",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({ username: "John Doe" })],
+      members: [createMockRoomMember({ username: "Bob" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -73,7 +73,7 @@ describe("RoomView", () => {
     expect(getRoom).toHaveBeenCalledWith("My Room");
     expect(screen.getByText("My Room")).toBeInTheDocument();
     expect(screen.getByText("My Topic")).toBeInTheDocument();
-    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("Bob")).toBeInTheDocument();
   });
 
   it("shows placeholder for empty topic", async () => {
@@ -84,7 +84,7 @@ describe("RoomView", () => {
       topic: null,
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({ username: "John Doe" })],
+      members: [createMockRoomMember({ username: "Bob" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -112,7 +112,7 @@ describe("RoomView", () => {
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({ username: "John Doe" })],
+      members: [createMockRoomMember({ username: "Bob" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -142,7 +142,7 @@ describe("RoomView", () => {
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: true,
-      members: [createMockRoomMember({ username: "John Doe" })],
+      members: [createMockRoomMember({ username: "Bob" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -174,7 +174,7 @@ describe("RoomView", () => {
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({ username: "John Doe" })],
+      members: [createMockRoomMember({ username: "Bob" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(leaveRoom).mockImplementation(() => Promise.resolve());
@@ -227,7 +227,7 @@ describe("RoomView", () => {
           name: "My Room",
           cardSetName: cardSet.name,
           votingClosed: !votingOpen,
-          members: [createMockRoomMember({ username: "John Doe" })],
+          members: [createMockRoomMember({ username: "Bob" })],
         })
       )
     );
@@ -260,7 +260,7 @@ describe("RoomView", () => {
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [createMockRoomMember({ username: "John Doe" })],
+      members: [createMockRoomMember({ username: "Bob" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -308,7 +308,7 @@ describe("RoomView", () => {
           topic: roomEdited ? "Custom Topic" : null,
           cardSetName: (roomEdited ? cardSet2 : cardSet1).name,
           votingClosed: false,
-          members: [createMockRoomMember({ username: "John Doe" })],
+          members: [createMockRoomMember({ username: "Bob" })],
         })
       )
     );
@@ -363,7 +363,7 @@ describe("RoomView", () => {
       cardSetName: cardSet.name,
       votingClosed: false,
       extensions: ["mockExtension"],
-      members: [createMockRoomMember({ username: "John Doe" })],
+      members: [createMockRoomMember({ username: "Bob" })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -403,7 +403,7 @@ describe("RoomView", () => {
           votingClosed: false,
           members: [
             createMockRoomMember({
-              username: "John Doe",
+              username: "Bob",
               role: memberEdited ? Role.VOTER : Role.OBSERVER,
             }),
           ],
@@ -428,7 +428,7 @@ describe("RoomView", () => {
 
     expect(editMember).toHaveBeenCalledWith(
       "My Room",
-      "John Doe",
+      "Bob",
       EditAction.SET_VOTER
     );
     expect(screen.getByText("Voter")).toBeInTheDocument();
@@ -458,7 +458,7 @@ describe("RoomView", () => {
           votingClosed: false,
           members: [
             createMockRoomMember({
-              username: "John Doe",
+              username: "Bob",
               role: Role.VOTER,
               vote: voteCreated ? card : null,
             }),
@@ -500,7 +500,7 @@ describe("RoomView", () => {
       cardSetName: cardSet.name,
       votingClosed: false,
       members: [
-        createMockRoomMember({ username: "John Doe", role: Role.OBSERVER }),
+        createMockRoomMember({ username: "Bob", role: Role.OBSERVER }),
       ],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());

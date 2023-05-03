@@ -7,12 +7,12 @@ describe("Header", () => {
   it("title is visible", () => {
     render(
       <AppContext.Provider
-        value={createMockContextState({ user: { username: "John Doe" } })}
+        value={createMockContextState({ user: { username: "Bob" } })}
       >
         <Header />
       </AppContext.Provider>
     );
 
-    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("Bob")).toBeInTheDocument();
   });
 });

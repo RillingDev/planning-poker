@@ -22,7 +22,7 @@ export function createMockCardSet(values: Partial<CardSet>): CardSet {
 
 export function createMockRoomMember(values: Partial<RoomMember>): RoomMember {
   return {
-    username: values.username ?? "John Doe",
+    username: values.username ?? "Bob",
     vote: values.vote ?? null,
     role: values.role ?? Role.VOTER,
   };
@@ -78,7 +78,7 @@ export function createMockContextState(
   values: Partial<AppContextState>
 ): AppContextState {
   return {
-    user: values.user ?? { username: "John Doe" },
+    user: values.user ?? { username: "Bob" },
     cardSets: values.cardSets ?? [],
     extensionManager: values.extensionManager ?? new ExtensionManager([]),
   };
