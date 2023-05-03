@@ -55,7 +55,7 @@ class RoomRepositoryIT {
 		room.setTopic("topic!");
 		room.setVotingState(Room.VotingState.CLOSED);
 
-		final RoomMember member = new RoomMember("John Doe");
+		final RoomMember member = new RoomMember("Bob");
 		room.getMembers().add(member);
 		member.setVote(card);
 
@@ -88,7 +88,7 @@ class RoomRepositoryIT {
 
 		final Room room = new Room("My Room", cardSet);
 
-		final RoomMember member = new RoomMember("John Doe");
+		final RoomMember member = new RoomMember("Bob");
 		room.getMembers().add(member);
 		member.setVote(card);
 
@@ -112,7 +112,7 @@ class RoomRepositoryIT {
 
 		final Room room = new Room("My Room", cardSet);
 
-		final RoomMember member = new RoomMember("John Doe");
+		final RoomMember member = new RoomMember("Bob");
 		room.getMembers().add(member);
 		member.setVote(card);
 
@@ -201,7 +201,7 @@ class RoomRepositoryIT {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				em.createNativeQuery("INSERT INTO app_user (username) VALUES ('John Doe')").executeUpdate();
+				em.createNativeQuery("INSERT INTO app_user (username) VALUES ('Bob')").executeUpdate();
 			}
 		});
 	}
