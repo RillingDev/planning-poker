@@ -8,6 +8,8 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
@@ -22,23 +24,29 @@ import static org.springframework.security.config.Customizer.withDefaults;
 class SecurityApplicationConfig {
 
 	private final DataSource dataSource;
-	private final KeycloakLogoutHandler keycloakLogoutHandler;
 
-	SecurityApplicationConfig(DataSource dataSource, KeycloakLogoutHandler keycloakLogoutHandler) {
+	SecurityApplicationConfig(DataSource dataSource) {
 		this.dataSource = dataSource;
-		this.keycloakLogoutHandler = keycloakLogoutHandler;
 	}
+
 
 	// https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html#mvc-enablewebmvcsecurity
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http, OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) throws Exception {
 		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2Login(withDefaults())
-				.logout(l -> l.addLogoutHandler(keycloakLogoutHandler))
+				.logout(l -> l.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler))
 				// Makes AJAX messy, without too much of a security impact
 				.csrf(AbstractHttpConfigurer::disable)
 				// Allow usage of H2 console
 				.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 		return http.build();
+	}
+
+	@Bean
+	OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+		final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+		oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+		return oidcClientInitiatedLogoutSuccessHandler;
 	}
 
 	// Ensure user table entry is present

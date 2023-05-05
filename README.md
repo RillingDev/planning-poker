@@ -15,7 +15,7 @@ using [properties](https://docs.spring.io/spring-boot/docs/current/reference/htm
 
 ### Authentication
 
-Authentication is possible via OAuth2. <https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html> gives a rough overview
+Authentication is possible via [OIDC](https://en.wikipedia.org/wiki/OpenID#OpenID_Connect_(OIDC)). <https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html> gives a rough overview
 over the required configuration.
 
 ### Extensions
