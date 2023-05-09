@@ -49,7 +49,7 @@ public class SummaryService {
 				min = card;
 			}
 		}
-		double averageValue = total / membersWithCardValues.size();
+		final double averageValue = total / membersWithCardValues.size();
 
 		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size() / 2);
 		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size() / 2);
@@ -63,12 +63,14 @@ public class SummaryService {
 			}
 		}
 
-		Card nearestCard = room.getCardSet().isShowNearestCard() ? findNearestCard(room.getCardSet(), averageValue) : null;
+		final CardSet cardSet = room.getCardSet();
+		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet, averageValue) : null;
+		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNFractionDigits(averageValue, cardSet.getRelevantFractionDigits()) : null;
 
-		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
-		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
+		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(cardSet, true);
+		final int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
 
-		return Optional.of(new VoteSummary(room.getCardSet().isShowAverageValue() ? averageValue : null, offset, nearestCard, max, maxVoters, min, minVoters));
+		return Optional.of(new VoteSummary(averageValueFormatted, offset, nearestCard, max, maxVoters, min, minVoters));
 	}
 
 	private static Card findNearestCard(CardSet cardSet, double averageValue) {
@@ -83,6 +85,11 @@ public class SummaryService {
 			}
 		}
 		return nearestCard;
+	}
+
+	private double roundToNFractionDigits(double value, int n) {
+		double factor = Math.pow(10, n);
+		return Math.round(value * factor) / factor;
 	}
 
 	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
