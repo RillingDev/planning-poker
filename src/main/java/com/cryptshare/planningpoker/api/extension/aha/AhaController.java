@@ -1,7 +1,6 @@
 package com.cryptshare.planningpoker.api.extension.aha;
 
-import com.cryptshare.planningpoker.api.exception.NotAMemberException;
-import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
+import com.cryptshare.planningpoker.api.AbstractRoomAwareController;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomExtensionConfig;
 import com.cryptshare.planningpoker.data.RoomRepository;
@@ -19,16 +18,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Profile("extension:aha")
-class AhaController {
+class AhaController extends AbstractRoomAwareController {
 	private static final Logger logger = LoggerFactory.getLogger(AhaController.class);
 
 	private static final String ATTR_SCORE_FACT_NAME = "scoreFactName";
 
-	private final RoomRepository roomRepository;
 	private final AhaConfigJson ahaConfigJson;
 
 	AhaController(RoomRepository roomRepository, Environment environment) {
-		this.roomRepository = roomRepository;
+		super(roomRepository);
 		ahaConfigJson = new AhaConfigJson(
 				environment.getRequiredProperty("planning-poker.extension.aha.account-domain"),
 				environment.getRequiredProperty("planning-poker.extension.aha.client-id"),
@@ -47,9 +45,8 @@ class AhaController {
 
 	@GetMapping(value = "/api/rooms/{room-name}/extensions/aha", produces = MediaType.APPLICATION_JSON_VALUE)
 	public AhaRoomConfigJson getRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
+		final Room room = requireRoom(roomName);
+		requireActingUserMember(room, user.getPreferredUsername());
 
 		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 
@@ -58,10 +55,9 @@ class AhaController {
 
 	@PatchMapping(value = "/api/rooms/{room-name}/extensions/aha", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void editRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user,
-			@RequestBody AhaRoomConfigJson changes) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
+							   @RequestBody AhaRoomConfigJson changes) {
+		final Room room = requireRoom(roomName);
+		requireActingUserMember(room, user.getPreferredUsername());
 
 		final RoomExtensionConfig extensionConfig = getAhaExtensionConfig(room);
 

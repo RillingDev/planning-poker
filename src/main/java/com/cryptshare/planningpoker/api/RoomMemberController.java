@@ -1,7 +1,5 @@
 package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.api.exception.NotAMemberException;
-import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
 import com.cryptshare.planningpoker.data.RoomRepository;
@@ -13,19 +11,16 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-class RoomMemberController {
+class RoomMemberController extends AbstractRoomAwareController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomMemberController.class);
 
-	private final RoomRepository roomRepository;
-
-	RoomMemberController(RoomRepository roomRepository) {
-		this.roomRepository = roomRepository;
+	protected RoomMemberController(RoomRepository roomRepository) {
+		super(roomRepository);
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/members")
 	public void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
+		final Room room = requireRoom(roomName);
 		if (room.findMemberByUser(user.getPreferredUsername()).isPresent()) {
 			logger.debug("User '{}' is already in room '{}'.", user.getPreferredUsername(), room);
 			return;
@@ -38,8 +33,7 @@ class RoomMemberController {
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/members")
 	public void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
+		final Room room = requireRoom(roomName);
 		room.findMemberByUser(user.getPreferredUsername()).ifPresentOrElse(roomMember -> {
 			removeMember(room, roomMember);
 			roomRepository.save(room);
@@ -51,9 +45,8 @@ class RoomMemberController {
 	@ResponseBody
 	public void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
 			@RequestParam("action") EditAction action, @AuthenticationPrincipal OidcUser user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		final RoomMember actingMember = room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
+		final Room room = requireRoom(roomName);
+		final RoomMember actingMember = requireActingUserMember(room, user.getPreferredUsername());
 
 		final RoomMember targetMember = room.findMemberByUser(memberUsername).orElseThrow(MemberNotFoundException::new);
 

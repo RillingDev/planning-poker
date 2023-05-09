@@ -1,7 +1,5 @@
 package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.api.exception.NotAMemberException;
-import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.data.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,15 +18,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-class RoomController {
+class RoomController extends AbstractRoomAwareController{
 	private static final Logger logger = LoggerFactory.getLogger(RoomController.class);
 
-	private final RoomRepository roomRepository;
 	private final CardSetRepository cardSetRepository;
 	private final ExtensionRepository extensionRepository;
 
 	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, ExtensionRepository extensionRepository) {
-		this.roomRepository = roomRepository;
+		super(roomRepository);
 		this.cardSetRepository = cardSetRepository;
 		this.extensionRepository = extensionRepository;
 	}
@@ -59,9 +56,8 @@ class RoomController {
 	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		final RoomMember roomMember = room.findMemberByUser(user.getPreferredUsername()).orElseThrow(NotAMemberException::new);
+		final Room room = requireRoom(roomName);
+		final RoomMember roomMember = requireActingUserMember(room, user.getPreferredUsername());
 
 		// Only show own vote while voting is not complete
 		return RoomJson.convertToDetailed(room, rm -> room.getVotingState() == Room.VotingState.CLOSED || rm.equals(roomMember));
@@ -69,7 +65,7 @@ class RoomController {
 
 	@DeleteMapping(value = "/api/rooms/{room-name}")
 	public void deleteRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+		final Room room = requireRoom(roomName);
 
 		roomRepository.delete(room);
 		logger.info("Deleted room '{}' by user '{}'.", room, user.getPreferredUsername());
@@ -78,7 +74,7 @@ class RoomController {
 	@PatchMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void editRoom(@PathVariable("room-name") String roomName, @RequestBody RoomEditOptionsJson changes,
 			@AuthenticationPrincipal OidcUser user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
+		final Room room = requireRoom(roomName);
 
 		if (changes.topic != null) {
 			room.setTopic(changes.topic);
