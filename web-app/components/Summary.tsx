@@ -1,6 +1,6 @@
 import { FC, useContext } from "react";
 import { AppContext } from "../AppContext";
-import { Card, CardSet, Room, RoomMember, VoteSummary } from "../model";
+import { Card, Room, RoomMember, VoteSummary } from "../model";
 import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./Summary.css";
@@ -32,18 +32,10 @@ const ExtremeSummaryDetails: FC<{
   );
 };
 
-function createFormatter(cardSet: CardSet) {
-  return new Intl.NumberFormat("en-US", {
-    style: "decimal",
-    maximumFractionDigits: cardSet.relevantFractionDigits,
-  });
-}
-
 export const Summary: FC<{
   room: Room;
   voteSummary: VoteSummary | null;
-  cardSet: CardSet;
-}> = ({ room, voteSummary, cardSet }) => {
+}> = ({ room, voteSummary }) => {
   const { extensionManager } = useContext(AppContext);
 
   if (voteSummary == null) {
@@ -53,31 +45,34 @@ export const Summary: FC<{
       </div>
     );
   }
-  const formatter = createFormatter(cardSet);
 
   const showExtremesDetails =
     voteSummary.highestVote.name !== voteSummary.lowestVote.name;
 
   return (
     <div className="summary">
-      <div className="summary__average">
-        <span>
-          Average: <strong>{formatter.format(voteSummary.average)}</strong>
-        </span>
-        <div className="summary__average__extensions">
-          {extensionManager.getByRoom(room).map((extension) => (
-            <extension.SubmitComponent
-              key={extension.key}
-              room={room}
-              voteSummary={voteSummary}
-            />
-          ))}
+      {voteSummary.average != null && (
+        <div className="summary__average">
+          <span>
+            Average: <strong>{voteSummary.average}</strong>
+          </span>
+          <div className="summary__average__extensions">
+            {extensionManager.getByRoom(room).map((extension) => (
+              <extension.SubmitComponent
+                key={extension.key}
+                room={room}
+                voteSummary={voteSummary}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="summary__nearest">
-        <span>Nearest Card:</span>
-        <PokerCard card={voteSummary.nearestCard} disabled={true} />
-      </div>
+      )}
+      {voteSummary.nearestCard != null && (
+        <div className="summary__nearest">
+          <span>Nearest Card:</span>
+          <PokerCard card={voteSummary.nearestCard} disabled={true} />
+        </div>
+      )}
       <ExtremeSummaryDetails
         className="summary__highest"
         label="Highest Vote"
