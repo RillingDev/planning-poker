@@ -63,21 +63,26 @@ public class SummaryService {
 			}
 		}
 
+		Card nearestCard = room.getCardSet().isShowNearestCard() ? findNearestCard(room.getCardSet(), averageValue) : null;
+
+		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
+		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
+
+		return Optional.of(new VoteSummary(room.getCardSet().isShowAverageValue() ? averageValue : null, offset, nearestCard, max, maxVoters, min, minVoters));
+	}
+
+	private static Card findNearestCard(CardSet cardSet, double averageValue) {
 		Card nearestCard = null;
 		double nearestCardDiff = Double.MAX_VALUE;
 		// Due to the ordering, cards with the same difference will be 'rounded' up
-		for (Card card : getOrderedCardsWithValues(room.getCardSet(), false)) {
+		for (Card card : getOrderedCardsWithValues(cardSet, false)) {
 			double diff = Math.abs(card.getValue() - averageValue);
 			if (diff < nearestCardDiff) {
 				nearestCardDiff = diff;
 				nearestCard = card;
 			}
 		}
-
-		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
-		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
-
-		return Optional.of(new VoteSummary(room.getCardSet().isShowAverageValue() ? averageValue : null, offset, room.getCardSet().isShowNearestCard() ? nearestCard : null, max, maxVoters, min, minVoters));
+		return nearestCard;
 	}
 
 	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
