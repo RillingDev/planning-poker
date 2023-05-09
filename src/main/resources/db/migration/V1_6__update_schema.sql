@@ -11,6 +11,11 @@ ALTER TABLE card_set
     ADD COLUMN show_nearest_card BOOLEAN NOT NULL USING TRUE;
 
 
+UPDATE card_set cs
+SET cs.show_average_value = false
+WHERE cs.ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
+
+
 // Resume constraints
 ALTER TABLE vote
     ADD CONSTRAINT ck_vote_card_set CHECK (
