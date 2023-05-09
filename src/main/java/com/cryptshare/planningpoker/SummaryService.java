@@ -4,6 +4,7 @@ import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -76,7 +77,7 @@ public class SummaryService {
 		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
 		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
 
-		return Optional.of(new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters));
+		return Optional.of(new VoteSummary(room.getCardSet().isShowAverageValue() ? averageValue : null, offset, room.getCardSet().isShowNearestCard() ? nearestCard : null, max, maxVoters, min, minVoters));
 	}
 
 	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
@@ -88,7 +89,8 @@ public class SummaryService {
 		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
 	}
 
-	public record VoteSummary(double average, int offset, Card nearestCard, Card highestVote, Set<RoomMember> highestVoters, Card lowestVote,
+	public record VoteSummary(@Nullable Double average, int offset, @Nullable Card nearestCard, Card highestVote,
+							  Set<RoomMember> highestVoters, Card lowestVote,
 							  Set<RoomMember> lowestVoters) {
 	}
 }
