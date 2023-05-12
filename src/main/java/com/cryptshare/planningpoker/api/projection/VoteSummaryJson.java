@@ -9,16 +9,16 @@ import java.util.List;
 
 public record VoteSummaryJson(@JsonProperty("average") @Nullable Double average, @JsonProperty("offset") double offset,
 							  @JsonProperty("nearestCard") @Nullable CardJson nearestCard,
-							  @JsonProperty("highest") VoteExtremeJson highest,
-							  @JsonProperty("lowest") VoteExtremeJson lowest) {
+							  @JsonProperty("highest") @Nullable VoteExtremeJson highest,
+							  @JsonProperty("lowest") @Nullable VoteExtremeJson lowest) {
 
 	public static VoteSummaryJson convert(SummaryService.VoteSummary voteSummary) {
 		return new VoteSummaryJson(
 				voteSummary.average(),
 				voteSummary.offset(),
 				voteSummary.nearestCard() != null ? CardJson.convert(voteSummary.nearestCard()) : null,
-				VoteExtremeJson.convert(voteSummary.highest()),
-				VoteExtremeJson.convert(voteSummary.lowest()));
+				voteSummary.highest() != null ? VoteExtremeJson.convert(voteSummary.highest()) : null,
+				voteSummary.lowest() != null ? VoteExtremeJson.convert(voteSummary.lowest()) : null);
 	}
 
 	record VoteExtremeJson(@JsonProperty("card") CardJson card,

@@ -152,7 +152,6 @@ class SummaryServiceTest {
 		assertThat(voteSummary.nearestCard()).isNull();
 	}
 
-
 	@Test
 	@DisplayName("calculates nearest card rounding up")
 	void calculatesNearestRoundingUp() {
@@ -200,8 +199,8 @@ class SummaryServiceTest {
 	}
 
 	@Test
-	@DisplayName("calculates min/max votes")
-	void calculatesMinMax() {
+	@DisplayName("calculates highest/lowest votes")
+	void calculatesExtremes() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
@@ -227,6 +226,35 @@ class SummaryServiceTest {
 		assertThat(voteSummary.highest().members()).containsExactlyInAnyOrder(carol, eve);
 		assertThat(voteSummary.lowest().card()).isEqualTo(card1);
 		assertThat(voteSummary.lowest().members()).containsExactly(bob);
+	}
+
+
+	@Test
+	@DisplayName("does not calculate highest/lowest votes if all votes are the same")
+	void skipsExtremes() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card1 = new Card("1", 1.0);
+		final Card card2 = new Card("2", 2.0);
+		final Card card3 = new Card("3", 3.0);
+		cardSet.getCards().addAll(Set.of(card1, card2, card3));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember carol = new RoomMember("Carol");
+		final RoomMember eve = new RoomMember("Eve");
+		myRoom.getMembers().addAll(Set.of(bob, alice, carol, eve));
+
+		bob.setVote(card1);
+		alice.setVote(card1);
+		carol.setVote(card1);
+		eve.setVote(card1);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		assertThat(voteSummary.highest()).isNull();
+		assertThat(voteSummary.lowest()).isNull();
 	}
 
 	@Test

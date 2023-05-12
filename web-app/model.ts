@@ -43,8 +43,8 @@ export interface VoteSummary {
   readonly average: number | null;
   readonly offset: number;
   readonly nearestCard: Card | null;
-  readonly highest: VoteExtreme;
-  readonly lowest: VoteExtreme;
+  readonly highest: VoteExtreme | null;
+  readonly lowest: VoteExtreme | null;
 }
 
 export interface VoteExtreme {

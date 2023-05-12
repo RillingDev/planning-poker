@@ -276,10 +276,8 @@ class RoomVotingControllerIT {
 		room.setVotingState(Room.VotingState.CLOSED);
 
 		given(summaryService.summarize(room)).willReturn(Optional.of(new VoteSummary(1.0,
-				2,
-				card,
-				new SummaryService.VoteExtreme(card, Set.of(roomMember1)),
-				new SummaryService.VoteExtreme(card, Set.of(roomMember2)))));
+				card, new SummaryService.VoteExtreme(card, Set.of(roomMember1)), new SummaryService.VoteExtreme(card, Set.of(roomMember2)), 2
+		)));
 
 		mockMvc.perform(get("/api/rooms/my-room/votes/summary").with(bobOidcLogin()))
 				.andExpect(status().isOk())

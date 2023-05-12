@@ -5,25 +5,24 @@ import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./Summary.css";
 
-const ExtremeSummaryDetails: FC<{
+const VoteExtremeSummary: FC<{
   className: string;
   label: string;
-  voteExtreme: VoteExtreme;
-  showDetails: boolean;
-}> = ({ className, label, voteExtreme, showDetails }) => {
+  voteExtreme: VoteExtreme | null;
+}> = ({ className, label, voteExtreme }) => {
   return (
     <div className={`summary__extreme ${className}`}>
       <div className="summary__extreme__header">
         <span>{label}:</span>
-        {showDetails ? (
+        {voteExtreme != null ? (
           <PokerCard card={voteExtreme.card} disabled={true} size="sm" />
         ) : (
           <span>-/-</span>
         )}
       </div>
       <ul>
-        {showDetails &&
-            voteExtreme.members.map((member) => (
+        {voteExtreme != null &&
+          voteExtreme.members.map((member) => (
             <li key={member.username}>{member.username}</li>
           ))}
       </ul>
@@ -44,9 +43,6 @@ export const Summary: FC<{
       </div>
     );
   }
-
-  const showExtremesDetails =
-    voteSummary.highest.card.name !== voteSummary.lowest.card.name;
 
   return (
     <div className="summary">
@@ -72,16 +68,14 @@ export const Summary: FC<{
           <PokerCard card={voteSummary.nearestCard} disabled={true} />
         </div>
       )}
-      <ExtremeSummaryDetails
+      <VoteExtremeSummary
         className="summary__highest"
         label="Highest Vote"
-        showDetails={showExtremesDetails}
         voteExtreme={voteSummary.highest}
       />
-      <ExtremeSummaryDetails
+      <VoteExtremeSummary
         className="summary__lowest"
         label="Lowest Vote"
-        showDetails={showExtremesDetails}
         voteExtreme={voteSummary.lowest}
       />
       <div className="summary__offset">
