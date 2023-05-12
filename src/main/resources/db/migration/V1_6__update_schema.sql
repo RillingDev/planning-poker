@@ -6,6 +6,9 @@ ALTER TABLE card_set
 
 
 ALTER TABLE card_set
+    ALTER COLUMN relevant_fraction_digits RENAME TO relevant_decimal_places;
+
+ALTER TABLE card_set
     ADD COLUMN show_average_value BOOLEAN NOT NULL USING TRUE;
 ALTER TABLE card_set
     ADD COLUMN show_nearest_card BOOLEAN NOT NULL USING TRUE;
@@ -31,4 +34,4 @@ ALTER TABLE vote
                 )
         );
 ALTER TABLE card_set
-    ADD CONSTRAINT ck_relevant_fraction_digits CHECK (CARD_SET.relevant_fraction_digits >= 0);
+    ADD CONSTRAINT ck_relevant_decimal_places CHECK (CARD_SET.relevant_decimal_places >= 0);

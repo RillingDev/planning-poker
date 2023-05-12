@@ -67,7 +67,7 @@ public class SummaryService {
 
 		final CardSet cardSet = room.getCardSet();
 		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet, averageValue) : null;
-		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNFractionDigits(averageValue, cardSet.getRelevantFractionDigits()) : null;
+		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNDecimalPlaces(averageValue, cardSet.getRelevantDecimalPlaces()) : null;
 
 		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(cardSet, true);
 		final int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
@@ -89,7 +89,7 @@ public class SummaryService {
 		return nearestCard;
 	}
 
-	private double roundToNFractionDigits(double value, int n) {
+	private double roundToNDecimalPlaces(double value, int n) {
 		return BigDecimal.valueOf(value).setScale(n, RoundingMode.HALF_UP).doubleValue();
 	}
 

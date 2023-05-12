@@ -26,7 +26,7 @@ class SummaryServiceTest {
 	@DisplayName("calculates average value")
 	void calculatesAverage() {
 		final CardSet cardSet = new CardSet("Set");
-		cardSet.setRelevantFractionDigits(10);
+		cardSet.setRelevantDecimalPlaces(10);
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
 		cardSet.getCards().addAll(Set.of(card1, card3));
@@ -53,7 +53,7 @@ class SummaryServiceTest {
 	@DisplayName("rounds average value")
 	void roundsAverage() {
 		final CardSet cardSet = new CardSet("Set");
-		cardSet.setRelevantFractionDigits(1);
+		cardSet.setRelevantDecimalPlaces(1);
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
 		cardSet.getCards().addAll(Set.of(card1, card3));

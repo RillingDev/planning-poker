@@ -22,8 +22,8 @@ public class CardSet extends BaseEntity {
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private Set<Card> cards = new HashSet<>(16);
 
-	@Column(name = "relevant_fraction_digits", nullable = false)
-	private int relevantFractionDigits;
+	@Column(name = "relevant_decimal_places", nullable = false)
+	private int relevantDecimalPlaces;
 
 	@Column(name = "show_average_value", nullable = false)
 	private boolean showAverageValue;
@@ -36,7 +36,7 @@ public class CardSet extends BaseEntity {
 
 	public CardSet(String name) {
 		this.name = name;
-		this.relevantFractionDigits = 1;
+		this.relevantDecimalPlaces = 1;
 		this.showAverageValue = true;
 		this.showNearestCard = true;
 	}
@@ -45,7 +45,7 @@ public class CardSet extends BaseEntity {
 	public String toString() {
 		return new StringJoiner(", ", CardSet.class.getSimpleName() + "[", "]").add("name='" + name + "'")
 				.add("cards=" + cards.size())
-				.add("relevantFractionDigits=" + relevantFractionDigits)
+				.add("relevantDecimalPlaces=" + relevantDecimalPlaces)
 				.add("showAverageValue=" + showAverageValue)
 				.add("showNearestCard=" + showNearestCard)
 				.toString();
@@ -67,12 +67,12 @@ public class CardSet extends BaseEntity {
 		this.cards = cards;
 	}
 
-	public int getRelevantFractionDigits() {
-		return relevantFractionDigits;
+	public int getRelevantDecimalPlaces() {
+		return relevantDecimalPlaces;
 	}
 
-	public void setRelevantFractionDigits(int relevantFractionDigits) {
-		this.relevantFractionDigits = relevantFractionDigits;
+	public void setRelevantDecimalPlaces(int relevantDecimalPlaces) {
+		this.relevantDecimalPlaces = relevantDecimalPlaces;
 	}
 
 	public boolean isShowAverageValue() {
