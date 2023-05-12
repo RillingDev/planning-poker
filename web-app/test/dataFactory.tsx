@@ -15,8 +15,7 @@ export function createMockCard(values: Partial<Card>): Card {
 export function createMockCardSet(values: Partial<CardSet>): CardSet {
   return {
     name: values.name ?? "Card Set",
-    cards: values.cards ?? [],
-    relevantFractionDigits: values.relevantFractionDigits ?? 1,
+    cards: values.cards ?? []
   };
 }
 

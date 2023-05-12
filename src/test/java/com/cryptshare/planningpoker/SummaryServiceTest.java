@@ -23,9 +23,10 @@ class SummaryServiceTest {
 	SummaryService summaryService;
 
 	@Test
-	@DisplayName("calculates average")
+	@DisplayName("calculates average value")
 	void calculatesAverage() {
 		final CardSet cardSet = new CardSet("Set");
+		cardSet.setRelevantFractionDigits(10);
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
 		cardSet.getCards().addAll(Set.of(card1, card3));
@@ -46,6 +47,60 @@ class SummaryServiceTest {
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		assertThat(voteSummary.average()).isCloseTo(2.333, Offset.offset(0.01));
+	}
+
+	@Test
+	@DisplayName("rounds average value")
+	void roundsAverage() {
+		final CardSet cardSet = new CardSet("Set");
+		cardSet.setRelevantFractionDigits(1);
+		final Card card1 = new Card("1", 1.0);
+		final Card card3 = new Card("3", 3.0);
+		cardSet.getCards().addAll(Set.of(card1, card3));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember carol = new RoomMember("Carol");
+		final RoomMember eve = new RoomMember("Eve");
+		eve.setRole(RoomMember.Role.OBSERVER);
+		myRoom.getMembers().addAll(Set.of(bob, alice, carol, eve));
+
+		bob.setVote(card1);
+		alice.setVote(card3);
+		carol.setVote(card3);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		assertThat(voteSummary.average()).isCloseTo(2.3, Offset.offset(0.01));
+	}
+
+	@Test
+	@DisplayName("hides average value")
+	void hidesAverage() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card1 = new Card("1", 1.0);
+		final Card card3 = new Card("3", 3.0);
+		cardSet.setShowAverageValue(false);
+		cardSet.getCards().addAll(Set.of(card1, card3));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember carol = new RoomMember("Carol");
+		final RoomMember eve = new RoomMember("Eve");
+		eve.setRole(RoomMember.Role.OBSERVER);
+		myRoom.getMembers().addAll(Set.of(bob, alice, carol, eve));
+
+		bob.setVote(card1);
+		alice.setVote(card3);
+		carol.setVote(card3);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		assertThat(voteSummary.average()).isNull();
 	}
 
 	@Test
@@ -71,6 +126,32 @@ class SummaryServiceTest {
 
 		assertThat(voteSummary.nearestCard()).isEqualTo(card3);
 	}
+
+	@Test
+	@DisplayName("hides nearest card")
+	void hidesNearest() {
+		final CardSet cardSet = new CardSet("Set");
+		cardSet.setShowNearestCard(false);
+		final Card card1 = new Card("1", 1.0);
+		final Card card3 = new Card("3", 3.0);
+		cardSet.getCards().addAll(Set.of(card1, card3));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember carol = new RoomMember("Carol");
+		myRoom.getMembers().addAll(Set.of(bob, alice, carol));
+
+		bob.setVote(card1);
+		alice.setVote(card3);
+		carol.setVote(card3);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		assertThat(voteSummary.nearestCard()).isNull();
+	}
+
 
 	@Test
 	@DisplayName("calculates nearest card rounding up")

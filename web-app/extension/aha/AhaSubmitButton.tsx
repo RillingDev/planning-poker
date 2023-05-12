@@ -171,20 +171,21 @@ export const AhaSubmitButton: FC<{ room: Room; voteSummary: VoteSummary }> = ({
 
   const ideaId =
     room.topic != null ? AhaExtension.extractIdeaId(room.topic) : null;
-  const score = Math.round(voteSummary.average);
+  const score = voteSummary.average;
 
+  const dataAvailable = ideaId != null && score != null;
   return (
     <>
       <button
         type="button"
         className="btn btn-primary btn-sm"
         onClick={showModal}
-        hidden={ideaId == null}
+        hidden={!dataAvailable}
         id="ahaShowSubmitModalButton"
       >
         Save to Aha!
       </button>
-      {ideaId &&
+      {dataAvailable &&
         modalVisible && ( // Delay mount until click to ensure modal data loading is not done prematurely
           <AhaSubmissionModal
             roomName={room.name}

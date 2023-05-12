@@ -218,7 +218,6 @@ export const RoomView: FC = () => {
               <Summary
                 voteSummary={summaryResult.votes}
                 room={room}
-                cardSet={cardSet}
               />
             ) : (
               <PokerCardList

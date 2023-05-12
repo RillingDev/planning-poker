@@ -34,14 +34,19 @@ class CardSetRepositoryIT {
 		final CardSet cardSet = new CardSet("Set #1");
 		cardSet.getCards().add(new Card("1", 1.0));
 		cardSet.getCards().add(new Card("Coffee", null));
+		cardSet.setRelevantFractionDigits(2);
+		cardSet.setShowAverageValue(true);
+		cardSet.setShowNearestCard(false);
 		cardSetRepository.save(cardSet);
 
 		final CardSet loaded = cardSetRepository.findByName("Set #1").orElseThrow();
 		assertThat(loaded.getName()).isEqualTo("Set #1");
-
 		assertThat(loaded.getCards()).hasSize(2);
 		assertThat(loaded.getCards()).extracting(Card::getName).containsExactlyInAnyOrder("1", "Coffee");
 		assertThat(loaded.getCards()).extracting(Card::getValue).containsExactlyInAnyOrder(1.0, null);
+		assertThat(loaded.getRelevantFractionDigits()).isEqualTo(2);
+		assertThat(loaded.isShowAverageValue()).isTrue();
+		assertThat(loaded.isShowNearestCard()).isFalse();
 	}
 
 	@Test

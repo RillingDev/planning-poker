@@ -18,7 +18,7 @@ describe("Summary", () => {
     const cardSet = createMockCardSet({});
     const room = createMockRoom({ cardSetName: cardSet.name });
 
-    render(<Summary room={room} voteSummary={null} cardSet={cardSet} />);
+    render(<Summary room={room} voteSummary={null} />);
 
     expect(screen.getByText("No result")).toBeInTheDocument();
   });
@@ -51,18 +51,17 @@ describe("Summary", () => {
       offset: 4,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />);
+    render(<Summary room={room} voteSummary={voteSummary}  />);
 
+    expect(screen.getByText("Average:")).toBeInTheDocument();
     expect(screen.getByText("2.5")).toBeInTheDocument();
   });
 
-  it("formats average", () => {
+
+  it("hides average if not available", () => {
     const card1 = createMockCard({ value: 1 });
     const card5 = createMockCard({ value: 5 });
-    const cardSet = createMockCardSet({
-      cards: [card1, card5],
-      relevantFractionDigits: 0,
-    });
+    const cardSet = createMockCardSet({ cards: [card1, card5] });
 
     const memberBob = createMockRoomMember({
       username: "Bob",
@@ -78,7 +77,7 @@ describe("Summary", () => {
       members: [memberBob, memberAlice],
     });
     const voteSummary: VoteSummary = {
-      average: 2.9,
+      average: null,
       lowestVote: card1,
       lowestVoters: [memberBob],
       highestVote: card5,
@@ -87,9 +86,9 @@ describe("Summary", () => {
       offset: 4,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />);
+    render(<Summary room={room} voteSummary={voteSummary}  />);
 
-    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.queryByText("Average:")).not.toBeInTheDocument();
   });
 
   it("shows nearest", () => {
@@ -121,9 +120,44 @@ describe("Summary", () => {
       offset: 4,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />);
+    render(<Summary room={room} voteSummary={voteSummary} />);
 
+    expect(screen.getByText("Nearest Card:")).toBeInTheDocument();
     expect(screen.getByText("Three")).toBeInTheDocument();
+  });
+
+  it("hides nearest if not available", () => {
+    const card1 = createMockCard({ value: 1 });
+    const card5 = createMockCard({ value: 5 });
+    const card3 = createMockCard({ value: 3, name: "Three" });
+    const cardSet = createMockCardSet({ cards: [card1, card3, card5] });
+
+    const memberBob = createMockRoomMember({
+      username: "Bob",
+      vote: card1,
+    });
+    const memberAlice = createMockRoomMember({
+      username: "Alice",
+      vote: card5,
+    });
+    const room = createMockRoom({
+      cardSetName: cardSet.name,
+      votingClosed: true,
+      members: [memberBob, memberAlice],
+    });
+    const voteSummary: VoteSummary = {
+      average: 2.5,
+      lowestVote: card1,
+      lowestVoters: [memberBob],
+      highestVote: card5,
+      highestVoters: [memberAlice],
+      nearestCard: null,
+      offset: 4,
+    };
+
+    render(<Summary room={room} voteSummary={voteSummary} />);
+
+    expect(screen.queryByText("Nearest Card:")).not.toBeInTheDocument();
   });
 
   it("shows extremes", () => {
@@ -156,7 +190,7 @@ describe("Summary", () => {
     };
 
     const { container } = render(
-      <Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />
+      <Summary room={room} voteSummary={voteSummary}/>
     );
 
     const summaryHighest = container.querySelector(
@@ -199,7 +233,7 @@ describe("Summary", () => {
       offset: 999,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />);
+    render(<Summary room={room} voteSummary={voteSummary} />);
 
     expect(screen.getByText("High")).toBeInTheDocument();
   });
@@ -248,7 +282,7 @@ describe("Summary", () => {
           extensionManager,
         })}
       >
-        <Summary room={room} voteSummary={voteSummary} cardSet={cardSet} />
+        <Summary room={room} voteSummary={voteSummary}/>
       </AppContext.Provider>
     );
 

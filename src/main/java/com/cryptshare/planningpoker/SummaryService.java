@@ -4,8 +4,11 @@ import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @Service
@@ -48,7 +51,7 @@ public class SummaryService {
 				min = card;
 			}
 		}
-		double averageValue = total / membersWithCardValues.size();
+		final double averageValue = total / membersWithCardValues.size();
 
 		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size() / 2);
 		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size() / 2);
@@ -62,21 +65,32 @@ public class SummaryService {
 			}
 		}
 
+		final CardSet cardSet = room.getCardSet();
+		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet, averageValue) : null;
+		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNFractionDigits(averageValue, cardSet.getRelevantFractionDigits()) : null;
+
+		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(cardSet, true);
+		final int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
+
+		return Optional.of(new VoteSummary(averageValueFormatted, offset, nearestCard, max, maxVoters, min, minVoters));
+	}
+
+	private static Card findNearestCard(CardSet cardSet, double averageValue) {
 		Card nearestCard = null;
 		double nearestCardDiff = Double.MAX_VALUE;
 		// Due to the ordering, cards with the same difference will be 'rounded' up
-		for (Card card : getOrderedCardsWithValues(room.getCardSet(), false)) {
+		for (Card card : getOrderedCardsWithValues(cardSet, false)) {
 			double diff = Math.abs(card.getValue() - averageValue);
 			if (diff < nearestCardDiff) {
 				nearestCardDiff = diff;
 				nearestCard = card;
 			}
 		}
+		return nearestCard;
+	}
 
-		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
-		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
-
-		return Optional.of(new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters));
+	private double roundToNFractionDigits(double value, int n) {
+		return BigDecimal.valueOf(value).setScale(n, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
@@ -88,7 +102,8 @@ public class SummaryService {
 		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
 	}
 
-	public record VoteSummary(double average, int offset, Card nearestCard, Card highestVote, Set<RoomMember> highestVoters, Card lowestVote,
+	public record VoteSummary(@Nullable Double average, int offset, @Nullable Card nearestCard, Card highestVote,
+							  Set<RoomMember> highestVoters, Card lowestVote,
 							  Set<RoomMember> lowestVoters) {
 	}
 }
