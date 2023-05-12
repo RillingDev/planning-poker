@@ -1,4 +1,5 @@
-FROM eclipse-temurin:17
+ARG BASE_IMAGE="eclipse-temurin:17"
+FROM ${BASE_IMAGE}
 
 RUN mkdir /opt/app
 WORKDIR /opt/app
