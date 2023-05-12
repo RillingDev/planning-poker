@@ -3,9 +3,9 @@ import { AppContext } from "../AppContext";
 import { Room, VoteExtreme, VoteSummary } from "../model";
 import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
-import "./Summary.css";
+import "./VoteSummaryDetails.css";
 
-const VoteExtremeSummary: FC<{
+const VoteExtremeDetails: FC<{
   className: string;
   label: string;
   voteExtreme: VoteExtreme | null;
@@ -30,7 +30,7 @@ const VoteExtremeSummary: FC<{
   );
 };
 
-export const Summary: FC<{
+export const VoteSummaryDetails: FC<{
   room: Room;
   voteSummary: VoteSummary | null;
 }> = ({ room, voteSummary }) => {
@@ -68,12 +68,12 @@ export const Summary: FC<{
           <PokerCard card={voteSummary.nearestCard} disabled={true} />
         </div>
       )}
-      <VoteExtremeSummary
+      <VoteExtremeDetails
         className="summary__highest"
         label="Highest Vote"
         voteExtreme={voteSummary.highest}
       />
-      <VoteExtremeSummary
+      <VoteExtremeDetails
         className="summary__lowest"
         label="Lowest Vote"
         voteExtreme={voteSummary.lowest}

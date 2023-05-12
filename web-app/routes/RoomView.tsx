@@ -19,7 +19,7 @@ import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { PokerCardList } from "../components/PokerCardList";
-import { Summary } from "../components/Summary";
+import { VoteSummaryDetails } from "../components/VoteSummaryDetails";
 import {
   useBooleanState,
   useDocumentTitle,
@@ -215,7 +215,7 @@ export const RoomView: FC = () => {
           </header>
           <div className="card">
             {summaryResult != null ? (
-              <Summary
+              <VoteSummaryDetails
                 voteSummary={summaryResult.votes}
                 room={room}
               />

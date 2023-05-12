@@ -8,17 +8,17 @@ import {
   createMockRoom,
   createMockRoomMember,
 } from "../test/dataFactory";
-import { Summary } from "./Summary";
+import { VoteSummaryDetails } from "./VoteSummaryDetails.tsx";
 import { AppContext } from "../AppContext";
 import { ExtensionManager } from "../extension/ExtensionManager";
 import { FC } from "react";
 
-describe("Summary", () => {
+describe("VoteSummaryDetails", () => {
   it("shows 'no results' if no summary exists", () => {
     const cardSet = createMockCardSet({});
     const room = createMockRoom({ cardSetName: cardSet.name });
 
-    render(<Summary room={room} voteSummary={null} />);
+    render(<VoteSummaryDetails room={room} voteSummary={null} />);
 
     expect(screen.getByText("No result")).toBeInTheDocument();
   });
@@ -49,7 +49,7 @@ describe("Summary", () => {
       offset: 4,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} />);
+    render(<VoteSummaryDetails room={room} voteSummary={voteSummary} />);
 
     expect(screen.getByText("Average:")).toBeInTheDocument();
     expect(screen.getByText("2.5")).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe("Summary", () => {
       offset: 4,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} />);
+    render(<VoteSummaryDetails room={room} voteSummary={voteSummary} />);
 
     expect(screen.queryByText("Average:")).not.toBeInTheDocument();
   });
@@ -113,7 +113,7 @@ describe("Summary", () => {
       offset: 4,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} />);
+    render(<VoteSummaryDetails room={room} voteSummary={voteSummary} />);
 
     expect(screen.getByText("Nearest Card:")).toBeInTheDocument();
     expect(screen.getByText("Three")).toBeInTheDocument();
@@ -146,7 +146,7 @@ describe("Summary", () => {
       offset: 4,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} />);
+    render(<VoteSummaryDetails room={room} voteSummary={voteSummary} />);
 
     expect(screen.queryByText("Nearest Card:")).not.toBeInTheDocument();
   });
@@ -179,7 +179,7 @@ describe("Summary", () => {
     };
 
     const { container } = render(
-      <Summary room={room} voteSummary={voteSummary} />
+      <VoteSummaryDetails room={room} voteSummary={voteSummary} />
     );
 
     const summaryHighest = container.querySelector(
@@ -220,7 +220,7 @@ describe("Summary", () => {
       offset: 999,
     };
 
-    render(<Summary room={room} voteSummary={voteSummary} />);
+    render(<VoteSummaryDetails room={room} voteSummary={voteSummary} />);
 
     expect(screen.getByText("High")).toBeInTheDocument();
   });
@@ -267,7 +267,7 @@ describe("Summary", () => {
           extensionManager,
         })}
       >
-        <Summary room={room} voteSummary={voteSummary} />
+        <VoteSummaryDetails room={room} voteSummary={voteSummary} />
       </AppContext.Provider>
     );
 
