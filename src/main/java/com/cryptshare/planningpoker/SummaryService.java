@@ -7,6 +7,8 @@ import com.cryptshare.planningpoker.data.RoomMember;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @Service
@@ -88,8 +90,7 @@ public class SummaryService {
 	}
 
 	private double roundToNFractionDigits(double value, int n) {
-		double factor = Math.pow(10, n);
-		return Math.round(value * factor) / factor;
+		return BigDecimal.valueOf(value).setScale(n, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {

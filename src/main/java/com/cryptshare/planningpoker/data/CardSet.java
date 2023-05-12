@@ -21,7 +21,7 @@ public class CardSet extends BaseEntity {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private Set<Card> cards = new HashSet<>(16);
-	// TODO: move summary data to own table
+
 	@Column(name = "relevant_fraction_digits", nullable = false)
 	private int relevantFractionDigits;
 
