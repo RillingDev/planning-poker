@@ -8,8 +8,11 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
@@ -54,7 +57,8 @@ class SecurityApplicationConfig {
 	public void onSuccess(AuthenticationSuccessEvent success) {
 		try (Connection connection = dataSource.getConnection();
 			 PreparedStatement preparedStatement = connection.prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
-			preparedStatement.setString(1, success.getAuthentication().getName());
+			final OidcUser user = (OidcUser) success.getAuthentication().getPrincipal();
+			preparedStatement.setString(1, user.getPreferredUsername());
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not initialize user.", e);
