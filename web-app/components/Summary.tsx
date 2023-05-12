@@ -1,6 +1,6 @@
 import { FC, useContext } from "react";
 import { AppContext } from "../AppContext";
-import { Card, Room, RoomMember, VoteSummary } from "../model";
+import { Room, VoteExtreme, VoteSummary } from "../model";
 import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./Summary.css";
@@ -8,23 +8,22 @@ import "./Summary.css";
 const ExtremeSummaryDetails: FC<{
   className: string;
   label: string;
-  vote: Card;
-  members: ReadonlyArray<RoomMember>;
+  voteExtreme: VoteExtreme;
   showDetails: boolean;
-}> = ({ className, label, vote, members, showDetails }) => {
+}> = ({ className, label, voteExtreme, showDetails }) => {
   return (
     <div className={`summary__extreme ${className}`}>
       <div className="summary__extreme__header">
         <span>{label}:</span>
         {showDetails ? (
-          <PokerCard card={vote} disabled={true} size="sm" />
+          <PokerCard card={voteExtreme.card} disabled={true} size="sm" />
         ) : (
           <span>-/-</span>
         )}
       </div>
       <ul>
         {showDetails &&
-          members.map((member) => (
+            voteExtreme.members.map((member) => (
             <li key={member.username}>{member.username}</li>
           ))}
       </ul>
@@ -47,7 +46,7 @@ export const Summary: FC<{
   }
 
   const showExtremesDetails =
-    voteSummary.highestVote.name !== voteSummary.lowestVote.name;
+    voteSummary.highest.card.name !== voteSummary.lowest.card.name;
 
   return (
     <div className="summary">
@@ -77,15 +76,13 @@ export const Summary: FC<{
         className="summary__highest"
         label="Highest Vote"
         showDetails={showExtremesDetails}
-        vote={voteSummary.highestVote}
-        members={voteSummary.highestVoters}
+        voteExtreme={voteSummary.highest}
       />
       <ExtremeSummaryDetails
         className="summary__lowest"
         label="Lowest Vote"
         showDetails={showExtremesDetails}
-        vote={voteSummary.lowestVote}
-        members={voteSummary.lowestVoters}
+        voteExtreme={voteSummary.lowest}
       />
       <div className="summary__offset">
         Disagreement: <DisagreementMeter offset={voteSummary.offset} />

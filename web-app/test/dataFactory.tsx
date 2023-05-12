@@ -15,7 +15,7 @@ export function createMockCard(values: Partial<Card>): Card {
 export function createMockCardSet(values: Partial<CardSet>): CardSet {
   return {
     name: values.name ?? "Card Set",
-    cards: values.cards ?? []
+    cards: values.cards ?? [],
   };
 }
 
@@ -47,10 +47,14 @@ export function createMockVoteSummary(
   const memberHigh = createMockRoomMember({ username: "Bar", vote: card3 });
   return {
     average: values.average ?? 2,
-    highestVote: values.highestVote ?? card3,
-    highestVoters: values.highestVoters ?? [memberHigh],
-    lowestVote: values.lowestVote ?? card1,
-    lowestVoters: values.lowestVoters ?? [memberLow],
+    highest: {
+      card: values.highest?.card ?? card3,
+      members: values.highest?.members ?? [memberHigh],
+    },
+    lowest: {
+      card: values.lowest?.card ?? card1,
+      members: values.lowest?.members ?? [memberLow],
+    },
     nearestCard: values.nearestCard ?? card3,
     offset: values.offset ?? 1,
   };

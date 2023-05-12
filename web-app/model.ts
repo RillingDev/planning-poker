@@ -43,10 +43,13 @@ export interface VoteSummary {
   readonly average: number | null;
   readonly offset: number;
   readonly nearestCard: Card | null;
-  readonly highestVote: Card;
-  readonly highestVoters: ReadonlyArray<RoomMember>;
-  readonly lowestVote: Card;
-  readonly lowestVoters: ReadonlyArray<RoomMember>;
+  readonly highest: VoteExtreme;
+  readonly lowest: VoteExtreme;
+}
+
+export interface VoteExtreme {
+  readonly card: Card;
+  readonly members: ReadonlyArray<RoomMember>;
 }
 
 export type RoomCreationOptions = Pick<Room, "cardSetName">;

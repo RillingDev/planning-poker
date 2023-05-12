@@ -223,10 +223,10 @@ class SummaryServiceTest {
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
-		assertThat(voteSummary.highestVote()).isEqualTo(card3);
-		assertThat(voteSummary.highestVoters()).containsExactlyInAnyOrder(carol, eve);
-		assertThat(voteSummary.lowestVote()).isEqualTo(card1);
-		assertThat(voteSummary.lowestVoters()).containsExactly(bob);
+		assertThat(voteSummary.highest().card()).isEqualTo(card3);
+		assertThat(voteSummary.highest().members()).containsExactlyInAnyOrder(carol, eve);
+		assertThat(voteSummary.lowest().card()).isEqualTo(card1);
+		assertThat(voteSummary.lowest().members()).containsExactly(bob);
 	}
 
 	@Test

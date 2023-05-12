@@ -53,15 +53,15 @@ public class SummaryService {
 		}
 		final double averageValue = total / membersWithCardValues.size();
 
-		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size() / 2);
-		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size() / 2);
+		final Set<RoomMember> minMembers = new HashSet<>(room.getMembers().size() / 2);
+		final Set<RoomMember> maxMembers = new HashSet<>(room.getMembers().size() / 2);
 		for (RoomMember member : membersWithCardValues) {
 			final Card card = member.getVote();
 			if (card.equals(max)) {
-				maxVoters.add(member);
+				maxMembers.add(member);
 			}
 			if (card.equals(min)) {
-				minVoters.add(member);
+				minMembers.add(member);
 			}
 		}
 
@@ -72,7 +72,7 @@ public class SummaryService {
 		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(cardSet, true);
 		final int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
 
-		return Optional.of(new VoteSummary(averageValueFormatted, offset, nearestCard, max, maxVoters, min, minVoters));
+		return Optional.of(new VoteSummary(averageValueFormatted, offset, nearestCard, new VoteExtreme(max, maxMembers), new VoteExtreme(min, minMembers)));
 	}
 
 	private static Card findNearestCard(CardSet cardSet, double averageValue) {
@@ -102,8 +102,10 @@ public class SummaryService {
 		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
 	}
 
-	public record VoteSummary(@Nullable Double average, int offset, @Nullable Card nearestCard, Card highestVote,
-							  Set<RoomMember> highestVoters, Card lowestVote,
-							  Set<RoomMember> lowestVoters) {
+	public record VoteSummary(@Nullable Double average, int offset, @Nullable Card nearestCard,
+							  VoteExtreme highest, VoteExtreme lowest) {
+	}
+
+	public record VoteExtreme(Card card, Set<RoomMember> members) {
 	}
 }
