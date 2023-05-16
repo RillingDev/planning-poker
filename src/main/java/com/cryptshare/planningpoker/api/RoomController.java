@@ -47,7 +47,7 @@ class RoomController extends AbstractRoomAwareController{
 
 		final Room room = new Room(roomName, cardSet);
 		roomRepository.save(room);
-		logger.info("Created room '{}' by user '{}'.", room, user.getPreferredUsername());
+		logger.info("Created room '{}' by user '{}'.", room, user.getName());
 	}
 
 	private record RoomCreationOptionsJson(@JsonProperty(value = "cardSetName", required = true) String cardSetName) {
@@ -57,7 +57,7 @@ class RoomController extends AbstractRoomAwareController{
 	@ResponseBody
 	public RoomJson getRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
-		final RoomMember roomMember = requireActingUserMember(room, user.getPreferredUsername());
+		final RoomMember roomMember = requireActingUserMember(room, user.getName());
 
 		// Only show own vote while voting is not complete
 		return RoomJson.convertToDetailed(room, rm -> room.getVotingState() == Room.VotingState.CLOSED || rm.equals(roomMember));
@@ -68,7 +68,7 @@ class RoomController extends AbstractRoomAwareController{
 		final Room room = requireRoom(roomName);
 
 		roomRepository.delete(room);
-		logger.info("Deleted room '{}' by user '{}'.", room, user.getPreferredUsername());
+		logger.info("Deleted room '{}' by user '{}'.", room, user.getName());
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -86,7 +86,7 @@ class RoomController extends AbstractRoomAwareController{
 			applyExtensions(room, changes.extensionKeys);
 		}
 		roomRepository.save(room);
-		logger.info("Edited room '{}' by user '{}'.", room, user.getPreferredUsername());
+		logger.info("Edited room '{}' by user '{}'.", room, user.getName());
 	}
 
 	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName, @Nullable @JsonProperty("topic") String topic,

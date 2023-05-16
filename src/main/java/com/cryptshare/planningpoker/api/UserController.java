@@ -14,7 +14,7 @@ class UserController {
 	@GetMapping(value = "/api/identity", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public UserJson loadIdentity(@AuthenticationPrincipal OidcUser user) {
-		return new UserJson(user.getPreferredUsername());
+		return new UserJson(user.getName());
 	}
 
 }

@@ -21,24 +21,24 @@ class RoomMemberController extends AbstractRoomAwareController {
 	@PostMapping(value = "/api/rooms/{room-name}/members")
 	public void joinRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
-		if (room.findMemberByUser(user.getPreferredUsername()).isPresent()) {
-			logger.debug("User '{}' is already in room '{}'.", user.getPreferredUsername(), room);
+		if (room.findMemberByUser(user.getName()).isPresent()) {
+			logger.debug("User '{}' is already in room '{}'.", user.getName(), room);
 			return;
 		}
 
-		addMember(room, user.getPreferredUsername());
+		addMember(room, user.getName());
 		roomRepository.save(room);
-		logger.info("User '{}' joined room '{}'.", user.getPreferredUsername(), room);
+		logger.info("User '{}' joined room '{}'.", user.getName(), room);
 	}
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/members")
 	public void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
-		room.findMemberByUser(user.getPreferredUsername()).ifPresentOrElse(roomMember -> {
+		room.findMemberByUser(user.getName()).ifPresentOrElse(roomMember -> {
 			removeMember(room, roomMember);
 			roomRepository.save(room);
-			logger.info("User '{}' left room '{}'.", user.getPreferredUsername(), room);
-		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getPreferredUsername(), room));
+			logger.info("User '{}' left room '{}'.", user.getName(), room);
+		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getName(), room));
 	}
 
 	@PatchMapping(value = "/api/rooms/{room-name}/members/{member-username}")
@@ -46,7 +46,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 	public void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
 			@RequestParam("action") EditAction action, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
-		final RoomMember actingMember = requireActingUserMember(room, user.getPreferredUsername());
+		final RoomMember actingMember = requireActingUserMember(room, user.getName());
 
 		final RoomMember targetMember = room.findMemberByUser(memberUsername).orElseThrow(MemberNotFoundException::new);
 

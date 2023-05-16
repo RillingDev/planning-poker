@@ -58,7 +58,7 @@ class SecurityApplicationConfig {
 		try (Connection connection = dataSource.getConnection();
 			 PreparedStatement preparedStatement = connection.prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
 			final OidcUser user = (OidcUser) success.getAuthentication().getPrincipal();
-			preparedStatement.setString(1, user.getPreferredUsername());
+			preparedStatement.setString(1, user.getName());
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			throw new IllegalStateException("Could not initialize user.", e);

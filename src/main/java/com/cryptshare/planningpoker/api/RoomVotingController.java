@@ -31,14 +31,14 @@ class RoomVotingController extends AbstractRoomAwareController {
 	public void createVote(@PathVariable("room-name") String roomName, @RequestParam("card-name") String cardName,
 						   @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
-		final RoomMember roomMember = requireActingUserMember(room, user.getPreferredUsername());
+		final RoomMember roomMember = requireActingUserMember(room, user.getName());
 		if (roomMember.getRole() == RoomMember.Role.OBSERVER) {
 			throw new ObserverException();
 		}
 
 		if (room.getVotingState() == Room.VotingState.CLOSED) {
 			// May happen on accident, so dont throw an error.
-			logger.warn("Ignoring user '{}' voting in '{}' as voting is completed.", user.getPreferredUsername(), room);
+			logger.warn("Ignoring user '{}' voting in '{}' as voting is completed.", user.getName(), room);
 			return;
 		}
 
@@ -51,25 +51,25 @@ class RoomVotingController extends AbstractRoomAwareController {
 
 		setVote(room, roomMember, card);
 		roomRepository.save(room);
-		logger.debug("User '{}' voted with '{}' in '{}'.", user.getPreferredUsername(), card, room);
+		logger.debug("User '{}' voted with '{}' in '{}'.", user.getName(), card, room);
 	}
 
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
 	public void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
-		requireActingUserMember(room, user.getPreferredUsername());
+		requireActingUserMember(room, user.getName());
 
 		clearVotes(room);
 		roomRepository.save(room);
-		logger.debug("User '{}' cleared votes in '{}'.", user.getPreferredUsername(), room);
+		logger.debug("User '{}' cleared votes in '{}'.", user.getName(), room);
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/votes/summary", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public SummaryResultJson getSummary(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
-		requireActingUserMember(room, user.getPreferredUsername());
+		requireActingUserMember(room, user.getName());
 
 		return new SummaryResultJson(summaryService.summarize(room).map(VoteSummaryJson::convert).orElse(null));
 	}

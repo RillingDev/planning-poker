@@ -9,6 +9,6 @@ public final class MockOidcLogins {
 	}
 
 	public static SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor bobOidcLogin() {
-		return oidcLogin().userInfoToken(build -> build.givenName("Bob").familyName("Doe").preferredUsername("Bob"));
+		return oidcLogin().idToken(build -> build.subject("Bob")).userInfoToken(b -> b.name("Bob T.").preferredUsername("Little Bobby Tables"));
 	}
 }
