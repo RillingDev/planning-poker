@@ -13,7 +13,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "card_set")
 public class CardSet extends BaseEntity {
-	public static final Comparator<CardSet> ALPHABETIC_COMPARATOR = Comparator.comparing(CardSet::getName, String::compareToIgnoreCase);
+	public static final Comparator<CardSet> ALPHABETIC_COMPARATOR = Comparator.comparing(CardSet::getName);
 
 	@Column(name = "set_name", nullable = false)
 	private String name;

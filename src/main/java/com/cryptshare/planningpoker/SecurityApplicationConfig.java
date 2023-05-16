@@ -56,6 +56,7 @@ class SecurityApplicationConfig {
 	@EventListener
 	public void onSuccess(AuthenticationSuccessEvent success) {
 		try (Connection connection = dataSource.getConnection();
+			 // TODO: always use a unique (subject) value here.
 			 PreparedStatement preparedStatement = connection.prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
 			final OidcUser user = (OidcUser) success.getAuthentication().getPrincipal();
 			preparedStatement.setString(1, user.getName());

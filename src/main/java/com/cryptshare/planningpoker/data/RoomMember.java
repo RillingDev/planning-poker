@@ -12,7 +12,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
-	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername, String::compareTo);
+	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername);
 
 	public enum Role {
 		VOTER,

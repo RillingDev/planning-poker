@@ -12,7 +12,7 @@ import java.util.*;
 @Entity
 @Table(name = "room")
 public class Room extends BaseEntity {
-	public static final Comparator<Room> ALPHABETIC_COMPARATOR = Comparator.comparing(Room::getName, String::compareToIgnoreCase);
+	public static final Comparator<Room> ALPHABETIC_COMPARATOR = Comparator.comparing(Room::getName);
 
 	@Column(name = "room_name", nullable = false)
 	private String name;
