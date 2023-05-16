@@ -101,7 +101,7 @@ public class Room extends BaseEntity {
 	}
 
 	public Optional<RoomMember> findMemberByUser(String username) {
-		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
+		return members.stream().filter(roomMember -> roomMember.getUsername().equals(username)).findFirst();
 	}
 
 	public Set<RoomExtensionConfig> getExtensionConfigs() {
