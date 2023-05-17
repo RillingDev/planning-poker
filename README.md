@@ -15,8 +15,11 @@ using [properties](https://docs.spring.io/spring-boot/docs/current/reference/htm
 
 ### Authentication
 
-Authentication is possible via [OIDC](https://en.wikipedia.org/wiki/OpenID#OpenID_Connect_(OIDC)). <https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html> gives a rough overview
-over the required configuration.
+Authentication is possible
+via [OIDC](<https://en.wikipedia.org/wiki/OpenID#OpenID_Connect_(OIDC)>). <https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html>
+gives a rough overview
+over the required configuration. It must be ensured that the resolved username (see `user-name-atribute` in the previous
+link) is unique across all users.
 
 ### Extensions
 
