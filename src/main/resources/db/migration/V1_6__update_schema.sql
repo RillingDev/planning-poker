@@ -54,7 +54,6 @@ ALTER TABLE room_member
 DROP TABLE app_user;
 
 // Based on schema for org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
-// Not enforced in schema right now: only a single client_registration_id may be used for all rows.
 CREATE TABLE oauth2_authorized_client
 (
     client_registration_id  VARCHAR(128)                            NOT NULL,
@@ -72,6 +71,12 @@ CREATE TABLE oauth2_authorized_client
 // Stricter than the default schema, as we require unique usernames across different providers.
 ALTER TABLE oauth2_authorized_client
     ADD CONSTRAINT uq_principal_name UNIQUE (principal_name);
+// To simplify enforcing a unique username, only one provider may be used.
+ALTER TABLE oauth2_authorized_client
+    ADD CONSTRAINT ck_single_client_registration
+        CHECK ((SELECT COUNT(*)
+                FROM oauth2_authorized_client other
+                WHERE other.client_registration_id != oauth2_authorized_client.client_registration_id) = 0);
 
 ALTER TABLE room_member
     ADD CONSTRAINT fk_room_member_user
@@ -101,4 +106,4 @@ ALTER TABLE vote
              WHERE ru.id = vote.room_member_id) != 'OBSERVER'
         );
 ALTER TABLE card_set
-    ADD CONSTRAINT ck_relevant_decimal_places CHECK (relevant_decimal_places >= 0);
+    ADD CONSTRAINT ck_relevant_decimal_places CHECK (card_set.relevant_decimal_places >= 0);
