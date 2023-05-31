@@ -2,8 +2,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
-import { LoaderFunctionArgs, useLoaderData } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import {
   clearVotes,
   createVote,
