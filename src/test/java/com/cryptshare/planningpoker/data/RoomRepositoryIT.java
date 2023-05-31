@@ -198,7 +198,11 @@ class RoomRepositoryIT {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				em.createNativeQuery("INSERT INTO app_user (username) VALUES ('Bob')").executeUpdate();
+				em.createNativeQuery("""
+						INSERT INTO oauth2_authorized_client (client_registration_id, principal_name, access_token_type, access_token_value,
+                                            access_token_issued_at, access_token_expires_at)
+      						VALUES ('someProvider', 'Bob', 'Bearer', 'someToken', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+""").executeUpdate();
 			}
 		});
 	}

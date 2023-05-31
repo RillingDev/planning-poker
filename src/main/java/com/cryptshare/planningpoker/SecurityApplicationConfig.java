@@ -2,37 +2,24 @@ package com.cryptshare.planningpoker;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 class SecurityApplicationConfig {
 
-	private final DataSource dataSource;
-
-	SecurityApplicationConfig(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-
 	// https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html#mvc-enablewebmvcsecurity
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http, OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) throws Exception {
-		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2Login(withDefaults())
+	SecurityFilterChain filterChain(HttpSecurity http, OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler, JdbcOAuth2AuthorizedClientService jdbcOAuth2AuthorizedClientService) throws Exception {
+		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2Login(withDefaults()).oauth2Client(oAuth2ClientConfigurer -> oAuth2ClientConfigurer.authorizedClientService(jdbcOAuth2AuthorizedClientService))
 				.logout(l -> l.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler))
 				// Makes AJAX messy, without too much of a security impact
 				.csrf(AbstractHttpConfigurer::disable)
@@ -48,18 +35,9 @@ class SecurityApplicationConfig {
 		return oidcClientInitiatedLogoutSuccessHandler;
 	}
 
-	// Ensure user table entry is present
-	@EventListener
-	public void onSuccess(AuthenticationSuccessEvent success) {
-		try (Connection connection = dataSource.getConnection();
-			 // TODO: always use a unique (subject) value here.
-			 PreparedStatement preparedStatement = connection.prepareStatement("MERGE INTO app_user (username) VALUES (?)")) {
-			final OidcUser user = (OidcUser) success.getAuthentication().getPrincipal();
-			preparedStatement.setString(1, user.getName());
-			preparedStatement.execute();
-		} catch (SQLException e) {
-			throw new IllegalStateException("Could not initialize user.", e);
-		}
+	@Bean
+	JdbcOAuth2AuthorizedClientService jdbcOAuth2AuthorizedClientService(JdbcOperations jdbcOperations, ClientRegistrationRepository clientRegistrationRepository) {
+		return new JdbcOAuth2AuthorizedClientService(jdbcOperations, clientRegistrationRepository);
 	}
 
 }

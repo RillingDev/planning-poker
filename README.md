@@ -21,6 +21,8 @@ gives a rough overview
 over the required configuration. It must be ensured that the resolved username (see `user-name-atribute` in the previous
 link) is unique across all users.
 
+**Important: Using multiple OIDC providers at the same time is not supported by this application.**
+
 ### Extensions
 
 Extensions may be enabled
