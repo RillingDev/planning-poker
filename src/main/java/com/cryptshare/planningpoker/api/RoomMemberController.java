@@ -44,7 +44,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 	@PatchMapping(value = "/api/rooms/{room-name}/members/{member-username}")
 	@ResponseBody
 	public void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
-			@RequestParam("action") EditAction action, @AuthenticationPrincipal OidcUser user) {
+						   @RequestParam("action") EditAction action, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
 		final RoomMember actingMember = requireActingUserMember(room, user.getName());
 

@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-class RoomController extends AbstractRoomAwareController{
+class RoomController extends AbstractRoomAwareController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomController.class);
 
 	private final CardSetRepository cardSetRepository;
@@ -38,7 +38,7 @@ class RoomController extends AbstractRoomAwareController{
 
 	@PostMapping(value = "/api/rooms/{room-name}")
 	public void createRoom(@PathVariable("room-name") String roomName, @RequestBody RoomCreationOptionsJson roomOptions,
-			@AuthenticationPrincipal OidcUser user) {
+						   @AuthenticationPrincipal OidcUser user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
@@ -73,7 +73,7 @@ class RoomController extends AbstractRoomAwareController{
 
 	@PatchMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void editRoom(@PathVariable("room-name") String roomName, @RequestBody RoomEditOptionsJson changes,
-			@AuthenticationPrincipal OidcUser user) {
+						 @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
 
 		if (changes.topic != null) {
@@ -89,7 +89,8 @@ class RoomController extends AbstractRoomAwareController{
 		logger.info("Edited room '{}' by user '{}'.", room, user.getName());
 	}
 
-	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName, @Nullable @JsonProperty("topic") String topic,
+	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName,
+									   @Nullable @JsonProperty("topic") String topic,
 									   @JsonProperty("extensions") Set<String> extensionKeys) {
 	}
 
