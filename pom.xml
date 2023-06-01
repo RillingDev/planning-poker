@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cryptshare</groupId>
-	<artifactId>planningpoker</artifactId>
+	<artifactId>planning-poker</artifactId>
 	<version>${revision}</version>
 	<name>planning-poker</name>
 	<properties>
