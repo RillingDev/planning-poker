@@ -12,20 +12,20 @@ import { AppContext } from "../AppContext";
 
 describe("MemberList", () => {
   it("shows members", () => {
-    const roomMember1 = createMockRoomMember({ username: "John Doe" });
+    const roomMember1 = createMockRoomMember({ username: "Bob" });
     const roomMember2 = createMockRoomMember({ username: "Alice" });
 
     render(
       <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
     );
 
-    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("Bob")).toBeInTheDocument();
     expect(screen.getByText("Alice")).toBeInTheDocument();
   });
 
   it("shows voter role", () => {
     const roomMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       role: Role.VOTER,
     });
     render(<MemberList members={[roomMember]} onAction={() => ({})} />);
@@ -35,7 +35,7 @@ describe("MemberList", () => {
 
   it("shows observer role", () => {
     const roomMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       role: Role.OBSERVER,
     });
     render(<MemberList members={[roomMember]} onAction={() => ({})} />);
@@ -45,7 +45,7 @@ describe("MemberList", () => {
 
   it("shows vote", () => {
     const roomMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       vote: createMockCard({ name: "Coffee" }),
     });
 
@@ -56,7 +56,7 @@ describe("MemberList", () => {
 
   it("sets to observer", async () => {
     const roomMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       role: Role.VOTER,
     });
 
@@ -75,7 +75,7 @@ describe("MemberList", () => {
 
   it("blocks setting to observer if already observer", async () => {
     const roomMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       role: Role.OBSERVER,
     });
 
@@ -88,7 +88,7 @@ describe("MemberList", () => {
 
   it("sets to voter", async () => {
     const roomMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       role: Role.OBSERVER,
     });
 
@@ -107,7 +107,7 @@ describe("MemberList", () => {
 
   it("blocks setting to voter if already voter", async () => {
     const roomMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       role: Role.VOTER,
     });
 
@@ -120,7 +120,7 @@ describe("MemberList", () => {
 
   it("kicking member", async () => {
     const otherMember = createMockRoomMember({
-      username: "John Doe",
+      username: "Bob",
       role: Role.VOTER,
     });
 

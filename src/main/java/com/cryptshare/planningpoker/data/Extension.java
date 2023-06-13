@@ -13,7 +13,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "extension")
 public class Extension extends BaseEntity {
-	public static final Comparator<Extension> ALPHABETIC_COMPARATOR = Comparator.comparing(Extension::getKey, String::compareToIgnoreCase);
+	public static final Comparator<Extension> ALPHABETIC_COMPARATOR = Comparator.comparing(Extension::getKey);
 
 	@Column(name = "extension_key", nullable = false)
 	private String key;

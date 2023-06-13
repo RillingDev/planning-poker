@@ -2,8 +2,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
-import { LoaderFunctionArgs, useLoaderData } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import {
   clearVotes,
   createVote,
@@ -19,7 +18,7 @@ import { ErrorPanel } from "../components/ErrorPanel";
 import { MemberList } from "../components/MemberList";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { PokerCardList } from "../components/PokerCardList";
-import { Summary } from "../components/Summary";
+import { VoteSummaryDetails } from "../components/VoteSummaryDetails";
 import {
   useBooleanState,
   useDocumentTitle,
@@ -215,10 +214,9 @@ export const RoomView: FC = () => {
           </header>
           <div className="card">
             {summaryResult != null ? (
-              <Summary
+              <VoteSummaryDetails
                 voteSummary={summaryResult.votes}
                 room={room}
-                cardSet={cardSet}
               />
             ) : (
               <PokerCardList

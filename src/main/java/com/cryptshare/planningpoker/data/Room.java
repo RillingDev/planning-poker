@@ -12,7 +12,7 @@ import java.util.*;
 @Entity
 @Table(name = "room")
 public class Room extends BaseEntity {
-	public static final Comparator<Room> ALPHABETIC_COMPARATOR = Comparator.comparing(Room::getName, String::compareToIgnoreCase);
+	public static final Comparator<Room> ALPHABETIC_COMPARATOR = Comparator.comparing(Room::getName);
 
 	@Column(name = "room_name", nullable = false)
 	private String name;
@@ -101,7 +101,7 @@ public class Room extends BaseEntity {
 	}
 
 	public Optional<RoomMember> findMemberByUser(String username) {
-		return members.stream().filter(roomMember -> roomMember.getUsername().equalsIgnoreCase(username)).findFirst();
+		return members.stream().filter(roomMember -> roomMember.getUsername().equals(username)).findFirst();
 	}
 
 	public Set<RoomExtensionConfig> getExtensionConfigs() {

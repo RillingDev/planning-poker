@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
 
+import static com.cryptshare.planningpoker.api.MockOidcLogins.bobOidcLogin;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -23,9 +23,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = AhaController.class, properties = { "planning-poker.extension.aha.account-domain=example",
-		"planning-poker.extension.aha.client-id=abc", "planning-poker.extension.aha.redirect-uri=https://example.com",
-		"planning-poker.extension.aha.score-fact-names=Fact Name 1,Fact Name 2" })
+@WebMvcTest(value = AhaController.class, properties = {"planning-poker.extension.aha.account-domain=example",
+		"planning-poker.extension.aha.client-id=abc", "planning-poker.extension.aha.redirect-uri=https://example.com"})
 @ActiveProfiles("extension:aha")
 class AhaControllerIT {
 
@@ -37,9 +36,8 @@ class AhaControllerIT {
 
 	@Test
 	@DisplayName("GET `/api/extensions/aha` returns config")
-	@WithMockUser
 	void getConfig() throws Exception {
-		mockMvc.perform(get("/api/extensions/aha"))
+		mockMvc.perform(get("/api/extensions/aha").with(bobOidcLogin()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.accountDomain").value("example"))
 				.andExpect(jsonPath("$.clientId").value("abc"))
@@ -48,98 +46,89 @@ class AhaControllerIT {
 
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` throws if room not found")
-	@WithMockUser
 	void getRoomConfigUnknownName() throws Exception {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 
-		mockMvc.perform(get("/api/rooms/my-room/extensions/aha")).andExpect(status().isNotFound());
+		mockMvc.perform(get("/api/rooms/my-room/extensions/aha").with(bobOidcLogin())).andExpect(status().isNotFound());
 	}
 
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` throws if room has extension not active")
-	@WithMockUser("John Doe")
 	void getRoomConfigNotActive() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember("John Doe"));
+		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(get("/api/rooms/my-room/extensions/aha")).andExpect(status().isNotFound());
+		mockMvc.perform(get("/api/rooms/my-room/extensions/aha").with(bobOidcLogin())).andExpect(status().isNotFound());
 	}
 
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` throws if not a member")
-	@WithMockUser("John Doe")
 	void getRoomConfigNotMember() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
 		room.getMembers().add(new RoomMember("Alice"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(get("/api/rooms/my-room/extensions/aha")).andExpect(status().isForbidden());
+		mockMvc.perform(get("/api/rooms/my-room/extensions/aha").with(bobOidcLogin())).andExpect(status().isForbidden());
 	}
 
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` returns config")
-	@WithMockUser("John Doe")
 	void getRoomConfigReturns() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember("John Doe"));
+		room.getMembers().add(new RoomMember("Bob"));
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(new Extension("aha"));
 		roomExtensionConfig.getAttributes().put("scoreFactName", "Effort");
 		room.getExtensionConfigs().add(roomExtensionConfig);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(get("/api/rooms/my-room/extensions/aha"))
+		mockMvc.perform(get("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.scoreFactName").value("Effort"));
 	}
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` throws if room not found")
-	@WithMockUser
 	void editRoomConfigUnknownName() throws Exception {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` throws if room has extension not active")
-	@WithMockUser("John Doe")
 	void editRoomConfigNotActive() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember("John Doe"));
+		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` throws if not a member")
-	@WithMockUser("John Doe")
 	void editRoomConfigNotMember() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
 		room.getMembers().add(new RoomMember("Alice"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
 				.andExpect(status().isForbidden());
-		;
 	}
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` updates config")
-	@WithMockUser("John Doe")
 	void editRoomConfigReturns() throws Exception {
 		final Room room = new Room("my-room", new CardSet("My Set 2"));
-		room.getMembers().add(new RoomMember("John Doe"));
+		room.getMembers().add(new RoomMember("Bob"));
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(new Extension("aha"));
 		roomExtensionConfig.getAttributes().put("scoreFactName", "Effort");
 		room.getExtensionConfigs().add(roomExtensionConfig);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(csrf())
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"scoreFactName\": \"Impact\"}")).andExpect(status().isOk());
 

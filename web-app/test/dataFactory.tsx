@@ -16,13 +16,12 @@ export function createMockCardSet(values: Partial<CardSet>): CardSet {
   return {
     name: values.name ?? "Card Set",
     cards: values.cards ?? [],
-    relevantFractionDigits: values.relevantFractionDigits ?? 1,
   };
 }
 
 export function createMockRoomMember(values: Partial<RoomMember>): RoomMember {
   return {
-    username: values.username ?? "John Doe",
+    username: values.username ?? "Bob",
     vote: values.vote ?? null,
     role: values.role ?? Role.VOTER,
   };
@@ -48,10 +47,14 @@ export function createMockVoteSummary(
   const memberHigh = createMockRoomMember({ username: "Bar", vote: card3 });
   return {
     average: values.average ?? 2,
-    highestVote: values.highestVote ?? card3,
-    highestVoters: values.highestVoters ?? [memberHigh],
-    lowestVote: values.lowestVote ?? card1,
-    lowestVoters: values.lowestVoters ?? [memberLow],
+    highest: {
+      card: values.highest?.card ?? card3,
+      members: values.highest?.members ?? [memberHigh],
+    },
+    lowest: {
+      card: values.lowest?.card ?? card1,
+      members: values.lowest?.members ?? [memberLow],
+    },
     nearestCard: values.nearestCard ?? card3,
     offset: values.offset ?? 1,
   };
@@ -78,7 +81,7 @@ export function createMockContextState(
   values: Partial<AppContextState>
 ): AppContextState {
   return {
-    user: values.user ?? { username: "John Doe" },
+    user: values.user ?? { username: "Bob" },
     cardSets: values.cardSets ?? [],
     extensionManager: values.extensionManager ?? new ExtensionManager([]),
   };

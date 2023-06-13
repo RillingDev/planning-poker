@@ -6,15 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(locations = "classpath:application-integrationtest.properties")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DataJpaTest
 class CardSetRepositoryIT {
 
 	@Autowired
@@ -34,14 +30,19 @@ class CardSetRepositoryIT {
 		final CardSet cardSet = new CardSet("Set #1");
 		cardSet.getCards().add(new Card("1", 1.0));
 		cardSet.getCards().add(new Card("Coffee", null));
+		cardSet.setRelevantDecimalPlaces(2);
+		cardSet.setShowAverageValue(true);
+		cardSet.setShowNearestCard(false);
 		cardSetRepository.save(cardSet);
 
 		final CardSet loaded = cardSetRepository.findByName("Set #1").orElseThrow();
 		assertThat(loaded.getName()).isEqualTo("Set #1");
-
 		assertThat(loaded.getCards()).hasSize(2);
 		assertThat(loaded.getCards()).extracting(Card::getName).containsExactlyInAnyOrder("1", "Coffee");
 		assertThat(loaded.getCards()).extracting(Card::getValue).containsExactlyInAnyOrder(1.0, null);
+		assertThat(loaded.getRelevantDecimalPlaces()).isEqualTo(2);
+		assertThat(loaded.isShowAverageValue()).isTrue();
+		assertThat(loaded.isShowNearestCard()).isFalse();
 	}
 
 	@Test

@@ -6,9 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -16,9 +14,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(locations = "classpath:application-integrationtest.properties")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DataJpaTest
 class RoomRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
@@ -40,6 +36,7 @@ class RoomRepositoryIT {
 		cardSetRepository.deleteAll();
 		roomRepository.deleteAll();
 		extensionRepository.deleteAll();
+
 		createExampleUser();
 	}
 
@@ -55,7 +52,7 @@ class RoomRepositoryIT {
 		room.setTopic("topic!");
 		room.setVotingState(Room.VotingState.CLOSED);
 
-		final RoomMember member = new RoomMember("John Doe");
+		final RoomMember member = new RoomMember("Bob");
 		room.getMembers().add(member);
 		member.setVote(card);
 
@@ -88,7 +85,7 @@ class RoomRepositoryIT {
 
 		final Room room = new Room("My Room", cardSet);
 
-		final RoomMember member = new RoomMember("John Doe");
+		final RoomMember member = new RoomMember("Bob");
 		room.getMembers().add(member);
 		member.setVote(card);
 
@@ -112,7 +109,7 @@ class RoomRepositoryIT {
 
 		final Room room = new Room("My Room", cardSet);
 
-		final RoomMember member = new RoomMember("John Doe");
+		final RoomMember member = new RoomMember("Bob");
 		room.getMembers().add(member);
 		member.setVote(card);
 
@@ -201,7 +198,11 @@ class RoomRepositoryIT {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				em.createNativeQuery("INSERT INTO app_user (username) VALUES ('John Doe')").executeUpdate();
+				em.createNativeQuery("""
+						INSERT INTO oauth2_authorized_client (client_registration_id, principal_name, access_token_type, access_token_value,
+                                            access_token_issued_at, access_token_expires_at)
+      						VALUES ('someProvider', 'Bob', 'Bearer', 'someToken', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+""").executeUpdate();
 			}
 		});
 	}

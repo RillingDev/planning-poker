@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.cryptshare.planningpoker.api.MockOidcLogins.bobOidcLogin;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,7 +29,6 @@ class CardSetControllerIT {
 
 	@Test
 	@DisplayName("GET `/api/card-sets` returns card sets")
-	@WithMockUser
 	void getCardSets() throws Exception {
 		final CardSet cardSet1 = new CardSet("My Set 1");
 		cardSet1.getCards().add(new Card("Coffee", 0.0));
@@ -39,7 +38,7 @@ class CardSetControllerIT {
 		final CardSet cardSet2 = new CardSet("My Set 2");
 		given(cardSetRepository.findAll()).willReturn(List.of(cardSet1, cardSet2));
 
-		mockMvc.perform(get("/api/card-sets")).andExpect(status().isOk())
+		mockMvc.perform(get("/api/card-sets").with(bobOidcLogin())).andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("My Set 1"))
 				.andExpect(jsonPath("$[0].cards.length()").value(4))

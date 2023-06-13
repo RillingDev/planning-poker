@@ -26,7 +26,7 @@ export default defineConfig(({ command, mode }) => {
       setupFiles: "./web-app/test/setup.ts",
       include: ["./web-app/**/*.test.{ts,tsx}"],
       coverage: {
-        provider: "c8",
+        provider: "v8",
         reporter: ["lcovonly"],
         reportsDirectory: "./.local/coverage",
       },

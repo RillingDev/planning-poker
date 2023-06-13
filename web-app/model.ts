@@ -33,7 +33,6 @@ export interface Card {
 export interface CardSet {
   readonly name: string;
   readonly cards: ReadonlyArray<Card>;
-  readonly relevantFractionDigits: number;
 }
 
 export interface SummaryResult {
@@ -41,13 +40,16 @@ export interface SummaryResult {
 }
 
 export interface VoteSummary {
-  readonly average: number;
+  readonly average: number | null;
   readonly offset: number;
-  readonly nearestCard: Card;
-  readonly highestVote: Card;
-  readonly highestVoters: ReadonlyArray<RoomMember>;
-  readonly lowestVote: Card;
-  readonly lowestVoters: ReadonlyArray<RoomMember>;
+  readonly nearestCard: Card | null;
+  readonly highest: VoteExtreme | null;
+  readonly lowest: VoteExtreme | null;
+}
+
+export interface VoteExtreme {
+  readonly card: Card;
+  readonly members: ReadonlyArray<RoomMember>;
 }
 
 export type RoomCreationOptions = Pick<Room, "cardSetName">;

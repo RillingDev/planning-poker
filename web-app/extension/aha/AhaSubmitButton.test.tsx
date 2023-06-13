@@ -29,7 +29,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -43,7 +43,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "X" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -54,7 +54,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -71,7 +71,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -108,7 +108,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -145,7 +145,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -182,7 +182,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "Room" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -219,7 +219,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -263,7 +263,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "My Room" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -318,7 +318,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "My Room" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 
@@ -368,7 +368,7 @@ describe("AhaSubmissionModal", () => {
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "My Room" })}
-        voteSummary={createMockVoteSummary({ average: 10.9 })}
+        voteSummary={createMockVoteSummary({ average: 11 })}
       />
     );
 

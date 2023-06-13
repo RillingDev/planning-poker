@@ -12,7 +12,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "room_member")
 public class RoomMember extends BaseEntity {
-	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername, String::compareToIgnoreCase);
+	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername);
 
 	public enum Role {
 		VOTER,
@@ -27,8 +27,8 @@ public class RoomMember extends BaseEntity {
 	private Role role;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name = "vote", joinColumns = { @JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
-			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false) })
+	@JoinTable(name = "vote", joinColumns = {@JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
+			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false)})
 	@Nullable
 	private Card vote;
 
@@ -36,7 +36,7 @@ public class RoomMember extends BaseEntity {
 	}
 
 	/**
-	 * @param username Must be derived from a valid {@link org.springframework.security.core.userdetails.UserDetails}.
+	 * @param username Must be derived from a valid {@link org.springframework.security.oauth2.core.oidc.user.OidcUser}.
 	 */
 	public RoomMember(String username) {
 		this.username = username;

@@ -4,9 +4,13 @@ import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SummaryService {
@@ -35,48 +39,60 @@ public class SummaryService {
 		}
 
 		double total = 0;
-		Card max = null;
-		Card min = null;
+		Card highestCard = null;
+		Card lowestCard = null;
 		for (RoomMember member : membersWithCardValues) {
 			final Card card = member.getVote();
 			total += card.getValue();
 
-			if (max == null || card.getValue() > max.getValue()) {
-				max = card;
+			if (highestCard == null || card.getValue() > highestCard.getValue()) {
+				highestCard = card;
 			}
-			if (min == null || card.getValue() < min.getValue()) {
-				min = card;
-			}
-		}
-		double averageValue = total / membersWithCardValues.size();
-
-		final Set<RoomMember> minVoters = new HashSet<>(room.getMembers().size() / 2);
-		final Set<RoomMember> maxVoters = new HashSet<>(room.getMembers().size() / 2);
-		for (RoomMember member : membersWithCardValues) {
-			final Card card = member.getVote();
-			if (card.equals(max)) {
-				maxVoters.add(member);
-			}
-			if (card.equals(min)) {
-				minVoters.add(member);
+			if (lowestCard == null || card.getValue() < lowestCard.getValue()) {
+				lowestCard = card;
 			}
 		}
+		final double averageValue = total / membersWithCardValues.size();
 
+		VoteExtreme highest = null;
+		VoteExtreme lowest = null;
+		// No need to show highest and lowest if they are the same
+		if (lowestCard != highestCard) {
+			highest = new VoteExtreme(highestCard, findMembersByCard(membersWithCardValues, highestCard));
+			lowest = new VoteExtreme(lowestCard, findMembersByCard(membersWithCardValues, lowestCard));
+		}
+
+		final CardSet cardSet = room.getCardSet();
+
+		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNDecimalPlaces(averageValue, cardSet.getRelevantDecimalPlaces()) : null;
+
+		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet, averageValue) : null;
+
+		final int offset = getOffset(highestCard, lowestCard, cardSet);
+
+		return Optional.of(new VoteSummary(averageValueFormatted, nearestCard, highest, lowest, offset));
+	}
+
+	private static Set<RoomMember> findMembersByCard(Collection<RoomMember> membersWithCardValues, Card card) {
+		return membersWithCardValues.stream().filter(roomMember -> roomMember.getVote().equals(card)).collect(Collectors.toUnmodifiableSet());
+	}
+
+	private double roundToNDecimalPlaces(double value, int n) {
+		return BigDecimal.valueOf(value).setScale(n, RoundingMode.HALF_UP).doubleValue();
+	}
+
+	private static Card findNearestCard(CardSet cardSet, double averageValue) {
 		Card nearestCard = null;
 		double nearestCardDiff = Double.MAX_VALUE;
 		// Due to the ordering, cards with the same difference will be 'rounded' up
-		for (Card card : getOrderedCardsWithValues(room.getCardSet(), false)) {
+		for (Card card : getOrderedCardsWithValues(cardSet, false)) {
 			double diff = Math.abs(card.getValue() - averageValue);
 			if (diff < nearestCardDiff) {
 				nearestCardDiff = diff;
 				nearestCard = card;
 			}
 		}
-
-		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(room.getCardSet(), true);
-		int offset = orderedCardsAsc.indexOf(max) - orderedCardsAsc.indexOf(min);
-
-		return Optional.of(new VoteSummary(averageValue, offset, nearestCard, max, maxVoters, min, minVoters));
+		return nearestCard;
 	}
 
 	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
@@ -88,7 +104,15 @@ public class SummaryService {
 		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
 	}
 
-	public record VoteSummary(double average, int offset, Card nearestCard, Card highestVote, Set<RoomMember> highestVoters, Card lowestVote,
-							  Set<RoomMember> lowestVoters) {
+	private static int getOffset(Card highestCard, Card lowestCard, CardSet cardSet) {
+		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(cardSet, true);
+		return orderedCardsAsc.indexOf(highestCard) - orderedCardsAsc.indexOf(lowestCard);
+	}
+
+	public record VoteSummary(@Nullable Double average, @Nullable Card nearestCard, @Nullable VoteExtreme highest,
+							  @Nullable VoteExtreme lowest, int offset) {
+	}
+
+	public record VoteExtreme(Card card, Set<RoomMember> members) {
 	}
 }

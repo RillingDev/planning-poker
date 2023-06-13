@@ -1,8 +1,6 @@
 package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.SummaryService;
-import com.cryptshare.planningpoker.api.exception.NotAMemberException;
-import com.cryptshare.planningpoker.api.exception.RoomNotFoundException;
 import com.cryptshare.planningpoker.api.projection.VoteSummaryJson;
 import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.Room;
@@ -15,34 +13,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-class RoomVotingController {
+class RoomVotingController extends AbstractRoomAwareController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomVotingController.class);
 
-	private final RoomRepository roomRepository;
 	private final SummaryService summaryService;
 
 	RoomVotingController(RoomRepository roomRepository, SummaryService summaryService) {
-		this.roomRepository = roomRepository;
+		super(roomRepository);
 		this.summaryService = summaryService;
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/votes")
 	public void createVote(@PathVariable("room-name") String roomName, @RequestParam("card-name") String cardName,
-			@AuthenticationPrincipal UserDetails user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		final RoomMember roomMember = room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+						   @AuthenticationPrincipal OidcUser user) {
+		final Room room = requireRoom(roomName);
+		final RoomMember roomMember = requireActingUserMember(room, user.getName());
 		if (roomMember.getRole() == RoomMember.Role.OBSERVER) {
 			throw new ObserverException();
 		}
 
 		if (room.getVotingState() == Room.VotingState.CLOSED) {
 			// May happen on accident, so dont throw an error.
-			logger.warn("Ignoring user '{}' voting in '{}' as voting is completed.", user.getUsername(), room);
+			logger.warn("Ignoring user '{}' voting in '{}' as voting is completed.", user.getName(), room);
 			return;
 		}
 
@@ -55,27 +51,25 @@ class RoomVotingController {
 
 		setVote(room, roomMember, card);
 		roomRepository.save(room);
-		logger.debug("User '{}' voted with '{}' in '{}'.", user.getUsername(), card, room);
+		logger.debug("User '{}' voted with '{}' in '{}'.", user.getName(), card, room);
 	}
 
-	// TODO: Move room and member lookup to argument resolver or similar.
-	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
-	public void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 
-		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
+	public void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
+		final Room room = requireRoom(roomName);
+		requireActingUserMember(room, user.getName());
 
 		clearVotes(room);
 		roomRepository.save(room);
-		logger.debug("User '{}' cleared votes in '{}'.", user.getUsername(), room);
+		logger.debug("User '{}' cleared votes in '{}'.", user.getName(), room);
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/votes/summary", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public SummaryResultJson getSummary(@PathVariable("room-name") String roomName, @AuthenticationPrincipal UserDetails user) {
-		final Room room = roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
-
-		room.findMemberByUser(user.getUsername()).orElseThrow(NotAMemberException::new);
+	public SummaryResultJson getSummary(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
+		final Room room = requireRoom(roomName);
+		requireActingUserMember(room, user.getName());
 
 		return new SummaryResultJson(summaryService.summarize(room).map(VoteSummaryJson::convert).orElse(null));
 	}
