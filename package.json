@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "validate": "npm run type-check && npm run lint",
     "build": "npm run type-check && vite build",
     "type-check": "tsc",
     "lint": "eslint ./web-app/ --ext tsx --ext ts",
