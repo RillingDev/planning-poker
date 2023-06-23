@@ -103,10 +103,26 @@ public class SummaryService {
 		return ascendingDistinctValues.indexOf(highestCard.getValue()) - ascendingDistinctValues.indexOf(lowestCard.getValue());
 	}
 
-	public record VoteSummary(@Nullable Double average, @Nullable Card nearestCard, @Nullable VoteExtreme highest,
-							  @Nullable VoteExtreme lowest, int offset) {
+	/**
+	 * @param average     The average vote value.
+	 * @param nearestCard The nearest card in the card set based on the {@link #average}.
+	 * @param highest     The highest vote.
+	 * @param lowest      The lowest vote.
+	 * @param offset      The offset between the position of the {@link #highest} and the {@link #lowest} card in the card set.
+	 */
+	public record VoteSummary(
+			@Nullable Double average,
+			@Nullable Card nearestCard,
+			@Nullable VoteExtreme highest,
+			@Nullable VoteExtreme lowest,
+			int offset
+	) {
 	}
 
+	/**
+	 * @param card    The card that was voted on.
+	 * @param members The members that voted for this card.
+	 */
 	public record VoteExtreme(Card card, Set<RoomMember> members) {
 	}
 }
