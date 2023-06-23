@@ -29,7 +29,8 @@ class SummaryServiceTest {
 		cardSet.setRelevantDecimalPlaces(10);
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
-		cardSet.getCards().addAll(Set.of(card1, card3));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -56,7 +57,8 @@ class SummaryServiceTest {
 		cardSet.setRelevantDecimalPlaces(1);
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
-		cardSet.getCards().addAll(Set.of(card1, card3));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -82,8 +84,9 @@ class SummaryServiceTest {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
+		final Card cardQuestion = new Card("?", null);
 		cardSet.setShowAverageValue(false);
-		cardSet.getCards().addAll(Set.of(card1, card3));
+		cardSet.getCards().addAll(Set.of(card1, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -109,7 +112,8 @@ class SummaryServiceTest {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
-		cardSet.getCards().addAll(Set.of(card1, card3));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -134,7 +138,8 @@ class SummaryServiceTest {
 		cardSet.setShowNearestCard(false);
 		final Card card1 = new Card("1", 1.0);
 		final Card card3 = new Card("3", 3.0);
-		cardSet.getCards().addAll(Set.of(card1, card3));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -158,7 +163,8 @@ class SummaryServiceTest {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card0 = new Card("0", 0.0);
 		final Card card1 = new Card("1", 1.0);
-		cardSet.getCards().addAll(Set.of(card0, card1));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card0, card1, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -176,26 +182,27 @@ class SummaryServiceTest {
 	}
 
 	@Test
-	@DisplayName("calculates nearest card rounding towards basic numeric")
-	void calculatesNearestRoundingBasicNumeric() {
+	@DisplayName("calculates nearest card preferring basic numeric")
+	void calculatesNearestPreferringBasicNumeric() {
 		final CardSet cardSet = new CardSet("Set");
-		final Card card0 = new Card("Coffee", 0.0);
-		final Card card1 = new Card("0", 0.0);
-		cardSet.getCards().addAll(Set.of(card0, card1));
+		final Card card0Text = new Card("Zero but with text", 0.0);
+		final Card card0 = new Card("0", 0.0);
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card0Text, card0, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
 		final RoomMember alice = new RoomMember("Alice");
 		myRoom.getMembers().addAll(Set.of(bob, alice));
 
-		bob.setVote(card0);
-		alice.setVote(card1);
+		bob.setVote(card0Text);
+		alice.setVote(card0);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
 		// Nearest card is rounded upwards
-		assertThat(voteSummary.nearestCard()).isEqualTo(card1);
+		assertThat(voteSummary.nearestCard()).isEqualTo(card0);
 	}
 
 	@Test
@@ -205,7 +212,8 @@ class SummaryServiceTest {
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
 		final Card card3 = new Card("3", 3.0);
-		cardSet.getCards().addAll(Set.of(card1, card2, card3));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card2, card3,cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -236,7 +244,8 @@ class SummaryServiceTest {
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
 		final Card card3 = new Card("3", 3.0);
-		cardSet.getCards().addAll(Set.of(card1, card2, card3));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card2, card3,cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -258,13 +267,46 @@ class SummaryServiceTest {
 	}
 
 	@Test
+	@DisplayName("calculates highest/lowest votes preferring basic numeric")
+	void calculatesExtremesPreferringBasicNumeric() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card0 = new Card("0", 0.0);
+		final Card card0Text = new Card("Zero but with text", 0.0);
+		final Card card3 = new Card("3", 3.0);
+		final Card card3Text = new Card("Three but with text", 3.0);
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card0, card0Text, card3, card3Text,cardQuestion));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember carol = new RoomMember("Carol");
+		final RoomMember eve = new RoomMember("Eve");
+		myRoom.getMembers().addAll(Set.of(bob, alice, carol, eve));
+
+		bob.setVote(card0);
+		alice.setVote(card0Text);
+		carol.setVote(card3);
+		eve.setVote(card3Text);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		assertThat(voteSummary.highest().card()).isEqualTo(card3);
+		assertThat(voteSummary.highest().members()).containsExactlyInAnyOrder(carol);
+		assertThat(voteSummary.lowest().card()).isEqualTo(card0);
+		assertThat(voteSummary.lowest().members()).containsExactly(bob);
+	}
+
+	@Test
 	@DisplayName("calculates offset")
 	void calculatesOffset() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
 		final Card card3 = new Card("3", 3.0);
-		cardSet.getCards().addAll(Set.of(card1, card2, card3));
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card2, card3,cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -289,10 +331,10 @@ class SummaryServiceTest {
 	void calculatesOffsetBasicNumeric() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
-		final Card card2 = new Card("3", 3.0);
-		final Card card2text = new Card("Two but text", 3.0);
+		final Card card3 = new Card("3", 3.0);
+		final Card card3Text = new Card("Three but with text", 3.0);
 		final Card cardQuestion = new Card("?", null);
-		cardSet.getCards().addAll(Set.of(card1, card2, card2text, cardQuestion));
+		cardSet.getCards().addAll(Set.of(card1, card3, card3Text, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -301,8 +343,8 @@ class SummaryServiceTest {
 		myRoom.getMembers().addAll(Set.of(bob, alice, carol));
 
 		bob.setVote(card1);
-		alice.setVote(card2);
-		carol.setVote(card2text);
+		alice.setVote(card3);
+		carol.setVote(card3Text);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
@@ -311,14 +353,14 @@ class SummaryServiceTest {
 	}
 
 	@Test
-	@DisplayName("calculates offset if multiple cards have the same value (with the cards withe same value on the low end)")
-	void calculatesOffsetBasicNumeric2() {
+	@DisplayName("calculates offset if multiple cards have the same value (with the cards with the same value on the low end)")
+	void calculatesOffsetBasicNumericLowEnd() {
 		final CardSet cardSet = new CardSet("Set");
-		final Card card1 = new Card("0", 0.0);
-		final Card card1text = new Card("0 but text", 0.0);
-		final Card card2 = new Card("1", 1.0);
+		final Card card0 = new Card("0", 0.0);
+		final Card card0Text = new Card("0 but with text", 0.0);
+		final Card card1 = new Card("1", 1.0);
 		final Card cardQuestion = new Card("?", null);
-		cardSet.getCards().addAll(Set.of(card1, card2, card1text, cardQuestion));
+		cardSet.getCards().addAll(Set.of(card0, card1, card0Text, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -326,9 +368,9 @@ class SummaryServiceTest {
 		final RoomMember carol = new RoomMember("Carol");
 		myRoom.getMembers().addAll(Set.of(bob, alice, carol));
 
-		bob.setVote(card1);
-		alice.setVote(card2);
-		carol.setVote(card1text);
+		bob.setVote(card0);
+		alice.setVote(card1);
+		carol.setVote(card0Text);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
