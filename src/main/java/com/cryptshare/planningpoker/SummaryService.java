@@ -66,9 +66,9 @@ public class SummaryService {
 
 		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNDecimalPlaces(averageValue, cardSet.getRelevantDecimalPlaces()) : null;
 
-		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet, averageValue) : null;
+		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet.getCards(), averageValue) : null;
 
-		final int offset = getOffset(highestCard, lowestCard, cardSet);
+		final int offset = getOffset(cardSet.getCards(), highestCard, lowestCard);
 
 		return Optional.of(new VoteSummary(averageValueFormatted, nearestCard, highest, lowest, offset));
 	}
@@ -81,11 +81,14 @@ public class SummaryService {
 		return BigDecimal.valueOf(value).setScale(n, RoundingMode.HALF_UP).doubleValue();
 	}
 
-	private static Card findNearestCard(CardSet cardSet, double averageValue) {
+	private static Card findNearestCard(Set<Card> cards, double averageValue) {
 		Card nearestCard = null;
 		double nearestCardDiff = Double.MAX_VALUE;
+
 		// Due to the ordering, cards with the same difference will be 'rounded' up
-		for (Card card : getOrderedCardsWithValues(cardSet, false)) {
+		// E.g. a set of cards will end up as [<high basic numeric card>, <high non-basic numeric card>, <low basic numeric card>]
+		Comparator<Card> descendingCardValuesComparator = Comparator.comparing(Card::getValue).thenComparing(Card::isBasicNumeric).reversed();
+		for (Card card : cards.stream().filter(c -> c.getValue() != null).sorted(descendingCardValuesComparator).toList()) {
 			double diff = Math.abs(card.getValue() - averageValue);
 			if (diff < nearestCardDiff) {
 				nearestCardDiff = diff;
@@ -95,17 +98,8 @@ public class SummaryService {
 		return nearestCard;
 	}
 
-	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
-		Comparator<Card> comparator = Comparator.comparing(Card::getValue);
-		if (asc) {
-			comparator = comparator.reversed();
-		}
-		comparator = comparator.thenComparing(Card::isBasicNumeric).reversed();
-		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
-	}
-
-	private static int getOffset(Card highestCard, Card lowestCard, CardSet cardSet) {
-		final List<Double> ascendingDistinctValues = cardSet.getCards().stream().map(Card::getValue).filter(Objects::nonNull).distinct().sorted().toList();
+	private static int getOffset(Set<Card> cards, Card highestCard, Card lowestCard) {
+		final List<Double> ascendingDistinctValues = cards.stream().map(Card::getValue).filter(Objects::nonNull).distinct().sorted().toList();
 		return ascendingDistinctValues.indexOf(highestCard.getValue()) - ascendingDistinctValues.indexOf(lowestCard.getValue());
 	}
 
