@@ -285,13 +285,14 @@ class SummaryServiceTest {
 	}
 
 	@Test
-	@DisplayName("calculates offset with basic numeric")
+	@DisplayName("calculates offset if multiple cards have the same value")
 	void calculatesOffsetBasicNumeric() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
-		final Card card2 = new Card("2", 2.0);
-		final Card card2text = new Card("Two but text", 2.0);
-		cardSet.getCards().addAll(Set.of(card1, card2, card2text));
+		final Card card2 = new Card("3", 3.0);
+		final Card card2text = new Card("Two but text", 3.0);
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card2, card2text, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -302,6 +303,32 @@ class SummaryServiceTest {
 		bob.setVote(card1);
 		alice.setVote(card2);
 		carol.setVote(card2text);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		assertThat(voteSummary.offset()).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("calculates offset if multiple cards have the same value (with the cards withe same value on the low end)")
+	void calculatesOffsetBasicNumeric2() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card1 = new Card("0", 0.0);
+		final Card card1text = new Card("0 but text", 0.0);
+		final Card card2 = new Card("1", 1.0);
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card2, card1text, cardQuestion));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember carol = new RoomMember("Carol");
+		myRoom.getMembers().addAll(Set.of(bob, alice, carol));
+
+		bob.setVote(card1);
+		alice.setVote(card2);
+		carol.setVote(card1text);
 		myRoom.setVotingState(Room.VotingState.CLOSED);
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();

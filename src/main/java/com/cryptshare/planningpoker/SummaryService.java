@@ -105,8 +105,8 @@ public class SummaryService {
 	}
 
 	private static int getOffset(Card highestCard, Card lowestCard, CardSet cardSet) {
-		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(cardSet, true);
-		return orderedCardsAsc.indexOf(highestCard) - orderedCardsAsc.indexOf(lowestCard);
+		final List<Double> ascendingDistinctValues = cardSet.getCards().stream().map(Card::getValue).filter(Objects::nonNull).distinct().sorted().toList();
+		return ascendingDistinctValues.indexOf(highestCard.getValue()) - ascendingDistinctValues.indexOf(lowestCard.getValue());
 	}
 
 	public record VoteSummary(@Nullable Double average, @Nullable Card nearestCard, @Nullable VoteExtreme highest,
