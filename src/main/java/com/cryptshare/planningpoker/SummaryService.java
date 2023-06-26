@@ -16,6 +16,16 @@ import java.util.stream.Collectors;
 public class SummaryService {
 
 	/**
+	 * Comparator for the order that cards should be picked as summary result.
+	 * A set of cards will end up as {@code [<high basic numeric card>, <high non-basic numeric card>, <low basic numeric card>]}.
+	 * <p>
+	 * Should only be used on collections where every card has a value.
+	 *
+	 * @see Card#NATURAL_COMPARATOR for the preferred <b>display</b> order.
+	 */
+	private static final Comparator<Card> PREFERRED_SUMMARY_COMPARATOR = Comparator.comparing(Card::getValue).thenComparing(Card::isBasicNumeric).reversed().thenComparing(Card::getName);
+
+	/**
 	 * Calculates a rooms voting statistic.
 	 *
 	 * @param room Room to check.
@@ -28,21 +38,21 @@ public class SummaryService {
 
 		// Keep only members with votes that have values to it.
 		// Subsequent IDE warnings regarding null-pointers are not valid due to this.
-		final List<RoomMember> membersWithCardValues = room.getMembers()
+		final List<Card> votesWithValues = room.getMembers()
 				.stream()
-				.filter(roomMember -> roomMember.getVote() != null && roomMember.getVote().getValue() != null)
-				.sorted(Comparator.comparing(RoomMember::getVote, Card.NATURAL_COMPARATOR))
+				.map(RoomMember::getVote).filter(Objects::nonNull)
+				.filter(vote -> vote.getValue() != null)
+				.sorted(PREFERRED_SUMMARY_COMPARATOR) // Sort to prefer basic numeric when calculating highest/lowest in case of value being the same.
 				.toList();
 
-		if (membersWithCardValues.isEmpty()) {
+		if (votesWithValues.isEmpty()) {
 			return Optional.empty();
 		}
 
 		double total = 0;
 		Card highestCard = null;
 		Card lowestCard = null;
-		for (RoomMember member : membersWithCardValues) {
-			final Card card = member.getVote();
+		for (Card card : votesWithValues) {
 			total += card.getValue();
 
 			if (highestCard == null || card.getValue() > highestCard.getValue()) {
@@ -52,40 +62,41 @@ public class SummaryService {
 				lowestCard = card;
 			}
 		}
-		final double averageValue = total / membersWithCardValues.size();
+		final double averageValue = total / votesWithValues.size();
 
 		VoteExtreme highest = null;
 		VoteExtreme lowest = null;
 		// No need to show highest and lowest if they are the same
 		if (lowestCard != highestCard) {
-			highest = new VoteExtreme(highestCard, findMembersByCard(membersWithCardValues, highestCard));
-			lowest = new VoteExtreme(lowestCard, findMembersByCard(membersWithCardValues, lowestCard));
+			highest = new VoteExtreme(highestCard, findMembersByCard(room.getMembers(), highestCard));
+			lowest = new VoteExtreme(lowestCard, findMembersByCard(room.getMembers(), lowestCard));
 		}
 
 		final CardSet cardSet = room.getCardSet();
 
 		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNDecimalPlaces(averageValue, cardSet.getRelevantDecimalPlaces()) : null;
 
-		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet, averageValue) : null;
+		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet.getCards(), averageValue) : null;
 
-		final int offset = getOffset(highestCard, lowestCard, cardSet);
+		final int offset = getOffset(cardSet.getCards(), highestCard, lowestCard);
 
 		return Optional.of(new VoteSummary(averageValueFormatted, nearestCard, highest, lowest, offset));
 	}
 
-	private static Set<RoomMember> findMembersByCard(Collection<RoomMember> membersWithCardValues, Card card) {
-		return membersWithCardValues.stream().filter(roomMember -> roomMember.getVote().equals(card)).collect(Collectors.toUnmodifiableSet());
+	private static Set<RoomMember> findMembersByCard(Collection<RoomMember> members, Card card) {
+		return members.stream().filter(roomMember -> card.equals(roomMember.getVote())).collect(Collectors.toUnmodifiableSet());
 	}
 
 	private double roundToNDecimalPlaces(double value, int n) {
 		return BigDecimal.valueOf(value).setScale(n, RoundingMode.HALF_UP).doubleValue();
 	}
 
-	private static Card findNearestCard(CardSet cardSet, double averageValue) {
+	private static Card findNearestCard(Set<Card> cards, double averageValue) {
 		Card nearestCard = null;
-		double nearestCardDiff = Double.MAX_VALUE;
+		double nearestCardDiff = Double.POSITIVE_INFINITY;
+
 		// Due to the ordering, cards with the same difference will be 'rounded' up
-		for (Card card : getOrderedCardsWithValues(cardSet, false)) {
+		for (Card card : cards.stream().filter(c -> c.getValue() != null).sorted(PREFERRED_SUMMARY_COMPARATOR).toList()) {
 			double diff = Math.abs(card.getValue() - averageValue);
 			if (diff < nearestCardDiff) {
 				nearestCardDiff = diff;
@@ -95,24 +106,31 @@ public class SummaryService {
 		return nearestCard;
 	}
 
-	private static List<Card> getOrderedCardsWithValues(CardSet cardSet, boolean asc) {
-		Comparator<Card> comparator = Comparator.comparing(Card::getValue);
-		if (asc) {
-			comparator = comparator.reversed();
-		}
-		comparator = comparator.thenComparing(Card::isBasicNumeric).reversed();
-		return cardSet.getCards().stream().filter(card -> card.getValue() != null).sorted(comparator).toList();
+	private static int getOffset(Set<Card> cards, Card highestCard, Card lowestCard) {
+		final List<Double> ascendingDistinctValues = cards.stream().map(Card::getValue).filter(Objects::nonNull).distinct().sorted().toList();
+		return ascendingDistinctValues.indexOf(highestCard.getValue()) - ascendingDistinctValues.indexOf(lowestCard.getValue());
 	}
 
-	private static int getOffset(Card highestCard, Card lowestCard, CardSet cardSet) {
-		final List<Card> orderedCardsAsc = getOrderedCardsWithValues(cardSet, true);
-		return orderedCardsAsc.indexOf(highestCard) - orderedCardsAsc.indexOf(lowestCard);
+	/**
+	 * @param average     The average vote value.
+	 * @param nearestCard The nearest card in the card set based on the {@link #average}.
+	 * @param highest     The highest vote.
+	 * @param lowest      The lowest vote.
+	 * @param offset      The offset between the position of the {@link #highest} and the {@link #lowest} card in the card set.
+	 */
+	public record VoteSummary(
+			@Nullable Double average,
+			@Nullable Card nearestCard,
+			@Nullable VoteExtreme highest,
+			@Nullable VoteExtreme lowest,
+			int offset
+	) {
 	}
 
-	public record VoteSummary(@Nullable Double average, @Nullable Card nearestCard, @Nullable VoteExtreme highest,
-							  @Nullable VoteExtreme lowest, int offset) {
-	}
-
+	/**
+	 * @param card    The card that was voted on.
+	 * @param members The members that voted for this card.
+	 */
 	public record VoteExtreme(Card card, Set<RoomMember> members) {
 	}
 }

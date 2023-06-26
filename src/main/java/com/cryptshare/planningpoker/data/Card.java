@@ -14,10 +14,7 @@ import java.util.StringJoiner;
 @Entity
 @Table(name = "card")
 public class Card extends BaseEntity {
-	public static final Comparator<Card> NATURAL_COMPARATOR = Comparator.comparing(Card::isBasicNumeric)
-			.reversed()
-			.thenComparing(Card::getValue, Comparator.nullsLast(Comparator.naturalOrder()))
-			.thenComparing(Card::getName);
+	public static final Comparator<Card> NATURAL_COMPARATOR = Comparator.comparing(Card::isBasicNumeric).reversed().thenComparing(Card::getValue, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Card::getName);
 
 	@Column(name = "card_name", nullable = false)
 	private String name;
@@ -69,6 +66,10 @@ public class Card extends BaseEntity {
 		return new StringJoiner(", ", Card.class.getSimpleName() + "[", "]").add("name='" + name + "'").add("value=" + value).toString();
 	}
 
+	/**
+	 * @return if this card is considered a basic numeric card. This is the case if its name looks like a number.
+	 * 	Most often this will be a card where the name is just the value of the card, but this is not enforced.
+	 */
 	public boolean isBasicNumeric() {
 		if (name.isEmpty()) {
 			return false;
