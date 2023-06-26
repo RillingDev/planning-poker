@@ -30,7 +30,8 @@ public class SummaryService {
 		// Subsequent IDE warnings regarding null-pointers are not valid due to this.
 		final List<Card> votesWithValues = room.getMembers()
 				.stream()
-				.filter(roomMember -> roomMember.getVote() != null).filter(Objects::nonNull).map(RoomMember::getVote).filter(vote ->  vote.getValue() != null)
+				.map(RoomMember::getVote).filter(Objects::nonNull)
+				.filter(vote -> vote.getValue() != null)
 				.sorted(Card.NATURAL_COMPARATOR) // Sort to prefer basic numeric when calculating highest/lowest in case of value being the same.
 				.toList();
 
