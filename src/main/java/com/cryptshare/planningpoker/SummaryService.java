@@ -28,21 +28,20 @@ public class SummaryService {
 
 		// Keep only members with votes that have values to it.
 		// Subsequent IDE warnings regarding null-pointers are not valid due to this.
-		final List<RoomMember> membersWithCardValues = room.getMembers()
+		final List<Card> votesWithValues = room.getMembers()
 				.stream()
-				.filter(roomMember -> roomMember.getVote() != null && roomMember.getVote().getValue() != null)
-				.sorted(Comparator.comparing(RoomMember::getVote, Card.NATURAL_COMPARATOR))
+				.filter(roomMember -> roomMember.getVote() != null).filter(Objects::nonNull).map(RoomMember::getVote).filter(vote ->  vote.getValue() != null)
+				.sorted(Card.NATURAL_COMPARATOR) // Sort to prefer basic numeric when calculating highest/lowest in case of value being the same.
 				.toList();
 
-		if (membersWithCardValues.isEmpty()) {
+		if (votesWithValues.isEmpty()) {
 			return Optional.empty();
 		}
 
 		double total = 0;
 		Card highestCard = null;
 		Card lowestCard = null;
-		for (RoomMember member : membersWithCardValues) {
-			final Card card = member.getVote();
+		for (Card card : votesWithValues) {
 			total += card.getValue();
 
 			if (highestCard == null || card.getValue() > highestCard.getValue()) {
@@ -52,14 +51,14 @@ public class SummaryService {
 				lowestCard = card;
 			}
 		}
-		final double averageValue = total / membersWithCardValues.size();
+		final double averageValue = total / votesWithValues.size();
 
 		VoteExtreme highest = null;
 		VoteExtreme lowest = null;
 		// No need to show highest and lowest if they are the same
 		if (lowestCard != highestCard) {
-			highest = new VoteExtreme(highestCard, findMembersByCard(membersWithCardValues, highestCard));
-			lowest = new VoteExtreme(lowestCard, findMembersByCard(membersWithCardValues, lowestCard));
+			highest = new VoteExtreme(highestCard, findMembersByCard(room.getMembers(), highestCard));
+			lowest = new VoteExtreme(lowestCard, findMembersByCard(room.getMembers(), lowestCard));
 		}
 
 		final CardSet cardSet = room.getCardSet();
@@ -73,8 +72,8 @@ public class SummaryService {
 		return Optional.of(new VoteSummary(averageValueFormatted, nearestCard, highest, lowest, offset));
 	}
 
-	private static Set<RoomMember> findMembersByCard(Collection<RoomMember> membersWithCardValues, Card card) {
-		return membersWithCardValues.stream().filter(roomMember -> roomMember.getVote().equals(card)).collect(Collectors.toUnmodifiableSet());
+	private static Set<RoomMember> findMembersByCard(Collection<RoomMember> members, Card card) {
+		return members.stream().filter(roomMember -> card.equals(roomMember.getVote())).collect(Collectors.toUnmodifiableSet());
 	}
 
 	private double roundToNDecimalPlaces(double value, int n) {
