@@ -1,7 +1,6 @@
 package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.SummaryService;
-import com.cryptshare.planningpoker.api.projection.VoteSummaryJson;
 import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;

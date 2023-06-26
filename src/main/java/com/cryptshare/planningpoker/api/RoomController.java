@@ -1,6 +1,5 @@
 package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.api.projection.RoomJson;
 import com.cryptshare.planningpoker.data.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;

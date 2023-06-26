@@ -25,7 +25,7 @@ class CardTest {
 		final Card cardCoffee = new Card("Coffee", 0.0);
 		final Card cardWayTooMuch = new Card("Way too much!!!", 100.0);
 		final Card cardDunno = new Card("dunno...", null);
-		final Card cardQ = new Card("unknown", null);
+		final Card cardUnknown = new Card("unknown", null);
 
 		final List<Card> unordered = new ArrayList<>(List.of(card0,
 				card05,
@@ -38,7 +38,7 @@ class CardTest {
 				cardCoffee,
 				cardWayTooMuch,
 				cardDunno,
-				cardQ));
+				cardUnknown));
 		Collections.shuffle(unordered);
 
 		final List<Card> ordered = unordered.stream().sorted(Card.NATURAL_COMPARATOR).toList();
@@ -53,6 +53,6 @@ class CardTest {
 				cardCoffee,
 				cardWayTooMuch,
 				cardDunno,
-				cardQ);
+				cardUnknown);
 	}
 }
