@@ -16,6 +16,16 @@ import java.util.stream.Collectors;
 public class SummaryService {
 
 	/**
+	 * Comparator for the order that cards should be picked as summary result.
+	 * A set of cards will end up as {@code [<high basic numeric card>, <high non-basic numeric card>, <low basic numeric card>]}.
+	 * <p>
+	 * Should only be used on collections where every card has a value.
+	 *
+	 * @see Card#NATURAL_COMPARATOR for the preferred <b>display</b> order.
+	 */
+	private static final Comparator<Card> PREFERRED_SUMMARY_COMPARATOR = Comparator.comparing(Card::getValue).thenComparing(Card::isBasicNumeric).reversed().thenComparing(Card::getName);
+
+	/**
 	 * Calculates a rooms voting statistic.
 	 *
 	 * @param room Room to check.
@@ -32,7 +42,7 @@ public class SummaryService {
 				.stream()
 				.map(RoomMember::getVote).filter(Objects::nonNull)
 				.filter(vote -> vote.getValue() != null)
-				.sorted(Card.NATURAL_COMPARATOR) // Sort to prefer basic numeric when calculating highest/lowest in case of value being the same.
+				.sorted(PREFERRED_SUMMARY_COMPARATOR) // Sort to prefer basic numeric when calculating highest/lowest in case of value being the same.
 				.toList();
 
 		if (votesWithValues.isEmpty()) {
@@ -83,12 +93,10 @@ public class SummaryService {
 
 	private static Card findNearestCard(Set<Card> cards, double averageValue) {
 		Card nearestCard = null;
-		double nearestCardDiff = Double.MAX_VALUE;
+		double nearestCardDiff = Double.POSITIVE_INFINITY;
 
 		// Due to the ordering, cards with the same difference will be 'rounded' up
-		// E.g. a set of cards will end up as [<high basic numeric card>, <high non-basic numeric card>, <low basic numeric card>]
-		Comparator<Card> descendingCardValuesComparator = Comparator.comparing(Card::getValue).thenComparing(Card::isBasicNumeric).reversed();
-		for (Card card : cards.stream().filter(c -> c.getValue() != null).sorted(descendingCardValuesComparator).toList()) {
+		for (Card card : cards.stream().filter(c -> c.getValue() != null).sorted(PREFERRED_SUMMARY_COMPARATOR).toList()) {
 			double diff = Math.abs(card.getValue() - averageValue);
 			if (diff < nearestCardDiff) {
 				nearestCardDiff = diff;

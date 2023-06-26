@@ -206,6 +206,29 @@ class SummaryServiceTest {
 	}
 
 	@Test
+	@DisplayName("calculates nearest card preferring first in alphabetic order if only non-basic numeric match")
+	void calculatesNearestPreferringAlphabetic() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card1Text1 = new Card("A) One but with text", 1.0);
+		final Card card1Text2 = new Card("B) One but with text", 1.0);
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1Text1, card1Text2, cardQuestion));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		myRoom.getMembers().addAll(Set.of(bob, alice));
+
+		bob.setVote(card1Text1);
+		alice.setVote(card1Text2);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		// Nearest card is rounded upwards
+		assertThat(voteSummary.nearestCard()).isEqualTo(card1Text1);
+	}
+	@Test
 	@DisplayName("calculates highest/lowest votes")
 	void calculatesExtremes() {
 		final CardSet cardSet = new CardSet("Set");
@@ -269,6 +292,38 @@ class SummaryServiceTest {
 	@Test
 	@DisplayName("calculates highest/lowest votes preferring basic numeric")
 	void calculatesExtremesPreferringBasicNumeric() {
+		final CardSet cardSet = new CardSet("Set");
+		final Card card1 = new Card("1", 1.0);
+		final Card card1Text = new Card("One but with text", 1.0);
+		final Card card3 = new Card("3", 3.0);
+		final Card card3Text = new Card("Three but with text", 3.0);
+		final Card cardQuestion = new Card("?", null);
+		cardSet.getCards().addAll(Set.of(card1, card1Text, card3, card3Text,cardQuestion));
+
+		final Room myRoom = new Room("My Room", cardSet);
+		final RoomMember bob = new RoomMember("Bob");
+		final RoomMember alice = new RoomMember("Alice");
+		final RoomMember carol = new RoomMember("Carol");
+		final RoomMember eve = new RoomMember("Eve");
+		myRoom.getMembers().addAll(Set.of(bob, alice, carol, eve));
+
+		bob.setVote(card1);
+		alice.setVote(card1Text);
+		carol.setVote(card3);
+		eve.setVote(card3Text);
+		myRoom.setVotingState(Room.VotingState.CLOSED);
+
+		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
+
+		assertThat(voteSummary.highest().card()).isEqualTo(card3);
+		assertThat(voteSummary.highest().members()).containsExactlyInAnyOrder(carol);
+		assertThat(voteSummary.lowest().card()).isEqualTo(card1);
+		assertThat(voteSummary.lowest().members()).containsExactly(bob);
+	}
+
+	@Test
+	@DisplayName("calculates highest/lowest votes preferring first in alphabetic order if only non-basic numeric match")
+	void calculatesExtremesPreferringAlphabetic() {
 		final CardSet cardSet = new CardSet("Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card1Text = new Card("One but with text", 1.0);
