@@ -29,7 +29,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 			return;
 		}
 
-		roomService.addMember(room, user.getName());
+		roomService.addMember(room, new RoomMember(user.getName()));
 		roomRepository.save(room);
 		logger.info("User '{}' joined room '{}'.", user.getName(), room);
 	}

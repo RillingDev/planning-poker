@@ -41,10 +41,13 @@ class RoomService {
 		}
 	}
 
-	public void addMember(Room room, String username) {
-		room.getMembers().add(new RoomMember(username));
+	public void addMember(Room room, RoomMember roomMember) {
+		room.getMembers().add(roomMember);
 	}
 
+	/**
+	 * Contract: Room member must be part of room.
+	 */
 	public void removeMember(Room room, RoomMember roomMember) {
 		room.getMembers().remove(roomMember);
 
@@ -53,6 +56,9 @@ class RoomService {
 		}
 	}
 
+	/**
+	 * Contract: Room member must be part of room.
+	 */
 	public void setRole(Room room, RoomMember roomMember, RoomMember.Role role) {
 		roomMember.setRole(role);
 
@@ -61,6 +67,9 @@ class RoomService {
 		}
 	}
 
+	/**
+	 * Contract: Room member must be part of room. Card must be part of room card set.
+	 */
 	public void setVote(Room room, RoomMember roomMember, Card card) {
 		roomMember.setVote(card);
 

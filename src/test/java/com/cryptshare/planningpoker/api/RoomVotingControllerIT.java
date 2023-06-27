@@ -4,11 +4,9 @@ import com.cryptshare.planningpoker.SummaryService;
 import com.cryptshare.planningpoker.data.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -17,7 +15,6 @@ import java.util.Set;
 
 import static com.cryptshare.planningpoker.SummaryService.VoteSummary;
 import static com.cryptshare.planningpoker.api.MockOidcLogins.bobOidcLogin;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -36,7 +33,7 @@ class RoomVotingControllerIT {
 	@MockBean
 	SummaryService summaryService;
 
-	@SpyBean
+	@MockBean
 	RoomService roomService;
 
 	@Autowired
@@ -53,7 +50,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` throws when not a member")
 	void createVoteNotMember() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -67,7 +64,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` throws when an illegal card is specified")
 	void createVoteWrongCard() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -81,7 +78,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` blocks observers")
 	void createVoteBlocksObserver() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
@@ -97,7 +94,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` ignores if voting is complete")
 	void createVoteClosed() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
 		cardSet.getCards().add(card1);
@@ -122,7 +119,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}/votes` sets vote")
 	void createVotePutsVote() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
@@ -133,37 +130,8 @@ class RoomVotingControllerIT {
 
 		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "1")).andExpect(status().isOk());
 
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		final Room actual = captor.getValue();
-		assertThat(actual.findMemberByUser("Bob").orElseThrow().getVote()).isNotNull().isEqualTo(card);
-		assertThat(actual.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
-	}
-
-	@Test
-	@DisplayName("POST `/api/rooms/{room-name}/votes` updates vote")
-	void createVoteUpdateVote() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
-		final Card card1 = new Card("1", 1.0);
-		final Card card2 = new Card("2", 2.0);
-		cardSet.getCards().add(card1);
-		cardSet.getCards().add(card2);
-		final Room room = new Room("my-room", cardSet);
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-
-		final RoomMember roomMember1 = new RoomMember("Bob");
-		roomMember1.setVote(card1);
-		room.getMembers().add(roomMember1);
-
-		final RoomMember roomMember2 = new RoomMember("Alice");
-		room.getMembers().add(roomMember2);
-
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "2")).andExpect(status().isOk());
-
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		final Card vote = captor.getValue().findMemberByUser("Bob").orElseThrow().getVote();
-		assertThat(vote).isEqualTo(card2);
+		verify(roomService).setVote(room, roomMember, card);
+		verify(roomRepository).save(room);
 	}
 
 	@Test
@@ -177,7 +145,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("DELETE `/api/rooms/{room-name}/votes` throws when not a member")
 	void clearVotesNotMember() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -189,9 +157,9 @@ class RoomVotingControllerIT {
 	}
 
 	@Test
-	@DisplayName("DELETE `/api/rooms/{room-name}/votes` clear vote")
+	@DisplayName("DELETE `/api/rooms/{room-name}/votes` clears vote")
 	void clearVotesUpdateVote() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card1 = new Card("1", 1.0);
 		final Card card2 = new Card("2", 2.0);
 		cardSet.getCards().add(card1);
@@ -210,10 +178,8 @@ class RoomVotingControllerIT {
 
 		mockMvc.perform(delete("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf())).andExpect(status().isOk());
 
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getMembers()).hasSize(2).allMatch(rm -> rm.getVote() == null);
-		assertThat(captor.getValue().getVotingState()).isEqualTo(Room.VotingState.OPEN);
+		verify(roomService).clearVotes(room);
+		verify(roomRepository).save(room);
 	}
 
 	@Test
@@ -228,7 +194,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` throws when not a member")
 	void getSummaryNotMember() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		cardSet.getCards().add(new Card("1", 1.0));
 		final Room room = new Room("my-room", cardSet);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -242,7 +208,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` shows empty when not complete")
 	void getSummaryShowsEmpty() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
@@ -264,7 +230,7 @@ class RoomVotingControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/votes/summary` shows votes when complete")
 	void getSummaryShowsSummary() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
