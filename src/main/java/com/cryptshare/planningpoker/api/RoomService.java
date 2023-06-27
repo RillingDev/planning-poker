@@ -22,22 +22,22 @@ class RoomService {
 	}
 
 	public void editExtensions(Room room, Set<Extension> newExtensions) {
-		final Set<String> previousExtensionKeys = room.getExtensionConfigs().stream().map(RoomExtensionConfig::getExtension).map(Extension::getKey).collect(Collectors.toCollection(HashSet::new));
+		final Set<Extension> previousExtensions = room.getExtensionConfigs().stream().map(RoomExtensionConfig::getExtension).collect(Collectors.toCollection(HashSet::new));
 
 		for (Extension newExtension : newExtensions) {
-			if (previousExtensionKeys.contains(newExtension.getKey())) {
+			if (previousExtensions.contains(newExtension)) {
 				// Extension unchanged.
 			} else {
 				// Extension added.
 				room.getExtensionConfigs().add(new RoomExtensionConfig(newExtension));
 			}
-			previousExtensionKeys.remove(newExtension.getKey());
+			previousExtensions.remove(newExtension);
 		}
 
 		// Check values that were only in previous, not in new one.
-		for (String previousExtensionKey : previousExtensionKeys) {
+		for (Extension previousExtension : previousExtensions) {
 			// Extension removed.
-			room.getExtensionConfigs().removeIf(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey().equals(previousExtensionKey));
+			room.getExtensionConfigs().removeIf(roomExtensionConfig -> roomExtensionConfig.getExtension().equals(previousExtension));
 		}
 	}
 
