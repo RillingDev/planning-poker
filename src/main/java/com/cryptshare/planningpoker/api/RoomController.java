@@ -22,11 +22,13 @@ class RoomController extends AbstractRoomAwareController {
 
 	private final CardSetRepository cardSetRepository;
 	private final ExtensionRepository extensionRepository;
+	private final RoomService roomService;
 
-	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, ExtensionRepository extensionRepository) {
+	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, ExtensionRepository extensionRepository, RoomService roomService) {
 		super(roomRepository);
 		this.cardSetRepository = cardSetRepository;
 		this.extensionRepository = extensionRepository;
+		this.roomService = roomService;
 	}
 
 	@GetMapping(value = "/api/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,21 +78,27 @@ class RoomController extends AbstractRoomAwareController {
 		final Room room = requireRoom(roomName);
 
 		if (changes.topic != null) {
-			room.setTopic(changes.topic);
+			roomService.editTopic(room, changes.topic);
+			logger.info("Edited room '{}' topic by user '{}'.", room, user.getName());
 		}
 		if (changes.cardSetName != null) {
-			room.setCardSet(cardSetRepository.findByName(changes.cardSetName).orElseThrow(CardSetNotFoundException::new));
+			roomService.editCardSet(room, cardSetRepository.findByName(changes.cardSetName).orElseThrow(CardSetNotFoundException::new));
+			logger.info("Edited room '{}' card set by user '{}'.", room, user.getName());
 		}
 		if (changes.extensionKeys != null) {
-			applyExtensions(room, changes.extensionKeys);
+			final Set<Extension> newExtensions = changes.extensionKeys.stream().map(newExtensionKey -> extensionRepository.findByKeyAndEnabledIsTrue(newExtensionKey)
+					.orElseThrow(ExtensionNotFoundException::new)).collect(Collectors.toUnmodifiableSet());
+			roomService.editExtensions(room, newExtensions);
+			logger.info("Edited room '{}' extensions by user '{}'.", room, user.getName());
 		}
 		roomRepository.save(room);
-		logger.info("Edited room '{}' by user '{}'.", room, user.getName());
 	}
+
 
 	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName,
 									   @Nullable @JsonProperty("topic") String topic,
 									   @JsonProperty("extensions") Set<String> extensionKeys) {
+
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No such card-set.")
@@ -105,33 +113,4 @@ class RoomController extends AbstractRoomAwareController {
 	private static class RoomNameExistsException extends RuntimeException {
 	}
 
-	private void applyExtensions(Room room, Set<String> newExtensionKeys) {
-		final Set<String> previousExtensionKeys = room.getExtensionConfigs()
-				.stream()
-				.map(RoomExtensionConfig::getExtension)
-				.map(Extension::getKey)
-				.collect(Collectors.toCollection(HashSet::new));
-
-		for (String newExtensionKey : newExtensionKeys) {
-			final Extension extension = extensionRepository.findByKeyAndEnabledIsTrue(newExtensionKey)
-					.orElseThrow(ExtensionNotFoundException::new);
-
-			if (previousExtensionKeys.contains(newExtensionKey)) {
-				// Extension unchanged.
-			} else {
-				// Extension added.
-				room.getExtensionConfigs().add(new RoomExtensionConfig(extension));
-				logger.info("Extension '{}' added to room '{}'.", newExtensionKey, room);
-			}
-			previousExtensionKeys.remove(newExtensionKey);
-		}
-
-		// Check values that were only in previous, not in new one.
-		for (String previousExtensionKey : previousExtensionKeys) {
-			// Extension removed.
-			room.getExtensionConfigs().removeIf(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey().equals(previousExtensionKey));
-			logger.info("Extension '{}' removed from room '{}'.", previousExtensionKey, room);
-		}
-
-	}
 }

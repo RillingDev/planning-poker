@@ -96,10 +96,6 @@ public class Room extends BaseEntity {
 		this.votingState = votingState;
 	}
 
-	public boolean allVotersVoted() {
-		return members.stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(roomMember -> roomMember.getVote() != null);
-	}
-
 	public Optional<RoomMember> findMemberByUser(String username) {
 		return members.stream().filter(roomMember -> roomMember.getUsername().equals(username)).findFirst();
 	}
