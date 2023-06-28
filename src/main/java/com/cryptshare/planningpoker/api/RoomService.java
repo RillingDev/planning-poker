@@ -79,8 +79,9 @@ class RoomService {
 	}
 
 	private void closeVotingIfNeeded(Room room) {
-		final boolean allVotersVoted = room.getMembers().stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(roomMember -> roomMember.getVote() != null);
-		if (allVotersVoted) {
+		final Set<RoomMember> voters = room.getMembers().stream().filter(rm -> rm.getRole() == RoomMember.Role.VOTER).collect(Collectors.toSet());
+		// No need to close the vote if no voters remain
+		if (!voters.isEmpty() && voters.stream().allMatch(roomMember -> roomMember.getVote() != null)) {
 			room.setVotingState(Room.VotingState.CLOSED);
 		}
 	}

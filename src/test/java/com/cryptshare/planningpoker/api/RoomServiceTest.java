@@ -21,7 +21,7 @@ class RoomServiceTest {
 	@DisplayName("edits card set")
 	void editCardSet() {
 		final CardSet originalCardSet = new CardSet("My Set 1");
-		final Room room = new Room("my-room", originalCardSet);
+		final Room room = new Room("My Room", originalCardSet);
 
 		final CardSet newCardSet = new CardSet("My Set 2");
 
@@ -33,7 +33,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("edits topic")
 	void editTopic() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 
 		roomService.editTopic(room, "Foo!");
 
@@ -43,7 +43,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("adds extension")
 	void editExtensionsAddsExtension() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 
 		final Extension someExtension = new Extension("someExtension");
 
@@ -55,7 +55,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("removes extension")
 	void editExtensionsRemovesExtension() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 
 		final Extension someExtension = new Extension("someExtension");
 		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
@@ -69,7 +69,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("handles mixed extension changes")
 	void editExtensionsMixedExtensionChanges() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 
 		final Extension someExtension = new Extension("someExtension");
 		final Extension otherExtension = new Extension("otherExtension");
@@ -84,7 +84,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("adds member to room")
 	void addMemberAdds() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 
 		roomService.addMember(room, new RoomMember("Bob"));
 
@@ -94,7 +94,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("adding member to room keeps voting closed")
 	void addMemberKeepsVotingClosed() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 		room.setVotingState(Room.VotingState.CLOSED);
 
 		roomService.addMember(room, new RoomMember("Bob"));
@@ -107,7 +107,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("removes member from room")
 	void removeMemberRemoves() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 		final RoomMember roomMember = new RoomMember("Bob");
 		room.getMembers().add(roomMember);
 
@@ -119,21 +119,49 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("removing member from room closes voting")
 	void removeMemberClosesVoting() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final CardSet cardSet = new CardSet("My Set");
+		final Card card1 = new Card("1", 1.0);
+		cardSet.getCards().add(card1);
+		final Room room = new Room("My Room", cardSet);
 		room.setVotingState(Room.VotingState.OPEN);
-		final RoomMember roomMember = new RoomMember("Bob");
-		room.getMembers().add(roomMember);
 
-		roomService.removeMember(room, roomMember);
+		final RoomMember roomMember1 = new RoomMember("Bob");
+		room.getMembers().add(roomMember1);
 
-		assertThat(room.getMembers()).isEmpty();
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setVote(card1);
+		room.getMembers().add(roomMember2);
+
+		roomService.removeMember(room, roomMember1);
+
+		assertThat(room.getMembers()).containsExactly(roomMember2);
 		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
+	}
+
+
+	@Test
+	@DisplayName("removing member from room keeps voting open if no voters remain")
+	void removeMemberKeepsVotingOpenIfNoVotersRemain() {
+		final Room room = new Room("My Room", new CardSet("My Set"));
+		room.setVotingState(Room.VotingState.OPEN);
+
+		final RoomMember roomMember1 = new RoomMember("Bob");
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setRole(RoomMember.Role.OBSERVER);
+		room.getMembers().add(roomMember2);
+
+		roomService.removeMember(room, roomMember1);
+
+		assertThat(room.getMembers()).containsExactly(roomMember2);
+		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.OPEN);
 	}
 
 	@Test
 	@DisplayName("sets role to observer")
 	void setRoleSetsObserver() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 
 		final RoomMember roomMember = new RoomMember("Bob");
 		roomMember.setRole(RoomMember.Role.VOTER);
@@ -148,23 +176,51 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("setting role to observer closes voting")
 	void setRoleSetsObserverClosesVoting() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final CardSet cardSet = new CardSet("My Set");
+		final Card card1 = new Card("1", 1.0);
+		cardSet.getCards().add(card1);
+		final Room room = new Room("My Room", cardSet);
 		room.setVotingState(Room.VotingState.OPEN);
 
-		final RoomMember roomMember = new RoomMember("Bob");
-		roomMember.setRole(RoomMember.Role.VOTER);
-		room.getMembers().add(roomMember);
+		final RoomMember roomMember1 = new RoomMember("Bob");
+		roomMember1.setRole(RoomMember.Role.VOTER);
+		room.getMembers().add(roomMember1);
 
-		roomService.setRole(room, roomMember, RoomMember.Role.OBSERVER);
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setRole(RoomMember.Role.VOTER);
+		roomMember2.setVote(card1);
+		room.getMembers().add(roomMember2);
 
-		assertThat(roomMember.getRole()).isEqualTo(RoomMember.Role.OBSERVER);
+		roomService.setRole(room, roomMember1, RoomMember.Role.OBSERVER);
+
+		assertThat(roomMember1.getRole()).isEqualTo(RoomMember.Role.OBSERVER);
 		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
+	}
+
+	@Test
+	@DisplayName("setting role to observer keeps voting open if no voters remain")
+	void setRoleSetsObserverKeepsVotingOpenIfNoVotersRemain() {
+		final Room room = new Room("My Room", new CardSet("My Set"));
+		room.setVotingState(Room.VotingState.OPEN);
+
+		final RoomMember roomMember1 = new RoomMember("Bob");
+		roomMember1.setRole(RoomMember.Role.VOTER);
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		roomMember2.setRole(RoomMember.Role.OBSERVER);
+		room.getMembers().add(roomMember2);
+
+		roomService.setRole(room, roomMember1, RoomMember.Role.OBSERVER);
+
+		assertThat(roomMember1.getRole()).isEqualTo(RoomMember.Role.OBSERVER);
+		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.OPEN);
 	}
 
 	@Test
 	@DisplayName("sets role to voter")
 	void setRoleSetsVoter() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 
 		final RoomMember roomMember = new RoomMember("Bob");
 		roomMember.setRole(RoomMember.Role.OBSERVER);
@@ -179,7 +235,7 @@ class RoomServiceTest {
 	@Test
 	@DisplayName("setting to voter keeps voting closed")
 	void setRoleSetsVoterVotingClosed() {
-		final Room room = new Room("my-room", new CardSet("My Set"));
+		final Room room = new Room("My Room", new CardSet("My Set"));
 		room.setVotingState(Room.VotingState.CLOSED);
 
 		final RoomMember roomMember = new RoomMember("Bob");
@@ -198,7 +254,7 @@ class RoomServiceTest {
 		final CardSet cardSet = new CardSet("My Set 1");
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
-		final Room room = new Room("my-room", cardSet);
+		final Room room = new Room("My Room", cardSet);
 
 		final RoomMember roomMember = new RoomMember("Bob");
 		room.getMembers().add(roomMember);
@@ -210,6 +266,25 @@ class RoomServiceTest {
 	}
 
 	@Test
+	@DisplayName("setting vote keeps room open if others still have to vote")
+	void setVoteKeepsVotingOpenIfNotAllVoted() {
+		final CardSet cardSet = new CardSet("My Set 1");
+		final Card card = new Card("1", 1.0);
+		cardSet.getCards().add(card);
+		final Room room = new Room("My Room", cardSet);
+
+		final RoomMember roomMember1 = new RoomMember("Bob");
+		room.getMembers().add(roomMember1);
+
+		final RoomMember roomMember2 = new RoomMember("Alice");
+		room.getMembers().add(roomMember2);
+
+		roomService.setVote(room, roomMember1, card);
+
+		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.OPEN);
+	}
+
+	@Test
 	@DisplayName("updates vote")
 	void setVoteUpdateVote() {
 		final CardSet cardSet = new CardSet("My Set 1");
@@ -217,7 +292,7 @@ class RoomServiceTest {
 		final Card card2 = new Card("2", 2.0);
 		cardSet.getCards().add(card1);
 		cardSet.getCards().add(card2);
-		final Room room = new Room("my-room", cardSet);
+		final Room room = new Room("My Room", cardSet);
 
 		final RoomMember roomMember1 = new RoomMember("Bob");
 		roomMember1.setVote(card1);
@@ -240,7 +315,7 @@ class RoomServiceTest {
 		final Card card2 = new Card("2", 2.0);
 		cardSet.getCards().add(card1);
 		cardSet.getCards().add(card2);
-		final Room room = new Room("my-room", cardSet);
+		final Room room = new Room("My Room", cardSet);
 
 		final RoomMember roomMember1 = new RoomMember("Bob");
 		roomMember1.setVote(card1);
