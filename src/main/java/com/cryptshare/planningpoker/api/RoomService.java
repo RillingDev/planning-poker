@@ -51,9 +51,7 @@ class RoomService {
 	public void removeMember(Room room, RoomMember roomMember) {
 		room.getMembers().remove(roomMember);
 
-		if (allVotersVoted(room)) {
-			room.setVotingState(Room.VotingState.CLOSED);
-		}
+		closeVotingIfNeeded(room);
 	}
 
 	/**
@@ -62,9 +60,7 @@ class RoomService {
 	public void setRole(Room room, RoomMember roomMember, RoomMember.Role role) {
 		roomMember.setRole(role);
 
-		if (role == RoomMember.Role.OBSERVER && allVotersVoted(room)) {
-			room.setVotingState(Room.VotingState.CLOSED);
-		}
+		closeVotingIfNeeded(room);
 	}
 
 	/**
@@ -73,9 +69,7 @@ class RoomService {
 	public void setVote(Room room, RoomMember roomMember, Card card) {
 		roomMember.setVote(card);
 
-		if (allVotersVoted(room)) {
-			room.setVotingState(Room.VotingState.CLOSED);
-		}
+		closeVotingIfNeeded(room);
 	}
 
 	public void clearVotes(Room room) {
@@ -84,7 +78,11 @@ class RoomService {
 		room.setVotingState(Room.VotingState.OPEN);
 	}
 
-	private boolean allVotersVoted(Room room) {
-		return room.getMembers().stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(roomMember -> roomMember.getVote() != null);
+	private void closeVotingIfNeeded(Room room) {
+		final boolean allVotersVoted = room.getMembers().stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(roomMember -> roomMember.getVote() != null);
+		if (allVotersVoted) {
+			room.setVotingState(Room.VotingState.CLOSED);
+		}
 	}
+
 }
