@@ -19,6 +19,8 @@ class RoomService {
 
 	public void editCardSet(Room room, CardSet newCardSet) {
 		room.setCardSet(newCardSet);
+
+		clearVotes(room);
 	}
 
 	public void editExtensions(Room room, Set<Extension> newExtensions) {
@@ -59,6 +61,10 @@ class RoomService {
 	 */
 	public void setRole(Room room, RoomMember roomMember, RoomMember.Role role) {
 		roomMember.setRole(role);
+
+		if (role == RoomMember.Role.OBSERVER) {
+			roomMember.setVote(null);
+		}
 
 		closeVotingIfNeeded(room);
 	}
