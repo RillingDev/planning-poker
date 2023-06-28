@@ -30,6 +30,28 @@ class RoomServiceTest {
 		assertThat(room.getCardSet()).isEqualTo(newCardSet);
 	}
 
+
+	@Test
+	@DisplayName("editing card set removes votes")
+	void editCardSetRemovesVotes() {
+		final CardSet originalCardSet = new CardSet("My Set");
+		final Card card1 = new Card("1", 1.0);
+		originalCardSet.getCards().add(card1);
+		final Room room = new Room("My Room", originalCardSet);
+		room.setVotingState(Room.VotingState.CLOSED);
+
+		final RoomMember roomMember = new RoomMember("Bob");
+		roomMember.setVote(card1);
+		room.getMembers().add(roomMember);
+
+		final CardSet newCardSet = new CardSet("My Set 2");
+
+		roomService.editCardSet(room, newCardSet);
+
+		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.OPEN);
+		assertThat(roomMember.getVote()).isNull();
+	}
+
 	@Test
 	@DisplayName("edits topic")
 	void editTopic() {
