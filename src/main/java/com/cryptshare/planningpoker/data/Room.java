@@ -21,7 +21,7 @@ public class Room extends BaseEntity {
 	@Nullable
 	private String topic;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private CardSet cardSet;
 
