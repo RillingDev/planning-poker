@@ -21,7 +21,7 @@ public class Room extends BaseEntity {
 	@Nullable
 	private String topic;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "card_set_id", nullable = false)
 	private CardSet cardSet;
 
@@ -94,10 +94,6 @@ public class Room extends BaseEntity {
 
 	public void setVotingState(VotingState votingState) {
 		this.votingState = votingState;
-	}
-
-	public boolean allVotersVoted() {
-		return members.stream().filter(rm -> rm.getRole() != RoomMember.Role.OBSERVER).allMatch(roomMember -> roomMember.getVote() != null);
 	}
 
 	public Optional<RoomMember> findMemberByUser(String username) {

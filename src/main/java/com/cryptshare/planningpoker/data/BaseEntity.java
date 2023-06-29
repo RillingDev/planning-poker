@@ -16,15 +16,13 @@ abstract class BaseEntity {
 	// UUID instead of auto-increment to always have an ID for equality checks.
 	@Id
 	@Column(name = "id", nullable = false)
-	@Nullable
 	private UUID id = UUID.randomUUID();
 
-	@Nullable
 	protected UUID getId() {
 		return id;
 	}
 
-	protected void setId(@Nullable UUID id) {
+	protected void setId(UUID id) {
 		this.id = id;
 	}
 

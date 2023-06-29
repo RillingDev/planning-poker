@@ -20,10 +20,12 @@ class RoomVotingController extends AbstractRoomAwareController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomVotingController.class);
 
 	private final SummaryService summaryService;
+	private final RoomService roomService;
 
-	RoomVotingController(RoomRepository roomRepository, SummaryService summaryService) {
+	RoomVotingController(RoomRepository roomRepository, SummaryService summaryService, RoomService roomService) {
 		super(roomRepository);
 		this.summaryService = summaryService;
+		this.roomService = roomService;
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/votes")
@@ -48,7 +50,7 @@ class RoomVotingController extends AbstractRoomAwareController {
 				.findFirst()
 				.orElseThrow(CardNotFoundException::new);
 
-		setVote(room, roomMember, card);
+		roomService.setVote(room, roomMember, card);
 		roomRepository.save(room);
 		logger.debug("User '{}' voted with '{}' in '{}'.", user.getName(), card, room);
 	}
@@ -59,7 +61,7 @@ class RoomVotingController extends AbstractRoomAwareController {
 		final Room room = requireRoom(roomName);
 		requireActingUserMember(room, user.getName());
 
-		clearVotes(room);
+		roomService.clearVotes(room);
 		roomRepository.save(room);
 		logger.debug("User '{}' cleared votes in '{}'.", user.getName(), room);
 	}
@@ -84,17 +86,4 @@ class RoomVotingController extends AbstractRoomAwareController {
 	private static class ObserverException extends RuntimeException {
 	}
 
-	private static void setVote(Room room, RoomMember roomMember, Card card) {
-		roomMember.setVote(card);
-
-		if (room.allVotersVoted()) {
-			room.setVotingState(Room.VotingState.CLOSED);
-		}
-	}
-
-	private static void clearVotes(Room room) {
-		room.getMembers().forEach(rm -> rm.setVote(null));
-
-		room.setVotingState(Room.VotingState.OPEN);
-	}
 }

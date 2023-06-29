@@ -1,0 +1,2 @@
+DROP TRIGGER update_room_member_vote_cleanup;
+DROP TRIGGER update_room_card_set_vote_cleanup;

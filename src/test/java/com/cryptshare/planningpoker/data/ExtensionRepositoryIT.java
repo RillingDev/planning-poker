@@ -2,29 +2,23 @@ package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Sql("/delete-initial-data.sql")
 class ExtensionRepositoryIT {
 
 	@Autowired
 	ExtensionRepository extensionRepository;
-
-	@PersistenceContext
-	EntityManager em;
-
-	@BeforeEach
-	void setUp() {
-		extensionRepository.deleteAll();
-	}
 
 	@Test
 	@DisplayName("can be saved and loaded")
