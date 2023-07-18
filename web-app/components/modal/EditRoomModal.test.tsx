@@ -29,7 +29,7 @@ describe("EditRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     expect(screen.getByText("Set 1")).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe("EditRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     expect(screen.getByLabelText("Card Set")).toHaveValue("Set 1");
@@ -90,7 +90,7 @@ describe("EditRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
     await userEvent.click(screen.getByText("Edit"));
@@ -118,7 +118,7 @@ describe("EditRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await userEvent.type(screen.getByLabelText("Topic"), "Bar?");
     await userEvent.click(screen.getByText("Edit"));
@@ -159,7 +159,7 @@ describe("EditRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     const extensionCheckbox =
       screen.getByLabelText<HTMLInputElement>("Mock Extension");
@@ -204,7 +204,7 @@ describe("EditRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     const extensionCheckbox =
       screen.getByLabelText<HTMLInputElement>("Mock Extension");
@@ -249,11 +249,11 @@ describe("EditRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await userEvent.type(screen.getByLabelText("Topic"), "Bar?");
     await userEvent.click(
-      screen.getByLabelText<HTMLInputElement>("Mock Extension")
+      screen.getByLabelText<HTMLInputElement>("Mock Extension"),
     );
     await userEvent.click(screen.getByText("Edit"));
 
@@ -293,7 +293,7 @@ describe("EditRoomModal", () => {
           onHide={onHide}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await userEvent.type(screen.getByLabelText("Topic"), "Bar?");
 
@@ -306,7 +306,7 @@ describe("EditRoomModal", () => {
           onHide={onHide}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     rerender(
       <AppContext.Provider value={contextState}>
@@ -317,7 +317,7 @@ describe("EditRoomModal", () => {
           onHide={onHide}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     expect(screen.getByLabelText("Topic")).toHaveValue("Foo!");

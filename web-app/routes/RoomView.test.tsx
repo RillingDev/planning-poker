@@ -65,7 +65,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -95,7 +95,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -123,7 +123,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -156,7 +156,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -190,12 +190,12 @@ describe("RoomView", () => {
       ],
       {
         initialEntries: ["/rooms/My Room"],
-      }
+      },
     );
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -228,8 +228,8 @@ describe("RoomView", () => {
           cardSetName: cardSet.name,
           votingClosed: !votingOpen,
           members: [createMockRoomMember({ username: "Bob" })],
-        })
-      )
+        }),
+      ),
     );
 
     const router = createMemoryRouter(TEST_ROUTES, {
@@ -238,7 +238,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -271,7 +271,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -309,8 +309,8 @@ describe("RoomView", () => {
           cardSetName: (roomEdited ? cardSet2 : cardSet1).name,
           votingClosed: false,
           members: [createMockRoomMember({ username: "Bob" })],
-        })
-      )
+        }),
+      ),
     );
 
     const router = createMemoryRouter(TEST_ROUTES, {
@@ -319,7 +319,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -374,12 +374,12 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
     expect(
-      screen.getByText("Mock Extension Room Component")
+      screen.getByText("Mock Extension Room Component"),
     ).toBeInTheDocument();
   });
 
@@ -407,8 +407,8 @@ describe("RoomView", () => {
               role: memberEdited ? Role.VOTER : Role.OBSERVER,
             }),
           ],
-        })
-      )
+        }),
+      ),
     );
 
     const router = createMemoryRouter(TEST_ROUTES, {
@@ -417,7 +417,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -429,7 +429,7 @@ describe("RoomView", () => {
     expect(editMember).toHaveBeenCalledWith(
       "My Room",
       "Bob",
-      EditAction.SET_VOTER
+      EditAction.SET_VOTER,
     );
     expect(screen.getByText("Voter")).toBeInTheDocument();
   });
@@ -463,8 +463,8 @@ describe("RoomView", () => {
               vote: voteCreated ? card : null,
             }),
           ],
-        })
-      )
+        }),
+      ),
     );
 
     const router = createMemoryRouter(TEST_ROUTES, {
@@ -473,7 +473,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -499,9 +499,7 @@ describe("RoomView", () => {
       name: "My Room",
       cardSetName: cardSet.name,
       votingClosed: false,
-      members: [
-        createMockRoomMember({ username: "Bob", role: Role.OBSERVER }),
-      ],
+      members: [createMockRoomMember({ username: "Bob", role: Role.OBSERVER })],
     });
     vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
     vi.mocked(getRoom).mockResolvedValue(room);
@@ -512,7 +510,7 @@ describe("RoomView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 

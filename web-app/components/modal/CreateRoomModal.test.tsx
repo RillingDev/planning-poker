@@ -26,7 +26,7 @@ describe("CreateRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     expect(screen.getByText("Set 1")).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe("CreateRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     const nameInput = screen.getByLabelText<HTMLInputElement>("Room Name");
     await userEvent.type(nameInput, "Room!%;");
@@ -75,7 +75,7 @@ describe("CreateRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     const nameInput = screen.getByLabelText<HTMLInputElement>("Room Name");
     await userEvent.type(nameInput, room.name);
@@ -103,7 +103,7 @@ describe("CreateRoomModal", () => {
           onHide={() => ({})}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await userEvent.type(screen.getByLabelText("Room Name"), "My Room");
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 1");
@@ -128,7 +128,7 @@ describe("CreateRoomModal", () => {
           onHide={onHide}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await userEvent.type(screen.getByLabelText("Room Name"), "My Room");
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 1");
@@ -142,7 +142,7 @@ describe("CreateRoomModal", () => {
           onHide={onHide}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     rerender(
       <AppContext.Provider value={contextState}>
@@ -153,7 +153,7 @@ describe("CreateRoomModal", () => {
           onHide={onHide}
           ariaLabelledBy="someId"
         />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     expect(screen.getByLabelText("Room Name")).toHaveValue("");

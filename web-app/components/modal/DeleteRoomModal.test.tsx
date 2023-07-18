@@ -15,7 +15,7 @@ describe("DeleteRoomModal", () => {
         onHide={() => ({})}
         room={room}
         ariaLabelledBy="someId"
-      />
+      />,
     );
 
     expect(screen.getByText("Delete Room 'My Room'")).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe("DeleteRoomModal", () => {
         onHide={() => ({})}
         room={room}
         ariaLabelledBy="someId"
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Permanently Delete This Room"));

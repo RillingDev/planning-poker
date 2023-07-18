@@ -20,7 +20,7 @@ export const CreateRoomModal: FC<{
     e.target.setCustomValidity(
       existingRooms.some((room) => room.name == value)
         ? "This room name is already in use."
-        : ""
+        : "",
     );
     setRoomName(value);
   }

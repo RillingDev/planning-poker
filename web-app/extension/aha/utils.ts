@@ -9,13 +9,13 @@ import { ahaExtension } from "./AhaExtension";
  * @internal
  */
 export async function _getProductScoreFactNames(
-  productId: string
+  productId: string,
 ): Promise<ReadonlyArray<string>> {
   const ideasForProduct = await ahaExtension
     .getClient()
     .then((c) => c.getIdeasForProduct(productId, 1, 200, ["score_facts"]));
   const accumulatedScoreFactNames = ideasForProduct.ideas.flatMap((idea) =>
-    idea.score_facts.map((scoreFact) => scoreFact.name)
+    idea.score_facts.map((scoreFact) => scoreFact.name),
   );
   return Array.from(new Set(accumulatedScoreFactNames)); // only return unique.
 }

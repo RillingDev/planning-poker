@@ -70,14 +70,14 @@ describe("RoomListView", () => {
       return Promise.resolve();
     });
     vi.mocked(getRooms).mockImplementation(() =>
-      Promise.resolve(roomCreated ? [createMockRoom({ name: "My Room" })] : [])
+      Promise.resolve(roomCreated ? [createMockRoom({ name: "My Room" })] : []),
     );
 
     const router = createMemoryRouter(TEST_ROUTES);
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -107,7 +107,7 @@ describe("RoomListView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -136,7 +136,7 @@ describe("RoomListView", () => {
     render(
       <AppContext.Provider value={contextState}>
         <RouterProvider router={router} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
     await waitForLoaderResolved();
 
@@ -176,7 +176,7 @@ describe("RoomListView", () => {
       return Promise.resolve();
     });
     vi.mocked(getRooms).mockImplementation(() =>
-      Promise.resolve(roomDeleted ? [] : [room])
+      Promise.resolve(roomDeleted ? [] : [room]),
     );
 
     const router = createMemoryRouter(TEST_ROUTES);

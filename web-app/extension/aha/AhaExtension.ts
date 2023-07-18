@@ -19,7 +19,7 @@ export class AhaExtension implements Extension {
   async getClient(): Promise<AhaClient> {
     if (this.#client == null) {
       this.#client = new AuthenticatingAhaClient(
-        await getExtensionConfig<AhaConfig>(this.key)
+        await getExtensionConfig<AhaConfig>(this.key),
       );
     }
     return this.#client;

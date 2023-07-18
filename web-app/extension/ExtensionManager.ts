@@ -10,7 +10,7 @@ export class ExtensionManager {
 
   getByRoom(room: Room): ReadonlyArray<Extension> {
     return this.#extensions.filter((extension) =>
-      room.extensions.includes(extension.key)
+      room.extensions.includes(extension.key),
     );
   }
 

@@ -179,16 +179,16 @@ describe("VoteSummaryDetails", () => {
     };
 
     const { container } = render(
-      <VoteSummaryDetails room={room} voteSummary={voteSummary} />
+      <VoteSummaryDetails room={room} voteSummary={voteSummary} />,
     );
 
     const summaryHighest = container.querySelector(
-      ".summary__highest"
+      ".summary__highest",
     ) as HTMLElement;
     expect(getByText(summaryHighest, "Alice")).toBeInTheDocument();
     expect(getByText(summaryHighest, "High Card")).toBeInTheDocument();
     const summaryLowest = container.querySelector(
-      ".summary__lowest"
+      ".summary__lowest",
     ) as HTMLElement;
     expect(getByText(summaryLowest, "Bob")).toBeInTheDocument();
     expect(getByText(summaryLowest, "Low Card")).toBeInTheDocument();
@@ -268,11 +268,11 @@ describe("VoteSummaryDetails", () => {
         })}
       >
         <VoteSummaryDetails room={room} voteSummary={voteSummary} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     expect(
-      screen.getByText("Mock Extension Submit Component")
+      screen.getByText("Mock Extension Submit Component"),
     ).toBeInTheDocument();
   });
 });

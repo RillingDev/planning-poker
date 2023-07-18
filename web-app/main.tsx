@@ -19,8 +19,8 @@ async function createContextState(): Promise<AppContextState> {
 
   const extensionManager = new ExtensionManager(
     AVAILABLE_EXTENSIONS.filter((availableExtension) =>
-      enabledExtensionKeys.includes(availableExtension.key)
-    )
+      enabledExtensionKeys.includes(availableExtension.key),
+    ),
   );
 
   return {
@@ -38,7 +38,7 @@ createContextState()
           <Header />
           <RouterProvider router={router} />
         </AppContext.Provider>
-      </React.StrictMode>
+      </React.StrictMode>,
     );
   })
   .catch(console.error);

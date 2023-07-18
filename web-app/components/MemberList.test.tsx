@@ -16,7 +16,7 @@ describe("MemberList", () => {
     const roomMember2 = createMockRoomMember({ username: "Alice" });
 
     render(
-      <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />
+      <MemberList members={[roomMember1, roomMember2]} onAction={() => ({})} />,
     );
 
     expect(screen.getByText("Bob")).toBeInTheDocument();
@@ -132,7 +132,7 @@ describe("MemberList", () => {
     render(
       <AppContext.Provider value={appContextState}>
         <MemberList members={[otherMember]} onAction={onAction} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     await userEvent.click(screen.getByLabelText("Edit Member"));
@@ -156,7 +156,7 @@ describe("MemberList", () => {
     render(
       <AppContext.Provider value={appContextState}>
         <MemberList members={[thisMember]} onAction={() => ({})} />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     await userEvent.click(screen.getByLabelText("Edit Member"));

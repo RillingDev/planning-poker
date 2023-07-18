@@ -60,7 +60,7 @@ export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
 
 function findMemberForUser(room: Room, user: User): RoomMember {
   const roomMember = room.members.find(
-    (member) => member.username == user.username
+    (member) => member.username == user.username,
   );
   if (roomMember == null) {
     throw new TypeError(`Could not find member for '${user.username}'`);
@@ -134,7 +134,7 @@ export const RoomView: FC = () => {
   const [activeCard, setActiveCard] = useState<Card | null>(member.vote);
 
   const [summaryResult, setSummaryResult] = useState<SummaryResult | null>(
-    loaderData.summaryResult
+    loaderData.summaryResult,
   );
 
   useDocumentTitle(room.name);

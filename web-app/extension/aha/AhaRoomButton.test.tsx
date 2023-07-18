@@ -55,7 +55,7 @@ describe("AhaRoomButton", () => {
     await userEvent.type(input, "ABC-I-123");
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", [
@@ -81,7 +81,7 @@ describe("AhaRoomButton", () => {
           });
         }
         return Promise.resolve(null);
-      }
+      },
     );
 
     render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
@@ -92,7 +92,7 @@ describe("AhaRoomButton", () => {
     await userEvent.type(input, "ABC-I-123");
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", [
@@ -124,7 +124,7 @@ describe("AhaRoomButton", () => {
     await userEvent.type(input, "ABC-I-123");
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     await userEvent.click(screen.getByText("Import Idea"));
@@ -136,7 +136,7 @@ describe("AhaRoomButton", () => {
 
   it("reacts to error", async () => {
     vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockRejectedValue(
-      new Error("Beep Boop")
+      new Error("Beep Boop"),
     );
 
     const onChange = vi.fn();
@@ -148,7 +148,7 @@ describe("AhaRoomButton", () => {
     await userEvent.type(input, "A");
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(screen.getByRole("alert")).toBeVisible();
@@ -173,7 +173,7 @@ describe("AhaRoomButton", () => {
     await userEvent.type(input, "ABC-I-123");
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     await userEvent.click(screen.getByText("Import Idea"));

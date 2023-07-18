@@ -40,7 +40,7 @@ const Member: FC<{
         </span>
         <span
           className={`badge rounded-pill bg-${mapRoleToColor(
-            member.role
+            member.role,
           )} ms-1`}
         >
           {mapRoleToName(member.role)}

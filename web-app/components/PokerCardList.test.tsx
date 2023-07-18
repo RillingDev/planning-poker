@@ -14,7 +14,7 @@ describe("PokerCardList", () => {
     });
 
     render(
-      <PokerCardList cardSet={cardSet} activeCard={null} disabled={true} />
+      <PokerCardList cardSet={cardSet} activeCard={null} disabled={true} />,
     );
 
     expect(screen.getByText("Card 1")).toBeInTheDocument();
@@ -30,7 +30,7 @@ describe("PokerCardList", () => {
     });
 
     render(
-      <PokerCardList cardSet={cardSet} activeCard={null} disabled={true} />
+      <PokerCardList cardSet={cardSet} activeCard={null} disabled={true} />,
     );
 
     expect(screen.getByText("Card 1")).toBeDisabled();
@@ -46,7 +46,7 @@ describe("PokerCardList", () => {
     });
 
     render(
-      <PokerCardList cardSet={cardSet} activeCard={null} disabled={false} />
+      <PokerCardList cardSet={cardSet} activeCard={null} disabled={false} />,
     );
 
     expect(screen.getByText("Card 1")).not.toBeDisabled();
@@ -60,7 +60,7 @@ describe("PokerCardList", () => {
     });
 
     render(
-      <PokerCardList cardSet={cardSet} activeCard={card1} disabled={false} />
+      <PokerCardList cardSet={cardSet} activeCard={card1} disabled={false} />,
     );
 
     expect(screen.getByText("Card 1")).toHaveClass("active");
@@ -81,7 +81,7 @@ describe("PokerCardList", () => {
         activeCard={null}
         disabled={false}
         onClick={handleClick}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Card 1"));

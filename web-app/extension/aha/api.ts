@@ -25,18 +25,18 @@ export interface AhaClient {
     productId: string,
     page: number,
     perPage: number,
-    fields: T[]
+    fields: T[],
   ): Promise<IdeasResponse<T>>;
 
   getIdea<T extends IdeaFilterField>(
     ideaId: string,
-    fields: T[]
+    fields: T[],
   ): Promise<IdeaResponse<T> | null>;
 
   putIdeaScore(
     ideaId: string,
     scoreFactName: string,
-    value: number
+    value: number,
   ): Promise<void>;
 }
 
@@ -69,7 +69,7 @@ export class AuthenticatingAhaClient implements AhaClient {
     this.#authUrl.searchParams.set("client_id", this.#clientId);
     this.#authUrl.searchParams.set(
       "redirect_uri",
-      this.#redirectUri.toString()
+      this.#redirectUri.toString(),
     );
 
     this.#accessToken = null;
@@ -91,7 +91,7 @@ export class AuthenticatingAhaClient implements AhaClient {
       const newWindow = window.open(
         this.#authUrl,
         "aha-auth-window",
-        "width=940, height=650"
+        "width=940, height=650",
       );
       const completionTimer = setInterval(() => {
         console.debug("Checking Aha! Auth window.");
@@ -117,8 +117,8 @@ export class AuthenticatingAhaClient implements AhaClient {
           if (exec == null) {
             reject(
               new TypeError(
-                `Unexpected response URI: ${newWindow.location.href}`
-              )
+                `Unexpected response URI: ${newWindow.location.href}`,
+              ),
             );
             return;
           }
@@ -144,13 +144,13 @@ export class AuthenticatingAhaClient implements AhaClient {
     productId: string,
     page: number,
     perPage: number,
-    fields: T[]
+    fields: T[],
   ): Promise<IdeasResponse<T>> {
     await this.#authenticate();
 
     const url = new URL(
       `products/${encodeURIComponent(productId)}/ideas`,
-      this.#apiUrl
+      this.#apiUrl,
     );
     url.searchParams.set("fields", fields.join(","));
     url.searchParams.set("page", String(page));
@@ -174,7 +174,7 @@ export class AuthenticatingAhaClient implements AhaClient {
   // https://www.aha.io/api/resources/ideas/get_a_specific_idea
   async getIdea<T extends IdeaFilterField>(
     ideaId: string,
-    fields: T[]
+    fields: T[],
   ): Promise<IdeaResponse<T> | null> {
     await this.#authenticate();
 
@@ -203,7 +203,7 @@ export class AuthenticatingAhaClient implements AhaClient {
   async putIdeaScore(
     ideaId: string,
     scoreFactName: string,
-    value: number
+    value: number,
   ): Promise<void> {
     await this.#authenticate();
 

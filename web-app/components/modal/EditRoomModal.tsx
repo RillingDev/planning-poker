@@ -46,14 +46,14 @@ export const EditRoomModal: FC<{
 
   function handleExtensionChange(
     e: ChangeEvent<HTMLInputElement>,
-    changedExtension: Extension
+    changedExtension: Extension,
   ) {
     setExtensionKeys((prevState) => {
       if (e.target.checked) {
         return [...prevState, changedExtension.key];
       } else {
         return prevState.filter(
-          (extensionKey) => extensionKey != changedExtension.key
+          (extensionKey) => extensionKey != changedExtension.key,
         );
       }
     });
