@@ -68,7 +68,7 @@ function findMemberForUser(room: Room, user: User): RoomMember {
   return roomMember;
 }
 
-function findCardSet(cardSets: ReadonlyArray<CardSet>, room: Room): CardSet {
+function findCardSet(cardSets: readonly CardSet[], room: Room): CardSet {
   const cardSet = cardSets.find((cs) => cs.name == room.cardSetName);
   if (cardSet == null) {
     throw new TypeError(`Invalid card set '${room.cardSetName}'.`);

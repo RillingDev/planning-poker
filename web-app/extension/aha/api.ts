@@ -17,7 +17,7 @@ export interface IdeaResponse<T extends IdeaFilterField> {
 }
 
 export type IdeasResponse<T extends IdeaFilterField> = Paginated<{
-  readonly ideas: ReadonlyArray<Idea<T>>;
+  readonly ideas: readonly Idea<T>[];
 }>;
 
 export interface AhaClient {

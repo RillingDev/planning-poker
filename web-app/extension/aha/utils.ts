@@ -10,7 +10,7 @@ import { ahaExtension } from "./AhaExtension";
  */
 export async function _getProductScoreFactNames(
   productId: string,
-): Promise<ReadonlyArray<string>> {
+): Promise<readonly string[]> {
   const ideasForProduct = await ahaExtension
     .getClient()
     .then((c) => c.getIdeasForProduct(productId, 1, 200, ["score_facts"]));

@@ -21,10 +21,9 @@ const VoteExtremeDetails: FC<{
         )}
       </div>
       <ul>
-        {voteExtreme != null &&
-          voteExtreme.members.map((member) => (
-            <li key={member.username}>{member.username}</li>
-          ))}
+        {voteExtreme?.members.map((member) => (
+          <li key={member.username}>{member.username}</li>
+        ))}
       </ul>
     </div>
   );

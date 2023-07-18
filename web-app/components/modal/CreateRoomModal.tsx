@@ -8,7 +8,7 @@ export const CreateRoomModal: FC<{
   onHide: () => void;
   onSubmit: (roomName: string, options: RoomCreationOptions) => void;
   ariaLabelledBy: string;
-  existingRooms: ReadonlyArray<Room>;
+  existingRooms: readonly Room[];
 }> = ({ show, existingRooms, onHide, onSubmit, ariaLabelledBy }) => {
   const { cardSets } = useContext(AppContext);
 

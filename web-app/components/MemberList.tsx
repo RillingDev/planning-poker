@@ -86,7 +86,7 @@ const Member: FC<{
 };
 
 export const MemberList: FC<{
-  members: ReadonlyArray<RoomMember>;
+  members: readonly RoomMember[];
   onAction: (member: RoomMember, action: EditAction) => void;
 }> = ({ members, onAction }) => {
   return (

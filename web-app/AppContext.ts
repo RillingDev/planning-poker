@@ -4,7 +4,7 @@ import { CardSet, User } from "./model";
 
 export interface AppContextState {
   user: User;
-  cardSets: ReadonlyArray<CardSet>;
+  cardSets: readonly CardSet[];
   extensionManager: ExtensionManager;
 }
 

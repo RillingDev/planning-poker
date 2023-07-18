@@ -42,13 +42,13 @@ export async function getIdentity(): Promise<User> {
     .then((res) => res.json() as Promise<User>);
 }
 
-export async function getExtensions(): Promise<ReadonlyArray<ExtensionKey>> {
+export async function getExtensions(): Promise<readonly ExtensionKey[]> {
   return fetch("/api/extensions", {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
     .then(assertStatusOk)
-    .then((res) => res.json() as Promise<ReadonlyArray<ExtensionKey>>);
+    .then((res) => res.json() as Promise<readonly ExtensionKey[]>);
 }
 
 export async function getExtensionConfig<T>(

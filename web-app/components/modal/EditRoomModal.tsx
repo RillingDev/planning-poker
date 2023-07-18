@@ -31,7 +31,7 @@ export const EditRoomModal: FC<{
   const [cardSetName, setCardSetName] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
   const [extensionKeys, setExtensionKeys] = useState<
-    ReadonlyArray<ExtensionKey>
+    readonly ExtensionKey[]
   >([]);
 
   function handleSubmit(e: FormEvent) {
