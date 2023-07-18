@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "npm run type-check && vite build",
     "type-check": "tsc",
-    "lint": "eslint ./web-app/ --ext tsx --ext ts",
+    "lint": "eslint ./web-app/ --ext ts,tsx",
     "test": "vitest run",
     "test:dev": "vitest dev"
   },

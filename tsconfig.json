@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -16,13 +17,9 @@
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
-    //"noUnusedParameters": true, # somehow lints libs and fails because of it
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["web-app"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

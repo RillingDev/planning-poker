@@ -1,13 +1,8 @@
 /* eslint-env node */
 module.exports = {
   root: true,
-  env: { browser: true },
-  parser: "@typescript-eslint/parser",
+  env: { browser: true, es2020: true },
   plugins: ["@typescript-eslint", "prettier"],
-  parserOptions: {
-    project: true,
-    tsconfigRootDir: __dirname,
-  },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
@@ -18,9 +13,13 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "prettier",
   ],
-  settings: { react: { version: "detect" } },
-  rules: {
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: true,
+    tsconfigRootDir: __dirname,
   },
+  settings: { react: { version: "detect" } },
+  rules: {},
   overrides: [
     {
       files: ["**/*.test.ts?(x)"],
