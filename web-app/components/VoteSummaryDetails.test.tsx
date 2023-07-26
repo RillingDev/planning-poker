@@ -182,10 +182,12 @@ describe("VoteSummaryDetails", () => {
       <VoteSummaryDetails room={room} voteSummary={voteSummary} />,
     );
 
-    const summaryHighest = container.querySelector(".summary__highest")!;
+    const summaryHighest =
+      container.querySelector<HTMLElement>(".summary__highest")!;
     expect(getByText(summaryHighest, "Alice")).toBeInTheDocument();
     expect(getByText(summaryHighest, "High Card")).toBeInTheDocument();
-    const summaryLowest = container.querySelector(".summary__lowest")!;
+    const summaryLowest =
+      container.querySelector<HTMLElement>(".summary__lowest")!;
     expect(getByText(summaryLowest, "Bob")).toBeInTheDocument();
     expect(getByText(summaryLowest, "Low Card")).toBeInTheDocument();
   });
