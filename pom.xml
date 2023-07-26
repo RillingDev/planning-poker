@@ -75,7 +75,7 @@
 				<version>3.1.0</version>
 				<executions>
 					<execution>
-						<id>vite:type-check</id>
+						<id>vite:validate</id>
 						<phase>validate</phase>
 						<goals>
 							<goal>exec</goal>
@@ -84,7 +84,7 @@
 							<executable>npm</executable>
 							<arguments>
 								<argument>run</argument>
-								<argument>type-check</argument>
+								<argument>validate</argument>
 							</arguments>
 						</configuration>
 					</execution>
