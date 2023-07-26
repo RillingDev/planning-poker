@@ -75,8 +75,8 @@
 				<version>3.1.0</version>
 				<executions>
 					<execution>
-						<id>npm:test</id>
-						<phase>verify</phase>
+						<id>vite:test</id>
+						<phase>test</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
@@ -86,11 +86,10 @@
 								<argument>run</argument>
 								<argument>test</argument>
 							</arguments>
-							<workingDirectory>${project.basedir}</workingDirectory>
 						</configuration>
 					</execution>
 					<execution>
-						<id>npm:build</id>
+						<id>vite:build</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>exec</goal>
