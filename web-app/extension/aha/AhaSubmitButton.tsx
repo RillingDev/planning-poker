@@ -60,9 +60,7 @@ const AhaSubmissionModal: FC<{
       .finally(() => setLoading(false));
   }, [ideaId, roomName, handleError]);
 
-  const [scoreFactNames, setScoreFactNames] = useState<readonly string[]>(
-    [],
-  );
+  const [scoreFactNames, setScoreFactNames] = useState<readonly string[]>([]);
 
   const [scoreFactName, setScoreFactName] = useState("");
 
