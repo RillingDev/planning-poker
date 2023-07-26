@@ -8,6 +8,8 @@ import java.util.*;
 
 /**
  * A room of {@link RoomMember} with a specific {@link CardSet}.
+ * <p>
+ * Modification should be done via {@link com.cryptshare.planningpoker.api.RoomService}.
  */
 @Entity
 @Table(name = "room")
