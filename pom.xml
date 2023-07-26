@@ -75,6 +75,20 @@
 				<version>3.1.0</version>
 				<executions>
 					<execution>
+						<id>vite:type-check</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>type-check</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
 						<id>vite:test</id>
 						<phase>test</phase>
 						<goals>
