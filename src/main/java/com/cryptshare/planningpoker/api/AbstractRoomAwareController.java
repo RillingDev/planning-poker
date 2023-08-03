@@ -6,6 +6,7 @@ import com.cryptshare.planningpoker.data.RoomRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+// TODO: use spring security for member check
 public abstract class AbstractRoomAwareController {
 
 	protected final RoomRepository roomRepository;
