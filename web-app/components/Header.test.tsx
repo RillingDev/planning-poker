@@ -10,7 +10,7 @@ describe("Header", () => {
         value={createMockContextState({ user: { username: "Bob" } })}
       >
         <Header />
-      </AppContext.Provider>
+      </AppContext.Provider>,
     );
 
     expect(screen.getByText("Bob")).toBeInTheDocument();

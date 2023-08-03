@@ -30,7 +30,7 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     expect(screen.getByText("Save to Aha!")).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "X" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     expect(screen.getByText("Save to Aha!")).not.toBeVisible();
@@ -55,7 +55,7 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
@@ -65,20 +65,20 @@ describe("AhaSubmissionModal", () => {
 
   it("shows error when idea loading fails", async () => {
     vi.mocked(ahaClient.getIdea<"name" | "reference_num">).mockResolvedValue(
-      null
+      null,
     );
 
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", [
@@ -86,7 +86,7 @@ describe("AhaSubmissionModal", () => {
       "reference_num",
     ]);
     expect(screen.getByRole("alert")).toHaveTextContent(
-      "Could not find idea 'ABC-I-123'."
+      "Could not find idea 'ABC-I-123'.",
     );
     expect(screen.getByText("Submit")).toBeDisabled();
   });
@@ -109,13 +109,13 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(ahaClient.getIdea).toHaveBeenCalledWith("ABC-I-123", [
@@ -146,13 +146,13 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
@@ -183,22 +183,22 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "Room" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
     expect(getExtensionRoomConfig).toHaveBeenCalledWith(
       "Room",
-      ahaExtension.key
+      ahaExtension.key,
     );
     expect(
-      screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value
+      screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value,
     ).toBe("Ipsum");
   });
 
@@ -220,22 +220,22 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(getProductScoreFactNames).toHaveBeenCalledWith("456");
     expect(getExtensionRoomConfig).toHaveBeenCalledWith(
       "Room",
-      ahaExtension.key
+      ahaExtension.key,
     );
     expect(
-      screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value
+      screen.getByLabelText<HTMLSelectElement>("Score Fact Name").value,
     ).toBe("");
   });
 
@@ -253,10 +253,10 @@ describe("AhaSubmissionModal", () => {
       scoreFactName: null,
     });
     vi.mocked(ahaClient.putIdeaScore).mockImplementation(() =>
-      Promise.resolve()
+      Promise.resolve(),
     );
     vi.mocked(editExtensionRoomConfig).mockImplementation(() =>
-      Promise.resolve()
+      Promise.resolve(),
     );
     vi.mocked(clearVotes).mockImplementation(() => Promise.resolve());
 
@@ -264,32 +264,32 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "My Room" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     await userEvent.selectOptions(
       screen.getByLabelText("Score Fact Name"),
-      "Lorem"
+      "Lorem",
     );
 
     await userEvent.click(screen.getByText("Submit"));
 
     await waitFor(() =>
       expect(
-        screen.queryByText("Submitting Idea Score")
-      ).not.toBeInTheDocument()
+        screen.queryByText("Submitting Idea Score"),
+      ).not.toBeInTheDocument(),
     );
 
     expect(ahaClient.putIdeaScore).toHaveBeenCalledWith(
       "ABC-I-123",
       "Lorem",
-      11
+      11,
     );
     expect(editExtensionRoomConfig).toHaveBeenCalledWith("My Room", "aha", {
       scoreFactName: "Lorem",
@@ -312,31 +312,31 @@ describe("AhaSubmissionModal", () => {
     });
     vi.mocked(ahaClient.putIdeaScore).mockRejectedValue(new Error("Beeb Boop"));
     vi.mocked(editExtensionRoomConfig).mockImplementation(() =>
-      Promise.resolve()
+      Promise.resolve(),
     );
 
     render(
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "My Room" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     await userEvent.selectOptions(
       screen.getByLabelText("Score Fact Name"),
-      "Lorem"
+      "Lorem",
     );
 
     await userEvent.click(screen.getByText("Submit"));
 
     await waitFor(() =>
-      expect(screen.getByText("Submitting Idea Score")).not.toBeVisible()
+      expect(screen.getByText("Submitting Idea Score")).not.toBeVisible(),
     );
 
     expect(screen.getByRole("alert")).toBeVisible();
@@ -358,10 +358,10 @@ describe("AhaSubmissionModal", () => {
       scoreFactName: null,
     });
     vi.mocked(ahaClient.putIdeaScore).mockImplementation(() =>
-      Promise.resolve()
+      Promise.resolve(),
     );
     vi.mocked(editExtensionRoomConfig).mockImplementation(() =>
-      Promise.resolve()
+      Promise.resolve(),
     );
     vi.mocked(clearVotes).mockImplementation(() => Promise.resolve());
 
@@ -369,32 +369,32 @@ describe("AhaSubmissionModal", () => {
       <AhaSubmitButton
         room={createMockRoom({ topic: "ABC-I-123", name: "My Room" })}
         voteSummary={createMockVoteSummary({ average: 11 })}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     await userEvent.selectOptions(
       screen.getByLabelText("Score Fact Name"),
-      "Lorem"
+      "Lorem",
     );
 
     await userEvent.click(screen.getByText("Submit"));
 
     await waitFor(() =>
       expect(
-        screen.queryByText("Submitting Idea Score")
-      ).not.toBeInTheDocument()
+        screen.queryByText("Submitting Idea Score"),
+      ).not.toBeInTheDocument(),
     );
 
     await userEvent.click(screen.getByText("Save to Aha!"));
 
     await waitFor(() =>
-      expect(screen.getByText("Loading Idea")).not.toBeVisible()
+      expect(screen.getByText("Loading Idea")).not.toBeVisible(),
     );
 
     expect(ahaClient.getIdea).toHaveBeenCalledTimes(2);

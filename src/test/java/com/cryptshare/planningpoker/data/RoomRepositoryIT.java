@@ -2,19 +2,16 @@ package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Sql({"/delete-initial-data.sql", "/create-dummy-user.sql"})
 class RoomRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
@@ -25,20 +22,9 @@ class RoomRepositoryIT {
 	@Autowired
 	ExtensionRepository extensionRepository;
 
-	@Autowired
-	PlatformTransactionManager transactionManager;
-
 	@PersistenceContext
 	EntityManager em;
 
-	@BeforeEach
-	void setUp() {
-		cardSetRepository.deleteAll();
-		roomRepository.deleteAll();
-		extensionRepository.deleteAll();
-
-		createExampleUser();
-	}
 
 	@Test
 	@DisplayName("can be saved and loaded")
@@ -193,17 +179,4 @@ class RoomRepositoryIT {
 		assertThat(em.createQuery("SELECT COUNT(*) FROM Extension ref", Long.class).getSingleResult()).isEqualTo(1);
 	}
 
-	private void createExampleUser() {
-		// Ensure user table is filled.
-		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				em.createNativeQuery("""
-						INSERT INTO oauth2_authorized_client (client_registration_id, principal_name, access_token_type, access_token_value,
-                                            access_token_issued_at, access_token_expires_at)
-      						VALUES ('someProvider', 'Bob', 'Bearer', 'someToken', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-""").executeUpdate();
-			}
-		});
-	}
 }

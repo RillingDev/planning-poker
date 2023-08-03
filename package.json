@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run type-check && vite build",
-    "type-check": "tsc",
-    "lint": "eslint ./web-app/ --ext tsx --ext ts",
+    "build": "tsc && vite build",
+    "validate": "tsc && npm run lint",
+    "lint": "eslint ./web-app/ --ext ts,tsx",
     "test": "vitest run",
     "test:dev": "vitest dev"
   },
@@ -29,20 +29,20 @@
     "@types/lodash-es": "^4.17.6",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.57.0",
-    "@typescript-eslint/parser": "^5.57.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.0",
-    "@vitest/coverage-v8": "^0.32.0",
+    "@vitest/coverage-v8": "^0.34.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
     "jsdom": "^22.0.0",
-    "prettier": "^2.8.7",
-    "typescript": "~5.0.2",
+    "prettier": "^3.0.0",
+    "typescript": "~5.1.6",
     "vite": "^4.3.1",
-    "vitest": "^0.32.0"
+    "vitest": "^0.34.0"
   }
 }

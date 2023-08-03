@@ -8,6 +8,8 @@ import java.util.StringJoiner;
 
 /**
  * User in a {@link Room}.
+ * <p>
+ * Modification should be done via {@link com.cryptshare.planningpoker.api.RoomService}.
  */
 @Entity
 @Table(name = "room_member")

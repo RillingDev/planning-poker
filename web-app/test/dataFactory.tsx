@@ -39,7 +39,7 @@ export function createMockRoom(values: Partial<Room>): Room {
 }
 
 export function createMockVoteSummary(
-  values: Partial<VoteSummary>
+  values: Partial<VoteSummary>,
 ): VoteSummary {
   const card1 = createMockCard({ name: "1", value: 1 });
   const card3 = createMockCard({ name: "3", value: 3 });
@@ -78,7 +78,7 @@ export function createMockExtension(values: Partial<Extension>): Extension {
 }
 
 export function createMockContextState(
-  values: Partial<AppContextState>
+  values: Partial<AppContextState>,
 ): AppContextState {
   return {
     user: values.user ?? { username: "Bob" },

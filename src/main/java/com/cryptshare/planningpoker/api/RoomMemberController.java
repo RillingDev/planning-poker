@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.*;
 class RoomMemberController extends AbstractRoomAwareController {
 	private static final Logger logger = LoggerFactory.getLogger(RoomMemberController.class);
 
-	protected RoomMemberController(RoomRepository roomRepository) {
+	private final RoomService roomService;
+
+	protected RoomMemberController(RoomRepository roomRepository, RoomService roomService) {
 		super(roomRepository);
+		this.roomService = roomService;
 	}
 
 	@PostMapping(value = "/api/rooms/{room-name}/members")
@@ -26,7 +29,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 			return;
 		}
 
-		addMember(room, user.getName());
+		roomService.addMember(room, new RoomMember(user.getName()));
 		roomRepository.save(room);
 		logger.info("User '{}' joined room '{}'.", user.getName(), room);
 	}
@@ -35,7 +38,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 	public void leaveRoom(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
 		room.findMemberByUser(user.getName()).ifPresentOrElse(roomMember -> {
-			removeMember(room, roomMember);
+			roomService.removeMember(room, roomMember);
 			roomRepository.save(room);
 			logger.info("User '{}' left room '{}'.", user.getName(), room);
 		}, () -> logger.debug("User '{}' is not part of room '{}'.", user.getName(), room));
@@ -56,7 +59,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 					logger.warn("Member '{}' already has the role voter in '{}'.", actingMember, room);
 					return;
 				}
-				setRole(room, targetMember, RoomMember.Role.VOTER);
+				roomService.setRole(room, targetMember, RoomMember.Role.VOTER);
 				roomRepository.save(room);
 				logger.info("Member '{}' set '{}' to voter in '{}'.", actingMember, targetMember, room);
 			}
@@ -65,12 +68,12 @@ class RoomMemberController extends AbstractRoomAwareController {
 					logger.warn("Member '{}' already has the role observer in '{}'.", actingMember, room);
 					return;
 				}
-				setRole(room, targetMember, RoomMember.Role.OBSERVER);
+				roomService.setRole(room, targetMember, RoomMember.Role.OBSERVER);
 				roomRepository.save(room);
 				logger.info("Member '{}' set '{}' to observer in '{}'.", actingMember, targetMember, room);
 			}
 			case KICK -> {
-				removeMember(room, targetMember);
+				roomService.removeMember(room, targetMember);
 				roomRepository.save(room);
 				logger.info("Member '{}' kicked '{}' from '{}'.", actingMember, targetMember, room);
 			}
@@ -87,23 +90,4 @@ class RoomMemberController extends AbstractRoomAwareController {
 	private static class MemberNotFoundException extends RuntimeException {
 	}
 
-	private static void setRole(Room room, RoomMember roomMember, RoomMember.Role role) {
-		roomMember.setRole(role);
-
-		if (role == RoomMember.Role.OBSERVER && room.allVotersVoted()) {
-			room.setVotingState(Room.VotingState.CLOSED);
-		}
-	}
-
-	private static void addMember(Room room, String username) {
-		room.getMembers().add(new RoomMember(username));
-	}
-
-	private static void removeMember(Room room, RoomMember roomMember) {
-		room.getMembers().remove(roomMember);
-
-		if (room.allVotersVoted()) {
-			room.setVotingState(Room.VotingState.CLOSED);
-		}
-	}
 }

@@ -19,7 +19,7 @@ public class RoomExtensionConfig extends BaseEntity {
 	public static final Comparator<RoomExtensionConfig> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomExtensionConfig::getExtension,
 			Extension.ALPHABETIC_COMPARATOR);
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "extension_id", nullable = false)
 	private Extension extension;
 

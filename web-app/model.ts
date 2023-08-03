@@ -19,9 +19,9 @@ export interface Room {
   readonly name: string;
   readonly topic: string | null;
   readonly cardSetName: string;
-  readonly members: ReadonlyArray<RoomMember>;
+  readonly members: readonly RoomMember[];
   readonly votingClosed: boolean;
-  readonly extensions: ReadonlyArray<ExtensionKey>;
+  readonly extensions: readonly ExtensionKey[];
 }
 
 export interface Card {
@@ -32,7 +32,7 @@ export interface Card {
 
 export interface CardSet {
   readonly name: string;
-  readonly cards: ReadonlyArray<Card>;
+  readonly cards: readonly Card[];
 }
 
 export interface SummaryResult {
@@ -49,7 +49,7 @@ export interface VoteSummary {
 
 export interface VoteExtreme {
   readonly card: Card;
-  readonly members: ReadonlyArray<RoomMember>;
+  readonly members: readonly RoomMember[];
 }
 
 export type RoomCreationOptions = Pick<Room, "cardSetName">;

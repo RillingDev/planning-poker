@@ -51,7 +51,7 @@ const AhaSubmissionModal: FC<{
             setScoreFactName(ahaRoomConfig.scoreFactName);
           } else {
             console.warn(
-              `Received outdated score fact name '${ahaRoomConfig.scoreFactName}', ignoring it.`
+              `Received outdated score fact name '${ahaRoomConfig.scoreFactName}', ignoring it.`,
             );
           }
         }
@@ -60,9 +60,7 @@ const AhaSubmissionModal: FC<{
       .finally(() => setLoading(false));
   }, [ideaId, roomName, handleError]);
 
-  const [scoreFactNames, setScoreFactNames] = useState<ReadonlyArray<string>>(
-    []
-  );
+  const [scoreFactNames, setScoreFactNames] = useState<readonly string[]>([]);
 
   const [scoreFactName, setScoreFactName] = useState("");
 

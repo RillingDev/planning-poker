@@ -17,19 +17,19 @@ async function assertStatusOk(res: Response): Promise<Response> {
 
   if (res.status == 403) {
     throw new Error(
-      "Missing permissions. This may be because you were kicked from the room. Please go back to the room list."
+      "Missing permissions. This may be because you were kicked from the room. Please go back to the room list.",
     );
   }
   if (res.status == 404) {
     throw new Error(
-      "Not found. This may be because this room was deleted in the meantime. Please go back to the room list."
+      "Not found. This may be because this room was deleted in the meantime. Please go back to the room list.",
     );
   }
 
   const body = await res.text();
   throw new Error(
     `Unexpected status code '${res.status}':
-		${body}.`
+		${body}.`,
   );
 }
 
@@ -42,17 +42,17 @@ export async function getIdentity(): Promise<User> {
     .then((res) => res.json() as Promise<User>);
 }
 
-export async function getExtensions(): Promise<ReadonlyArray<ExtensionKey>> {
+export async function getExtensions(): Promise<readonly ExtensionKey[]> {
   return fetch("/api/extensions", {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
     .then(assertStatusOk)
-    .then((res) => res.json() as Promise<ReadonlyArray<ExtensionKey>>);
+    .then((res) => res.json() as Promise<readonly ExtensionKey[]>);
 }
 
 export async function getExtensionConfig<T>(
-  extensionKey: ExtensionKey
+  extensionKey: ExtensionKey,
 ): Promise<T> {
   return fetch(`/api/extensions/${extensionKey}`, {
     method: "GET",
@@ -64,14 +64,14 @@ export async function getExtensionConfig<T>(
 
 export async function getExtensionRoomConfig<T>(
   roomName: string,
-  extensionKey: ExtensionKey
+  extensionKey: ExtensionKey,
 ): Promise<T> {
   return fetch(
     `/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`,
     {
       method: "GET",
       headers: { Accept: MEDIA_TYPE_JSON },
-    }
+    },
   )
     .then(assertStatusOk)
     .then((res) => res.json() as Promise<T>);
@@ -80,7 +80,7 @@ export async function getExtensionRoomConfig<T>(
 export async function editExtensionRoomConfig<T>(
   roomName: string,
   extensionKey: ExtensionKey,
-  config: Partial<T>
+  config: Partial<T>,
 ): Promise<void> {
   await fetch(
     `/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`,
@@ -88,7 +88,7 @@ export async function editExtensionRoomConfig<T>(
       method: "PATCH",
       headers: { "Content-Type": MEDIA_TYPE_JSON },
       body: JSON.stringify(config),
-    }
+    },
   ).then(assertStatusOk);
 }
 
@@ -112,7 +112,7 @@ export async function getRooms(): Promise<Room[]> {
 
 export async function createRoom(
   roomName: string,
-  { cardSetName }: RoomCreationOptions
+  { cardSetName }: RoomCreationOptions,
 ): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "POST",
@@ -138,7 +138,7 @@ export async function deleteRoom(roomName: string): Promise<void> {
 
 export async function editRoom(
   roomName: string,
-  { topic, cardSetName, extensions }: RoomEditOptions
+  { topic, cardSetName, extensions }: RoomEditOptions,
 ): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "PATCH",
@@ -163,13 +163,13 @@ export async function leaveRoom(roomName: string): Promise<void> {
 export async function editMember(
   roomName: string,
   memberUsername: string,
-  action: EditAction
+  action: EditAction,
 ): Promise<void> {
   const url = new URL(
     `/api/rooms/${encodeURIComponent(roomName)}/members/${encodeURIComponent(
-      memberUsername
+      memberUsername,
     )}`,
-    location.href
+    location.href,
   );
   url.searchParams.set("action", action);
   await fetch(url, {
@@ -179,11 +179,11 @@ export async function editMember(
 
 export async function createVote(
   roomName: string,
-  cardName: string
+  cardName: string,
 ): Promise<void> {
   const url = new URL(
     `/api/rooms/${encodeURIComponent(roomName)}/votes`,
-    location.href
+    location.href,
   );
   url.searchParams.set("card-name", cardName);
   await fetch(url, {

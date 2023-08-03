@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.cryptshare.planningpoker.api.MockOidcLogins.bobOidcLogin;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,13 +35,16 @@ class RoomControllerIT {
 	@MockBean
 	ExtensionRepository extensionRepository;
 
+	@MockBean
+	RoomService roomService;
+
 	@Autowired
 	MockMvc mockMvc;
 
 	@Test
 	@DisplayName("GET `/api/rooms` loads rooms")
 	void getRooms() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Room room1 = new Room("Room #1", cardSet);
 		room1.setTopic("Foo!");
 		room1.getMembers().add(new RoomMember("Bob"));
@@ -50,26 +54,25 @@ class RoomControllerIT {
 		mockMvc.perform(get("/api/rooms").with(bobOidcLogin())).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("Room #1"))
 				.andExpect(jsonPath("$[0].topic").value("Foo!"))
-				.andExpect(jsonPath("$[0].cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$[0].cardSetName").value("My Set"))
 				.andExpect(jsonPath("$[0].members.length()").value(1))
 				.andExpect(jsonPath("$[0].members[0].username").value("Bob"))
 				.andExpect(jsonPath("$[0].members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$[1].name").value("Room #2"))
 				.andExpect(jsonPath("$[1].topic").value((String) null))
-				.andExpect(jsonPath("$[1].cardSetName").value("My Set 1"))
 				.andExpect(jsonPath("$[1].members.length()").value(0));
 	}
 
 	@Test
 	@DisplayName("POST `/api/rooms/{room-name}` throws for duplicate name")
 	void createRoomDuplicateName() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(new Room("my-room", cardSet)));
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
+		given(cardSetRepository.findByName("My Set")).willReturn(Optional.of(cardSet));
 
 		mockMvc.perform(post("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
-					"cardSetName": "My Set 1"
+					"cardSetName": "My Set"
 				}
 				""")).andExpect(status().isBadRequest());
 	}
@@ -78,11 +81,11 @@ class RoomControllerIT {
 	@DisplayName("POST `/api/rooms/{room-name}` throws for unknown card set")
 	void createRoomUnknownCardSet() throws Exception {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.empty());
+		given(cardSetRepository.findByName("My Set")).willReturn(Optional.empty());
 
 		mockMvc.perform(post("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
-					"cardSetName": "My Set 1"
+					"cardSetName": "My Set"
 				}
 				""")).andExpect(status().isBadRequest());
 	}
@@ -92,11 +95,11 @@ class RoomControllerIT {
 	void createRoomCreatesRoom() throws Exception {
 		final CardSet cardSet = new CardSet("My Set 1");
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
+		given(cardSetRepository.findByName("My Set")).willReturn(Optional.of(cardSet));
 
 		mockMvc.perform(post("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
-					"cardSetName": "My Set 1"
+					"cardSetName": "My Set"
 				}
 				""")).andExpect(status().isOk());
 
@@ -118,7 +121,7 @@ class RoomControllerIT {
 	@Test
 	@DisplayName("DELETE `/api/rooms/{room-name}` deletes")
 	void deleteRoomDeletes() throws Exception {
-		final Room room = new Room("my-room", new CardSet("Card Set"));
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Alice"));
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
@@ -131,14 +134,14 @@ class RoomControllerIT {
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}` throws for unknown name")
 	void editRoomUnknownName() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(cardSet));
+		final CardSet cardSet = new CardSet("My Set");
+		given(cardSetRepository.findByName("My Set")).willReturn(Optional.of(cardSet));
 
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 
 		mockMvc.perform(patch("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
-					"cardSetName": "My Set 1"
+					"cardSetName": "My Set"
 				}
 				""")).andExpect(status().isNotFound());
 	}
@@ -146,15 +149,15 @@ class RoomControllerIT {
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}` throws for unknown card set")
 	void editRoomUnknownCardSet() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		final Room room = new Room("my-room", new CardSet("My Set 1"));
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.empty());
+		given(cardSetRepository.findByName("My Set 2")).willReturn(Optional.empty());
 
 		mockMvc.perform(patch("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
-					"cardSetName": "My Set 1"
+					"cardSetName": "My Set 2"
 				}
 				""")).andExpect(status().isBadRequest());
 	}
@@ -162,32 +165,29 @@ class RoomControllerIT {
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}` edits card-set")
 	void editRoomEditsCardSet() throws Exception {
-		final CardSet originalCardSet = new CardSet("My Set 2");
+		final CardSet originalCardSet = new CardSet("My Set 1");
 		final Room room = new Room("my-room", originalCardSet);
 		room.setTopic("Foo!");
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		final CardSet newCardSet = new CardSet("My Set 1");
-		given(cardSetRepository.findByName("My Set 1")).willReturn(Optional.of(newCardSet));
+		final CardSet newCardSet = new CardSet("My Set 2");
+		given(cardSetRepository.findByName("My Set 2")).willReturn(Optional.of(newCardSet));
 
 		mockMvc.perform(patch("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
 				{
-					"cardSetName": "My Set 1"
+					"cardSetName": "My Set 2"
 				}
 				""")).andExpect(status().isOk());
 
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getCardSet()).isEqualTo(newCardSet);
-		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
+		verify(roomService).editCardSet(room, newCardSet);
+		verify(roomRepository).save(room);
 	}
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}` edits topic")
 	void editRoomEditsTopic() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 2");
-		final Room room = new Room("my-room", cardSet);
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -197,17 +197,14 @@ class RoomControllerIT {
 				}
 				""")).andExpect(status().isOk());
 
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getTopic()).isEqualTo("Foo!");
-		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
+		verify(roomService).editTopic(room, "Foo!");
+		verify(roomRepository).save(room);
 	}
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}` throws for unknown extension")
 	void editRoomChecksExtension() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 2");
-		final Room room = new Room("my-room", cardSet);
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -221,10 +218,9 @@ class RoomControllerIT {
 	}
 
 	@Test
-	@DisplayName("PATCH `/api/rooms/{room-name}` adds extension")
-	void editRoomAddsExtension() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 2");
-		final Room room = new Room("my-room", cardSet);
+	@DisplayName("PATCH `/api/rooms/{room-name}` edits extension")
+	void editRoomEditsExtension() throws Exception {
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -237,62 +233,10 @@ class RoomControllerIT {
 				}
 				""")).andExpect(status().isOk());
 
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getExtensionConfigs()).hasSize(1);
-		final RoomExtensionConfig roomExtensionConfig = captor.getValue().getExtensionConfigs().iterator().next();
-		assertThat(roomExtensionConfig.getExtension()).isEqualTo(someExtension);
+		verify(roomService).editExtensions(room, Set.of(someExtension));
+		verify(roomRepository).save(room);
 	}
 
-	@Test
-	@DisplayName("PATCH `/api/rooms/{room-name}` removes extension")
-	void editRoomRemovesExtension() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 2");
-		final Room room = new Room("my-room", cardSet);
-		room.getMembers().add(new RoomMember("Bob"));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-
-		final Extension someExtension = new Extension("someExtension");
-		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
-		given(extensionRepository.findByKeyAndEnabledIsTrue("someExtension")).willReturn(Optional.of(someExtension));
-
-		mockMvc.perform(patch("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
-				{
-					"extensions": []
-				}
-				""")).andExpect(status().isOk());
-
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getExtensionConfigs()).isEmpty();
-	}
-
-	@Test
-	@DisplayName("PATCH `/api/rooms/{room-name}` handles mixed extension changes")
-	void editRoomMixedExtension() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 2");
-		final Room room = new Room("my-room", cardSet);
-		room.getMembers().add(new RoomMember("Bob"));
-		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
-
-		final Extension someExtension = new Extension("someExtension");
-		room.getExtensionConfigs().add(new RoomExtensionConfig(someExtension));
-		given(extensionRepository.findByKeyAndEnabledIsTrue("someExtension")).willReturn(Optional.of(someExtension));
-		final Extension otherExtension = new Extension("otherExtension");
-		given(extensionRepository.findByKeyAndEnabledIsTrue("otherExtension")).willReturn(Optional.of(otherExtension));
-
-		mockMvc.perform(patch("/api/rooms/my-room").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("""
-				{
-					"extensions": ["otherExtension"]
-				}
-				""")).andExpect(status().isOk());
-
-		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
-		verify(roomRepository).save(captor.capture());
-		assertThat(captor.getValue().getExtensionConfigs()).hasSize(1);
-		final RoomExtensionConfig roomExtensionConfig = captor.getValue().getExtensionConfigs().iterator().next();
-		assertThat(roomExtensionConfig.getExtension()).isEqualTo(otherExtension);
-	}
 
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/` throws for unknown name")
@@ -305,8 +249,7 @@ class RoomControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/` throws when not a member")
 	void loadRoomNotMember() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
-		final Room room = new Room("my-room", cardSet);
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
 		final RoomMember roomMember = new RoomMember("Alice");
@@ -318,7 +261,7 @@ class RoomControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/` loads room")
 	void loadRoomLoads() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
@@ -338,7 +281,7 @@ class RoomControllerIT {
 		mockMvc.perform(get("/api/rooms/my-room/").with(bobOidcLogin()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("my-room"))
-				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$.cardSetName").value("My Set"))
 				.andExpect(jsonPath("$.members.length()").value(3))
 				.andExpect(jsonPath("$.members[0].username").value("Alice"))
 				.andExpect(jsonPath("$.members[0].role").value("VOTER"))
@@ -356,7 +299,7 @@ class RoomControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/` shows votes when complete")
 	void loadRoomShowsVotes() throws Exception {
-		final CardSet cardSet = new CardSet("My Set 1");
+		final CardSet cardSet = new CardSet("My Set");
 		final Card card = new Card("1", 1.0);
 		cardSet.getCards().add(card);
 		final Room room = new Room("my-room", cardSet);
@@ -374,7 +317,7 @@ class RoomControllerIT {
 		mockMvc.perform(get("/api/rooms/my-room/").with(bobOidcLogin()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("my-room"))
-				.andExpect(jsonPath("$.cardSetName").value("My Set 1"))
+				.andExpect(jsonPath("$.cardSetName").value("My Set"))
 				.andExpect(jsonPath("$.members.length()").value(2))
 				.andExpect(jsonPath("$.members[0].username").value("Alice"))
 				.andExpect(jsonPath("$.members[0].role").value("VOTER"))

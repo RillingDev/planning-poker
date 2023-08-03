@@ -30,9 +30,9 @@ export const EditRoomModal: FC<{
   // Initial state is filled in handleShow, to ensure is reset when opening the modal.
   const [cardSetName, setCardSetName] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
-  const [extensionKeys, setExtensionKeys] = useState<
-    ReadonlyArray<ExtensionKey>
-  >([]);
+  const [extensionKeys, setExtensionKeys] = useState<readonly ExtensionKey[]>(
+    [],
+  );
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -46,14 +46,14 @@ export const EditRoomModal: FC<{
 
   function handleExtensionChange(
     e: ChangeEvent<HTMLInputElement>,
-    changedExtension: Extension
+    changedExtension: Extension,
   ) {
     setExtensionKeys((prevState) => {
       if (e.target.checked) {
         return [...prevState, changedExtension.key];
       } else {
         return prevState.filter(
-          (extensionKey) => extensionKey != changedExtension.key
+          (extensionKey) => extensionKey != changedExtension.key,
         );
       }
     });

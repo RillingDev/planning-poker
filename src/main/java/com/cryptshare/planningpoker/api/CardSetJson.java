@@ -1,4 +1,4 @@
-package com.cryptshare.planningpoker.api.projection;
+package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.CardSet;

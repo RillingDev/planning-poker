@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export function useErrorHandler(): [
   Error | null,
   (e: Error) => void,
-  () => void
+  () => void,
 ] {
   const [error, setError] = useState<Error | null>(null);
 
@@ -17,7 +17,7 @@ export function useErrorHandler(): [
 }
 
 export function useBooleanState(
-  initialState = false
+  initialState = false,
 ): [boolean, () => void, () => void] {
   const [state, setState] = useState(initialState);
   const setTrue = useCallback(() => setState(true), []);

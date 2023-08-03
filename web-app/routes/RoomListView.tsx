@@ -100,7 +100,7 @@ export const RoomListView: FC = () => {
 
   function handleCreationSubmit(
     newRoomName: string,
-    newRoomOptions: RoomCreationOptions
+    newRoomOptions: RoomCreationOptions,
   ) {
     hideCreationModal();
     createRoom(newRoomName, newRoomOptions)

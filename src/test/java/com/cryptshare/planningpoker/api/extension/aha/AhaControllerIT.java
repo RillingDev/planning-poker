@@ -55,7 +55,7 @@ class AhaControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` throws if room has extension not active")
 	void getRoomConfigNotActive() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -65,7 +65,7 @@ class AhaControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` throws if not a member")
 	void getRoomConfigNotMember() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Alice"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -75,7 +75,7 @@ class AhaControllerIT {
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/extensions/aha` returns config")
 	void getRoomConfigReturns() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Bob"));
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(new Extension("aha"));
 		roomExtensionConfig.getAttributes().put("scoreFactName", "Effort");
@@ -99,7 +99,7 @@ class AhaControllerIT {
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` throws if room has extension not active")
 	void editRoomConfigNotActive() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -110,7 +110,7 @@ class AhaControllerIT {
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` throws if not a member")
 	void editRoomConfigNotMember() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Alice"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
@@ -121,7 +121,7 @@ class AhaControllerIT {
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/extensions/aha` updates config")
 	void editRoomConfigReturns() throws Exception {
-		final Room room = new Room("my-room", new CardSet("My Set 2"));
+		final Room room = new Room("my-room", new CardSet("My Set"));
 		room.getMembers().add(new RoomMember("Bob"));
 		final RoomExtensionConfig roomExtensionConfig = new RoomExtensionConfig(new Extension("aha"));
 		roomExtensionConfig.getAttributes().put("scoreFactName", "Effort");

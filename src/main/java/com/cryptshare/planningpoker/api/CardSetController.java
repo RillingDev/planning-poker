@@ -1,6 +1,5 @@
 package com.cryptshare.planningpoker.api;
 
-import com.cryptshare.planningpoker.api.projection.CardSetJson;
 import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.CardSetRepository;
 import org.springframework.http.MediaType;
