@@ -3,7 +3,6 @@ package com.cryptshare.planningpoker.data;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import org.springframework.lang.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
