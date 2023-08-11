@@ -19,7 +19,9 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   settings: { react: { version: "detect" } },
-  rules: {},
+  rules: {
+    "prettier/prettier": "warn",
+  },
   overrides: [
     {
       files: ["**/*.test.ts?(x)"],
