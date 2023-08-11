@@ -10,7 +10,7 @@ import {
 import { loader as roomListLoader, RoomListView } from "./routes/RoomListView";
 import { loader as roomLoader, RoomView } from "./routes/RoomView";
 
-const ErrorPage: FC = () => {
+export const ErrorElement: FC = () => {
   const routeError = useRouteError() as Error | ErrorResponse;
   console.error(routeError);
   const message = isRouteErrorResponse(routeError)
@@ -31,12 +31,12 @@ export const router = createBrowserRouter([
     path: "/",
     element: <RoomListView />,
     loader: roomListLoader,
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorElement />,
   },
   {
     path: "/rooms/:roomName",
     element: <RoomView />,
     loader: roomLoader,
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorElement />,
   },
 ]);
