@@ -1,4 +1,8 @@
-import { isStatusOk, MEDIA_TYPE_JSON } from "./apiUtils";
+import {
+  getStateChangingHeaders,
+  isStatusOk,
+  MEDIA_TYPE_JSON,
+} from "./apiUtils";
 import {
   CardSet,
   EditAction,
@@ -86,7 +90,10 @@ export async function editExtensionRoomConfig<T>(
     `/api/rooms/${encodeURIComponent(roomName)}/extensions/${extensionKey}`,
     {
       method: "PATCH",
-      headers: { "Content-Type": MEDIA_TYPE_JSON },
+      headers: {
+        ...getStateChangingHeaders(),
+        "Content-Type": MEDIA_TYPE_JSON,
+      },
       body: JSON.stringify(config),
     },
   ).then(assertStatusOk);
@@ -116,7 +123,7 @@ export async function createRoom(
 ): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "POST",
-    headers: { "Content-Type": MEDIA_TYPE_JSON },
+    headers: { ...getStateChangingHeaders(), "Content-Type": MEDIA_TYPE_JSON },
     body: JSON.stringify({ cardSetName }),
   }).then(assertStatusOk);
 }
@@ -133,6 +140,7 @@ export async function getRoom(roomName: string): Promise<Room> {
 export async function deleteRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "DELETE",
+    headers: getStateChangingHeaders(),
   }).then(assertStatusOk);
 }
 
@@ -142,7 +150,7 @@ export async function editRoom(
 ): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "PATCH",
-    headers: { "Content-Type": MEDIA_TYPE_JSON },
+    headers: { ...getStateChangingHeaders(), "Content-Type": MEDIA_TYPE_JSON },
     // Note: `undefined` values mean the key will not be part of the JSON payload
     body: JSON.stringify({ topic, cardSetName, extensions }),
   }).then(assertStatusOk);
@@ -151,12 +159,14 @@ export async function editRoom(
 export async function joinRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
     method: "POST",
+    headers: getStateChangingHeaders(),
   }).then(assertStatusOk);
 }
 
 export async function leaveRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
     method: "DELETE",
+    headers: getStateChangingHeaders(),
   }).then(assertStatusOk);
 }
 
@@ -174,6 +184,7 @@ export async function editMember(
   url.searchParams.set("action", action);
   await fetch(url, {
     method: "PATCH",
+    headers: getStateChangingHeaders(),
   }).then(assertStatusOk);
 }
 
@@ -188,12 +199,14 @@ export async function createVote(
   url.searchParams.set("card-name", cardName);
   await fetch(url, {
     method: "POST",
+    headers: getStateChangingHeaders(),
   }).then(assertStatusOk);
 }
 
 export async function clearVotes(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes`, {
     method: "DELETE",
+    headers: getStateChangingHeaders(),
   }).then(assertStatusOk);
 }
 

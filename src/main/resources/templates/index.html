@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planning Poker</title>
+
+    <link rel="icon" href="/logo.svg?v=1" type="image/svg+xml" />
+
+	  <!-- https://docs.spring.io/spring-security/reference/6.1-SNAPSHOT/servlet/exploits/csrf.html#csrf-integration-javascript-mpa -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	  <meta name="_csrf" th:content="${_csrf.token}"/>
+
+    <th:block th:if="${@environment.acceptsProfiles('development')}">
+      <!-- https://vitejs.dev/guide/backend-integration.html -->
+      <script type="module">
+        import RefreshRuntime from "https://127.0.0.1:5173/@react-refresh";
+
+        RefreshRuntime.injectIntoGlobalHook(window);
+        window.$RefreshReg$ = () => {};
+        window.$RefreshSig$ = () => (type) => type;
+        window.__vite_plugin_react_preamble_installed__ = true;
+      </script>
+      <script type="module" src="https://127.0.0.1:5173/@vite/client"></script>
+      <script
+        type="module"
+        src="https://127.0.0.1:5173/web-app/main.tsx"
+      ></script>
+    </th:block>
+    <th:block th:unless="${@environment.acceptsProfiles('development')}">
+      <link rel="stylesheet" href="/main.css" />
+      <script type="module" src="/main.js" async></script>
+    </th:block>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
