@@ -2,7 +2,6 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
 import { ErrorElement } from "./router.tsx";
 import React from "react";
-
 import { describe, expect, it } from "vitest";
 
 const CrashComponent: React.FC = () => {
