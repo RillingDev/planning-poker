@@ -36,7 +36,7 @@ class RoomController extends AbstractRoomAwareController {
 		return roomRepository.findAll().stream().sorted(Room.ALPHABETIC_COMPARATOR).map(RoomJson::convertToBasic).toList();
 	}
 
-	@PostMapping(value = "/api/rooms/{room-name}")
+	@PostMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void createRoom(@PathVariable("room-name") String roomName, @RequestBody RoomCreationOptionsJson roomOptions,
 						   @AuthenticationPrincipal OidcUser user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
