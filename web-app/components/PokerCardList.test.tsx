@@ -49,8 +49,8 @@ describe("PokerCardList", () => {
       <PokerCardList cardSet={cardSet} activeCard={null} disabled={false} />,
     );
 
-    expect(screen.getByText("Card 1")).not.toBeDisabled();
-    expect(screen.getByText("Card 2")).not.toBeDisabled();
+    expect(screen.getByText("Card 1")).toBeEnabled();
+    expect(screen.getByText("Card 2")).toBeEnabled();
   });
 
   it("sets active card", () => {
