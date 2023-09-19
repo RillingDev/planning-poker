@@ -70,13 +70,7 @@ Start the run config `backend:dev` and `frontend:dev` and go to <https://localho
 
 ### Build for Production
 
-Start the run config `package`.
-This will:
-
-1. compile the backend.
-2. compile the frontend.
-3. copy the compiled frontend resources into the compiled backend resources.
-4. package everything as JAR.
+Start the run config `package`. This will create an executable JAR file in `./target`.
 
 ### Architecture
 
