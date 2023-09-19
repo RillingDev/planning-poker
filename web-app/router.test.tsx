@@ -3,6 +3,8 @@ import { render, screen } from "@testing-library/react";
 import { ErrorElement } from "./router.tsx";
 import React from "react";
 
+import { describe, expect, it } from "vitest";
+
 const CrashComponent: React.FC = () => {
   throw new Error("Beep Boop");
 };

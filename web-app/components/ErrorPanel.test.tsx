@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { ErrorPanel } from "./ErrorPanel";
+import { describe, expect, it } from "vitest";
 
 describe("ErrorPanel", () => {
   it("shows error message", () => {

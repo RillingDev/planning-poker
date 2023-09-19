@@ -1,5 +1,7 @@
 import { AhaExtension } from "./AhaExtension";
 
+import { describe, expect, it } from "vitest";
+
 describe("AhaExtension", () => {
   it("extractIdeaId", () => {
     expect(AhaExtension.extractIdeaId("foo")).toBeNull();
