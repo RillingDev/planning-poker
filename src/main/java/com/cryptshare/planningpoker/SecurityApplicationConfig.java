@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -22,9 +21,7 @@ class SecurityApplicationConfig {
 		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2Login(withDefaults()).oauth2Client(oAuth2ClientConfigurer -> oAuth2ClientConfigurer.authorizedClientService(jdbcOAuth2AuthorizedClientService))
 				.logout(l -> l.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler))
 				// TODO: check how to properly implement this (https://docs.spring.io/spring-boot/docs/3.0.x/reference/htmlsingle/#data.sql.h2-web-console)
-				.csrf(AbstractHttpConfigurer::disable)
-				// TODO: re-check this.
-				.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+				.csrf(AbstractHttpConfigurer::disable);
 		return http.build();
 	}
 
