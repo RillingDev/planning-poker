@@ -50,7 +50,7 @@ class RoomController extends AbstractRoomAwareController {
 		logger.info("Created room '{}' by user '{}'.", room, user.getName());
 	}
 
-	private record RoomCreationOptionsJson(@JsonProperty(value = "cardSetName", required = true) String cardSetName) {
+	record RoomCreationOptionsJson(@JsonProperty(value = "cardSetName", required = true) String cardSetName) {
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -93,10 +93,9 @@ class RoomController extends AbstractRoomAwareController {
 		roomRepository.save(room);
 	}
 
-
-	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName,
+	record RoomEditOptionsJson(@Nullable @JsonProperty("cardSetName") String cardSetName,
 									   @Nullable @JsonProperty("topic") String topic,
-									   @JsonProperty("extensions") Set<String> extensionKeys) {
+							   @Nullable @JsonProperty("extensions") Set<String> extensionKeys) {
 
 	}
 
