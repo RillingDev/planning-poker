@@ -21,9 +21,9 @@ class SecurityApplicationConfig {
 	SecurityFilterChain filterChain(HttpSecurity http, OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler, JdbcOAuth2AuthorizedClientService jdbcOAuth2AuthorizedClientService) throws Exception {
 		http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2Login(withDefaults()).oauth2Client(oAuth2ClientConfigurer -> oAuth2ClientConfigurer.authorizedClientService(jdbcOAuth2AuthorizedClientService))
 				.logout(l -> l.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler))
-				// Makes AJAX messy, without too much of a security impact
+				// TODO: check how to properly implement this (https://docs.spring.io/spring-boot/docs/3.0.x/reference/htmlsingle/#data.sql.h2-web-console)
 				.csrf(AbstractHttpConfigurer::disable)
-				// Allow usage of H2 console
+				// TODO: re-check this.
 				.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 		return http.build();
 	}

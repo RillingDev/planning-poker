@@ -21,6 +21,7 @@ public class RoomMember extends BaseEntity {
 		OBSERVER
 	}
 
+	// TODO: should not be used as a unique value, as multiple OIDC providers may be registered that have overlapping names.
 	@Column(name = "username", nullable = false)
 	private String username;
 

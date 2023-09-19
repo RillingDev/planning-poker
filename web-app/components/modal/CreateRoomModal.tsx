@@ -3,6 +3,7 @@ import { Form, Modal } from "react-bootstrap";
 import { AppContext } from "../../AppContext";
 import { Room, RoomCreationOptions } from "../../model";
 
+// TODO: Move modal to a new route for simpler code?
 export const CreateRoomModal: FC<{
   show: boolean;
   onHide: () => void;
