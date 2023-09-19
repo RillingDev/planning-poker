@@ -75,15 +75,8 @@ This will:
 
 1. compile the backend.
 2. compile the frontend.
-3. copy the compiled frontend into the compiled backend resources.
-4. package the whole bunch as JAR.
-
-### Known Issues
-
-Problem: The web app does not reflect changes to the code, and the React dev tools report that it is running in
-production mode.
-
-Solution: Delete the `target` folder, it probably contains old build artifacts of the web app.
+3. copy the compiled frontend resources into the compiled backend resources.
+4. package everything as JAR.
 
 ### Architecture
 
