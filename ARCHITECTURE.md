@@ -1,9 +1,5 @@
 # Architecture
 
-## Structure
-
-![High Level Deployment UML Diagram](./docs/deployment.svg)
-
 ## Structure & Tooling
 
 This application uses both [Spring Boot](https://spring.io/projects/spring-boot) (REST controllers, business logic, persistence layer)
