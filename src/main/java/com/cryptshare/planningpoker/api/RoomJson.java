@@ -4,13 +4,14 @@ import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomExtensionConfig;
 import com.cryptshare.planningpoker.data.RoomMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic") String topic,
+public record RoomJson(@JsonProperty("name") String name, @Nullable @JsonProperty("topic") String topic,
 					   @JsonProperty("cardSetName") String cardSetName,
 					   @JsonProperty("members") List<RoomMemberJson> members,
 					   @JsonProperty("votingClosed") boolean votingClosed,

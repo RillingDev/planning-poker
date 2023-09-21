@@ -3,6 +3,7 @@ import { Form, Modal } from "react-bootstrap";
 import { AppContext } from "../../AppContext";
 import { Room, RoomCreationOptions } from "../../model";
 
+// TODO: Move modal to a new route for simpler code?
 export const CreateRoomModal: FC<{
   show: boolean;
   onHide: () => void;
@@ -54,7 +55,7 @@ export const CreateRoomModal: FC<{
               required
               maxLength={50}
               title="May not contain the following: ;%\/"
-              pattern="^[^;%\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
+              pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
               value={roomName}
               onChange={handleNameChange}
             />

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MockedObject, vi } from "vitest";
+import { beforeEach, describe, expect, it, MockedObject, vi } from "vitest";
 import { createMockRoom } from "../../test/dataFactory";
 import { ahaExtension } from "./AhaExtension";
 import { AhaRoomButton } from "./AhaRoomButton";

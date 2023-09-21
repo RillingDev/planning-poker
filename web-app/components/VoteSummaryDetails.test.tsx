@@ -12,6 +12,7 @@ import { VoteSummaryDetails } from "./VoteSummaryDetails.tsx";
 import { AppContext } from "../AppContext";
 import { ExtensionManager } from "../extension/ExtensionManager";
 import { FC } from "react";
+import { describe, expect, it } from "vitest";
 
 describe("VoteSummaryDetails", () => {
   it("shows 'no results' if no summary exists", () => {

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createMockCard, createMockCardSet } from "../test/dataFactory";
 import { PokerCardList } from "./PokerCardList";
 
@@ -49,8 +49,8 @@ describe("PokerCardList", () => {
       <PokerCardList cardSet={cardSet} activeCard={null} disabled={false} />,
     );
 
-    expect(screen.getByText("Card 1")).not.toBeDisabled();
-    expect(screen.getByText("Card 2")).not.toBeDisabled();
+    expect(screen.getByText("Card 1")).toBeEnabled();
+    expect(screen.getByText("Card 2")).toBeEnabled();
   });
 
   it("sets active card", () => {

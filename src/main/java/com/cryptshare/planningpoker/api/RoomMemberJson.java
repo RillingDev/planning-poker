@@ -2,9 +2,10 @@ package com.cryptshare.planningpoker.api;
 
 import com.cryptshare.planningpoker.data.RoomMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.lang.Nullable;
 
 public record RoomMemberJson(@JsonProperty("username") String username, @JsonProperty("role") String role,
-							 @JsonProperty("vote") CardJson vote) {
+							 @Nullable @JsonProperty("vote") CardJson vote) {
 
 	private static final CardJson HIDDEN_CARD = new CardJson("Voted", null, null);
 
@@ -24,7 +25,7 @@ public record RoomMemberJson(@JsonProperty("username") String username, @JsonPro
 		return convert(roomMember, vote);
 	}
 
-	private static RoomMemberJson convert(RoomMember roomMember, CardJson vote) {
+	private static RoomMemberJson convert(RoomMember roomMember, @Nullable CardJson vote) {
 		return new RoomMemberJson(roomMember.getUsername(), roomMember.getRole().name(), vote);
 	}
 

@@ -20,6 +20,6 @@
     //"noUnusedParameters": true, # somehow lints libs and fails because of it
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["web-app"],
+  "include": ["web-app/"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

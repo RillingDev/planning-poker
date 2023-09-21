@@ -58,7 +58,7 @@ class ExtensionRepositoryIT {
 		bar.setEnabled(false);
 		extensionRepository.save(bar);
 
-		assertThat(extensionRepository.findByKeyAndEnabledIsTrue("foo")).get().isEqualTo(foo);
+		assertThat(extensionRepository.findByKeyAndEnabledIsTrue("foo")).contains(foo);
 		assertThat(extensionRepository.findByKeyAndEnabledIsTrue("bar")).isEmpty();
 	}
 }

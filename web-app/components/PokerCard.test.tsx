@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { Card } from "../model";
 import { PokerCard } from "./PokerCard";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
 
 describe("PokerCard", () => {
   it("shows name", () => {

@@ -21,9 +21,8 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     test: {
-      globals: true,
       environment: "jsdom",
-      setupFiles: "./web-app/test/setup.ts",
+      setupFiles: "./web-app/test/vitest.setup.ts",
       include: ["./web-app/**/*.test.{ts,tsx}"],
       coverage: {
         provider: "v8",

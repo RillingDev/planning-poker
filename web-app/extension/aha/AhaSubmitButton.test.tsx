@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MockedObject, vi } from "vitest";
+import { beforeEach, describe, expect, it, MockedObject, vi } from "vitest";
 import {
   clearVotes,
   editExtensionRoomConfig,

@@ -1,4 +1,3 @@
-/* eslint-env node */
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
@@ -15,11 +14,14 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: true,
+    ecmaVersion: "latest",
+    project: ["./tsconfig.json", "./tsconfig.node.json"],
     tsconfigRootDir: __dirname,
   },
   settings: { react: { version: "detect" } },
-  rules: {},
+  rules: {
+    "prettier/prettier": "warn",
+  },
   overrides: [
     {
       files: ["**/*.test.ts?(x)"],

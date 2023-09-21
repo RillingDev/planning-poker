@@ -36,7 +36,7 @@ class RoomController extends AbstractRoomAwareController {
 		return roomRepository.findAll().stream().sorted(Room.ALPHABETIC_COMPARATOR).map(RoomJson::convertToBasic).toList();
 	}
 
-	@PostMapping(value = "/api/rooms/{room-name}")
+	@PostMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void createRoom(@PathVariable("room-name") String roomName, @RequestBody RoomCreationOptionsJson roomOptions,
 						   @AuthenticationPrincipal OidcUser user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
@@ -50,7 +50,7 @@ class RoomController extends AbstractRoomAwareController {
 		logger.info("Created room '{}' by user '{}'.", room, user.getName());
 	}
 
-	private record RoomCreationOptionsJson(@JsonProperty(value = "cardSetName", required = true) String cardSetName) {
+	record RoomCreationOptionsJson(@JsonProperty(value = "cardSetName", required = true) String cardSetName) {
 	}
 
 	@GetMapping(value = "/api/rooms/{room-name}/", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -93,10 +93,9 @@ class RoomController extends AbstractRoomAwareController {
 		roomRepository.save(room);
 	}
 
-
-	private record RoomEditOptionsJson(@JsonProperty("cardSetName") String cardSetName,
+	record RoomEditOptionsJson(@Nullable @JsonProperty("cardSetName") String cardSetName,
 									   @Nullable @JsonProperty("topic") String topic,
-									   @JsonProperty("extensions") Set<String> extensionKeys) {
+							   @Nullable @JsonProperty("extensions") Set<String> extensionKeys) {
 
 	}
 

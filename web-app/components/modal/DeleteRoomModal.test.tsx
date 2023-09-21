@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Mocked, vi } from "vitest";
+import { describe, expect, it, Mocked, vi } from "vitest";
 import { createMockRoom } from "../../test/dataFactory";
 import { DeleteRoomModal } from "./DeleteRoomModal";
 

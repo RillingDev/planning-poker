@@ -1,4 +1,4 @@
-import { MockedObject, vi } from "vitest";
+import { beforeEach, describe, expect, it, MockedObject, vi } from "vitest";
 import { ahaExtension } from "./AhaExtension";
 import { AhaClient } from "./api";
 import { _getProductScoreFactNames } from "./utils";

@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { DisagreementMeter } from "./DisagreementMeter";
+import { describe, expect, it } from "vitest";
 
 describe("DisagreementMeter", () => {
   it("shows none disagreement", () => {

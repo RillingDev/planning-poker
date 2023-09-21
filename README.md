@@ -70,20 +70,7 @@ Start the run config `backend:dev` and `frontend:dev` and go to <https://localho
 
 ### Build for Production
 
-Start the run config `package`.
-This will:
-
-1. compile the backend.
-2. compile the frontend.
-3. copy the compiled frontend into the compiled backend resources.
-4. package the whole bunch as JAR.
-
-### Known Issues
-
-Problem: The web app does not reflect changes to the code, and the React dev tools report that it is running in
-production mode.
-
-Solution: Delete the `target` folder, it probably contains old build artifacts of the web app.
+Start the run config `package`. This will create an executable JAR file in `./target`.
 
 ### Architecture
 

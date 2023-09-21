@@ -6,7 +6,7 @@ import {
   createMockRoomMember,
 } from "../test/dataFactory";
 import { MemberList } from "./MemberList";
-import { vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { AppContext } from "../AppContext";
 
