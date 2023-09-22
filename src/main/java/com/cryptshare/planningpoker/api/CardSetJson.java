@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-// TODO: maybe use JSON view instead of manual mapping?
+/**
+ * Model for {@link CardSet}.
+ */
 public record CardSetJson(@JsonProperty("name") String name, @JsonProperty("cards") List<CardJson> cards) {
 
 	public static CardSetJson convert(CardSet cardSet) {

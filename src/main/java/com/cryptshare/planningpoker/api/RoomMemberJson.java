@@ -4,6 +4,9 @@ import com.cryptshare.planningpoker.data.RoomMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.lang.Nullable;
 
+/**
+ * Model for {@link RoomMember}.
+ */
 public record RoomMemberJson(@JsonProperty("username") String username, @JsonProperty("role") String role,
 							 @Nullable @JsonProperty("vote") CardJson vote) {
 

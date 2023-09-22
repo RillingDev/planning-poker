@@ -11,11 +11,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Model for {@link Room}.
+ */
 public record RoomJson(@JsonProperty("name") String name, @Nullable @JsonProperty("topic") String topic,
-					   @JsonProperty("cardSetName") String cardSetName,
-					   @JsonProperty("members") List<RoomMemberJson> members,
-					   @JsonProperty("votingClosed") boolean votingClosed,
-					   @JsonProperty("extensions") List<String> extensions) {
+					   @JsonProperty("cardSetName") String cardSetName, @JsonProperty("members") List<RoomMemberJson> members,
+					   @JsonProperty("votingClosed") boolean votingClosed, @JsonProperty("extensions") List<String> extensions) {
 
 	public static RoomJson convertToBasic(Room room) {
 		return convert(room, RoomMemberJson::convertToBasic);
