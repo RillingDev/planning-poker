@@ -6,10 +6,10 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
-    "plugin:jsx-a11y/recommended",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
+	  "plugin:jsx-a11y/recommended",
     "plugin:prettier/recommended",
   ],
   parser: "@typescript-eslint/parser",
@@ -25,6 +25,7 @@ module.exports = {
   overrides: [
     {
       files: ["**/*.test.ts?(x)"],
+		extends: ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       rules: {
         "@typescript-eslint/unbound-method": "off",
       },
