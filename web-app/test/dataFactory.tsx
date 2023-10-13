@@ -7,7 +7,7 @@ import { FC } from "react";
 export function createMockCard(values: Partial<Card>): Card {
   return {
     name: values.name ?? "Card",
-    description: values.description ?? null,
+    description: values.description ?? "",
     value: values.value ?? null,
   };
 }
@@ -34,7 +34,7 @@ export function createMockRoom(values: Partial<Room>): Room {
     members: values.members ?? [],
     extensions: values.extensions ?? [],
     votingClosed: values.votingClosed ?? false,
-    topic: values.topic ?? null,
+    topic: values.topic ?? "",
   };
 }
 

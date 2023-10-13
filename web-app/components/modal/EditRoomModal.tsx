@@ -13,8 +13,6 @@ function getDelta<T>(oldValue: T, newValue: T): T | undefined {
   return isEqual(oldValue, newValue) ? undefined : newValue;
 }
 
-const getEffectiveTopic = (room: Room): string => room.topic ?? "";
-
 /**
  * @param onSubmit Invoked upon submission with delta of changes values.
  */
@@ -38,7 +36,7 @@ export const EditRoomModal: FC<{
     e.preventDefault();
     // Only emit difference to initial.
     onSubmit({
-      topic: getDelta(getEffectiveTopic(room), topic),
+      topic: getDelta(room.topic, topic),
       cardSetName: getDelta(room.cardSetName, cardSetName),
       extensions: getDelta(room.extensions, extensionKeys),
     });
@@ -61,7 +59,7 @@ export const EditRoomModal: FC<{
 
   function handleShow() {
     setCardSetName(room.cardSetName);
-    setTopic(getEffectiveTopic(room));
+    setTopic(room.topic);
     setExtensionKeys(room.extensions);
   }
 

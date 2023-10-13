@@ -10,7 +10,7 @@ import org.springframework.lang.Nullable;
 public record RoomMemberJson(@JsonProperty("username") String username, @JsonProperty("role") String role,
 							 @Nullable @JsonProperty("vote") CardJson vote) {
 
-	private static final CardJson HIDDEN_CARD = new CardJson("Voted", null, null);
+	private static final CardJson HIDDEN_CARD = new CardJson("Voted", null, "");
 
 	public static RoomMemberJson convertToBasic(RoomMember roomMember) {
 		return convert(roomMember, null);

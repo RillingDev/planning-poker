@@ -81,7 +81,7 @@ describe("RoomView", () => {
     const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
-      topic: null,
+      topic: "",
       cardSetName: cardSet.name,
       votingClosed: false,
       members: [createMockRoomMember({ username: "Bob" })],
@@ -305,7 +305,7 @@ describe("RoomView", () => {
       Promise.resolve(
         createMockRoom({
           name: "My Room",
-          topic: roomEdited ? "Custom Topic" : null,
+          topic: roomEdited ? "Custom Topic" : "",
           cardSetName: (roomEdited ? cardSet2 : cardSet1).name,
           votingClosed: false,
           members: [createMockRoomMember({ username: "Bob" })],

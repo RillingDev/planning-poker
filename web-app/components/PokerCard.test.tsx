@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 
 describe("PokerCard", () => {
   it("shows name", () => {
-    const card: Card = { name: "Foo", value: 1, description: null };
+    const card: Card = { name: "Foo", value: 1, description: "" };
 
     render(<PokerCard card={card} />);
 

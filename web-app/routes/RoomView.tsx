@@ -197,7 +197,7 @@ export const RoomView: FC = () => {
           </nav>
         </div>
         <span>
-          <strong>Topic:</strong> {room.topic ?? "-"}
+          <strong>Topic:</strong> {room.topic.length > 0 ? room.topic : "-"}
         </span>
       </header>
       <div className="room-view">

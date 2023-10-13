@@ -168,7 +168,7 @@ export const AhaSubmitButton: FC<{ room: Room; voteSummary: VoteSummary }> = ({
   const [modalVisible, showModal, hideModal] = useBooleanState(false);
 
   const ideaId =
-    room.topic != null ? AhaExtension.extractIdeaId(room.topic) : null;
+    room.topic.length > 0 ? AhaExtension.extractIdeaId(room.topic) : null;
   const score = voteSummary.average;
 
   const dataAvailable = ideaId != null && score != null;
