@@ -20,6 +20,15 @@ ALTER TABLE room
 	ALTER COLUMN topic CLOB(4096) NOT NULL;
 
 
+
+UPDATE card c
+SET c.card_description = 'Unsure.'
+WHERE c.card_name = '?';
+
+UPDATE card c
+SET c.card_description = 'Vote for a break.'
+WHERE c.card_name = 'Coffee';
+
 // Resume constraints
 ALTER TABLE vote
 	ADD CONSTRAINT ck_vote_card_set CHECK (
