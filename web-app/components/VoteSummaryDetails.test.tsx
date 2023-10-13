@@ -1,4 +1,4 @@
-import { getByText, render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { VoteSummary } from "../model";
 import {
   createMockCard,
@@ -179,18 +179,14 @@ describe("VoteSummaryDetails", () => {
       offset: 4,
     };
 
-    const { container } = render(
-      <VoteSummaryDetails room={room} voteSummary={voteSummary} />,
-    );
+    render(<VoteSummaryDetails room={room} voteSummary={voteSummary} />);
 
-    const summaryHighest =
-      container.querySelector<HTMLElement>(".summary__highest")!;
-    expect(getByText(summaryHighest, "Alice")).toBeInTheDocument();
-    expect(getByText(summaryHighest, "High Card")).toBeInTheDocument();
-    const summaryLowest =
-      container.querySelector<HTMLElement>(".summary__lowest")!;
-    expect(getByText(summaryLowest, "Bob")).toBeInTheDocument();
-    expect(getByText(summaryLowest, "Low Card")).toBeInTheDocument();
+    const summaryHighest = screen.getByTestId("summary-highest");
+    expect(within(summaryHighest).getByText("Alice")).toBeInTheDocument();
+    expect(within(summaryHighest).getByText("High Card")).toBeInTheDocument();
+    const summaryLowest = screen.getByTestId("summary-lowest");
+    expect(within(summaryLowest).getByText("Bob")).toBeInTheDocument();
+    expect(within(summaryLowest).getByText("Low Card")).toBeInTheDocument();
   });
 
   it("shows offset", () => {

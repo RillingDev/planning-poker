@@ -6,12 +6,11 @@ import { PokerCard } from "./PokerCard";
 import "./VoteSummaryDetails.css";
 
 const VoteExtremeDetails: FC<{
-  className: string;
   label: string;
   voteExtreme: VoteExtreme | null;
-}> = ({ className, label, voteExtreme }) => {
+}> = ({ label, voteExtreme }) => {
   return (
-    <div className={`summary__extreme ${className}`}>
+    <div className="summary__extreme">
       <div className="summary__extreme__header">
         <span>{label}:</span>
         {voteExtreme != null ? (
@@ -67,16 +66,18 @@ export const VoteSummaryDetails: FC<{
           <PokerCard card={voteSummary.nearestCard} disabled={true} />
         </div>
       )}
-      <VoteExtremeDetails
-        className="summary__highest"
-        label="Highest Vote"
-        voteExtreme={voteSummary.highest}
-      />
-      <VoteExtremeDetails
-        className="summary__lowest"
-        label="Lowest Vote"
-        voteExtreme={voteSummary.lowest}
-      />
+      <div className="summary__highest" data-testid="summary-highest">
+        <VoteExtremeDetails
+          label="Highest Vote"
+          voteExtreme={voteSummary.highest}
+        />
+      </div>
+      <div className="summary__lowest" data-testid="summary-lowest">
+        <VoteExtremeDetails
+          label="Lowest Vote"
+          voteExtreme={voteSummary.lowest}
+        />
+      </div>
       <div className="summary__offset">
         Disagreement: <DisagreementMeter offset={voteSummary.offset} />
       </div>
