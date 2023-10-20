@@ -1,5 +1,4 @@
 import { AppContextState } from "../AppContext";
-import { ExtensionManager } from "../extension/ExtensionManager";
 import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../model";
 import { Extension } from "../extension/Extension";
 import { FC } from "react";
@@ -83,6 +82,6 @@ export function createMockContextState(
   return {
     user: values.user ?? { username: "Bob" },
     cardSets: values.cardSets ?? [],
-    extensionManager: values.extensionManager ?? new ExtensionManager([]),
+    enabledExtensions: values.enabledExtensions ?? [],
   };
 }
