@@ -23,7 +23,7 @@ export const EditRoomModal: FC<{
   ariaLabelledBy: string;
   room: Room;
 }> = ({ room, show, onHide, onSubmit, ariaLabelledBy }) => {
-  const { cardSets, extensionManager } = useContext(AppContext);
+  const { cardSets, enabledExtensions } = useContext(AppContext);
 
   // Initial state is filled in handleShow, to ensure is reset when opening the modal.
   const [cardSetName, setCardSetName] = useState<string>("");
@@ -98,7 +98,7 @@ export const EditRoomModal: FC<{
           <div className="mb-3">
             <fieldset>
               <legend className="h6">Extensions</legend>
-              {extensionManager.getAll().map((extension) => (
+              {enabledExtensions.map((extension) => (
                 <Form.Check
                   inline
                   type="checkbox"

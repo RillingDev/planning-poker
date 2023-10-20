@@ -4,6 +4,7 @@ import { Room, VoteExtreme, VoteSummary } from "../model";
 import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./VoteSummaryDetails.css";
+import { getActiveExtensionsByRoom } from "../extension/extensions.ts";
 
 const VoteExtremeDetails: FC<{
   label: string;
@@ -32,7 +33,7 @@ export const VoteSummaryDetails: FC<{
   room: Room;
   voteSummary: VoteSummary | null;
 }> = ({ room, voteSummary }) => {
-  const { extensionManager } = useContext(AppContext);
+  const { enabledExtensions } = useContext(AppContext);
 
   if (voteSummary == null) {
     return (
@@ -50,13 +51,15 @@ export const VoteSummaryDetails: FC<{
             Average: <strong>{voteSummary.average}</strong>
           </span>
           <div className="summary__average__extensions">
-            {extensionManager.getByRoom(room).map((extension) => (
-              <extension.SubmitComponent
-                key={extension.key}
-                room={room}
-                voteSummary={voteSummary}
-              />
-            ))}
+            {getActiveExtensionsByRoom(enabledExtensions, room).map(
+              (extension) => (
+                <extension.SubmitComponent
+                  key={extension.key}
+                  room={room}
+                  voteSummary={voteSummary}
+                />
+              ),
+            )}
           </div>
         </div>
       )}

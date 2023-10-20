@@ -10,7 +10,6 @@ import {
 } from "../test/dataFactory";
 import { VoteSummaryDetails } from "./VoteSummaryDetails.tsx";
 import { AppContext } from "../AppContext";
-import { ExtensionManager } from "../extension/ExtensionManager";
 import { FC } from "react";
 import { describe, expect, it } from "vitest";
 
@@ -228,7 +227,6 @@ describe("VoteSummaryDetails", () => {
       SubmitComponent: MockSubmitComponent,
       key: "mockExtension",
     });
-    const extensionManager = new ExtensionManager([extension]);
 
     const card1 = createMockCard({ value: 1 });
     const card5 = createMockCard({ value: 5 });
@@ -259,7 +257,7 @@ describe("VoteSummaryDetails", () => {
     render(
       <AppContext.Provider
         value={createMockContextState({
-          extensionManager,
+          enabledExtensions: [extension],
         })}
       >
         <VoteSummaryDetails room={room} voteSummary={voteSummary} />

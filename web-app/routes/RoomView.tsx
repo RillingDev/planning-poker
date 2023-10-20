@@ -37,6 +37,7 @@ import {
   User,
 } from "../model";
 import "./RoomView.css";
+import { getActiveExtensionsByRoom } from "../extension/extensions.ts";
 
 interface LoaderResult {
   room: Room;
@@ -88,7 +89,7 @@ const RoomViewHeader: FC<{
     onChange(changes);
   }
 
-  const { extensionManager } = useContext(AppContext);
+  const { enabledExtensions } = useContext(AppContext);
 
   return (
     <div className="room-view__header">
@@ -110,7 +111,7 @@ const RoomViewHeader: FC<{
         ariaLabelledBy="showEditModalButton"
       />
 
-      {extensionManager.getByRoom(room).map((extension) => (
+      {getActiveExtensionsByRoom(enabledExtensions, room).map((extension) => (
         <extension.RoomComponent
           key={extension.key}
           room={room}
