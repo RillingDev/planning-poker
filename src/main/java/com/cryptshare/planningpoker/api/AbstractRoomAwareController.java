@@ -31,7 +31,6 @@ public abstract class AbstractRoomAwareController {
 	/**
 	 * Resolves user member for this name in this room, throwing if not found.
 	 */
-	// Use
 	protected RoomMember requireActingUserMember(Room room, String username) {
 		return room.findMemberByUser(username).orElseThrow(NotAMemberException::new);
 	}
