@@ -28,7 +28,6 @@ import {
 import { AppContext } from "../AppContext";
 import userEvent from "@testing-library/user-event";
 import { FC } from "react";
-import { ExtensionManager } from "../extension/ExtensionManager";
 import { EditAction, Role } from "../model";
 
 vi.mock("../api");
@@ -81,7 +80,7 @@ describe("RoomView", () => {
     const contextState = createMockContextState({ cardSets: [cardSet] });
     const room = createMockRoom({
       name: "My Room",
-      topic: null,
+      topic: "",
       cardSetName: cardSet.name,
       votingClosed: false,
       members: [createMockRoomMember({ username: "Bob" })],
@@ -305,7 +304,7 @@ describe("RoomView", () => {
       Promise.resolve(
         createMockRoom({
           name: "My Room",
-          topic: roomEdited ? "Custom Topic" : null,
+          topic: roomEdited ? "Custom Topic" : "",
           cardSetName: (roomEdited ? cardSet2 : cardSet1).name,
           votingClosed: false,
           members: [createMockRoomMember({ username: "Bob" })],
@@ -351,12 +350,11 @@ describe("RoomView", () => {
       RoomComponent: MockRoomComponent,
       key: "mockExtension",
     });
-    const extensionManager = new ExtensionManager([extension]);
 
     const cardSet = createMockCardSet({ name: "My Set" });
     const contextState = createMockContextState({
       cardSets: [cardSet],
-      extensionManager,
+      enabledExtensions: [extension],
     });
     const room = createMockRoom({
       name: "My Room",

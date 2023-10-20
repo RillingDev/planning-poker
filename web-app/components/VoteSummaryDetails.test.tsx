@@ -1,4 +1,4 @@
-import { getByText, render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { VoteSummary } from "../model";
 import {
   createMockCard,
@@ -10,7 +10,6 @@ import {
 } from "../test/dataFactory";
 import { VoteSummaryDetails } from "./VoteSummaryDetails.tsx";
 import { AppContext } from "../AppContext";
-import { ExtensionManager } from "../extension/ExtensionManager";
 import { FC } from "react";
 import { describe, expect, it } from "vitest";
 
@@ -179,18 +178,14 @@ describe("VoteSummaryDetails", () => {
       offset: 4,
     };
 
-    const { container } = render(
-      <VoteSummaryDetails room={room} voteSummary={voteSummary} />,
-    );
+    render(<VoteSummaryDetails room={room} voteSummary={voteSummary} />);
 
-    const summaryHighest =
-      container.querySelector<HTMLElement>(".summary__highest")!;
-    expect(getByText(summaryHighest, "Alice")).toBeInTheDocument();
-    expect(getByText(summaryHighest, "High Card")).toBeInTheDocument();
-    const summaryLowest =
-      container.querySelector<HTMLElement>(".summary__lowest")!;
-    expect(getByText(summaryLowest, "Bob")).toBeInTheDocument();
-    expect(getByText(summaryLowest, "Low Card")).toBeInTheDocument();
+    const summaryHighest = screen.getByTestId("summary-highest");
+    expect(within(summaryHighest).getByText("Alice")).toBeInTheDocument();
+    expect(within(summaryHighest).getByText("High Card")).toBeInTheDocument();
+    const summaryLowest = screen.getByTestId("summary-lowest");
+    expect(within(summaryLowest).getByText("Bob")).toBeInTheDocument();
+    expect(within(summaryLowest).getByText("Low Card")).toBeInTheDocument();
   });
 
   it("shows offset", () => {
@@ -232,7 +227,6 @@ describe("VoteSummaryDetails", () => {
       SubmitComponent: MockSubmitComponent,
       key: "mockExtension",
     });
-    const extensionManager = new ExtensionManager([extension]);
 
     const card1 = createMockCard({ value: 1 });
     const card5 = createMockCard({ value: 5 });
@@ -263,7 +257,7 @@ describe("VoteSummaryDetails", () => {
     render(
       <AppContext.Provider
         value={createMockContextState({
-          extensionManager,
+          enabledExtensions: [extension],
         })}
       >
         <VoteSummaryDetails room={room} voteSummary={voteSummary} />

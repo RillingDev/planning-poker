@@ -1,8 +1,6 @@
 package com.cryptshare.planningpoker.data;
 
 import jakarta.persistence.*;
-import org.springframework.lang.Nullable;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -20,7 +18,6 @@ public class Room extends BaseEntity {
 	private String name;
 
 	@Column(name = "topic")
-	@Nullable
 	private String topic;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -40,8 +37,7 @@ public class Room extends BaseEntity {
 	private Set<RoomExtensionConfig> extensionConfigs = new HashSet<>(4);
 
 	public enum VotingState {
-		OPEN,
-		CLOSED
+		OPEN, CLOSED
 	}
 
 	protected Room() {
@@ -51,6 +47,7 @@ public class Room extends BaseEntity {
 		this.name = name;
 		this.cardSet = cardSet;
 		votingState = VotingState.OPEN;
+		topic = "";
 	}
 
 	public String getName() {
@@ -77,17 +74,12 @@ public class Room extends BaseEntity {
 		this.members = members;
 	}
 
-	@Nullable
 	public String getTopic() {
 		return topic;
 	}
 
-	public void setTopic(@Nullable String topic) {
-		if (StringUtils.hasText(topic)) {
-			this.topic = topic;
-		} else {
-			this.topic = null;
-		}
+	public void setTopic(String topic) {
+		this.topic = topic;
 	}
 
 	public VotingState getVotingState() {

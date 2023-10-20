@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Model for {@link CardSet}.
+ */
 public record CardSetJson(@JsonProperty("name") String name, @JsonProperty("cards") List<CardJson> cards) {
 
 	public static CardSetJson convert(CardSet cardSet) {
-		return new CardSetJson(
-				cardSet.getName(),
-				cardSet.getCards().stream().sorted(Card.NATURAL_COMPARATOR).map(CardJson::convert).toList());
+		return new CardSetJson(cardSet.getName(), cardSet.getCards().stream().sorted(Card.NATURAL_COMPARATOR).map(CardJson::convert).toList());
 	}
 
 }

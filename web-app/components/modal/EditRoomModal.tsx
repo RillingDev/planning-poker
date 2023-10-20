@@ -13,8 +13,6 @@ function getDelta<T>(oldValue: T, newValue: T): T | undefined {
   return isEqual(oldValue, newValue) ? undefined : newValue;
 }
 
-const getEffectiveTopic = (room: Room): string => room.topic ?? "";
-
 /**
  * @param onSubmit Invoked upon submission with delta of changes values.
  */
@@ -25,7 +23,7 @@ export const EditRoomModal: FC<{
   ariaLabelledBy: string;
   room: Room;
 }> = ({ room, show, onHide, onSubmit, ariaLabelledBy }) => {
-  const { cardSets, extensionManager } = useContext(AppContext);
+  const { cardSets, enabledExtensions } = useContext(AppContext);
 
   // Initial state is filled in handleShow, to ensure is reset when opening the modal.
   const [cardSetName, setCardSetName] = useState<string>("");
@@ -38,7 +36,7 @@ export const EditRoomModal: FC<{
     e.preventDefault();
     // Only emit difference to initial.
     onSubmit({
-      topic: getDelta(getEffectiveTopic(room), topic),
+      topic: getDelta(room.topic, topic),
       cardSetName: getDelta(room.cardSetName, cardSetName),
       extensions: getDelta(room.extensions, extensionKeys),
     });
@@ -61,7 +59,7 @@ export const EditRoomModal: FC<{
 
   function handleShow() {
     setCardSetName(room.cardSetName);
-    setTopic(getEffectiveTopic(room));
+    setTopic(room.topic);
     setExtensionKeys(room.extensions);
   }
 
@@ -100,7 +98,7 @@ export const EditRoomModal: FC<{
           <div className="mb-3">
             <fieldset>
               <legend className="h6">Extensions</legend>
-              {extensionManager.getAll().map((extension) => (
+              {enabledExtensions.map((extension) => (
                 <Form.Check
                   inline
                   type="checkbox"

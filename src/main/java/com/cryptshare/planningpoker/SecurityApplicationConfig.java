@@ -14,7 +14,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 class SecurityApplicationConfig {
 
-	// https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html#mvc-enablewebmvcsecurity
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http, OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler,
 			JdbcOAuth2AuthorizedClientService jdbcOAuth2AuthorizedClientService) throws Exception {

@@ -4,14 +4,14 @@ import { Room, VoteExtreme, VoteSummary } from "../model";
 import { DisagreementMeter } from "./DisagreementMeter";
 import { PokerCard } from "./PokerCard";
 import "./VoteSummaryDetails.css";
+import { getActiveExtensionsByRoom } from "../extension/extensions.ts";
 
 const VoteExtremeDetails: FC<{
-  className: string;
   label: string;
   voteExtreme: VoteExtreme | null;
-}> = ({ className, label, voteExtreme }) => {
+}> = ({ label, voteExtreme }) => {
   return (
-    <div className={`summary__extreme ${className}`}>
+    <div className="summary__extreme">
       <div className="summary__extreme__header">
         <span>{label}:</span>
         {voteExtreme != null ? (
@@ -33,7 +33,7 @@ export const VoteSummaryDetails: FC<{
   room: Room;
   voteSummary: VoteSummary | null;
 }> = ({ room, voteSummary }) => {
-  const { extensionManager } = useContext(AppContext);
+  const { enabledExtensions } = useContext(AppContext);
 
   if (voteSummary == null) {
     return (
@@ -51,13 +51,15 @@ export const VoteSummaryDetails: FC<{
             Average: <strong>{voteSummary.average}</strong>
           </span>
           <div className="summary__average__extensions">
-            {extensionManager.getByRoom(room).map((extension) => (
-              <extension.SubmitComponent
-                key={extension.key}
-                room={room}
-                voteSummary={voteSummary}
-              />
-            ))}
+            {getActiveExtensionsByRoom(enabledExtensions, room).map(
+              (extension) => (
+                <extension.SubmitComponent
+                  key={extension.key}
+                  room={room}
+                  voteSummary={voteSummary}
+                />
+              ),
+            )}
           </div>
         </div>
       )}
@@ -67,16 +69,18 @@ export const VoteSummaryDetails: FC<{
           <PokerCard card={voteSummary.nearestCard} disabled={true} />
         </div>
       )}
-      <VoteExtremeDetails
-        className="summary__highest"
-        label="Highest Vote"
-        voteExtreme={voteSummary.highest}
-      />
-      <VoteExtremeDetails
-        className="summary__lowest"
-        label="Lowest Vote"
-        voteExtreme={voteSummary.lowest}
-      />
+      <div className="summary__highest" data-testid="summary-highest">
+        <VoteExtremeDetails
+          label="Highest Vote"
+          voteExtreme={voteSummary.highest}
+        />
+      </div>
+      <div className="summary__lowest" data-testid="summary-lowest">
+        <VoteExtremeDetails
+          label="Lowest Vote"
+          voteExtreme={voteSummary.lowest}
+        />
+      </div>
       <div className="summary__offset">
         Disagreement: <DisagreementMeter offset={voteSummary.offset} />
       </div>

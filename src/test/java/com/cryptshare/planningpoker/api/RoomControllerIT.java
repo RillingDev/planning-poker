@@ -59,7 +59,7 @@ class RoomControllerIT {
 				.andExpect(jsonPath("$[0].members[0].username").value("Bob"))
 				.andExpect(jsonPath("$[0].members[0].role").value("VOTER"))
 				.andExpect(jsonPath("$[1].name").value("Room #2"))
-				.andExpect(jsonPath("$[1].topic").value((String) null))
+				.andExpect(jsonPath("$[1].topic").value(""))
 				.andExpect(jsonPath("$[1].members.length()").value(0));
 	}
 
@@ -106,7 +106,7 @@ class RoomControllerIT {
 		final ArgumentCaptor<Room> captor = ArgumentCaptor.forClass(Room.class);
 		verify(roomRepository).save(captor.capture());
 		assertThat(captor.getValue().getName()).isEqualTo("my-room");
-		assertThat(captor.getValue().getTopic()).isNull();
+		assertThat(captor.getValue().getTopic()).isEqualTo("");
 		assertThat(captor.getValue().getCardSet()).isEqualTo(cardSet);
 	}
 

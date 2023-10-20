@@ -17,7 +17,7 @@ export const PokerCard: FC<Props> = ({ card, ...props }) => {
 
   const tooltipId = useId();
 
-  if (card.description == null) {
+  if (card.description.length == 0) {
     return button;
   }
 

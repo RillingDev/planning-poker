@@ -19,11 +19,12 @@ public abstract class AbstractRoomAwareController {
 	/**
 	 * Resolves room for this name, throwing if not found.
 	 */
+	// TODO: maybe use DataBinder instead of manual invocation?
 	protected Room requireRoom(String roomName) {
 		return roomRepository.findByName(roomName).orElseThrow(RoomNotFoundException::new);
 	}
 
-	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such room.")
+	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No room with this name was found.")
 	static class RoomNotFoundException extends RuntimeException {
 	}
 
@@ -34,7 +35,7 @@ public abstract class AbstractRoomAwareController {
 		return room.findMemberByUser(username).orElseThrow(NotAMemberException::new);
 	}
 
-	@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "You must be a member of this room to perform this action.")
+	@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "You are not a member of this room.")
 	public static class NotAMemberException extends RuntimeException {
 	}
 }

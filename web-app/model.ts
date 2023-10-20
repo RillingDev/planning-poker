@@ -17,7 +17,7 @@ export interface RoomMember {
 
 export interface Room {
   readonly name: string;
-  readonly topic: string | null;
+  readonly topic: string;
   readonly cardSetName: string;
   readonly members: readonly RoomMember[];
   readonly votingClosed: boolean;
@@ -27,7 +27,7 @@ export interface Room {
 export interface Card {
   readonly name: string;
   readonly value: number | null;
-  readonly description: string | null;
+  readonly description: string;
 }
 
 export interface CardSet {

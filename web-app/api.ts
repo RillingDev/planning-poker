@@ -1,6 +1,6 @@
 import {
+  assertStatusSuccess,
   getStateChangingHeaders,
-  isStatusOk,
   MEDIA_TYPE_JSON,
 } from "./apiUtils";
 import {
@@ -14,35 +14,12 @@ import {
   User,
 } from "./model";
 
-async function assertStatusOk(res: Response): Promise<Response> {
-  if (isStatusOk(res)) {
-    return res;
-  }
-
-  if (res.status == 403) {
-    throw new Error(
-      "Missing permissions. This may be because you were kicked from the room. Please go back to the room list.",
-    );
-  }
-  if (res.status == 404) {
-    throw new Error(
-      "Not found. This may be because this room was deleted in the meantime. Please go back to the room list.",
-    );
-  }
-
-  const body = await res.text();
-  throw new Error(
-    `Unexpected status code '${res.status}':
-		${body}.`,
-  );
-}
-
 export async function getIdentity(): Promise<User> {
   return fetch("/api/identity", {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<User>);
 }
 
@@ -51,7 +28,7 @@ export async function getExtensions(): Promise<readonly ExtensionKey[]> {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<readonly ExtensionKey[]>);
 }
 
@@ -62,7 +39,7 @@ export async function getExtensionConfig<T>(
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<T>);
 }
 
@@ -77,7 +54,7 @@ export async function getExtensionRoomConfig<T>(
       headers: { Accept: MEDIA_TYPE_JSON },
     },
   )
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<T>);
 }
 
@@ -96,7 +73,7 @@ export async function editExtensionRoomConfig<T>(
       },
       body: JSON.stringify(config),
     },
-  ).then(assertStatusOk);
+  ).then(assertStatusSuccess);
 }
 
 export async function getCardSets(): Promise<CardSet[]> {
@@ -104,7 +81,7 @@ export async function getCardSets(): Promise<CardSet[]> {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<CardSet[]>);
 }
 
@@ -113,7 +90,7 @@ export async function getRooms(): Promise<Room[]> {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<Room[]>);
 }
 
@@ -125,7 +102,7 @@ export async function createRoom(
     method: "POST",
     headers: { ...getStateChangingHeaders(), "Content-Type": MEDIA_TYPE_JSON },
     body: JSON.stringify({ cardSetName }),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function getRoom(roomName: string): Promise<Room> {
@@ -133,7 +110,7 @@ export async function getRoom(roomName: string): Promise<Room> {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<Room>);
 }
 
@@ -141,7 +118,7 @@ export async function deleteRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "DELETE",
     headers: getStateChangingHeaders(),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function editRoom(
@@ -153,21 +130,21 @@ export async function editRoom(
     headers: { ...getStateChangingHeaders(), "Content-Type": MEDIA_TYPE_JSON },
     // Note: `undefined` values mean the key will not be part of the JSON payload
     body: JSON.stringify({ topic, cardSetName, extensions }),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function joinRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
     method: "POST",
     headers: getStateChangingHeaders(),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function leaveRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
     method: "DELETE",
     headers: getStateChangingHeaders(),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function editMember(
@@ -185,7 +162,7 @@ export async function editMember(
   await fetch(url, {
     method: "PATCH",
     headers: getStateChangingHeaders(),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function createVote(
@@ -200,14 +177,14 @@ export async function createVote(
   await fetch(url, {
     method: "POST",
     headers: getStateChangingHeaders(),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function clearVotes(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes`, {
     method: "DELETE",
     headers: getStateChangingHeaders(),
-  }).then(assertStatusOk);
+  }).then(assertStatusSuccess);
 }
 
 export async function getSummary(roomName: string): Promise<SummaryResult> {
@@ -215,6 +192,6 @@ export async function getSummary(roomName: string): Promise<SummaryResult> {
     method: "GET",
     headers: { Accept: MEDIA_TYPE_JSON },
   })
-    .then(assertStatusOk)
+    .then(assertStatusSuccess)
     .then((res) => res.json() as Promise<SummaryResult>);
 }

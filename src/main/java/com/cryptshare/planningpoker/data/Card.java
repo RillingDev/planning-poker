@@ -24,7 +24,6 @@ public class Card extends BaseEntity {
 	private Double value;
 
 	@Column(name = "card_description")
-	@Nullable
 	private String description;
 
 	protected Card() {
@@ -33,6 +32,7 @@ public class Card extends BaseEntity {
 	public Card(String name, @Nullable Double value) {
 		this.name = name;
 		this.value = value;
+		description = "";
 	}
 
 	public String getName() {
@@ -52,12 +52,11 @@ public class Card extends BaseEntity {
 		this.value = value;
 	}
 
-	@Nullable
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(@Nullable String description) {
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
