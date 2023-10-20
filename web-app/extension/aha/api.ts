@@ -1,4 +1,4 @@
-import { isStatusOk, MEDIA_TYPE_JSON } from "../../apiUtils";
+import { assertStatusSuccess, MEDIA_TYPE_JSON } from "../../apiUtils";
 import { AhaConfig, FullIdea, Idea, IdeaFilterField } from "./model";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
@@ -38,14 +38,6 @@ export interface AhaClient {
     scoreFactName: string,
     value: number,
   ): Promise<void>;
-}
-
-async function assertStatusOk(res: Response): Promise<Response> {
-  if (isStatusOk(res)) {
-    return res;
-  }
-  const body = await res.text();
-  throw new Error(`Unexpected status code '${res.status}':\n\n${body}.`);
 }
 
 export class AuthenticatingAhaClient implements AhaClient {
@@ -164,7 +156,7 @@ export class AuthenticatingAhaClient implements AhaClient {
       },
     });
 
-    await assertStatusOk(response);
+    await assertStatusSuccess(response);
 
     const body = (await response.json()) as IdeasResponse<T>;
     console.log("Retrieved ideas.", body);
@@ -192,7 +184,7 @@ export class AuthenticatingAhaClient implements AhaClient {
     if (response.status == 404) {
       return null;
     }
-    await assertStatusOk(response);
+    await assertStatusSuccess(response);
 
     const body = (await response.json()) as IdeaResponse<T>;
     console.log("Retrieved idea.", body);
@@ -225,7 +217,7 @@ export class AuthenticatingAhaClient implements AhaClient {
       },
     });
 
-    await assertStatusOk(response);
+    await assertStatusSuccess(response);
 
     console.log("Submitted idea score.", body);
   }
