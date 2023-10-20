@@ -9,8 +9,8 @@ export async function assertStatusSuccess(res: Response): Promise<Response> {
 
   // If the error response has a message property, directly use it instead of throwing the full body for better UX.
   if (res.headers.get("Content-Type") == MEDIA_TYPE_JSON) {
-    const jsonBody = await res.json();
-    if ("message" in jsonBody) {
+    const jsonBody = (await res.json()) as Record<string, unknown>;
+    if (typeof jsonBody.message == "string") {
       throw new Error(jsonBody.message);
     }
   }
