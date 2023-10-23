@@ -140,6 +140,7 @@ export const RoomListView: FC = () => {
         />
       </header>
       <nav>
+        {/* TODO: make smaller */}
         <ul className="room-list__contents">
           {rooms.map((room) => (
             <li key={room.name}>

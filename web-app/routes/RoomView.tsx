@@ -103,6 +103,7 @@ const RoomViewHeader: FC<{
       >
         <FontAwesomeIcon icon={faEdit} title="Edit Room" />
       </button>
+      {/* TODO: use same icon language as with user editing */}
       <EditRoomModal
         onSubmit={handleModalEdit}
         room={room}
@@ -220,12 +221,15 @@ export const RoomView: FC = () => {
                 room={room}
               />
             ) : (
-              <PokerCardList
-                cardSet={cardSet}
-                activeCard={activeCard}
-                disabled={member.role == Role.OBSERVER}
-                onClick={handleCardClick}
-              />
+              <>
+                {/* TODO: Hint on what these cards do */}
+                <PokerCardList
+                  cardSet={cardSet}
+                  activeCard={activeCard}
+                  disabled={member.role == Role.OBSERVER}
+                  onClick={handleCardClick}
+                />
+              </>
             )}
           </div>
         </main>
