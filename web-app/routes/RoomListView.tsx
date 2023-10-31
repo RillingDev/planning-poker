@@ -121,7 +121,7 @@ export const RoomListView: FC = () => {
     <>
       <ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
-      <header className="room-list__header">
+      <header className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="mb-0">Rooms</h2>
         <button
           type="button"
@@ -141,7 +141,7 @@ export const RoomListView: FC = () => {
       </header>
       <nav>
         {/* TODO: make smaller */}
-        <ul className="room-list__contents list-unstyled">
+        <ul className="room-list__contents list-unstyled mb-0">
           {rooms.map((room) => (
             <li key={room.name}>
               <RoomItem

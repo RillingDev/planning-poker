@@ -185,7 +185,7 @@ export const RoomView: FC = () => {
   return (
     <>
       <ErrorPanel error={error} onClose={resetError} />
-      <header>
+      <header className="mb-3">
         <div className="d-flex justify-content-between align-items-center mb-1">
           <RoomViewHeader room={room} onChange={handleEdit} />
           <nav>
