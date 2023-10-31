@@ -11,7 +11,7 @@ export const PokerCardList: FC<{
   onClick?: (card: Card) => void;
 }> = ({ cardSet, activeCard, disabled, onClick }) => {
   return (
-    <ul className="poker-card-list">
+    <ul className="poker-card-list list-unstyled">
       {cardSet.cards.map((card) => (
         <li key={card.name}>
           <PokerCard

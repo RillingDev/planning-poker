@@ -141,7 +141,7 @@ export const RoomListView: FC = () => {
       </header>
       <nav>
         {/* TODO: make smaller */}
-        <ul className="room-list__contents">
+        <ul className="room-list__contents list-unstyled">
           {rooms.map((room) => (
             <li key={room.name}>
               <RoomItem

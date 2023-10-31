@@ -92,7 +92,7 @@ export const MemberList: FC<{
   onAction: (member: RoomMember, action: EditAction) => void;
 }> = ({ members, onAction }) => {
   return (
-    <ul className="member-list">
+    <ul className="member-list list-unstyled">
       {members.map((member) => (
         <Member
           key={member.username}
