@@ -14,7 +14,6 @@ describe("DeleteRoomModal", () => {
         onSubmit={() => ({})}
         onHide={() => ({})}
         room={room}
-        ariaLabelledBy="someId"
       />,
     );
 
@@ -31,7 +30,6 @@ describe("DeleteRoomModal", () => {
         onSubmit={onSubmit}
         onHide={() => ({})}
         room={room}
-        ariaLabelledBy="someId"
       />,
     );
 

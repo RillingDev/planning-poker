@@ -16,8 +16,7 @@ const AhaIdeaLoadingModal: FC<{
   show: boolean;
   onHide: () => void;
   onSubmit: (changes: RoomEditOptions) => void;
-  ariaLabelledBy: string;
-}> = ({ show, onHide, onSubmit, ariaLabelledBy }) => {
+}> = ({ show, onHide, onSubmit }) => {
   const [error, handleError, resetError] = useErrorHandler();
 
   const [ideaLoading, setIdeaLoading] = useState(false);
@@ -65,11 +64,13 @@ const AhaIdeaLoadingModal: FC<{
       show={show}
       onExit={handleExit}
       onHide={onHide}
-      aria-labelledby={ariaLabelledBy}
+      aria-labelledby="ahaIdeaLoadingModalTitle"
     >
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Load from Aha!</Modal.Title>
+          <Modal.Title id="ahaIdeaLoadingModalTitle">
+            Load from Aha!
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <ErrorPanel
@@ -146,7 +147,6 @@ export const AhaRoomButton: FC<{
         show={modalVisible}
         onHide={hideModal}
         onSubmit={handleSubmit}
-        ariaLabelledBy="ahaShowRoomModalButton"
       />
     </>
   );

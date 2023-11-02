@@ -50,7 +50,6 @@ const RoomItem: FC<{
         type="button"
         className="btn btn-warning btn-sm"
         onClick={showEditModal}
-        id="showEditModalButton"
       >
         <FontAwesomeIcon icon={faEdit} title="Edit Room" />
       </button>
@@ -59,14 +58,12 @@ const RoomItem: FC<{
         room={room}
         show={editModalVisible}
         onHide={hideEditModal}
-        ariaLabelledBy="showEditModalButton"
       />
 
       <button
         type="button"
         className="btn btn-danger btn-sm"
         onClick={showDeleteModal}
-        id="showDeleteModalButton"
       >
         <FontAwesomeIcon icon={faTrash} title="Delete Room" />
       </button>
@@ -75,7 +72,6 @@ const RoomItem: FC<{
         room={room}
         show={deleteModalVisible}
         onHide={hideDeleteModal}
-        ariaLabelledBy="showDeleteModalButton"
       />
     </div>
   );
@@ -136,7 +132,6 @@ export const RoomListView: FC = () => {
           existingRooms={rooms}
           onSubmit={handleCreationSubmit}
           onHide={hideCreationModal}
-          ariaLabelledBy="showCreateModalButton"
         />
       </header>
       <nav>

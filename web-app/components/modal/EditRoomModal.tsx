@@ -20,9 +20,8 @@ export const EditRoomModal: FC<{
   show: boolean;
   onHide: () => void;
   onSubmit: (changes: RoomEditOptions) => void;
-  ariaLabelledBy: string;
   room: Room;
-}> = ({ room, show, onHide, onSubmit, ariaLabelledBy }) => {
+}> = ({ room, show, onHide, onSubmit }) => {
   const { cardSets, enabledExtensions } = useContext(AppContext);
 
   // Initial state is filled in handleShow, to ensure is reset when opening the modal.
@@ -68,11 +67,13 @@ export const EditRoomModal: FC<{
       show={show}
       onHide={onHide}
       onShow={handleShow}
-      aria-labelledby={ariaLabelledBy}
+      aria-labelledby="editRoomModalTitle"
     >
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Room &apos;{room.name}&apos;</Modal.Title>
+          <Modal.Title id="editRoomModalTitle">
+            Edit Room &apos;{room.name}&apos;
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3" controlId="formEditRoomCardSet">

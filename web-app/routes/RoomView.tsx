@@ -99,7 +99,6 @@ const RoomViewHeader: FC<{
         type="button"
         className="btn btn-warning btn-sm"
         onClick={showEditModal}
-        id="showEditModalButton"
       >
         <FontAwesomeIcon icon={faEdit} title="Edit Room" />
       </button>
@@ -109,7 +108,6 @@ const RoomViewHeader: FC<{
         room={room}
         show={editModalVisible}
         onHide={hideEditModal}
-        ariaLabelledBy="showEditModalButton"
       />
 
       {getActiveExtensionsByRoom(enabledExtensions, room).map((extension) => (
