@@ -1,4 +1,4 @@
-import { FC, useContext, useId } from "react";
+import { FC, useContext } from "react";
 import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
 import { AppContext } from "../AppContext";
@@ -28,8 +28,6 @@ const Member: FC<{
 }> = ({ member, onAction }) => {
   const { user } = useContext(AppContext);
 
-  const dropdownId = useId();
-
   const currentUser = member.username == user.username;
 
   return (
@@ -50,13 +48,8 @@ const Member: FC<{
         <PokerCard card={member.vote} disabled={true} size="sm" />
       )}
       <Dropdown size="sm" as={ButtonGroup}>
-
         {/* TODO: make less "bold" */}
-        <Dropdown.Toggle
-          variant="secondary"
-          id={dropdownId}
-          aria-label="Edit Member"
-        />
+        <Dropdown.Toggle variant="secondary" aria-label="Edit Member" />
 
         <Dropdown.Menu>
           <Dropdown.Item
