@@ -51,8 +51,9 @@ const Member: FC<{
         {/* TODO: make less "bold" */}
         <Dropdown.Toggle variant="secondary" aria-label="Edit Member" />
 
-        <Dropdown.Menu>
+        <Dropdown.Menu role="menu">
           <Dropdown.Item
+            role="menuitem"
             as="button"
             onClick={() => onAction(EditAction.SET_OBSERVER)}
             disabled={member.role == Role.OBSERVER}
@@ -61,6 +62,7 @@ const Member: FC<{
           </Dropdown.Item>
           <Dropdown.Item
             as="button"
+            role="menuitem"
             onClick={() => onAction(EditAction.SET_VOTER)}
             disabled={member.role == Role.VOTER}
           >
@@ -69,6 +71,7 @@ const Member: FC<{
           <Dropdown.Divider />
           <Dropdown.Item
             as="button"
+            role="menuitem"
             onClick={() => onAction(EditAction.KICK)}
             disabled={currentUser}
           >
