@@ -221,6 +221,7 @@ export const RoomView: FC = () => {
             ) : (
               <>
                 {/* TODO: Hint on what these cards do */}
+                {/* TODO: Show better feedback to observers */}
                 <PokerCardList
                   cardSet={cardSet}
                   activeCard={activeCard}
