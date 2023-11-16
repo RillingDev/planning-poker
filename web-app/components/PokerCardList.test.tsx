@@ -21,6 +21,22 @@ describe("PokerCardList", () => {
     expect(screen.getByText("Card 2")).toBeInTheDocument();
   });
 
+  it("shows tooltip", async () => {
+    const cardSet = createMockCardSet({
+      cards: [createMockCard({ name: "Card 1", description: "Foo Bar" })],
+    });
+
+    render(
+      <PokerCardList cardSet={cardSet} activeCard={null} disabled={true} />,
+    );
+
+    expect(screen.queryByText("Foo Bar")).not.toBeInTheDocument();
+
+    await userEvent.hover(screen.getByText("Card 1"));
+
+    expect(screen.getByText("Foo Bar")).toBeVisible();
+  });
+
   it("disables buttons", () => {
     const cardSet = createMockCardSet({
       cards: [
