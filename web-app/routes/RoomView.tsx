@@ -180,6 +180,12 @@ export const RoomView: FC = () => {
     clearVotes(room.name).then(updateRoom).catch(handleError);
   }
 
+  const isObserver = member.role == Role.OBSERVER;
+  const helpText =
+    isObserver || activeCard != null
+      ? "Please wait until everyone has voted."
+      : "Pick your card.";
+
   return (
     <>
       <ErrorPanel error={error} onClose={resetError} />
@@ -220,12 +226,12 @@ export const RoomView: FC = () => {
               />
             ) : (
               <>
-                {/* TODO: Hint on what these cards do */}
                 {/* TODO: Show better feedback to observers */}
+                <p className="text-center mt-3 mb-0">{helpText}</p>
                 <PokerCardList
                   cardSet={cardSet}
                   activeCard={activeCard}
-                  disabled={member.role == Role.OBSERVER}
+                  disabled={isObserver}
                   onClick={handleCardClick}
                 />
               </>
