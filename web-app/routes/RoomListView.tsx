@@ -46,33 +46,35 @@ const RoomItem: FC<{
     <div className="card room-item">
       <Link to={`/rooms/${encodeURIComponent(room.name)}`}>{room.name}</Link>
 
-      <button
-        type="button"
-        className="btn btn-secondary btn-sm"
-        onClick={showEditModal}
-      >
-        <FontAwesomeIcon icon={faEdit} title="Edit Room" />
-      </button>
-      <EditRoomModal
-        onSubmit={handleEdit}
-        room={room}
-        show={editModalVisible}
-        onHide={hideEditModal}
-      />
+      <div className="btn-group">
+        <button
+          type="button"
+          className="btn btn-secondary btn-sm"
+          onClick={showEditModal}
+        >
+          <FontAwesomeIcon icon={faEdit} title="Edit Room" />
+        </button>
+        <EditRoomModal
+          onSubmit={handleEdit}
+          room={room}
+          show={editModalVisible}
+          onHide={hideEditModal}
+        />
 
-      <button
-        type="button"
-        className="btn btn-danger btn-sm"
-        onClick={showDeleteModal}
-      >
-        <FontAwesomeIcon icon={faTrash} title="Delete Room" />
-      </button>
-      <DeleteRoomModal
-        onSubmit={handleDelete}
-        room={room}
-        show={deleteModalVisible}
-        onHide={hideDeleteModal}
-      />
+        <button
+          type="button"
+          className="btn btn-danger btn-sm"
+          onClick={showDeleteModal}
+        >
+          <FontAwesomeIcon icon={faTrash} title="Delete Room" />
+        </button>
+        <DeleteRoomModal
+          onSubmit={handleDelete}
+          room={room}
+          show={deleteModalVisible}
+          onHide={hideDeleteModal}
+        />
+      </div>
     </div>
   );
 };
