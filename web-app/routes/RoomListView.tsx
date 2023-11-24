@@ -48,7 +48,7 @@ const RoomItem: FC<{
 
       <button
         type="button"
-        className="btn btn-warning btn-sm"
+        className="btn btn-secondary btn-sm"
         onClick={showEditModal}
       >
         <FontAwesomeIcon icon={faEdit} title="Edit Room" />
