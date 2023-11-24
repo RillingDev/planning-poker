@@ -48,7 +48,6 @@ const Member: FC<{
         <PokerCard card={member.vote} disabled={true} size="sm" />
       )}
       <Dropdown size="sm" as={ButtonGroup}>
-        {/* TODO: make less "bold" */}
         <Dropdown.Toggle variant="secondary" aria-label="Edit Member" />
 
         <Dropdown.Menu role="menu">
