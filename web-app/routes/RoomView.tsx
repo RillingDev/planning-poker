@@ -121,6 +121,16 @@ const RoomViewHeader: FC<{
   );
 };
 
+function getHelpText(member: RoomMember, activeCard: Card | null): string {
+  if (member.role == Role.OBSERVER) {
+    return "You are an Observer. Please wait until all voters have voted.";
+  } else if (activeCard != null) {
+    return "Thank you for your vote. Please wait until everybody else has voted.";
+  } else {
+    return "Pick a card to vote for.";
+  }
+}
+
 export const RoomView: FC = () => {
   const [error, handleError, resetError] = useErrorHandler();
 
@@ -180,11 +190,7 @@ export const RoomView: FC = () => {
     clearVotes(room.name).then(updateRoom).catch(handleError);
   }
 
-  const isObserver = member.role == Role.OBSERVER;
-  const helpText =
-    isObserver || activeCard != null
-      ? "Please wait until everyone has voted."
-      : "Pick your card.";
+  const helpText = getHelpText(member, activeCard);
 
   return (
     <>
@@ -226,12 +232,11 @@ export const RoomView: FC = () => {
               />
             ) : (
               <>
-                {/* TODO: Show better feedback to observers */}
                 <p className="text-center mt-3 mb-0">{helpText}</p>
                 <PokerCardList
                   cardSet={cardSet}
                   activeCard={activeCard}
-                  disabled={isObserver}
+                  disabled={member.role == Role.OBSERVER}
                   onClick={handleCardClick}
                 />
               </>

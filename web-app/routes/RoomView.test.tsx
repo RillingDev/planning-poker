@@ -1,15 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import {
-  clearVotes,
-  createVote,
-  editMember,
-  editRoom,
-  getRoom,
-  getSummary,
-  joinRoom,
-  leaveRoom,
-} from "../api";
+import { clearVotes, createVote, editMember, editRoom, getRoom, getSummary, joinRoom, leaveRoom } from "../api";
 import {
   createMockCard,
   createMockCardSet,
@@ -17,14 +8,10 @@ import {
   createMockExtension,
   createMockRoom,
   createMockRoomMember,
-  createMockVoteSummary,
+  createMockVoteSummary
 } from "../test/dataFactory";
 import { loader, RoomView } from "./RoomView";
-import {
-  createMemoryRouter,
-  RouteObject,
-  RouterProvider,
-} from "react-router-dom";
+import { createMemoryRouter, RouteObject, RouterProvider } from "react-router-dom";
 import { AppContext } from "../AppContext";
 import userEvent from "@testing-library/user-event";
 import { FC } from "react";
@@ -542,9 +529,16 @@ describe("RoomView", () => {
     );
     await waitForLoaderResolved();
 
-    expect(screen.getByText("Pick your card.")).toBeInTheDocument();
+    expect(screen.getByText("Pick a card to vote for.")).toBeInTheDocument();
     expect(
-      screen.queryByText("Please wait until everyone has voted."),
+      screen.queryByText(
+        "You are an Observer. Please wait until all voters have voted.",
+      ),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "Thank you for your vote. Please wait until everybody else has voted.",
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -583,9 +577,18 @@ describe("RoomView", () => {
     await waitForLoaderResolved();
 
     expect(
-      screen.getByText("Please wait until everyone has voted."),
+      screen.getByText(
+        "Thank you for your vote. Please wait until everybody else has votd.",
+      ),
     ).toBeInTheDocument();
-    expect(screen.queryByText("Pick your card.")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Pick a card to vote for.",
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "You are an Observer. Please wait until all voters have voted.,
+      ,
+    ).not.toBeInTheDocument();
   });
 
   it("shows help text for observers", async () => {
@@ -616,8 +619,17 @@ describe("RoomView", () => {
     await waitForLoaderResolved();
 
     expect(
-      screen.getByText("Please wait until everyone has voted."),
+      screen.getByText(
+        "You are an Observer. Please wait until all voters have voted."
+      )
     ).toBeInTheDocument();
-    expect(screen.queryByText("Pick your card.")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "Thank you for your vote. Please wait until everybody else has voted."
+      )
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Pick a card to vote for.")
+    ).not.toBeInTheDocument();
   });
 });
