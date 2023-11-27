@@ -143,7 +143,7 @@ describe("RoomListView", () => {
     await userEvent.click(screen.getByText("Edit Room"));
 
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
-    await userEvent.click(screen.getByText("Edit"));
+    await userEvent.click(screen.getByText("Submit"));
 
     expect(screen.queryByText("Edit Room 'My Room'")).not.toBeInTheDocument();
     expect(editRoom).toHaveBeenCalledWith("My Room", {
