@@ -3,7 +3,6 @@ import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
 import { AppContext } from "../AppContext";
 import { EditAction, Role, RoomMember } from "../model";
-import "./MemberList.css";
 import { PokerCard } from "./PokerCard";
 
 function mapRoleToColor(role: Role): Color {
@@ -31,8 +30,8 @@ const Member: FC<{
   const currentUser = member.username == user.username;
 
   return (
-    <li className="card member">
-      <span className="member__name">
+    <li className="card d-flex flex-row align-items-center p-2 gap-2">
+      <span className="flex-grow-1">
         <span className={currentUser ? "fw-bolder" : ""}>
           {member.username}
         </span>
@@ -87,7 +86,7 @@ export const MemberList: FC<{
   onAction: (member: RoomMember, action: EditAction) => void;
 }> = ({ members, onAction }) => {
   return (
-    <ul className="member-list list-unstyled">
+    <ul className="list-unstyled mb-0 d-flex flex-column gap-2">
       {members.map((member) => (
         <Member
           key={member.username}

@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { Card, CardSet } from "../model";
 import { PokerCard } from "./PokerCard";
-import "./PokerCardList.css";
 
 // TODO: use listbox or radio buttons for a11y
 export const PokerCardList: FC<{
@@ -11,7 +10,7 @@ export const PokerCardList: FC<{
   onClick?: (card: Card) => void;
 }> = ({ cardSet, activeCard, disabled, onClick }) => {
   return (
-    <ul className="poker-card-list list-unstyled">
+    <ul className="list-unstyled mb-0 p-3 d-flex flex-wrap justify-content-center gap-2">
       {cardSet.cards.map((card) => (
         <li key={card.name}>
           <PokerCard

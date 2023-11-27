@@ -1,8 +1,0 @@
-.poker-card-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 0;
-  padding: 1rem;
-  gap: 0.5rem;
-}
