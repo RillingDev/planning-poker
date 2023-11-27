@@ -9,7 +9,11 @@ interface Props extends ButtonProps {
 
 export const PokerCard: FC<Props> = ({ card, ...props }) => {
   const button = (
-    <Button className="btn-poker-card" variant="outline-dark" {...props}>
+    <Button
+      variant="outline-dark"
+      className="btn-poker-card fw-bold"
+      {...props}
+    >
       <span className="visually-hidden">Card </span>
       {card.name}
     </Button>

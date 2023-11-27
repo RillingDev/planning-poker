@@ -18,11 +18,10 @@ const AhaSubmissionModal: FC<{
   show: boolean;
   onHide: () => void;
   onSubmit: () => void;
-  ariaLabelledBy: string;
   roomName: string;
   ideaId: string;
   score: number;
-}> = ({ roomName, ideaId, score, show, onHide, onSubmit, ariaLabelledBy }) => {
+}> = ({ roomName, ideaId, score, show, onHide, onSubmit }) => {
   const [error, handleError, resetError] = useErrorHandler();
 
   const [idea, setIdea] = useState<LoadedIdea | null>(null);
@@ -86,10 +85,14 @@ const AhaSubmissionModal: FC<{
 
   // No onExit needed, component is destroyed when not visible
   return (
-    <Modal show={show} onHide={onHide} aria-labelledby={ariaLabelledBy}>
+    <Modal
+      show={show}
+      onHide={onHide}
+      aria-labelledby="ahaSubmissionModalTitle"
+    >
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Save to Aha!</Modal.Title>
+          <Modal.Title id="ahaSubmissionModalTitle">Save to Aha!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <ErrorPanel
@@ -192,7 +195,6 @@ export const AhaSubmitButton: FC<{ room: Room; voteSummary: VoteSummary }> = ({
             show={modalVisible}
             onHide={hideModal}
             onSubmit={hideModal}
-            ariaLabelledBy="ahaShowSubmitModalButton"
           />
         )}
     </>

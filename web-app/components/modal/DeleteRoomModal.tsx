@@ -6,13 +6,14 @@ export const DeleteRoomModal: FC<{
   show: boolean;
   onHide: () => void;
   onSubmit: () => void;
-  ariaLabelledBy: string;
   room: Room;
-}> = ({ room, show, onHide, onSubmit, ariaLabelledBy }) => {
+}> = ({ room, show, onHide, onSubmit }) => {
   return (
-    <Modal show={show} onHide={onHide} aria-labelledby={ariaLabelledBy}>
+    <Modal show={show} onHide={onHide} aria-labelledby="deleteRoomModalTitle">
       <Modal.Header closeButton>
-        <Modal.Title>Delete Room &apos;{room.name}&apos;</Modal.Title>
+        <Modal.Title id="deleteRoomModalTitle">
+          Delete Room &apos;{room.name}&apos;
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>Are you sure you want to delete this room?</Modal.Body>
       <Modal.Footer>

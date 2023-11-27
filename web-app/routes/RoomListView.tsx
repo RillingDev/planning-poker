@@ -10,7 +10,6 @@ import { DeleteRoomModal } from "../components/modal/DeleteRoomModal";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
 import { Room, RoomCreationOptions, RoomEditOptions } from "../model";
-import "./RoomListView.css";
 
 interface LoaderResult {
   rooms: Room[];
@@ -43,40 +42,38 @@ const RoomItem: FC<{
   }
 
   return (
-    <div className="card room-item">
+    <div className="card p-3 d-flex flex-row justify-content-between align-items-center">
       <Link to={`/rooms/${encodeURIComponent(room.name)}`}>{room.name}</Link>
 
-      <button
-        type="button"
-        className="btn btn-warning btn-sm"
-        onClick={showEditModal}
-        id="showEditModalButton"
-      >
-        <FontAwesomeIcon icon={faEdit} title="Edit Room" />
-      </button>
-      <EditRoomModal
-        onSubmit={handleEdit}
-        room={room}
-        show={editModalVisible}
-        onHide={hideEditModal}
-        ariaLabelledBy="showEditModalButton"
-      />
+      <div className="btn-group">
+        <button
+          type="button"
+          className="btn btn-secondary btn-sm"
+          onClick={showEditModal}
+        >
+          <FontAwesomeIcon icon={faEdit} title="Edit Room" />
+        </button>
+        <EditRoomModal
+          onSubmit={handleEdit}
+          room={room}
+          show={editModalVisible}
+          onHide={hideEditModal}
+        />
 
-      <button
-        type="button"
-        className="btn btn-danger btn-sm"
-        onClick={showDeleteModal}
-        id="showDeleteModalButton"
-      >
-        <FontAwesomeIcon icon={faTrash} title="Delete Room" />
-      </button>
-      <DeleteRoomModal
-        onSubmit={handleDelete}
-        room={room}
-        show={deleteModalVisible}
-        onHide={hideDeleteModal}
-        ariaLabelledBy="showDeleteModalButton"
-      />
+        <button
+          type="button"
+          className="btn btn-danger btn-sm"
+          onClick={showDeleteModal}
+        >
+          <FontAwesomeIcon icon={faTrash} title="Delete Room" />
+        </button>
+        <DeleteRoomModal
+          onSubmit={handleDelete}
+          room={room}
+          show={deleteModalVisible}
+          onHide={hideDeleteModal}
+        />
+      </div>
     </div>
   );
 };
@@ -121,7 +118,7 @@ export const RoomListView: FC = () => {
     <>
       <ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
-      <header className="room-list__header">
+      <header className="d-flex mb-3 justify-content-between align-items-center">
         <h2 className="mb-0">Rooms</h2>
         <button
           type="button"
@@ -136,11 +133,11 @@ export const RoomListView: FC = () => {
           existingRooms={rooms}
           onSubmit={handleCreationSubmit}
           onHide={hideCreationModal}
-          ariaLabelledBy="showCreateModalButton"
         />
       </header>
       <nav>
-        <ul className="room-list__contents">
+        {/* TODO: make smaller */}
+        <ul className="list-unstyled mb-0 d-flex flex-column gap-3">
           {rooms.map((room) => (
             <li key={room.name}>
               <RoomItem

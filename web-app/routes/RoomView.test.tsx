@@ -514,4 +514,135 @@ describe("RoomView", () => {
 
     expect(screen.getByText("My Card")).toBeDisabled();
   });
+
+  it("shows help text for voters", async () => {
+    const cardSet = createMockCardSet({
+      name: "My Set",
+      cards: [createMockCard({ name: "My Card" })],
+    });
+    const contextState = createMockContextState({
+      cardSets: [cardSet],
+    });
+    const room = createMockRoom({
+      name: "My Room",
+      cardSetName: cardSet.name,
+      votingClosed: false,
+      members: [createMockRoomMember({ username: "Bob", role: Role.VOTER })],
+    });
+    vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
+    vi.mocked(getRoom).mockResolvedValue(room);
+
+    const router = createMemoryRouter(TEST_ROUTES, {
+      initialEntries: ["/rooms/My Room"],
+    });
+    render(
+      <AppContext.Provider value={contextState}>
+        <RouterProvider router={router} />
+      </AppContext.Provider>,
+    );
+    await waitForLoaderResolved();
+
+    expect(screen.getByText("Pick a card to vote for.")).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "You are an Observer. Please wait until all voters have voted.",
+      ),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "Thank you for your vote. Please wait until everybody else has voted.",
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows help text for voters that already voted", async () => {
+    const card1 = createMockCard({ name: "My Card" });
+    const cardSet = createMockCardSet({
+      name: "My Set",
+      cards: [card1],
+    });
+    const contextState = createMockContextState({
+      cardSets: [cardSet],
+    });
+    const room = createMockRoom({
+      name: "My Room",
+      cardSetName: cardSet.name,
+      votingClosed: false,
+      members: [
+        createMockRoomMember({
+          username: "Bob",
+          role: Role.VOTER,
+          vote: card1,
+        }),
+      ],
+    });
+    vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
+    vi.mocked(getRoom).mockResolvedValue(room);
+
+    const router = createMemoryRouter(TEST_ROUTES, {
+      initialEntries: ["/rooms/My Room"],
+    });
+    render(
+      <AppContext.Provider value={contextState}>
+        <RouterProvider router={router} />
+      </AppContext.Provider>,
+    );
+    await waitForLoaderResolved();
+
+    expect(
+      screen.getByText(
+        "Thank you for your vote. Please wait until everybody else has voted.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Pick a card to vote for."),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "You are an Observer. Please wait until all voters have voted.",
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows help text for observers", async () => {
+    const cardSet = createMockCardSet({
+      name: "My Set",
+      cards: [createMockCard({ name: "My Card" })],
+    });
+    const contextState = createMockContextState({
+      cardSets: [cardSet],
+    });
+    const room = createMockRoom({
+      name: "My Room",
+      cardSetName: cardSet.name,
+      votingClosed: false,
+      members: [createMockRoomMember({ username: "Bob", role: Role.OBSERVER })],
+    });
+    vi.mocked(joinRoom).mockImplementation(() => Promise.resolve());
+    vi.mocked(getRoom).mockResolvedValue(room);
+
+    const router = createMemoryRouter(TEST_ROUTES, {
+      initialEntries: ["/rooms/My Room"],
+    });
+    render(
+      <AppContext.Provider value={contextState}>
+        <RouterProvider router={router} />
+      </AppContext.Provider>,
+    );
+    await waitForLoaderResolved();
+
+    expect(
+      screen.getByText(
+        "You are an Observer. Please wait until all voters have voted.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "Thank you for your vote. Please wait until everybody else has voted.",
+      ),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Pick a card to vote for."),
+    ).not.toBeInTheDocument();
+  });
 });

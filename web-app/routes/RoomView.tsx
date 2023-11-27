@@ -92,14 +92,13 @@ const RoomViewHeader: FC<{
   const { enabledExtensions } = useContext(AppContext);
 
   return (
-    <div className="room-view__header">
+    <div className="d-flex gap-2 align-items-center">
       <h2 className="mb-0">{room.name}</h2>
 
       <button
         type="button"
-        className="btn btn-warning btn-sm"
+        className="btn btn-secondary btn-sm"
         onClick={showEditModal}
-        id="showEditModalButton"
       >
         <FontAwesomeIcon icon={faEdit} title="Edit Room" />
       </button>
@@ -108,7 +107,6 @@ const RoomViewHeader: FC<{
         room={room}
         show={editModalVisible}
         onHide={hideEditModal}
-        ariaLabelledBy="showEditModalButton"
       />
 
       {getActiveExtensionsByRoom(enabledExtensions, room).map((extension) => (
@@ -121,6 +119,16 @@ const RoomViewHeader: FC<{
     </div>
   );
 };
+
+function getHelpText(member: RoomMember, activeCard: Card | null): string {
+  if (member.role == Role.OBSERVER) {
+    return "You are an Observer. Please wait until all voters have voted.";
+  } else if (activeCard != null) {
+    return "Thank you for your vote. Please wait until everybody else has voted.";
+  } else {
+    return "Pick a card to vote for.";
+  }
+}
 
 export const RoomView: FC = () => {
   const [error, handleError, resetError] = useErrorHandler();
@@ -181,11 +189,13 @@ export const RoomView: FC = () => {
     clearVotes(room.name).then(updateRoom).catch(handleError);
   }
 
+  const helpText = getHelpText(member, activeCard);
+
   return (
     <>
       <ErrorPanel error={error} onClose={resetError} />
-      <header>
-        <div className="d-flex justify-content-between align-items-center mb-1">
+      <header className="mb-4">
+        <div className="mb-1 d-flex justify-content-between align-items-center">
           <RoomViewHeader room={room} onChange={handleEdit} />
           <nav>
             <Link
@@ -203,7 +213,7 @@ export const RoomView: FC = () => {
       </header>
       <div className="room-view">
         <main>
-          <header className="d-flex justify-content-between align-items-center mb-2">
+          <header className="mb-2 d-flex justify-content-between align-items-center">
             <h3 className="mb-0">Vote</h3>
             <button
               type="button"
@@ -220,12 +230,15 @@ export const RoomView: FC = () => {
                 room={room}
               />
             ) : (
-              <PokerCardList
-                cardSet={cardSet}
-                activeCard={activeCard}
-                disabled={member.role == Role.OBSERVER}
-                onClick={handleCardClick}
-              />
+              <>
+                <p className="text-center mt-3 mb-0">{helpText}</p>
+                <PokerCardList
+                  cardSet={cardSet}
+                  activeCard={activeCard}
+                  disabled={member.role == Role.OBSERVER}
+                  onClick={handleCardClick}
+                />
+              </>
             )}
           </div>
         </main>

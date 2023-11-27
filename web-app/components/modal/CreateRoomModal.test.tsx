@@ -24,7 +24,6 @@ describe("CreateRoomModal", () => {
           existingRooms={[]}
           onSubmit={() => ({})}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -46,7 +45,6 @@ describe("CreateRoomModal", () => {
           existingRooms={[]}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -73,7 +71,6 @@ describe("CreateRoomModal", () => {
           existingRooms={[room]}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -101,7 +98,6 @@ describe("CreateRoomModal", () => {
           existingRooms={[]}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -126,7 +122,6 @@ describe("CreateRoomModal", () => {
           existingRooms={existingRooms}
           onSubmit={onSubmit}
           onHide={onHide}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -140,7 +135,6 @@ describe("CreateRoomModal", () => {
           existingRooms={existingRooms}
           onSubmit={onSubmit}
           onHide={onHide}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -151,7 +145,6 @@ describe("CreateRoomModal", () => {
           existingRooms={existingRooms}
           onSubmit={onSubmit}
           onHide={onHide}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );

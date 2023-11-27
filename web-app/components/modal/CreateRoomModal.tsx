@@ -8,9 +8,8 @@ export const CreateRoomModal: FC<{
   show: boolean;
   onHide: () => void;
   onSubmit: (roomName: string, options: RoomCreationOptions) => void;
-  ariaLabelledBy: string;
   existingRooms: readonly Room[];
-}> = ({ show, existingRooms, onHide, onSubmit, ariaLabelledBy }) => {
+}> = ({ show, existingRooms, onHide, onSubmit }) => {
   const { cardSets } = useContext(AppContext);
 
   const [roomName, setRoomName] = useState<string>("");
@@ -41,11 +40,11 @@ export const CreateRoomModal: FC<{
       show={show}
       onHide={onHide}
       onExit={handleExit}
-      aria-labelledby={ariaLabelledBy}
+      aria-labelledby="createRoomModalTitle"
     >
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Create a New Room</Modal.Title>
+          <Modal.Title id="createRoomModalTitle">Create a New Room</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3" controlId="formCreateRoomName">

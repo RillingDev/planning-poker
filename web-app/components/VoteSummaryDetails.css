@@ -16,19 +16,10 @@
 
 .summary__average {
   grid-area: average;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0.25rem;
 }
 
 .summary__nearest {
   grid-area: nearest;
-  display: flex;
-  gap: 0.5rem;
-  flex-direction: column;
-  align-items: center;
 }
 
 .summary__highest {
@@ -41,18 +32,6 @@
 
 .summary__offset {
   grid-area: offset;
-}
-
-.summary__extreme__header {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.summary__extreme ul {
-  margin: 0;
-  padding-left: 1.5rem;
-  font-size: 0.85em;
 }
 
 .summary--empty {

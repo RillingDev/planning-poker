@@ -12,7 +12,7 @@ const VoteExtremeDetails: FC<{
 }> = ({ label, voteExtreme }) => {
   return (
     <div className="summary__extreme">
-      <div className="summary__extreme__header">
+      <div className="d-flex align-items-center gap-2">
         <span>{label}:</span>
         {voteExtreme != null ? (
           <PokerCard card={voteExtreme.card} disabled={true} size="sm" />
@@ -20,7 +20,7 @@ const VoteExtremeDetails: FC<{
           <span>-/-</span>
         )}
       </div>
-      <ul>
+      <ul className="small ps-4 mb-0">
         {voteExtreme?.members.map((member) => (
           <li key={member.username}>{member.username}</li>
         ))}
@@ -46,11 +46,11 @@ export const VoteSummaryDetails: FC<{
   return (
     <div className="summary">
       {voteSummary.average != null && (
-        <div className="summary__average">
+        <div className="summary__average d-flex flex-column align-items-center justify-content-center gap-1">
           <span>
             Average: <strong>{voteSummary.average}</strong>
           </span>
-          <div className="summary__average__extensions">
+          <div>
             {getActiveExtensionsByRoom(enabledExtensions, room).map(
               (extension) => (
                 <extension.SubmitComponent
@@ -64,7 +64,7 @@ export const VoteSummaryDetails: FC<{
         </div>
       )}
       {voteSummary.nearestCard != null && (
-        <div className="summary__nearest">
+        <div className="summary__nearest d-flex justify-content-center flex-column align-items-center gap-1">
           <span>Nearest Card:</span>
           <PokerCard card={voteSummary.nearestCard} disabled={true} />
         </div>

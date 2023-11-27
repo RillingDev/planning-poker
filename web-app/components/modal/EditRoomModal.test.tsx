@@ -26,7 +26,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={() => ({})}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -60,7 +59,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={() => ({})}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -85,12 +83,11 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
-    await userEvent.click(screen.getByText("Edit"));
+    await userEvent.click(screen.getByText("Submit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: "Set 2",
@@ -113,12 +110,11 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
     await userEvent.type(screen.getByLabelText("Topic"), "Bar?");
-    await userEvent.click(screen.getByText("Edit"));
+    await userEvent.click(screen.getByText("Submit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
@@ -152,7 +148,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -161,7 +156,7 @@ describe("EditRoomModal", () => {
     expect(extensionCheckbox).not.toBeChecked();
     await userEvent.click(extensionCheckbox);
     expect(extensionCheckbox).toBeChecked();
-    await userEvent.click(screen.getByText("Edit"));
+    await userEvent.click(screen.getByText("Submit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
@@ -195,7 +190,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -204,7 +198,7 @@ describe("EditRoomModal", () => {
     expect(extensionCheckbox).toBeChecked();
     await userEvent.click(extensionCheckbox);
     expect(extensionCheckbox).not.toBeChecked();
-    await userEvent.click(screen.getByText("Edit"));
+    await userEvent.click(screen.getByText("Submit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
@@ -238,7 +232,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={() => ({})}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -246,7 +239,7 @@ describe("EditRoomModal", () => {
     await userEvent.click(
       screen.getByLabelText<HTMLInputElement>("Mock Extension"),
     );
-    await userEvent.click(screen.getByText("Edit"));
+    await userEvent.click(screen.getByText("Submit"));
 
     expect(onSubmit).toHaveBeenCalledWith({
       cardSetName: undefined,
@@ -280,7 +273,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={onHide}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -293,7 +285,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={onHide}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );
@@ -304,7 +295,6 @@ describe("EditRoomModal", () => {
           room={room}
           onSubmit={onSubmit}
           onHide={onHide}
-          ariaLabelledBy="someId"
         />
       </AppContext.Provider>,
     );

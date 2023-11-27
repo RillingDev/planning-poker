@@ -1,9 +1,8 @@
-import { FC, useContext, useId } from "react";
+import { FC, useContext } from "react";
 import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
 import { AppContext } from "../AppContext";
 import { EditAction, Role, RoomMember } from "../model";
-import "./MemberList.css";
 import { PokerCard } from "./PokerCard";
 
 function mapRoleToColor(role: Role): Color {
@@ -28,13 +27,11 @@ const Member: FC<{
 }> = ({ member, onAction }) => {
   const { user } = useContext(AppContext);
 
-  const dropdownId = useId();
-
   const currentUser = member.username == user.username;
 
   return (
-    <li className="card member">
-      <span className="member__name">
+    <li className="card p-2 d-flex flex-row align-items-center gap-2">
+      <span className="flex-grow-1">
         <span className={currentUser ? "fw-bolder" : ""}>
           {member.username}
         </span>
@@ -50,14 +47,11 @@ const Member: FC<{
         <PokerCard card={member.vote} disabled={true} size="sm" />
       )}
       <Dropdown size="sm" as={ButtonGroup}>
-        <Dropdown.Toggle
-          variant="secondary"
-          id={dropdownId}
-          aria-label="Edit Member"
-        />
+        <Dropdown.Toggle variant="secondary" aria-label="Edit Member" />
 
-        <Dropdown.Menu>
+        <Dropdown.Menu role="menu">
           <Dropdown.Item
+            role="menuitem"
             as="button"
             onClick={() => onAction(EditAction.SET_OBSERVER)}
             disabled={member.role == Role.OBSERVER}
@@ -66,6 +60,7 @@ const Member: FC<{
           </Dropdown.Item>
           <Dropdown.Item
             as="button"
+            role="menuitem"
             onClick={() => onAction(EditAction.SET_VOTER)}
             disabled={member.role == Role.VOTER}
           >
@@ -74,6 +69,7 @@ const Member: FC<{
           <Dropdown.Divider />
           <Dropdown.Item
             as="button"
+            role="menuitem"
             onClick={() => onAction(EditAction.KICK)}
             disabled={currentUser}
           >
@@ -90,7 +86,7 @@ export const MemberList: FC<{
   onAction: (member: RoomMember, action: EditAction) => void;
 }> = ({ members, onAction }) => {
   return (
-    <ul className="member-list">
+    <ul className="list-unstyled mb-0 d-flex flex-column gap-2">
       {members.map((member) => (
         <Member
           key={member.username}
