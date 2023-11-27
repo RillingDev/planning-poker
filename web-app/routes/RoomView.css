@@ -3,12 +3,6 @@
   gap: 1rem;
 }
 
-.room-view__header {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
 @media screen and (min-width: 800px) {
   .room-view {
     grid-template-columns: 1fr minmax(max-content, 300px);

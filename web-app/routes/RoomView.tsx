@@ -92,7 +92,7 @@ const RoomViewHeader: FC<{
   const { enabledExtensions } = useContext(AppContext);
 
   return (
-    <div className="room-view__header">
+    <div className="d-flex gap-2 align-items-center">
       <h2 className="mb-0">{room.name}</h2>
 
       <button
@@ -196,7 +196,7 @@ export const RoomView: FC = () => {
     <>
       <ErrorPanel error={error} onClose={resetError} />
       <header className="mb-4">
-        <div className="d-flex justify-content-between align-items-center mb-1">
+        <div className="mb-1 d-flex justify-content-between align-items-center">
           <RoomViewHeader room={room} onChange={handleEdit} />
           <nav>
             <Link
@@ -214,7 +214,7 @@ export const RoomView: FC = () => {
       </header>
       <div className="room-view">
         <main>
-          <header className="d-flex justify-content-between align-items-center mb-2">
+          <header className="mb-2 d-flex justify-content-between align-items-center">
             <h3 className="mb-0">Vote</h3>
             <button
               type="button"

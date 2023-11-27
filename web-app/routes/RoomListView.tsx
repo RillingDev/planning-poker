@@ -10,7 +10,6 @@ import { DeleteRoomModal } from "../components/modal/DeleteRoomModal";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
 import { Room, RoomCreationOptions, RoomEditOptions } from "../model";
-import "./RoomListView.css";
 
 interface LoaderResult {
   rooms: Room[];
@@ -43,7 +42,7 @@ const RoomItem: FC<{
   }
 
   return (
-    <div className="card room-item">
+    <div className="card p-3 d-flex flex-row justify-content-between align-items-center">
       <Link to={`/rooms/${encodeURIComponent(room.name)}`}>{room.name}</Link>
 
       <div className="btn-group">
@@ -119,7 +118,7 @@ export const RoomListView: FC = () => {
     <>
       <ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
-      <header className="d-flex justify-content-between align-items-center mb-3">
+      <header className="d-flex mb-3 justify-content-between align-items-center">
         <h2 className="mb-0">Rooms</h2>
         <button
           type="button"
@@ -138,7 +137,7 @@ export const RoomListView: FC = () => {
       </header>
       <nav>
         {/* TODO: make smaller */}
-        <ul className="room-list__contents list-unstyled mb-0">
+        <ul className="list-unstyled mb-0 d-flex flex-column gap-3">
           {rooms.map((room) => (
             <li key={room.name}>
               <RoomItem

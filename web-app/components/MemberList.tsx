@@ -30,7 +30,7 @@ const Member: FC<{
   const currentUser = member.username == user.username;
 
   return (
-    <li className="card d-flex flex-row align-items-center p-2 gap-2">
+    <li className="card p-2 d-flex flex-row align-items-center gap-2">
       <span className="flex-grow-1">
         <span className={currentUser ? "fw-bolder" : ""}>
           {member.username}
