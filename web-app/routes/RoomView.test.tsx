@@ -330,7 +330,7 @@ describe("RoomView", () => {
 
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
     await userEvent.type(screen.getByLabelText("Topic"), "Custom Topic");
-    await userEvent.click(screen.getByText("Edit"));
+    await userEvent.click(screen.getByText("Submit"));
 
     expect(screen.queryByText("Edit Room 'My Room'")).not.toBeInTheDocument();
     expect(editRoom).toHaveBeenCalledWith("My Room", {
