@@ -115,7 +115,7 @@ export const EditRoomModal: FC<{
         </Modal.Body>
         <Modal.Footer>
           <button type="submit" className="btn btn-primary">
-            Edit
+            Submit
           </button>
         </Modal.Footer>
       </Form>
