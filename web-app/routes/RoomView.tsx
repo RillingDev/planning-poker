@@ -232,6 +232,7 @@ export const RoomView: FC = () => {
             ) : (
               <>
                 <p className="text-center mt-3 mb-0">{helpText}</p>
+                {/* Better visualize to observers that they cannot vote */}
                 <PokerCardList
                   cardSet={cardSet}
                   activeCard={activeCard}
