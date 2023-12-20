@@ -2,7 +2,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
-import { Link, LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import {
   clearVotes,
   createVote,
@@ -10,7 +10,6 @@ import {
   editRoom,
   getRoom,
   getSummary,
-  joinRoom,
   leaveRoom,
 } from "../api";
 import { AppContext } from "../AppContext";
@@ -38,26 +37,7 @@ import {
 } from "../model";
 import "./RoomView.css";
 import { getActiveExtensionsByRoom } from "../extension/extensions.ts";
-
-interface LoaderResult {
-  room: Room;
-  summaryResult: SummaryResult | null;
-}
-
-export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
-  const roomName = args.params.roomName!;
-
-  await joinRoom(roomName);
-
-  const room = await getRoom(roomName);
-
-  let summaryResult = null;
-  if (room.votingClosed) {
-    summaryResult = await getSummary(room.name);
-  }
-
-  return { room, summaryResult };
-}
+import { RoomLoaderResult } from "./RoomView.loader.ts";
 
 function findMemberForUser(room: Room, user: User): RoomMember {
   const roomMember = room.members.find(
@@ -133,7 +113,7 @@ function getHelpText(member: RoomMember, activeCard: Card | null): string {
 export const RoomView: FC = () => {
   const [error, handleError, resetError] = useErrorHandler();
 
-  const loaderData = useLoaderData() as LoaderResult;
+  const loaderData = useLoaderData() as RoomLoaderResult;
 
   const { user, cardSets } = useContext(AppContext);
 

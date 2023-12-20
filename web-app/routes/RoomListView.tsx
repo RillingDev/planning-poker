@@ -10,15 +10,7 @@ import { DeleteRoomModal } from "../components/modal/DeleteRoomModal";
 import { EditRoomModal } from "../components/modal/EditRoomModal";
 import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
 import { Room, RoomCreationOptions, RoomEditOptions } from "../model";
-
-interface LoaderResult {
-  rooms: Room[];
-}
-
-export async function loader(): Promise<LoaderResult> {
-  const rooms = await getRooms();
-  return { rooms };
-}
+import { RoomListLoaderResult } from "./RoomListView.loader.ts";
 
 const RoomItem: FC<{
   room: Room;
@@ -81,7 +73,7 @@ const RoomItem: FC<{
 export const RoomListView: FC = () => {
   const [error, handleError, resetError] = useErrorHandler();
 
-  const loaderData = useLoaderData() as LoaderResult;
+  const loaderData = useLoaderData() as RoomListLoaderResult;
   const [rooms, setRooms] = useState<Room[]>(loaderData.rooms);
 
   const [creationModalVisible, showCreationModal, hideCreationModal] =

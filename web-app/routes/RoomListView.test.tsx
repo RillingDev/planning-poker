@@ -6,7 +6,7 @@ import {
   createMockContextState,
   createMockRoom,
 } from "../test/dataFactory";
-import { loader, RoomListView } from "./RoomListView";
+import { RoomListView } from "./RoomListView";
 import {
   createMemoryRouter,
   RouteObject,
@@ -16,6 +16,7 @@ import {
 import userEvent from "@testing-library/user-event";
 import { AppContext } from "../AppContext";
 import { FC } from "react";
+import { roomListLoader } from "./RoomListView.loader.ts";
 
 vi.mock("../api");
 
@@ -23,7 +24,7 @@ const TEST_ROUTES: RouteObject[] = [
   {
     path: "/",
     element: <RoomListView />,
-    loader: loader,
+    loader: roomListLoader,
   },
 ];
 

@@ -19,7 +19,7 @@ import {
   createMockRoomMember,
   createMockVoteSummary,
 } from "../test/dataFactory";
-import { loader, RoomView } from "./RoomView";
+import { RoomView } from "./RoomView";
 import {
   createMemoryRouter,
   RouteObject,
@@ -29,6 +29,7 @@ import { AppContext } from "../AppContext";
 import userEvent from "@testing-library/user-event";
 import { FC } from "react";
 import { EditAction, Role } from "../model";
+import { roomLoader } from "./RoomView.loader.ts";
 
 vi.mock("../api");
 
@@ -36,7 +37,7 @@ const TEST_ROUTES: RouteObject[] = [
   {
     path: "/rooms/:roomName",
     element: <RoomView />,
-    loader: loader,
+    loader: roomLoader,
   },
 ];
 

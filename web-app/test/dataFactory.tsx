@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { AppContextState } from "../AppContext";
 import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../model";
 import { Extension } from "../extension/Extension";
