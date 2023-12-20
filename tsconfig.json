@@ -17,7 +17,7 @@
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
-    //"noUnusedParameters": true, # somehow lints libs and fails because of it
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["web-app/"],
