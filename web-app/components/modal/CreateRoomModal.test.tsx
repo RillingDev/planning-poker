@@ -7,7 +7,7 @@ import {
   createMockCardSet,
   createMockContextState,
   createMockRoom,
-} from "../../test/dataFactory.tsx";
+} from "../../test/dataFactory.ts";
 import { CreateRoomModal } from "./CreateRoomModal.tsx";
 
 describe("CreateRoomModal", () => {

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { AppContext } from "../AppContext.ts";
-import { createMockContextState } from "../test/dataFactory.tsx";
+import { createMockContextState } from "../test/dataFactory.ts";
 import { describe, expect, it } from "vitest";
 import { Header } from "./Header.tsx";
 

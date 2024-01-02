@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { AppContextState } from "../AppContext.ts";
 import {
   Card,
@@ -9,7 +8,7 @@ import {
   VoteSummary,
 } from "../model.ts";
 import { Extension } from "../extension/Extension.ts";
-import { FC } from "react";
+import { MockRoomComponent, MockSubmitComponent } from "./componentFactory.tsx";
 
 export function createMockCard(values: Partial<Card>): Card {
   return {
@@ -66,14 +65,6 @@ export function createMockVoteSummary(
     offset: values.offset ?? 1,
   };
 }
-
-const MockRoomComponent: FC = () => {
-  return <span>Mock Extension Room Component</span>;
-};
-
-const MockSubmitComponent: FC = () => {
-  return <span>Mock Extension Submit Component</span>;
-};
 
 export function createMockExtension(values: Partial<Extension>): Extension {
   return {

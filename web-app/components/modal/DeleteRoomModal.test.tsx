@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, Mocked, vi } from "vitest";
-import { createMockRoom } from "../../test/dataFactory.tsx";
+import { createMockRoom } from "../../test/dataFactory.ts";
 import { DeleteRoomModal } from "./DeleteRoomModal.tsx";
 
 describe("DeleteRoomModal", () => {

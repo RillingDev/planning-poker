@@ -4,7 +4,7 @@ import {
   createMockCard,
   createMockContextState,
   createMockRoomMember,
-} from "../test/dataFactory.tsx";
+} from "../test/dataFactory.ts";
 import { MemberList } from "./MemberList.tsx";
 import { describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";

@@ -7,7 +7,7 @@ import {
   createMockExtension,
   createMockRoom,
   createMockRoomMember,
-} from "../test/dataFactory.tsx";
+} from "../test/dataFactory.ts";
 import { VoteSummaryDetails } from "./VoteSummaryDetails.tsx";
 import { AppContext } from "../AppContext.ts";
 import { FC } from "react";

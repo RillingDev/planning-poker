@@ -18,7 +18,7 @@ import {
   createMockRoom,
   createMockRoomMember,
   createMockVoteSummary,
-} from "../test/dataFactory.tsx";
+} from "../test/dataFactory.ts";
 import { RoomView } from "./RoomView.tsx";
 import {
   createMemoryRouter,

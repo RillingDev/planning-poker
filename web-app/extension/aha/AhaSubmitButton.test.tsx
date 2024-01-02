@@ -9,7 +9,7 @@ import {
 import {
   createMockRoom,
   createMockVoteSummary,
-} from "../../test/dataFactory.tsx";
+} from "../../test/dataFactory.ts";
 import { ahaExtension } from "./AhaExtension.ts";
 import { AhaSubmitButton } from "./AhaSubmitButton.tsx";
 import type { AhaClient } from "./api.ts";

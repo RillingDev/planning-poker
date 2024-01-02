@@ -8,7 +8,7 @@ import {
   createMockContextState,
   createMockExtension,
   createMockRoom,
-} from "../../test/dataFactory.tsx";
+} from "../../test/dataFactory.ts";
 import { EditRoomModal } from "./EditRoomModal.tsx";
 
 describe("EditRoomModal", () => {

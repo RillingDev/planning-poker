@@ -5,7 +5,7 @@ import {
   createMockCardSet,
   createMockContextState,
   createMockRoom,
-} from "../test/dataFactory.tsx";
+} from "../test/dataFactory.ts";
 import { RoomListView } from "./RoomListView.tsx";
 import {
   createMemoryRouter,
