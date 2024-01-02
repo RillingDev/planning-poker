@@ -1,9 +1,9 @@
-import { getExtensionConfig } from "../../api";
-import type { Extension } from "../Extension";
-import { AhaRoomButton } from "./AhaRoomButton";
-import { AhaSubmitButton } from "./AhaSubmitButton";
-import { AhaClient, AuthenticatingAhaClient } from "./api";
-import { AhaConfig } from "./model";
+import { getExtensionConfig } from "../../api.ts";
+import type { Extension } from "../Extension.ts";
+import { AhaRoomButton } from "./AhaRoomButton.tsx";
+import { AhaSubmitButton } from "./AhaSubmitButton.tsx";
+import { AhaClient, AuthenticatingAhaClient } from "./api.ts";
+import { AhaConfig } from "./model.ts";
 
 const IDEA_PATTERN = /(\w+-I-?\d+)/;
 

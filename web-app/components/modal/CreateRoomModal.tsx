@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, FormEvent, useContext, useState } from "react";
 import { Form, Modal } from "react-bootstrap";
-import { AppContext } from "../../AppContext";
-import { Room, RoomCreationOptions } from "../../model";
+import { AppContext } from "../../AppContext.ts";
+import { Room, RoomCreationOptions } from "../../model.ts";
 
 // TODO: Move modal to a new route for simpler code?
 export const CreateRoomModal: FC<{

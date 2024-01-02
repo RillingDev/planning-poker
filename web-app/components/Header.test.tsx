@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { AppContext } from "../AppContext";
-import { createMockContextState } from "../test/dataFactory";
-import { Header } from "./Header";
+import { AppContext } from "../AppContext.ts";
+import { createMockContextState } from "../test/dataFactory.tsx";
 import { describe, expect, it } from "vitest";
+import { Header } from "./Header.tsx";
 
 describe("Header", () => {
   it("title is visible", () => {

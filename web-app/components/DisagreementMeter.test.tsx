@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { DisagreementMeter } from "./DisagreementMeter";
+import { DisagreementMeter } from "./DisagreementMeter.tsx";
 import { describe, expect, it } from "vitest";
 
 describe("DisagreementMeter", () => {

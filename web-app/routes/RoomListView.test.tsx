@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { createRoom, deleteRoom, editRoom, getRooms } from "../api";
+import { createRoom, deleteRoom, editRoom, getRooms } from "../api.ts";
 import {
   createMockCardSet,
   createMockContextState,
   createMockRoom,
-} from "../test/dataFactory";
-import { RoomListView } from "./RoomListView";
+} from "../test/dataFactory.tsx";
+import { RoomListView } from "./RoomListView.tsx";
 import {
   createMemoryRouter,
   RouteObject,
@@ -14,7 +14,7 @@ import {
   useParams,
 } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../AppContext.ts";
 import { FC } from "react";
 import { roomListLoader } from "./RoomListView.loader.ts";
 

@@ -9,7 +9,7 @@ import {
   getSummary,
   joinRoom,
   leaveRoom,
-} from "../api";
+} from "../api.ts";
 import {
   createMockCard,
   createMockCardSet,
@@ -18,17 +18,17 @@ import {
   createMockRoom,
   createMockRoomMember,
   createMockVoteSummary,
-} from "../test/dataFactory";
-import { RoomView } from "./RoomView";
+} from "../test/dataFactory.tsx";
+import { RoomView } from "./RoomView.tsx";
 import {
   createMemoryRouter,
   RouteObject,
   RouterProvider,
 } from "react-router-dom";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../AppContext.ts";
 import userEvent from "@testing-library/user-event";
 import { FC } from "react";
-import { EditAction, Role } from "../model";
+import { EditAction, Role } from "../model.ts";
 import { roomLoader } from "./RoomView.loader.ts";
 
 vi.mock("../api");

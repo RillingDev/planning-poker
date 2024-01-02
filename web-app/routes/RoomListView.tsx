@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useState } from "react";
 import { Link, useLoaderData } from "react-router-dom";
-import { createRoom, deleteRoom, editRoom, getRooms } from "../api";
-import { ErrorPanel } from "../components/ErrorPanel";
-import { CreateRoomModal } from "../components/modal/CreateRoomModal";
-import { DeleteRoomModal } from "../components/modal/DeleteRoomModal";
-import { EditRoomModal } from "../components/modal/EditRoomModal";
-import { useBooleanState, useErrorHandler, useInterval } from "../hooks";
-import { Room, RoomCreationOptions, RoomEditOptions } from "../model";
+import { createRoom, deleteRoom, editRoom, getRooms } from "../api.ts";
+import { ErrorPanel } from "../components/ErrorPanel.tsx";
+import { CreateRoomModal } from "../components/modal/CreateRoomModal.tsx";
+import { DeleteRoomModal } from "../components/modal/DeleteRoomModal.tsx";
+import { EditRoomModal } from "../components/modal/EditRoomModal.tsx";
+import { useBooleanState, useErrorHandler, useInterval } from "../hooks.ts";
+import { Room, RoomCreationOptions, RoomEditOptions } from "../model.ts";
 import { RoomListLoaderResult } from "./RoomListView.loader.ts";
 
 const RoomItem: FC<{

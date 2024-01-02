@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import { VoteSummary } from "../model";
+import { VoteSummary } from "../model.ts";
 import {
   createMockCard,
   createMockCardSet,
@@ -7,9 +7,9 @@ import {
   createMockExtension,
   createMockRoom,
   createMockRoomMember,
-} from "../test/dataFactory";
+} from "../test/dataFactory.tsx";
 import { VoteSummaryDetails } from "./VoteSummaryDetails.tsx";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../AppContext.ts";
 import { FC } from "react";
 import { describe, expect, it } from "vitest";
 

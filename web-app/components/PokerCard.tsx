@@ -1,6 +1,6 @@
 import { FC, useId } from "react";
 import { Button, ButtonProps, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { Card } from "../model";
+import { Card } from "../model.ts";
 import "./PokerCard.css";
 
 interface Props extends ButtonProps {

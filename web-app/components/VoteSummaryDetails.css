@@ -1,41 +1,41 @@
 .summary {
-	display: grid;
+  display: grid;
 
-	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-	grid-template-columns: 1fr 1fr;
-	grid-template-areas:
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
     "average highest"
     "average highest"
     "nearest lowest"
     "nearest lowest"
     "nearest offset";
 
-	gap: 1rem;
-	padding: 1rem;
+  gap: 1rem;
+  padding: 1rem;
 }
 
 .summary__average {
-	grid-area: average;
+  grid-area: average;
 }
 
 .summary__nearest {
-	grid-area: nearest;
+  grid-area: nearest;
 }
 
 .summary__highest {
-	grid-area: highest;
+  grid-area: highest;
 }
 
 .summary__lowest {
-	grid-area: lowest;
+  grid-area: lowest;
 }
 
 .summary__offset {
-	grid-area: offset;
+  grid-area: offset;
 }
 
 .summary--empty {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

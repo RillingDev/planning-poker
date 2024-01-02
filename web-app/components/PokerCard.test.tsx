@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { Card } from "../model";
-import { PokerCard } from "./PokerCard";
+import { Card } from "../model.ts";
+import { PokerCard } from "./PokerCard.tsx";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 

@@ -1,5 +1,5 @@
 import { memoize } from "lodash-es";
-import { ahaExtension } from "./AhaExtension";
+import { ahaExtension } from "./AhaExtension.ts";
 
 // Aha does only return the existing score facts for an idea if they were saved before.
 // In order to also support other ideas, we manually have to check which score fact names exist.

@@ -1,5 +1,5 @@
-import { ahaExtension } from "./aha/AhaExtension";
-import { Extension } from "./Extension";
+import { ahaExtension } from "./aha/AhaExtension.ts";
+import { Extension } from "./Extension.ts";
 import { ExtensionKey, Room } from "../model.ts";
 
 const AVAILABLE_EXTENSIONS: readonly Extension[] = [ahaExtension];

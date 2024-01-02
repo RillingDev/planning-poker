@@ -1,9 +1,9 @@
 import { FC, useContext } from "react";
 import { ButtonGroup, Dropdown } from "react-bootstrap";
 import { Color } from "react-bootstrap/types";
-import { AppContext } from "../AppContext";
-import { EditAction, Role, RoomMember } from "../model";
-import { PokerCard } from "./PokerCard";
+import { AppContext } from "../AppContext.ts";
+import { EditAction, Role, RoomMember } from "../model.ts";
+import { PokerCard } from "./PokerCard.tsx";
 
 function mapRoleToColor(role: Role): Color {
   if (role === Role.VOTER) {

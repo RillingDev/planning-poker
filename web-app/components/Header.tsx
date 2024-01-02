@@ -1,5 +1,5 @@
 import { FC, useContext } from "react";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../AppContext.ts";
 
 export const Header: FC = () => {
   const { user } = useContext(AppContext);

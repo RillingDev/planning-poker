@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, Mocked, vi } from "vitest";
-import { AppContext } from "../../AppContext";
-import { Room, RoomCreationOptions } from "../../model";
+import { AppContext } from "../../AppContext.ts";
+import { Room, RoomCreationOptions } from "../../model.ts";
 import {
   createMockCardSet,
   createMockContextState,
   createMockRoom,
-} from "../../test/dataFactory";
-import { CreateRoomModal } from "./CreateRoomModal";
+} from "../../test/dataFactory.tsx";
+import { CreateRoomModal } from "./CreateRoomModal.tsx";
 
 describe("CreateRoomModal", () => {
   it("shows card sets", () => {

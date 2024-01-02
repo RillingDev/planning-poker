@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import { EditAction, Role } from "../model";
+import { EditAction, Role } from "../model.ts";
 import {
   createMockCard,
   createMockContextState,
   createMockRoomMember,
-} from "../test/dataFactory";
-import { MemberList } from "./MemberList";
+} from "../test/dataFactory.tsx";
+import { MemberList } from "./MemberList.tsx";
 import { describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../AppContext.ts";
 
 describe("MemberList", () => {
   it("shows members", () => {

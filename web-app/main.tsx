@@ -2,10 +2,10 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "vite/modulepreload-polyfill";
-import { AppContext, createContextState } from "./AppContext";
-import { Header } from "./components/Header";
+import { AppContext, createContextState } from "./AppContext.ts";
+import { Header } from "./components/Header.tsx";
 import "./index.css";
-import { router } from "./router";
+import { router } from "./router.tsx";
 
 createContextState()
   .then((ctx) => {

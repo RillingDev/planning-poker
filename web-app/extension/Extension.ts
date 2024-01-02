@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ExtensionKey, Room, RoomEditOptions, VoteSummary } from "../model";
+import { ExtensionKey, Room, RoomEditOptions, VoteSummary } from "../model.ts";
 
 export type RoomComponent = FC<{
   room: Room;

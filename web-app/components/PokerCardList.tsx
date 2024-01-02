@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { Card, CardSet } from "../model";
-import { PokerCard } from "./PokerCard";
+import { Card, CardSet } from "../model.ts";
+import { PokerCard } from "./PokerCard.tsx";
 
 // TODO: use listbox or radio buttons for a11y
 export const PokerCardList: FC<{

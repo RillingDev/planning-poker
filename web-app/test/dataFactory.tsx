@@ -1,7 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
-import { AppContextState } from "../AppContext";
-import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../model";
-import { Extension } from "../extension/Extension";
+import { AppContextState } from "../AppContext.ts";
+import {
+  Card,
+  CardSet,
+  Role,
+  Room,
+  RoomMember,
+  VoteSummary,
+} from "../model.ts";
+import { Extension } from "../extension/Extension.ts";
 import { FC } from "react";
 
 export function createMockCard(values: Partial<Card>): Card {

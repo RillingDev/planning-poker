@@ -5,13 +5,16 @@ import {
   clearVotes,
   editExtensionRoomConfig,
   getExtensionRoomConfig,
-} from "../../api";
-import { createMockRoom, createMockVoteSummary } from "../../test/dataFactory";
-import { ahaExtension } from "./AhaExtension";
-import { AhaSubmitButton } from "./AhaSubmitButton";
-import type { AhaClient } from "./api";
-import { AhaRoomConfig } from "./model";
-import { getProductScoreFactNames } from "./utils";
+} from "../../api.ts";
+import {
+  createMockRoom,
+  createMockVoteSummary,
+} from "../../test/dataFactory.tsx";
+import { ahaExtension } from "./AhaExtension.ts";
+import { AhaSubmitButton } from "./AhaSubmitButton.tsx";
+import type { AhaClient } from "./api.ts";
+import { AhaRoomConfig } from "./model.ts";
+import { getProductScoreFactNames } from "./utils.ts";
 
 vi.mock("./AhaExtension");
 

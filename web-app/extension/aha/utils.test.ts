@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, MockedObject, vi } from "vitest";
-import { ahaExtension } from "./AhaExtension";
-import { AhaClient } from "./api";
-import { _getProductScoreFactNames } from "./utils";
+import { ahaExtension } from "./AhaExtension.ts";
+import { AhaClient } from "./api.ts";
+import { _getProductScoreFactNames } from "./utils.ts";
 
 vi.mock("./AhaExtension");
 

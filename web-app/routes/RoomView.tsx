@@ -11,19 +11,19 @@ import {
   getRoom,
   getSummary,
   leaveRoom,
-} from "../api";
-import { AppContext } from "../AppContext";
-import { ErrorPanel } from "../components/ErrorPanel";
-import { MemberList } from "../components/MemberList";
-import { EditRoomModal } from "../components/modal/EditRoomModal";
-import { PokerCardList } from "../components/PokerCardList";
-import { VoteSummaryDetails } from "../components/VoteSummaryDetails";
+} from "../api.ts";
+import { AppContext } from "../AppContext.ts";
+import { ErrorPanel } from "../components/ErrorPanel.tsx";
+import { MemberList } from "../components/MemberList.tsx";
+import { EditRoomModal } from "../components/modal/EditRoomModal.tsx";
+import { PokerCardList } from "../components/PokerCardList.tsx";
+import { VoteSummaryDetails } from "../components/VoteSummaryDetails.tsx";
 import {
   useBooleanState,
   useDocumentTitle,
   useErrorHandler,
   useInterval,
-} from "../hooks";
+} from "../hooks.ts";
 import {
   Card,
   CardSet,
@@ -34,7 +34,7 @@ import {
   RoomMember,
   SummaryResult,
   User,
-} from "../model";
+} from "../model.ts";
 import "./RoomView.css";
 import { getActiveExtensionsByRoom } from "../extension/extensions.ts";
 import { RoomLoaderResult } from "./RoomView.loader.ts";

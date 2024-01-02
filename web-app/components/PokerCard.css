@@ -1,6 +1,6 @@
 .btn-poker-card:not(.btn-sm) {
-	width: 110px;
-	aspect-ratio: 0.714; /* Ratio of real poker card sizes! */
+  width: 110px;
+  aspect-ratio: 0.714; /* Ratio of real poker card sizes! */
 
-	font-size: 1.1em;
+  font-size: 1.1em;
 }

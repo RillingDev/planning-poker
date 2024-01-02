@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import { RoomListView } from "./routes/RoomListView";
-import { RoomView } from "./routes/RoomView";
+import { RoomListView } from "./routes/RoomListView.tsx";
+import { RoomView } from "./routes/RoomView.tsx";
 import { roomLoader } from "./routes/RoomView.loader.ts";
 import { roomListLoader } from "./routes/RoomListView.loader.ts";
 import { RouterErrorElement } from "./components/RouterErrorElement.tsx";

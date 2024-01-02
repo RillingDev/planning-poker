@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, MockedObject, vi } from "vitest";
-import { createMockRoom } from "../../test/dataFactory";
-import { ahaExtension } from "./AhaExtension";
-import { AhaRoomButton } from "./AhaRoomButton";
+import { createMockRoom } from "../../test/dataFactory.tsx";
+import { ahaExtension } from "./AhaExtension.ts";
+import { AhaRoomButton } from "./AhaRoomButton.tsx";
 import type { AhaClient } from "./api";
 
 vi.mock("./AhaExtension");
