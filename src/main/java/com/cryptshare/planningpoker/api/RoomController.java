@@ -59,7 +59,7 @@ class RoomController extends AbstractRoomAwareController {
 		final Room room = requireRoom(roomName);
 		final RoomMember roomMember = requireActingUserMember(room, user.getName());
 
-		// Only show own vote while voting is not complete
+		// Only show the own vote while voting is not complete
 		return RoomJson.convertToDetailed(room, rm -> room.getVotingState() == Room.VotingState.CLOSED || rm.equals(roomMember));
 	}
 

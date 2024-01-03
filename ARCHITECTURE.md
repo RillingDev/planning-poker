@@ -22,7 +22,7 @@ When building the production artifacts, the following steps are performed:
 
 The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or
 voting).
-Integrity related validation is done in the persistence layer, such as enforcing votes are from the correct card set.
+Integrity related validation is done in the persistence layer, such as enforcing that votes are from the correct card set.
 
 The persistence layer is treated as the single-source-of-truth.
 

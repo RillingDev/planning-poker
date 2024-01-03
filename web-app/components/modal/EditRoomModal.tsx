@@ -24,7 +24,7 @@ export const EditRoomModal: FC<{
 }> = ({ room, show, onHide, onSubmit }) => {
   const { cardSets, enabledExtensions } = useContext(AppContext);
 
-  // Initial state is filled in handleShow, to ensure is reset when opening the modal.
+  // The initial state is filled in handleShow, to ensure is reset when opening the modal.
   const [cardSetName, setCardSetName] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
   const [extensionKeys, setExtensionKeys] = useState<readonly ExtensionKey[]>(

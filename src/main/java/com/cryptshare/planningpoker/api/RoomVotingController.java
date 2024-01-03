@@ -38,7 +38,7 @@ class RoomVotingController extends AbstractRoomAwareController {
 		}
 
 		if (room.getVotingState() == Room.VotingState.CLOSED) {
-			// May happen on accident, so dont throw an error.
+			// May happen when clicking fast, so don't throw an error.
 			logger.warn("Ignoring user '{}' voting in '{}' as voting is completed.", user.getName(), room);
 			return;
 		}

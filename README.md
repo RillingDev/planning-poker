@@ -6,8 +6,7 @@ A tool to play [Planning Poker](https://en.wikipedia.org/wiki/Planning_poker).
 
 When the JAR file is executed, a web server will be started and listen at <http://localhost:8080>.
 
-Configuration may be done
-using [properties](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.properties-and-configuration.external-properties-location).
+Configuration may be done using [properties](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.properties-and-configuration.external-properties-location).
 
 ### Requirements
 
@@ -15,10 +14,9 @@ using [properties](https://docs.spring.io/spring-boot/docs/current/reference/htm
 
 ### Authentication
 
-Authentication is possible
-via [OIDC](<https://en.wikipedia.org/wiki/OpenID#OpenID_Connect_(OIDC)>). <https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html>
-gives an overview over the required configuration. It must be ensured that the resolved username (see `user-name-attribute` in the previous
-link) is unique across all users.
+Authentication is possible  via [OIDC](<https://en.wikipedia.org/wiki/OpenID#OpenID_Connect_(OIDC)>).
+<https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html> gives an overview over the required configuration.
+It must be ensured that the resolved username (see `user-name-attribute` in the previous link) is unique across all users.
 
 **Important: Using multiple OIDC providers at the same time is not supported by this application.**
 
@@ -46,7 +44,7 @@ Note that the Aha! Integration only works when the application is available unde
 A button "Load from Aha!" will appear next to the room name. It can be used to load the details of an Aha! ID or URL
 into the room.
 If the topic of a room is set to an Aha! idea ID or URL, a button to submit the average score to Aha! will show up after
-voting completes.
+the voting is completed.
 
 ## Development
 

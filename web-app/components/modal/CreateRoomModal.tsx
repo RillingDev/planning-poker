@@ -54,7 +54,7 @@ export const CreateRoomModal: FC<{
               required
               maxLength={50}
               title="May not contain the following: ;%\/"
-              pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to make the prevent big scary error messages
+              pattern="^[^;%\\\/]+$" // These characters are blocked by StrictHttpFirewall if inside the path. Block them to prevent big scary error messages
               value={roomName}
               onChange={handleNameChange}
             />
