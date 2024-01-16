@@ -1,5 +1,6 @@
-### Spring Boot
-
+###################
+### Spring Boot ###
+###################
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -35,7 +36,9 @@ build/
 .vscode/
 
 
-### Vite
+###################
+### Create Vite ###
+###################
 
 # Logs
 logs
@@ -51,17 +54,9 @@ dist
 dist-ssr
 *.local
 
+###################
+###   Custom    ###
+###################
 
-### Custom
-
-
-# Temp files
+# Database
 /data/*
-/dependency-reduced-pom.xml
-*.dtmp
-*.bkp
-
-# Project files
-
-# Build files
-
