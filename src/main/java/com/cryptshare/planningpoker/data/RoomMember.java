@@ -21,7 +21,8 @@ public class RoomMember extends BaseEntity {
 		OBSERVER
 	}
 
-	// TODO: should not be used as a unique value, as multiple OIDC providers may be registered that have overlapping names.
+	// Must be the principal name of a persisted OAuth2AuthorizedClient.
+	// See org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
 	@Column(name = "username", nullable = false)
 	private String username;
 
