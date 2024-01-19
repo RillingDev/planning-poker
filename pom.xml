@@ -15,7 +15,7 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<build.version>3.0.6</build.version>
+		<build.version>3.0.7</build.version>
 		<build.number>0</build.number>
 		<revision>${build.version}.${build.number}</revision>
 	</properties>
