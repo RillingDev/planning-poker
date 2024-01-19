@@ -1,7 +1,14 @@
-import { AppContextState } from "../AppContext";
-import { Card, CardSet, Role, Room, RoomMember, VoteSummary } from "../model";
-import { Extension } from "../extension/Extension";
-import { FC } from "react";
+import { AppContextState } from "../AppContext.ts";
+import {
+  Card,
+  CardSet,
+  Role,
+  Room,
+  RoomMember,
+  VoteSummary,
+} from "../model.ts";
+import { Extension } from "../extension/Extension.ts";
+import { MockRoomComponent, MockSubmitComponent } from "./componentFactory.tsx";
 
 export function createMockCard(values: Partial<Card>): Card {
   return {
@@ -58,14 +65,6 @@ export function createMockVoteSummary(
     offset: values.offset ?? 1,
   };
 }
-
-const MockRoomComponent: FC = () => {
-  return <span>Mock Extension Room Component</span>;
-};
-
-const MockSubmitComponent: FC = () => {
-  return <span>Mock Extension Submit Component</span>;
-};
 
 export function createMockExtension(values: Partial<Extension>): Extension {
   return {

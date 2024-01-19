@@ -1,7 +1,9 @@
+// Based on https://github.com/vitejs/vite/blob/main/packages/create-vite/template-react-ts/.eslintrc.cjs
+// with changes from https://github.com/vitejs/vite/blob/main/packages/create-vite/template-react-ts/README.md
+// and additional plugins.
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
-  plugins: ["@typescript-eslint"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
@@ -9,26 +11,33 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
-	  "plugin:jsx-a11y/recommended",
-    "plugin:prettier/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
+  ignorePatterns: [".local", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
+    sourceType: "module",
     project: ["./tsconfig.json", "./tsconfig.node.json"],
-    tsconfigRootDir: __dirname,
+    tsconfigRootDir: __dirname
   },
   settings: { react: { version: "detect" } },
+  plugins: ["prettier", "react-refresh"],
   rules: {
     "prettier/prettier": "warn",
+
+    "react-refresh/only-export-components": [
+      "warn",
+      { allowConstantExport: true }
+    ]
   },
   overrides: [
     {
       files: ["**/*.test.ts?(x)"],
-		extends: ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
+      extends: ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       rules: {
-        "@typescript-eslint/unbound-method": "off",
-      },
-    },
-  ],
+        "@typescript-eslint/unbound-method": "off"
+      }
+    }
+  ]
 };

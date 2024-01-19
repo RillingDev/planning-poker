@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { ErrorPanel } from "./ErrorPanel";
+import { ErrorPanel } from "./ErrorPanel.tsx";
 import { describe, expect, it } from "vitest";
 
 describe("ErrorPanel", () => {

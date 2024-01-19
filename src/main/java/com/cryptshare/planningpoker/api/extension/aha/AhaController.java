@@ -78,7 +78,7 @@ class AhaController extends AbstractRoomAwareController {
 	}
 
 	private RoomExtensionConfig getAhaExtensionConfig(Room room) {
-		// No need to check if extension is enabled. If it wasn't, this controller would not be active.
+		// No need to check if the extension is enabled. If it wasn't, this controller would not be active.
 		return room.getExtensionConfigs()
 				.stream()
 				.filter(roomExtensionConfig -> roomExtensionConfig.getExtension().getKey().equals("aha"))

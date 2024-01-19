@@ -1,8 +1,8 @@
 // noinspection JSUnusedGlobalSymbols
 
 import { MockedObject, vi } from "vitest";
-import { Extension } from "../../Extension";
-import { AhaClient } from "../api";
+import { Extension } from "../../Extension.ts";
+import { AhaClient } from "../api.ts";
 
 /**
  * Mock version of AhaExtension.

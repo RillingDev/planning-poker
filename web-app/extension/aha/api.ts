@@ -1,5 +1,5 @@
-import { assertStatusSuccess, MEDIA_TYPE_JSON } from "../../apiUtils";
-import { AhaConfig, FullIdea, Idea, IdeaFilterField } from "./model";
+import { assertStatusSuccess, MEDIA_TYPE_JSON } from "../../apiUtils.ts";
+import { AhaConfig, FullIdea, Idea, IdeaFilterField } from "./model.ts";
 
 const ACCESS_TOKEN_REGEX = /#access_token=(\w+)/;
 

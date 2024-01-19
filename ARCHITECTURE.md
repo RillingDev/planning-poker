@@ -2,12 +2,11 @@
 
 ## Structure & Tooling
 
-This application uses both [Spring Boot](https://spring.io/projects/spring-boot) (REST controllers, business logic, persistence layer)
-and [Vite](https://vitejs.dev/) (frontend).
+This application uses both [Spring Boot](https://spring.io/projects/spring-boot) (REST controllers, business logic, persistence layer) and [Vite](https://vitejs.dev/) (frontend).
 
-During development, Spring Boot will be the primary server that serves HTML (`./src/main/resources/templates/index.html`) and the REST API, while
-the React frontend is served by
-Vite and included by the previously mentioned HTML file. In production, only Spring Boot is active and the built frontend is directly included.
+During development, Spring Boot will be the primary server that serves HTML (`./src/main/resources/templates/index.html`) and the REST API,
+while the React frontend is served by Vite and included by the previously mentioned HTML file.
+In production, only Spring Boot is active and the built frontend is directly included.
 
 When building the production artifacts, the following steps are performed:
 
@@ -20,22 +19,19 @@ When building the production artifacts, the following steps are performed:
 
 ### Validation & State Transitions
 
-The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or
-voting).
-Integrity related validation is done in the persistence layer, such as enforcing votes are from the correct card set.
+The general request validation is done in the REST controllers, as is the transition of states (e.g., joining rooms or voting).
+Integrity related validation is done in the persistence layer, such as enforcing that votes are from the correct card set.
 
 The persistence layer is treated as the single-source-of-truth.
 
 ### Extensions
 
-Extensions are primarily controlled using spring profiles that start with the prefix `extension:`. This is then
-delegated to the web app. Extensions are globally categorized as either "enabled" or "disabled". If they are enabled,
-they may further be
-activated or deactivated on a per-room basis.
+Extensions are primarily controlled using spring profiles that start with the prefix `extension:`.
+This is then delegated to the web app. Extensions are globally categorized as either "enabled" or "disabled".
+If they are enabled, they may further be activated or deactivated on a per-room basis.
 
-Extensions MAY use the REST API resources at `/api/extensions/{extension-key}`
-and `/api/rooms/{room-name}/extensions/{extension-key}` to
-implement own endpoints, with the first being for global, and the second for per-room options.
+Extensions MAY use the REST API resources at `/api/extensions/{extension-key}` and `/api/rooms/{room-name}/extensions/{extension-key}` to implement own endpoints,
+with the first being for global, and the second for per-room options.
 
 Extensions MAY use the attributes associated with their `RoomExtensionConfig` to persist data for rooms.
 

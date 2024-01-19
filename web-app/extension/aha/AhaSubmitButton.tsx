@@ -4,13 +4,13 @@ import {
   clearVotes,
   editExtensionRoomConfig,
   getExtensionRoomConfig,
-} from "../../api";
-import { ErrorPanel } from "../../components/ErrorPanel";
-import { useBooleanState, useErrorHandler } from "../../hooks";
-import { Room, VoteSummary } from "../../model";
-import { ahaExtension, AhaExtension } from "./AhaExtension";
-import { AhaRoomConfig, Idea } from "./model";
-import { getProductScoreFactNames } from "./utils";
+} from "../../api.ts";
+import { ErrorPanel } from "../../components/ErrorPanel.tsx";
+import { useBooleanState, useErrorHandler } from "../../hooks.ts";
+import { Room, VoteSummary } from "../../model.ts";
+import { ahaExtension, AhaExtension } from "./AhaExtension.ts";
+import { AhaRoomConfig, Idea } from "./model.ts";
+import { getProductScoreFactNames } from "./utils.ts";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 

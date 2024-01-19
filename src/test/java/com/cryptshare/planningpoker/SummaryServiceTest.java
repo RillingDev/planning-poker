@@ -177,7 +177,7 @@ class SummaryServiceTest {
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
-		// Nearest card is rounded upwards
+		// The nearest card is rounded upwards
 		assertThat(voteSummary.nearestCard()).isEqualTo(card2);
 	}
 
@@ -201,7 +201,7 @@ class SummaryServiceTest {
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
-		// Nearest card is rounded upwards
+		// The nearest card is rounded upwards
 		assertThat(voteSummary.nearestCard()).isEqualTo(card1);
 	}
 
@@ -225,7 +225,7 @@ class SummaryServiceTest {
 
 		final VoteSummary voteSummary = summaryService.summarize(myRoom).orElseThrow();
 
-		// Nearest card is rounded upwards
+		// The nearest card is rounded upwards
 		assertThat(voteSummary.nearestCard()).isEqualTo(card1Text1);
 	}
 	@Test

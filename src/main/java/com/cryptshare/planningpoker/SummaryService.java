@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class SummaryService {
 
 	/**
-	 * Comparator for the order that cards should be picked as summary result.
+	 * Comparator for the order that cards should be picked as the summary result.
 	 * A set of cards will end up as {@code [<high basic numeric card>, <high non-basic numeric card>, <low basic numeric card>]}.
 	 * <p>
 	 * Should only be used on collections where every card has a value.
@@ -29,7 +29,7 @@ public class SummaryService {
 	 * Calculates a rooms voting statistic.
 	 *
 	 * @param room Room to check.
-	 * @return Summary, or empty if not applicable (e.g. because no votes with value were made).
+	 * @return Summary, or empty if not applicable (e.g., because no votes with value were made).
 	 */
 	public Optional<VoteSummary> summarize(Room room) {
 		if (room.getVotingState() == Room.VotingState.OPEN) {

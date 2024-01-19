@@ -2,7 +2,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
-import { Link, LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import {
   clearVotes,
   createVote,
@@ -10,21 +10,20 @@ import {
   editRoom,
   getRoom,
   getSummary,
-  joinRoom,
   leaveRoom,
-} from "../api";
-import { AppContext } from "../AppContext";
-import { ErrorPanel } from "../components/ErrorPanel";
-import { MemberList } from "../components/MemberList";
-import { EditRoomModal } from "../components/modal/EditRoomModal";
-import { PokerCardList } from "../components/PokerCardList";
-import { VoteSummaryDetails } from "../components/VoteSummaryDetails";
+} from "../api.ts";
+import { AppContext } from "../AppContext.ts";
+import { ErrorPanel } from "../components/ErrorPanel.tsx";
+import { MemberList } from "../components/MemberList.tsx";
+import { EditRoomModal } from "../components/modal/EditRoomModal.tsx";
+import { PokerCardList } from "../components/PokerCardList.tsx";
+import { VoteSummaryDetails } from "../components/VoteSummaryDetails.tsx";
 import {
   useBooleanState,
   useDocumentTitle,
   useErrorHandler,
   useInterval,
-} from "../hooks";
+} from "../hooks.ts";
 import {
   Card,
   CardSet,
@@ -35,29 +34,10 @@ import {
   RoomMember,
   SummaryResult,
   User,
-} from "../model";
+} from "../model.ts";
 import "./RoomView.css";
 import { getActiveExtensionsByRoom } from "../extension/extensions.ts";
-
-interface LoaderResult {
-  room: Room;
-  summaryResult: SummaryResult | null;
-}
-
-export async function loader(args: LoaderFunctionArgs): Promise<LoaderResult> {
-  const roomName = args.params.roomName!;
-
-  await joinRoom(roomName);
-
-  const room = await getRoom(roomName);
-
-  let summaryResult = null;
-  if (room.votingClosed) {
-    summaryResult = await getSummary(room.name);
-  }
-
-  return { room, summaryResult };
-}
+import { RoomLoaderResult } from "./RoomView.loader.ts";
 
 function findMemberForUser(room: Room, user: User): RoomMember {
   const roomMember = room.members.find(
@@ -133,7 +113,7 @@ function getHelpText(member: RoomMember, activeCard: Card | null): string {
 export const RoomView: FC = () => {
   const [error, handleError, resetError] = useErrorHandler();
 
-  const loaderData = useLoaderData() as LoaderResult;
+  const loaderData = useLoaderData() as RoomLoaderResult;
 
   const { user, cardSets } = useContext(AppContext);
 
@@ -232,6 +212,7 @@ export const RoomView: FC = () => {
             ) : (
               <>
                 <p className="text-center mt-3 mb-0">{helpText}</p>
+                {/* TODO: Better visualize to observers that they cannot vote */}
                 <PokerCardList
                   cardSet={cardSet}
                   activeCard={activeCard}

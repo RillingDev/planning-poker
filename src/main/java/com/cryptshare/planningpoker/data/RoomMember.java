@@ -21,7 +21,8 @@ public class RoomMember extends BaseEntity {
 		OBSERVER
 	}
 
-	// TODO: should not be used as a unique value, as multiple OIDC providers may be registered that have overlapping names.
+	// Must be the principal name of a persisted OAuth2AuthorizedClient.
+	// See org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
 	@Column(name = "username", nullable = false)
 	private String username;
 
@@ -29,6 +30,7 @@ public class RoomMember extends BaseEntity {
 	@Column(name = "user_role", nullable = false)
 	private Role role;
 
+	// FIXME: in rare cases (data race?) adding a vote violates the pkey of the vote entry (probably because an identical was created before)
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinTable(name = "vote", joinColumns = {@JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
 			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false)})

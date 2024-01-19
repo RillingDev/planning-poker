@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Modal } from "react-bootstrap";
-import { Room } from "../../model";
+import { Room } from "../../model.ts";
 
 export const DeleteRoomModal: FC<{
   show: boolean;

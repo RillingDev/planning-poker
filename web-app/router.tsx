@@ -1,37 +1,21 @@
-import { FC } from "react";
-import { Alert } from "react-bootstrap";
-import { createBrowserRouter, Link, useRouteError } from "react-router-dom";
-import { loader as roomListLoader, RoomListView } from "./routes/RoomListView";
-import { loader as roomLoader, RoomView } from "./routes/RoomView";
-
-export const ErrorElement: FC = () => {
-  const error = useRouteError();
-  console.error(error);
-  const message =
-    error instanceof Error
-      ? error.message
-      : "Something went wrong. Please check the browser console for errors.";
-  return (
-    <>
-      <Alert variant="danger">{message}</Alert>
-      <div className="text-center">
-        <Link to={"/"}>Back to Room List</Link>
-      </div>
-    </>
-  );
-};
+import { createBrowserRouter } from "react-router-dom";
+import { RoomListView } from "./routes/RoomListView.tsx";
+import { RoomView } from "./routes/RoomView.tsx";
+import { roomLoader } from "./routes/RoomView.loader.ts";
+import { roomListLoader } from "./routes/RoomListView.loader.ts";
+import { RouterErrorElement } from "./components/RouterErrorElement.tsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RoomListView />,
     loader: roomListLoader,
-    errorElement: <ErrorElement />,
+    errorElement: <RouterErrorElement />,
   },
   {
     path: "/rooms/:roomName",
     element: <RoomView />,
     loader: roomLoader,
-    errorElement: <ErrorElement />,
+    errorElement: <RouterErrorElement />,
   },
 ]);

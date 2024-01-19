@@ -1,4 +1,4 @@
-import { AhaExtension } from "./AhaExtension";
+import { AhaExtension } from "./AhaExtension.ts";
 
 import { describe, expect, it } from "vitest";
 

@@ -2,7 +2,7 @@ import {
   assertStatusSuccess,
   getStateChangingHeaders,
   MEDIA_TYPE_JSON,
-} from "./apiUtils";
+} from "./apiUtils.ts";
 import {
   CardSet,
   EditAction,
@@ -12,7 +12,7 @@ import {
   RoomEditOptions,
   SummaryResult,
   User,
-} from "./model";
+} from "./model.ts";
 
 export async function getIdentity(): Promise<User> {
   return fetch("/api/identity", {

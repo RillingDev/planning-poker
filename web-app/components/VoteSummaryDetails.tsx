@@ -1,8 +1,8 @@
 import { FC, useContext } from "react";
-import { AppContext } from "../AppContext";
-import { Room, VoteExtreme, VoteSummary } from "../model";
-import { DisagreementMeter } from "./DisagreementMeter";
-import { PokerCard } from "./PokerCard";
+import { AppContext } from "../AppContext.ts";
+import { Room, VoteExtreme, VoteSummary } from "../model.ts";
+import { DisagreementMeter } from "./DisagreementMeter.tsx";
+import { PokerCard } from "./PokerCard.tsx";
 import "./VoteSummaryDetails.css";
 import { getActiveExtensionsByRoom } from "../extension/extensions.ts";
 

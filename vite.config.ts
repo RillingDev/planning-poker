@@ -14,7 +14,7 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         input: "./web-app/main.tsx",
         output: {
-          // Remove hashes from file name so we have an easier time including them
+          // Remove hashes from file name, so we have an easier time including them
           entryFileNames: "[name].js",
           assetFileNames: "[name][extname]",
         },

@@ -1,10 +1,10 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
 import { Form, Modal, Spinner } from "react-bootstrap";
-import { ErrorPanel } from "../../components/ErrorPanel";
-import { useBooleanState, useErrorHandler } from "../../hooks";
-import { Room, RoomEditOptions } from "../../model";
-import { ahaExtension, AhaExtension } from "./AhaExtension";
-import { Idea } from "./model";
+import { ErrorPanel } from "../../components/ErrorPanel.tsx";
+import { useBooleanState, useErrorHandler } from "../../hooks.ts";
+import { Room, RoomEditOptions } from "../../model.ts";
+import { ahaExtension, AhaExtension } from "./AhaExtension.ts";
+import { Idea } from "./model.ts";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 
