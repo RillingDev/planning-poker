@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "vite/modulepreload-polyfill";
 import { AppContext, createContextState } from "./AppContext.ts";
-import { Header } from "./components/Header.tsx";
 import "./index.css";
 import { router } from "./router.tsx";
 
@@ -12,10 +11,7 @@ createContextState()
     createRoot(document.getElementById("root")!).render(
       <React.StrictMode>
         <AppContext.Provider value={ctx}>
-          <Header />
-          <main>
-            <RouterProvider router={router} />
-          </main>
+          <RouterProvider router={router} />
         </AppContext.Provider>
       </React.StrictMode>,
     );
