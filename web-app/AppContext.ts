@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { getCardSets, getExtensions, getIdentity } from "./api.ts";
+import { getCardSets, getExtensions } from "./api.ts";
 import { getEnabledExtensions } from "./extension/extensions.ts";
 import { Extension } from "./extension/Extension.ts";
 import { CardSet, User } from "./model.ts";
@@ -18,15 +18,18 @@ export const AppContext = createContext<AppContextState>({
 });
 
 export async function createContextState(): Promise<AppContextState> {
-  const [user, enabledExtensionKeys, cardSets] = await Promise.all([
-    getIdentity(),
+  const username = document
+    .querySelector("meta[name='_username']")!
+    .getAttribute("content")!;
+
+  const [enabledExtensionKeys, cardSets] = await Promise.all([
     getExtensions(),
     getCardSets(),
   ]);
 
   return {
     cardSets,
-    user,
+    user: { username },
     enabledExtensions: getEnabledExtensions(enabledExtensionKeys),
   };
 }

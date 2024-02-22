@@ -11,17 +11,7 @@ import {
   RoomCreationOptions,
   RoomEditOptions,
   SummaryResult,
-  User,
 } from "./model.ts";
-
-export async function getIdentity(): Promise<User> {
-  return fetch("/api/identity", {
-    method: "GET",
-    headers: { Accept: MEDIA_TYPE_JSON },
-  })
-    .then(assertStatusSuccess)
-    .then((res) => res.json() as Promise<User>);
-}
 
 export async function getExtensions(): Promise<readonly ExtensionKey[]> {
   return fetch("/api/extensions", {
