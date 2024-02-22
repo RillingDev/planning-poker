@@ -13,7 +13,9 @@ createContextState()
       <React.StrictMode>
         <AppContext.Provider value={ctx}>
           <Header />
-          <RouterProvider router={router} />
+          <main>
+            <RouterProvider router={router} />
+          </main>
         </AppContext.Provider>
       </React.StrictMode>,
     );
