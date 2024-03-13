@@ -126,7 +126,7 @@ export const RoomView: FC = () => {
     loaderData.summaryResult,
   );
 
-  useDocumentTitle(room.name);
+  useDocumentTitle(`${room.name} - Planning Poker`);
 
   function handleEdit(changes: RoomEditOptions) {
     editRoom(room.name, changes).then(updateRoom).catch(handleError);
@@ -169,8 +169,6 @@ export const RoomView: FC = () => {
     clearVotes(room.name).then(updateRoom).catch(handleError);
   }
 
-  const helpText = getHelpText(member, activeCard);
-
   return (
     <>
       <ErrorPanel error={error} onClose={resetError} />
@@ -211,7 +209,9 @@ export const RoomView: FC = () => {
               />
             ) : (
               <>
-                <p className="text-center mt-3 mb-0">{helpText}</p>
+                <p className="text-center mt-3 mb-0">
+                  {getHelpText(member, activeCard)}
+                </p>
                 {/* TODO: Better visualize to observers that they cannot vote */}
                 <PokerCardList
                   cardSet={cardSet}
