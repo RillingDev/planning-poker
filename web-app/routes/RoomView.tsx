@@ -126,7 +126,7 @@ export const RoomView: FC = () => {
     loaderData.summaryResult,
   );
 
-  useDocumentTitle(room.name);
+  useDocumentTitle(`${room.name} - Planning Poker`);
 
   function handleEdit(changes: RoomEditOptions) {
     editRoom(room.name, changes).then(updateRoom).catch(handleError);
@@ -169,12 +169,10 @@ export const RoomView: FC = () => {
     clearVotes(room.name).then(updateRoom).catch(handleError);
   }
 
-  const helpText = getHelpText(member, activeCard);
-
   return (
     <>
       <ErrorPanel error={error} onClose={resetError} />
-      <header className="mb-4">
+      <div className="mb-4">
         <div className="mb-1 d-flex justify-content-between align-items-center">
           <RoomViewHeader room={room} onChange={handleEdit} />
           <nav>
@@ -190,10 +188,10 @@ export const RoomView: FC = () => {
         <span>
           <strong>Topic:</strong> {room.topic.length > 0 ? room.topic : "-"}
         </span>
-      </header>
+      </div>
       <div className="room-view">
-        <main>
-          <header className="mb-2 d-flex justify-content-between align-items-center">
+        <div>
+          <div className="mb-2 d-flex justify-content-between align-items-center">
             <h3 className="mb-0">Vote</h3>
             <button
               type="button"
@@ -202,7 +200,7 @@ export const RoomView: FC = () => {
             >
               Restart
             </button>
-          </header>
+          </div>
           <div className="card">
             {summaryResult != null ? (
               <VoteSummaryDetails
@@ -211,7 +209,9 @@ export const RoomView: FC = () => {
               />
             ) : (
               <>
-                <p className="text-center mt-3 mb-0">{helpText}</p>
+                <p className="text-center mt-3 mb-0">
+                  {getHelpText(member, activeCard)}
+                </p>
                 {/* TODO: Better visualize to observers that they cannot vote */}
                 <PokerCardList
                   cardSet={cardSet}
@@ -222,7 +222,7 @@ export const RoomView: FC = () => {
               </>
             )}
           </div>
-        </main>
+        </div>
         <div>
           <h3 className="mb-2">Members</h3>
           <MemberList members={room.members} onAction={handleAction} />

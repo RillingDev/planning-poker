@@ -110,7 +110,7 @@ export const RoomListView: FC = () => {
     <>
       <ErrorPanel error={error} onClose={resetError}></ErrorPanel>
 
-      <header className="d-flex mb-3 justify-content-between align-items-center">
+      <div className="d-flex mb-3 justify-content-between align-items-center">
         <h2 className="mb-0">Rooms</h2>
         <button
           type="button"
@@ -126,7 +126,7 @@ export const RoomListView: FC = () => {
           onSubmit={handleCreationSubmit}
           onHide={hideCreationModal}
         />
-      </header>
+      </div>
       <nav>
         {/* TODO: make smaller */}
         <ul className="list-unstyled mb-0 d-flex flex-column gap-3">

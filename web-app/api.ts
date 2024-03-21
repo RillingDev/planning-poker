@@ -1,8 +1,4 @@
-import {
-  assertStatusSuccess,
-  getStateChangingHeaders,
-  MEDIA_TYPE_JSON,
-} from "./apiUtils.ts";
+import { assertStatusSuccess, MEDIA_TYPE_JSON } from "./apiUtils.ts";
 import {
   CardSet,
   EditAction,
@@ -11,17 +7,8 @@ import {
   RoomCreationOptions,
   RoomEditOptions,
   SummaryResult,
-  User,
 } from "./model.ts";
-
-export async function getIdentity(): Promise<User> {
-  return fetch("/api/identity", {
-    method: "GET",
-    headers: { Accept: MEDIA_TYPE_JSON },
-  })
-    .then(assertStatusSuccess)
-    .then((res) => res.json() as Promise<User>);
-}
+import { getCsrfHeaders } from "./authentication.ts";
 
 export async function getExtensions(): Promise<readonly ExtensionKey[]> {
   return fetch("/api/extensions", {
@@ -68,7 +55,7 @@ export async function editExtensionRoomConfig<T>(
     {
       method: "PATCH",
       headers: {
-        ...getStateChangingHeaders(),
+        ...getCsrfHeaders(),
         "Content-Type": MEDIA_TYPE_JSON,
       },
       body: JSON.stringify(config),
@@ -100,7 +87,7 @@ export async function createRoom(
 ): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "POST",
-    headers: { ...getStateChangingHeaders(), "Content-Type": MEDIA_TYPE_JSON },
+    headers: { ...getCsrfHeaders(), "Content-Type": MEDIA_TYPE_JSON },
     body: JSON.stringify({ cardSetName }),
   }).then(assertStatusSuccess);
 }
@@ -117,7 +104,7 @@ export async function getRoom(roomName: string): Promise<Room> {
 export async function deleteRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "DELETE",
-    headers: getStateChangingHeaders(),
+    headers: getCsrfHeaders(),
   }).then(assertStatusSuccess);
 }
 
@@ -127,7 +114,7 @@ export async function editRoom(
 ): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}`, {
     method: "PATCH",
-    headers: { ...getStateChangingHeaders(), "Content-Type": MEDIA_TYPE_JSON },
+    headers: { ...getCsrfHeaders(), "Content-Type": MEDIA_TYPE_JSON },
     // Note: `undefined` values mean the key will not be part of the JSON payload
     body: JSON.stringify({ topic, cardSetName, extensions }),
   }).then(assertStatusSuccess);
@@ -136,14 +123,14 @@ export async function editRoom(
 export async function joinRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
     method: "POST",
-    headers: getStateChangingHeaders(),
+    headers: getCsrfHeaders(),
   }).then(assertStatusSuccess);
 }
 
 export async function leaveRoom(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/members`, {
     method: "DELETE",
-    headers: getStateChangingHeaders(),
+    headers: getCsrfHeaders(),
   }).then(assertStatusSuccess);
 }
 
@@ -161,7 +148,7 @@ export async function editMember(
   url.searchParams.set("action", action);
   await fetch(url, {
     method: "PATCH",
-    headers: getStateChangingHeaders(),
+    headers: getCsrfHeaders(),
   }).then(assertStatusSuccess);
 }
 
@@ -176,14 +163,14 @@ export async function createVote(
   url.searchParams.set("card-name", cardName);
   await fetch(url, {
     method: "POST",
-    headers: getStateChangingHeaders(),
+    headers: getCsrfHeaders(),
   }).then(assertStatusSuccess);
 }
 
 export async function clearVotes(roomName: string): Promise<void> {
   await fetch(`/api/rooms/${encodeURIComponent(roomName)}/votes`, {
     method: "DELETE",
-    headers: getStateChangingHeaders(),
+    headers: getCsrfHeaders(),
   }).then(assertStatusSuccess);
 }
 

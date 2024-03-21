@@ -1,15 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Planning Poker</title>
 
-    <link rel="icon" href="/logo.svg?v=1" type="image/svg+xml" />
+    <link rel="icon" th:href="@{/logo.svg?v=1}" type="image/svg+xml" />
 
     <!-- https://docs.spring.io/spring-security/reference/6.1-SNAPSHOT/servlet/exploits/csrf.html#csrf-integration-javascript-mpa -->
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <meta name="_csrf" th:content="${_csrf.token}" />
+
+    <meta name="_username" th:content="${#authentication.name}" />
 
     <th:block th:if="${@environment.acceptsProfiles('development')}">
       <!-- https://vitejs.dev/guide/backend-integration.html -->
@@ -28,13 +30,23 @@
       ></script>
     </th:block>
     <th:block th:unless="${@environment.acceptsProfiles('development')}">
-      <link rel="stylesheet" href="/main.css" />
-      <script type="module" src="/main.js" async></script>
+      <link rel="stylesheet" th:href="@{/main.css}" />
+      <script type="module" th:src="@{/main.js}" async></script>
     </th:block>
   </head>
   <body>
     <div class="container py-3">
-      <div id="root"></div>
+      <header class="mb-5 d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Planning Poker</h1>
+        <span>
+          Signed in as <strong sec:authentication="name"></strong> (<a
+            th:href="@{/logout}"
+            >Log out</a
+          >)
+        </span>
+      </header>
+
+      <main id="root"></main>
     </div>
   </body>
 </html>

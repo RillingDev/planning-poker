@@ -45,6 +45,13 @@ Extensions SHOULD be as isolated as possible from the main application.
    2. (Optional) Create endpoints for per-room settings under `/api/rooms/{room-name}/extensions/my-extension-key`.
 3. Create an implementation of the frontend interface `Extension`.
 
+#### Existing Extensions
+
+##### Aha!
+
+The Aha! extension works almost entirely in then frontend. It uses OAuth2 to authenticate and work with the Aha! REST API.
+The backend server just serves the configuration details.
+
 ## Guidelines
 
 ### Frontend

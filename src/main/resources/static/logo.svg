@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="120" height="120" version="1.1" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"
-	 xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
-	 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-	<title>Planning Poker Logo</title>
-	<style>
-		path {
+<svg width="120" height="120" version="1.1" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <title>Planning Poker Logo</title>
+ <style>path {
 			fill: #212529;
 		}
 
@@ -13,37 +10,30 @@
 			path {
 				fill: #f8f9fa;
 			}
-		}
-	</style>
-	<g transform="matrix(5.3256 0 0 4.8692 60 59.998)">
-		<path d="m7.989 3.103c-.242-4.057-7.747-11.693-7.989-13.603-.242 1.909-7.747 9.545-7.989 13.603-.169 2.868 1.695 4.057 3.39 4.057 1.8352-.021581 3.3509-2.8007 3.873-3.341.242.716-1.603 6.682-2.179 6.682h5.811c-.576 0-2.421-5.966-2.179-6.682.45715.4963 1.7971 3.2578 3.874 3.341 1.694-.001 3.557-1.189 3.388-4.057z"/>
-	</g>
-	<metadata>
-		<rdf:RDF>
-			<cc:Work rdf:about="">
-				<dc:title>Planning Poker Logo</dc:title>
-				<dc:contributor>
-					<cc:Agent>
-						<dc:title>Based of '4 of spades.svg' by 'Byron Knoll' from
-							'https://commons.wikimedia.org/wiki/File:4_of_spades.svg'
-						</dc:title>
-					</cc:Agent>
-				</dc:contributor>
-				<cc:license rdf:resource="http://creativecommons.org/licenses/by-nc/4.0/"/>
-				<dc:creator>
-					<cc:Agent>
-						<dc:title>Felix Rilling</dc:title>
-					</cc:Agent>
-				</dc:creator>
-			</cc:Work>
-			<cc:License rdf:about="http://creativecommons.org/licenses/by-nc/4.0/">
-				<cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
-				<cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
-				<cc:requires rdf:resource="http://creativecommons.org/ns#Notice"/>
-				<cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"/>
-				<cc:prohibits rdf:resource="http://creativecommons.org/ns#CommercialUse"/>
-				<cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
-			</cc:License>
-		</rdf:RDF>
-	</metadata>
+		}</style>
+ <g transform="matrix(5.3256 0 0 4.8692 60 59.998)">
+  <path d="m7.989 3.103c-.242-4.057-7.747-11.693-7.989-13.603-.242 1.909-7.747 9.545-7.989 13.603-.169 2.868 1.695 4.057 3.39 4.057 1.8352-.021581 3.3509-2.8007 3.873-3.341.242.716-1.603 6.682-2.179 6.682h5.811c-.576 0-2.421-5.966-2.179-6.682.45715.4963 1.7971 3.2578 3.874 3.341 1.694-.001 3.557-1.189 3.388-4.057z"/>
+ </g>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:title>Planning Poker Logo</dc:title>
+    <dc:contributor>
+     <cc:Agent>
+      <dc:title>Based of '4 of spades.svg' by 'Byron Knoll' from
+							'https://commons.wikimedia.org/wiki/File:4_of_spades.svg'</dc:title>
+     </cc:Agent>
+    </dc:contributor>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/by-nc/4.0/"/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/by-nc/4.0/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:requires rdf:resource="http://creativecommons.org/ns#Notice"/>
+    <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"/>
+    <cc:prohibits rdf:resource="http://creativecommons.org/ns#CommercialUse"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
 </svg>

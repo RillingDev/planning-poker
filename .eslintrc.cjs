@@ -11,7 +11,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended"
+    "plugin:jsx-a11y/recommended",
   ],
   ignorePatterns: [".local", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
@@ -19,7 +19,7 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
     project: ["./tsconfig.json", "./tsconfig.node.json"],
-    tsconfigRootDir: __dirname
+    tsconfigRootDir: __dirname,
   },
   settings: { react: { version: "detect" } },
   plugins: ["prettier", "react-refresh"],
@@ -28,16 +28,16 @@ module.exports = {
 
     "react-refresh/only-export-components": [
       "warn",
-      { allowConstantExport: true }
-    ]
+      { allowConstantExport: true },
+    ],
   },
   overrides: [
     {
       files: ["**/*.test.ts?(x)"],
       extends: ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       rules: {
-        "@typescript-eslint/unbound-method": "off"
-      }
-    }
-  ]
+        "@typescript-eslint/unbound-method": "off",
+      },
+    },
+  ],
 };
