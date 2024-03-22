@@ -1,4 +1,4 @@
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useContext, useState } from "react";
@@ -80,7 +80,8 @@ const RoomViewHeader: FC<{
         className="btn btn-secondary btn-sm"
         onClick={showEditModal}
       >
-        <FontAwesomeIcon icon={faEdit} title="Edit Room" />
+        <FontAwesomeIcon icon={faEdit} className="me-1"/>
+        Edit
       </button>
       <EditRoomModal
         onSubmit={handleModalEdit}
@@ -198,6 +199,7 @@ export const RoomView: FC = () => {
               className="btn btn-warning btn-sm"
               onClick={handleRestart}
             >
+              <FontAwesomeIcon icon={faRotate} className="me-1"/>
               Restart
             </button>
           </div>

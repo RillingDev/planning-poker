@@ -5,6 +5,8 @@ import { useBooleanState, useErrorHandler } from "../../hooks.ts";
 import { Room, RoomEditOptions } from "../../model.ts";
 import { ahaExtension, AhaExtension } from "./AhaExtension.ts";
 import { Idea } from "./model.ts";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileImport } from "@fortawesome/free-solid-svg-icons";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 
@@ -141,6 +143,7 @@ export const AhaRoomButton: FC<{
         onClick={showModal}
         id="ahaShowRoomModalButton"
       >
+        <FontAwesomeIcon icon={faFileImport} className="me-1" />
         Load from Aha!
       </button>
       <AhaIdeaLoadingModal
