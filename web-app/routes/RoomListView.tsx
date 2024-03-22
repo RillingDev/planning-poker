@@ -1,4 +1,4 @@
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { FC } from "react";
 import { useState } from "react";
@@ -43,7 +43,8 @@ const RoomItem: FC<{
           className="btn btn-secondary btn-sm"
           onClick={showEditModal}
         >
-          <FontAwesomeIcon icon={faEdit} title="Edit Room" />
+          <FontAwesomeIcon icon={faEdit} className="me-1" />
+          Edit
         </button>
         <EditRoomModal
           onSubmit={handleEdit}
@@ -57,7 +58,8 @@ const RoomItem: FC<{
           className="btn btn-danger btn-sm"
           onClick={showDeleteModal}
         >
-          <FontAwesomeIcon icon={faTrash} title="Delete Room" />
+          <FontAwesomeIcon icon={faTrash} className="me-1" />
+          Delete
         </button>
         <DeleteRoomModal
           onSubmit={handleDelete}
@@ -118,6 +120,7 @@ export const RoomListView: FC = () => {
           onClick={showCreationModal}
           id="showCreateModalButton"
         >
+          <FontAwesomeIcon icon={faPlus} className="me-1" />
           Create Room
         </button>
         <CreateRoomModal

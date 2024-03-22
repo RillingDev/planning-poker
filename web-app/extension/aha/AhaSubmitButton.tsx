@@ -11,6 +11,8 @@ import { Room, VoteSummary } from "../../model.ts";
 import { ahaExtension, AhaExtension } from "./AhaExtension.ts";
 import { AhaRoomConfig, Idea } from "./model.ts";
 import { getProductScoreFactNames } from "./utils.ts";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 
 type LoadedIdea = Idea<"name" | "reference_num">;
 
@@ -184,6 +186,7 @@ export const AhaSubmitButton: FC<{ room: Room; voteSummary: VoteSummary }> = ({
         hidden={!dataAvailable}
         id="ahaShowSubmitModalButton"
       >
+        <FontAwesomeIcon icon={faFloppyDisk} className="me-1" />
         Save to Aha!
       </button>
       {dataAvailable &&
