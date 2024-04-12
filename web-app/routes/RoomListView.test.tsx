@@ -114,7 +114,7 @@ describe("RoomListView", () => {
 
     expect(screen.queryByText("Edit Room 'My Room'")).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("Edit Room"));
+    await userEvent.click(screen.getByText("Edit"));
 
     expect(screen.getByText("Edit Room 'My Room'")).toBeVisible();
   });
@@ -141,7 +141,7 @@ describe("RoomListView", () => {
     );
     await waitForLoaderResolved();
 
-    await userEvent.click(screen.getByText("Edit Room"));
+    await userEvent.click(screen.getByText("Edit"));
 
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
     await userEvent.click(screen.getByText("Submit"));
@@ -163,7 +163,7 @@ describe("RoomListView", () => {
 
     expect(screen.queryByText("Delete Room 'My Room'")).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("Delete Room"));
+    await userEvent.click(screen.getByText("Delete"));
 
     expect(screen.getByText("Delete Room 'My Room'")).toBeVisible();
   });
@@ -186,7 +186,7 @@ describe("RoomListView", () => {
 
     expect(screen.getByText("My Room")).toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("Delete Room"));
+    await userEvent.click(screen.getByText("Delete"));
 
     await userEvent.click(screen.getByText("Permanently Delete This Room"));
 
