@@ -80,7 +80,7 @@ const RoomViewHeader: FC<{
         className="btn btn-secondary btn-sm"
         onClick={showEditModal}
       >
-        <FontAwesomeIcon icon={faEdit} className="me-1"/>
+        <FontAwesomeIcon icon={faEdit} className="me-1" />
         Edit
       </button>
       <EditRoomModal
@@ -199,7 +199,7 @@ export const RoomView: FC = () => {
               className="btn btn-warning btn-sm"
               onClick={handleRestart}
             >
-              <FontAwesomeIcon icon={faRotate} className="me-1"/>
+              <FontAwesomeIcon icon={faRotate} className="me-1" />
               Restart
             </button>
           </div>
