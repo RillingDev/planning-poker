@@ -4,6 +4,7 @@ import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,10 @@ public class SummaryService {
 	 *
 	 * @see Card#NATURAL_COMPARATOR for the preferred <b>display</b> order.
 	 */
-	private static final Comparator<Card> PREFERRED_SUMMARY_COMPARATOR = Comparator.comparing(Card::getValue).thenComparing(Card::isBasicNumeric).reversed().thenComparing(Card::getName);
+	private static final Comparator<Card> PREFERRED_SUMMARY_COMPARATOR = Comparator.comparing(Card::getValue)
+			.thenComparing(Card::isBasicNumeric)
+			.reversed()
+			.thenComparing(Card::getName);
 
 	/**
 	 * Calculates a rooms voting statistic.
@@ -38,7 +42,7 @@ public class SummaryService {
 
 		// Keep only members with votes that have values to it.
 		// Subsequent IDE warnings regarding null-pointers are not valid due to this.
-		final List<Card> votesWithValues = room.getMembers()
+		final List< Card> votesWithValues = room.getMembers()
 				.stream()
 				.map(RoomMember::getVote).filter(Objects::nonNull)
 				.filter(vote -> vote.getValue() != null)
@@ -74,7 +78,9 @@ public class SummaryService {
 
 		final CardSet cardSet = room.getCardSet();
 
-		final Double averageValueFormatted = cardSet.isShowAverageValue() ? roundToNDecimalPlaces(averageValue, cardSet.getRelevantDecimalPlaces()) : null;
+		final Double averageValueFormatted = cardSet.isShowAverageValue() ?
+				roundToNDecimalPlaces(averageValue, cardSet.getRelevantDecimalPlaces()) :
+				null;
 
 		final Card nearestCard = cardSet.isShowNearestCard() ? findNearestCard(cardSet.getCards(), averageValue) : null;
 
@@ -91,7 +97,7 @@ public class SummaryService {
 		return BigDecimal.valueOf(value).setScale(n, RoundingMode.HALF_UP).doubleValue();
 	}
 
-	private static Card findNearestCard(Set<Card> cards, double averageValue) {
+	private static @Nullable Card findNearestCard(Set<Card> cards, double averageValue) {
 		Card nearestCard = null;
 		double nearestCardDiff = Double.POSITIVE_INFINITY;
 
@@ -118,13 +124,8 @@ public class SummaryService {
 	 * @param lowest      The lowest vote.
 	 * @param offset      The offset between the position of the {@link #highest} and the {@link #lowest} card in the card set.
 	 */
-	public record VoteSummary(
-			@Nullable Double average,
-			@Nullable Card nearestCard,
-			@Nullable VoteExtreme highest,
-			@Nullable VoteExtreme lowest,
-			int offset
-	) {
+	public record VoteSummary(@Nullable Double average, @Nullable Card nearestCard, @Nullable VoteExtreme highest, @Nullable VoteExtreme lowest,
+							  int offset) {
 	}
 
 	/**
