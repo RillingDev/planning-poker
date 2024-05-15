@@ -13,12 +13,12 @@ function getDelta<T>(oldValue: T, newValue: T): T | undefined {
   return isEqual(oldValue, newValue) ? undefined : newValue;
 }
 
-/**
- * @param onSubmit Invoked upon submission with delta of changes values.
- */
 export const EditRoomModal: FC<{
   show: boolean;
   onHide: () => void;
+  /**
+   * Invoked upon submission with delta of changes values.
+   */
   onSubmit: (changes: RoomEditOptions) => void;
   room: Room;
 }> = ({ room, show, onHide, onSubmit }) => {

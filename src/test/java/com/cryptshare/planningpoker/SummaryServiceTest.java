@@ -228,6 +228,7 @@ class SummaryServiceTest {
 		// The nearest card is rounded upwards
 		assertThat(voteSummary.nearestCard()).isEqualTo(card1Text1);
 	}
+
 	@Test
 	@DisplayName("calculates highest/lowest votes")
 	void calculatesExtremes() {
@@ -236,7 +237,7 @@ class SummaryServiceTest {
 		final Card card2 = new Card("2", 2.0);
 		final Card card3 = new Card("3", 3.0);
 		final Card cardQuestion = new Card("?", null);
-		cardSet.getCards().addAll(Set.of(card1, card2, card3,cardQuestion));
+		cardSet.getCards().addAll(Set.of(card1, card2, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -259,7 +260,6 @@ class SummaryServiceTest {
 		assertThat(voteSummary.lowest().members()).containsExactly(bob);
 	}
 
-
 	@Test
 	@DisplayName("does not calculate highest/lowest votes if all votes are the same")
 	void skipsExtremes() {
@@ -268,7 +268,7 @@ class SummaryServiceTest {
 		final Card card2 = new Card("2", 2.0);
 		final Card card3 = new Card("3", 3.0);
 		final Card cardQuestion = new Card("?", null);
-		cardSet.getCards().addAll(Set.of(card1, card2, card3,cardQuestion));
+		cardSet.getCards().addAll(Set.of(card1, card2, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -298,7 +298,7 @@ class SummaryServiceTest {
 		final Card card3 = new Card("3", 3.0);
 		final Card card3Text = new Card("Three but with text", 3.0);
 		final Card cardQuestion = new Card("?", null);
-		cardSet.getCards().addAll(Set.of(card1, card1Text, card3, card3Text,cardQuestion));
+		cardSet.getCards().addAll(Set.of(card1, card1Text, card3, card3Text, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -330,7 +330,7 @@ class SummaryServiceTest {
 		final Card card3 = new Card("3", 3.0);
 		final Card card3Text = new Card("Three but with text", 3.0);
 		final Card cardQuestion = new Card("?", null);
-		cardSet.getCards().addAll(Set.of(card1, card1Text, card3, card3Text,cardQuestion));
+		cardSet.getCards().addAll(Set.of(card1, card1Text, card3, card3Text, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");
@@ -361,7 +361,7 @@ class SummaryServiceTest {
 		final Card card2 = new Card("2", 2.0);
 		final Card card3 = new Card("3", 3.0);
 		final Card cardQuestion = new Card("?", null);
-		cardSet.getCards().addAll(Set.of(card1, card2, card3,cardQuestion));
+		cardSet.getCards().addAll(Set.of(card1, card2, card3, cardQuestion));
 
 		final Room myRoom = new Room("My Room", cardSet);
 		final RoomMember bob = new RoomMember("Bob");

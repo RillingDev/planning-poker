@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Sql({"/delete-initial-data.sql", "/create-dummy-user.sql"})
+@Sql({ "/delete-initial-data.sql", "/create-dummy-user.sql" })
 class RoomRepositoryIT {
 	@Autowired
 	RoomRepository roomRepository;
@@ -24,7 +24,6 @@ class RoomRepositoryIT {
 
 	@PersistenceContext
 	EntityManager em;
-
 
 	@Test
 	@DisplayName("can be saved and loaded")

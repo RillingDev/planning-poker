@@ -30,7 +30,7 @@ class RoomVotingController extends AbstractRoomAwareController {
 
 	@PostMapping(value = "/api/rooms/{room-name}/votes")
 	public void createVote(@PathVariable("room-name") String roomName, @RequestParam("card-name") String cardName,
-						   @AuthenticationPrincipal OidcUser user) {
+			@AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
 		final RoomMember roomMember = requireActingUserMember(room, user.getName());
 		if (roomMember.getRole() == RoomMember.Role.OBSERVER) {
@@ -54,7 +54,6 @@ class RoomVotingController extends AbstractRoomAwareController {
 		roomRepository.save(room);
 		logger.debug("User '{}' voted with '{}' in '{}'.", user.getName(), card, room);
 	}
-
 
 	@DeleteMapping(value = "/api/rooms/{room-name}/votes")
 	public void clearVotes(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user) {

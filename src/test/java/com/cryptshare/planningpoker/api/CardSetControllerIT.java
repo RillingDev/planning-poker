@@ -38,7 +38,8 @@ class CardSetControllerIT {
 		final CardSet cardSet2 = new CardSet("My Set 2");
 		given(cardSetRepository.findAll()).willReturn(List.of(cardSet1, cardSet2));
 
-		mockMvc.perform(get("/api/card-sets").with(bobOidcLogin())).andExpect(status().isOk())
+		mockMvc.perform(get("/api/card-sets").with(bobOidcLogin()))
+				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("My Set 1"))
 				.andExpect(jsonPath("$[0].cards.length()").value(4))

@@ -277,7 +277,7 @@ describe("RoomView", () => {
 
     expect(screen.queryByText("Edit Room 'My Room'")).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("Edit Room"));
+    await userEvent.click(screen.getByText("Edit"));
 
     expect(screen.getByText("Edit Room 'My Room'")).toBeVisible();
   });
@@ -327,7 +327,7 @@ describe("RoomView", () => {
     expect(screen.queryByText("Card 2")).not.toBeInTheDocument();
     expect(screen.queryByText("Custom Topic")).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("Edit Room"));
+    await userEvent.click(screen.getByText("Edit"));
 
     await userEvent.selectOptions(screen.getByLabelText("Card Set"), "Set 2");
     await userEvent.type(screen.getByLabelText("Topic"), "Custom Topic");

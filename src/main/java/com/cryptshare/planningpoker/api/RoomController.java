@@ -23,7 +23,8 @@ class RoomController extends AbstractRoomAwareController {
 	private final ExtensionRepository extensionRepository;
 	private final RoomService roomService;
 
-	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, ExtensionRepository extensionRepository, RoomService roomService) {
+	RoomController(RoomRepository roomRepository, CardSetRepository cardSetRepository, ExtensionRepository extensionRepository,
+			RoomService roomService) {
 		super(roomRepository);
 		this.cardSetRepository = cardSetRepository;
 		this.extensionRepository = extensionRepository;
@@ -38,7 +39,7 @@ class RoomController extends AbstractRoomAwareController {
 
 	@PostMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void createRoom(@PathVariable("room-name") String roomName, @RequestBody RoomCreationOptionsJson roomOptions,
-						   @AuthenticationPrincipal OidcUser user) {
+			@AuthenticationPrincipal OidcUser user) {
 		if (roomRepository.findByName(roomName).isPresent()) {
 			throw new RoomNameExistsException();
 		}
@@ -73,7 +74,7 @@ class RoomController extends AbstractRoomAwareController {
 
 	@PatchMapping(value = "/api/rooms/{room-name}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void editRoom(@PathVariable("room-name") String roomName, @RequestBody RoomEditOptionsJson changes,
-						 @AuthenticationPrincipal OidcUser user) {
+			@AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
 
 		if (changes.topic != null) {
@@ -85,16 +86,17 @@ class RoomController extends AbstractRoomAwareController {
 			logger.info("Edited room '{}' card set by user '{}'.", room, user.getName());
 		}
 		if (changes.extensionKeys != null) {
-			final Set<Extension> newExtensions = changes.extensionKeys.stream().map(newExtensionKey -> extensionRepository.findByKeyAndEnabledIsTrue(newExtensionKey)
-					.orElseThrow(ExtensionNotFoundException::new)).collect(Collectors.toUnmodifiableSet());
+			final Set<Extension> newExtensions = changes.extensionKeys.stream()
+					.map(newExtensionKey -> extensionRepository.findByKeyAndEnabledIsTrue(newExtensionKey)
+							.orElseThrow(ExtensionNotFoundException::new))
+					.collect(Collectors.toUnmodifiableSet());
 			roomService.editExtensions(room, newExtensions);
 			logger.info("Edited room '{}' extensions by user '{}'.", room, user.getName());
 		}
 		roomRepository.save(room);
 	}
 
-	record RoomEditOptionsJson(@Nullable @JsonProperty("cardSetName") String cardSetName,
-									   @Nullable @JsonProperty("topic") String topic,
+	record RoomEditOptionsJson(@Nullable @JsonProperty("cardSetName") String cardSetName, @Nullable @JsonProperty("topic") String topic,
 							   @Nullable @JsonProperty("extensions") Set<String> extensionKeys) {
 
 	}

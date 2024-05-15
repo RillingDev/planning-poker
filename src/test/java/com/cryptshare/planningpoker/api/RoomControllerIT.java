@@ -51,7 +51,9 @@ class RoomControllerIT {
 		final Room room2 = new Room("Room #2", cardSet);
 		given(roomRepository.findAll()).willReturn(List.of(room1, room2));
 
-		mockMvc.perform(get("/api/rooms").with(bobOidcLogin())).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(2))
+		mockMvc.perform(get("/api/rooms").with(bobOidcLogin()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(2))
 				.andExpect(jsonPath("$[0].name").value("Room #1"))
 				.andExpect(jsonPath("$[0].topic").value("Foo!"))
 				.andExpect(jsonPath("$[0].cardSetName").value("My Set"))
@@ -236,7 +238,6 @@ class RoomControllerIT {
 		verify(roomService).editExtensions(room, Set.of(someExtension));
 		verify(roomRepository).save(room);
 	}
-
 
 	@Test
 	@DisplayName("GET `/api/rooms/{room-name}/` throws for unknown name")

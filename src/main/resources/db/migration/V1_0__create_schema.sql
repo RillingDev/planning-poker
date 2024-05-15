@@ -56,21 +56,21 @@ CREATE TABLE vote
 		ON DELETE CASCADE,
 	CONSTRAINT ck_vote_room_member_role CHECK (
 		// Enforce that observers do not have votes
-			(SELECT ru.user_role
-			 FROM room_member ru
-			 WHERE ru.id = vote.room_member_id) != 'OBSERVER'
+		(SELECT ru.user_role
+		 FROM room_member ru
+		 WHERE ru.id = vote.room_member_id) != 'OBSERVER'
 		),
 	CONSTRAINT ck_vote_card_set CHECK (
 		// Enforce that card is from the set that is the configured card set for this room
-			(SELECT r.card_set_id
-			 FROM room_member ru
-					  LEFT JOIN room r ON r.id = ru.room_id
-			 WHERE ru.id = vote.room_member_id) = (
-				SELECT cs.id
-				FROM card c
-						 LEFT JOIN card_set cs ON c.card_set_id = cs.id
-				WHERE c.id = vote.card_id
-				)
+		(SELECT r.card_set_id
+		 FROM room_member ru
+				  LEFT JOIN room r ON r.id = ru.room_id
+		 WHERE ru.id = vote.room_member_id) = (
+			SELECT cs.id
+			FROM card c
+					 LEFT JOIN card_set cs ON c.card_set_id = cs.id
+			WHERE c.id = vote.card_id
+			)
 		)
 );
 // Delete votes when a member switches to observer.
@@ -92,9 +92,9 @@ CALL "com.cryptshare.planningpoker.data.h2.VoteCardSetCleanupTrigger";
 
 // Data
 
-INSERT INTO CARD_SET (id, set_name)
+INSERT INTO card_set (id, set_name)
 VALUES ('947dddcf-e093-4726-b070-fce668365edc', 'Adjusted Fibonacci Scale');
-INSERT INTO CARD (id, card_set_id, card_name, card_value)
+INSERT INTO card (id, card_set_id, card_name, card_value)
 VALUES (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '0', 0.0),
 	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '1', 1.0),
 	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '2', 2.0),
@@ -108,9 +108,9 @@ VALUES (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '0', 0.0),
 	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', '?', NULL),
 	   (RANDOM_UUID(), '947dddcf-e093-4726-b070-fce668365edc', 'Coffee', 0);
 
-INSERT INTO CARD_SET (id, set_name)
+INSERT INTO card_set (id, set_name)
 VALUES ('148b39a9-2868-4ae6-ac2f-018347892f48', '1 through 10');
-INSERT INTO CARD (id, card_set_id, card_name, card_value)
+INSERT INTO card (id, card_set_id, card_name, card_value)
 VALUES (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '1', 1.0),
 	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '2', 2.0),
 	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '3', 3.0),
@@ -123,9 +123,9 @@ VALUES (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '1', 1.0),
 	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '10', 10.0),
 	   (RANDOM_UUID(), '148b39a9-2868-4ae6-ac2f-018347892f48', '?', NULL);
 
-INSERT INTO CARD_SET (id, set_name)
+INSERT INTO card_set (id, set_name)
 VALUES ('149b39a9-2868-4ae6-ac2f-018347892f49', 'T-Shirt Sizes');
-INSERT INTO CARD (id, card_set_id, card_name, card_value)
+INSERT INTO card (id, card_set_id, card_name, card_value)
 VALUES (RANDOM_UUID(), '149b39a9-2868-4ae6-ac2f-018347892f49', 'XS', 0.0),
 	   (RANDOM_UUID(), '149b39a9-2868-4ae6-ac2f-018347892f49', 'S', 1.0),
 	   (RANDOM_UUID(), '149b39a9-2868-4ae6-ac2f-018347892f49', 'M', 2.0),

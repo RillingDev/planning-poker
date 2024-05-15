@@ -30,7 +30,6 @@ class RoomServiceTest {
 		assertThat(room.getCardSet()).isEqualTo(newCardSet);
 	}
 
-
 	@Test
 	@DisplayName("editing card set removes votes")
 	void editCardSetRemovesVotes() {
@@ -87,7 +86,6 @@ class RoomServiceTest {
 		assertThat(room.getExtensionConfigs()).isEmpty();
 	}
 
-
 	@Test
 	@DisplayName("handles mixed extension changes")
 	void editExtensionsMixedExtensionChanges() {
@@ -125,7 +123,6 @@ class RoomServiceTest {
 		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
-
 	@Test
 	@DisplayName("removes member from room")
 	void removeMemberRemoves() {
@@ -160,7 +157,6 @@ class RoomServiceTest {
 		assertThat(room.getVotingState()).isEqualTo(Room.VotingState.CLOSED);
 	}
 
-
 	@Test
 	@DisplayName("removing member from room keeps voting open if no voters remain")
 	void removeMemberKeepsVotingOpenIfNoVotersRemain() {
@@ -193,7 +189,6 @@ class RoomServiceTest {
 
 		assertThat(roomMember.getRole()).isEqualTo(RoomMember.Role.OBSERVER);
 	}
-
 
 	@Test
 	@DisplayName("setting role to observer closes voting")
@@ -252,7 +247,6 @@ class RoomServiceTest {
 
 		assertThat(roomMember.getRole()).isEqualTo(RoomMember.Role.VOTER);
 	}
-
 
 	@Test
 	@DisplayName("setting to voter keeps voting closed")
@@ -327,7 +321,6 @@ class RoomServiceTest {
 
 		assertThat(room.findMemberByUser("Bob").orElseThrow().getVote()).isNotNull().isEqualTo(card2);
 	}
-
 
 	@Test
 	@DisplayName("clears votes")

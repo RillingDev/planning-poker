@@ -143,13 +143,14 @@ class RoomMemberControllerIT {
 		roomMember.setRole(RoomMember.Role.VOTER);
 		room.getMembers().add(roomMember);
 
-		mockMvc.perform(patch("/api/rooms/my-room/members/Bob").with(bobOidcLogin()).with(bobOidcLogin()).queryParam("action", "SET_OBSERVER").with(csrf()))
-				.andExpect(status().isOk());
+		mockMvc.perform(patch("/api/rooms/my-room/members/Bob").with(bobOidcLogin())
+				.with(bobOidcLogin())
+				.queryParam("action", "SET_OBSERVER")
+				.with(csrf())).andExpect(status().isOk());
 
 		verify(roomService).setRole(room, roomMember, RoomMember.Role.OBSERVER);
 		verify(roomRepository).save(room);
 	}
-
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/members/{member-username}` sets to voter")
@@ -161,12 +162,12 @@ class RoomMemberControllerIT {
 		roomMember.setRole(RoomMember.Role.OBSERVER);
 		room.getMembers().add(roomMember);
 
-		mockMvc.perform(patch("/api/rooms/my-room/members/Bob").with(bobOidcLogin()).queryParam("action", "SET_VOTER").with(csrf())).andExpect(status().isOk());
+		mockMvc.perform(patch("/api/rooms/my-room/members/Bob").with(bobOidcLogin()).queryParam("action", "SET_VOTER").with(csrf()))
+				.andExpect(status().isOk());
 
 		verify(roomService).setRole(room, roomMember, RoomMember.Role.VOTER);
 		verify(roomRepository).save(room);
 	}
-
 
 	@Test
 	@DisplayName("PATCH `/api/rooms/{room-name}/members/{member-username}` kicks")
@@ -179,7 +180,8 @@ class RoomMemberControllerIT {
 		final RoomMember bob = new RoomMember("Bob");
 		room.getMembers().add(bob);
 
-		mockMvc.perform(patch("/api/rooms/my-room/members/Alice").with(bobOidcLogin()).queryParam("action", "KICK").with(csrf())).andExpect(status().isOk());
+		mockMvc.perform(patch("/api/rooms/my-room/members/Alice").with(bobOidcLogin()).queryParam("action", "KICK").with(csrf()))
+				.andExpect(status().isOk());
 
 		verify(roomService).removeMember(room, alice);
 		verify(roomRepository).save(room);
