@@ -23,8 +23,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = AhaController.class, properties = {"planning-poker.extension.aha.account-domain=example",
-		"planning-poker.extension.aha.client-id=abc", "planning-poker.extension.aha.redirect-uri=https://example.com"})
+@WebMvcTest(value = AhaController.class, properties = { "planning-poker.extension.aha.account-domain=example",
+		"planning-poker.extension.aha.client-id=abc", "planning-poker.extension.aha.redirect-uri=https://example.com" })
 @ActiveProfiles("extension:aha")
 class AhaControllerIT {
 
@@ -92,8 +92,10 @@ class AhaControllerIT {
 	void editRoomConfigUnknownName() throws Exception {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
-				.andExpect(status().isNotFound());
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin())
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{}")).andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -103,8 +105,10 @@ class AhaControllerIT {
 		room.getMembers().add(new RoomMember("Bob"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
-				.andExpect(status().isNotFound());
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin())
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{}")).andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -114,8 +118,10 @@ class AhaControllerIT {
 		room.getMembers().add(new RoomMember("Alice"));
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content("{}"))
-				.andExpect(status().isForbidden());
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin())
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{}")).andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -128,7 +134,8 @@ class AhaControllerIT {
 		room.getExtensionConfigs().add(roomExtensionConfig);
 		given(roomRepository.findByName("my-room")).willReturn(Optional.of(room));
 
-		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin()).with(csrf())
+		mockMvc.perform(patch("/api/rooms/my-room/extensions/aha").with(bobOidcLogin())
+				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"scoreFactName\": \"Impact\"}")).andExpect(status().isOk());
 

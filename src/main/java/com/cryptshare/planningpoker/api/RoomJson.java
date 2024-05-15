@@ -13,9 +13,9 @@ import java.util.function.Predicate;
 /**
  * Model for {@link Room}.
  */
-public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic") String topic,
-					   @JsonProperty("cardSetName") String cardSetName, @JsonProperty("members") List<RoomMemberJson> members,
-					   @JsonProperty("votingClosed") boolean votingClosed, @JsonProperty("extensions") List<String> extensions) {
+public record RoomJson(@JsonProperty("name") String name, @JsonProperty("topic") String topic, @JsonProperty("cardSetName") String cardSetName,
+					   @JsonProperty("members") List<RoomMemberJson> members, @JsonProperty("votingClosed") boolean votingClosed,
+					   @JsonProperty("extensions") List<String> extensions) {
 
 	public static RoomJson convertToBasic(Room room) {
 		return convert(room, RoomMemberJson::convertToBasic);

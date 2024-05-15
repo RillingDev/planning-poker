@@ -44,7 +44,8 @@ class RoomVotingControllerIT {
 	void createVoteUnknownName() throws Exception {
 		given(roomRepository.findByName("my-room")).willReturn(Optional.empty());
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "1")).andExpect(status().isNotFound());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "1"))
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -58,7 +59,8 @@ class RoomVotingControllerIT {
 		final RoomMember roomMember = new RoomMember("Alice");
 		room.getMembers().add(roomMember);
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "1")).andExpect(status().isForbidden());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "1"))
+				.andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -72,7 +74,8 @@ class RoomVotingControllerIT {
 		final RoomMember roomMember = new RoomMember("Bob");
 		room.getMembers().add(roomMember);
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "99")).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "99"))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -88,7 +91,8 @@ class RoomVotingControllerIT {
 		roomMember.setRole(RoomMember.Role.OBSERVER);
 		room.getMembers().add(roomMember);
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "99")).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "99"))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -111,7 +115,8 @@ class RoomVotingControllerIT {
 		room.getMembers().add(roomMember2);
 		room.setVotingState(Room.VotingState.CLOSED);
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "2")).andExpect(status().isOk());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "2"))
+				.andExpect(status().isOk());
 
 		verify(roomRepository, never()).save(any());
 	}
@@ -128,7 +133,8 @@ class RoomVotingControllerIT {
 		final RoomMember roomMember = new RoomMember("Bob");
 		room.getMembers().add(roomMember);
 
-		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "1")).andExpect(status().isOk());
+		mockMvc.perform(post("/api/rooms/my-room/votes").with(bobOidcLogin()).with(csrf()).queryParam("card-name", "1"))
+				.andExpect(status().isOk());
 
 		verify(roomService).setVote(room, roomMember, card);
 		verify(roomRepository).save(room);
@@ -224,7 +230,9 @@ class RoomVotingControllerIT {
 
 		given(summaryService.summarize(room)).willReturn(Optional.empty());
 
-		mockMvc.perform(get("/api/rooms/my-room/votes/summary").with(bobOidcLogin())).andExpect(status().isOk()).andExpect(jsonPath("$.votes").value((Object) null));
+		mockMvc.perform(get("/api/rooms/my-room/votes/summary").with(bobOidcLogin()))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.votes").value((Object) null));
 	}
 
 	@Test
@@ -245,9 +253,12 @@ class RoomVotingControllerIT {
 		room.getMembers().add(roomMember2);
 		room.setVotingState(Room.VotingState.CLOSED);
 
-		given(summaryService.summarize(room)).willReturn(Optional.of(new VoteSummary(1.0,
-				card, new SummaryService.VoteExtreme(card, Set.of(roomMember1)), new SummaryService.VoteExtreme(card, Set.of(roomMember2)), 2
-		)));
+		given(summaryService.summarize(room)).willReturn(Optional.of(new VoteSummary(
+				1.0,
+				card,
+				new SummaryService.VoteExtreme(card, Set.of(roomMember1)),
+				new SummaryService.VoteExtreme(card, Set.of(roomMember2)),
+				2)));
 
 		mockMvc.perform(get("/api/rooms/my-room/votes/summary").with(bobOidcLogin()))
 				.andExpect(status().isOk())

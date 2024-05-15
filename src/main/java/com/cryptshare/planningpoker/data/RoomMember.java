@@ -17,8 +17,7 @@ public class RoomMember extends BaseEntity {
 	public static final Comparator<RoomMember> ALPHABETIC_COMPARATOR = Comparator.comparing(RoomMember::getUsername);
 
 	public enum Role {
-		VOTER,
-		OBSERVER
+		VOTER, OBSERVER
 	}
 
 	// Must be the principal name of a persisted OAuth2AuthorizedClient.
@@ -32,8 +31,9 @@ public class RoomMember extends BaseEntity {
 
 	// FIXME: in rare cases (data race?) adding a vote violates the pkey of the vote entry (probably because an identical was created before)
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name = "vote", joinColumns = {@JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
-			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false)})
+	@JoinTable(name = "vote", joinColumns = {
+			@JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
+			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false) })
 	@Nullable
 	private Card vote;
 
@@ -75,6 +75,8 @@ public class RoomMember extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'").add("role=" + role).toString();
+		return new StringJoiner(", ", RoomMember.class.getSimpleName() + "[", "]").add("username='" + username + "'")
+				.add("role=" + role)
+				.toString();
 	}
 }

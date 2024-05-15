@@ -24,7 +24,10 @@ class RoomService {
 	}
 
 	public void editExtensions(Room room, Set<Extension> newExtensions) {
-		final Set<Extension> previousExtensions = room.getExtensionConfigs().stream().map(RoomExtensionConfig::getExtension).collect(Collectors.toCollection(HashSet::new));
+		final Set<Extension> previousExtensions = room.getExtensionConfigs()
+				.stream()
+				.map(RoomExtensionConfig::getExtension)
+				.collect(Collectors.toCollection(HashSet::new));
 
 		for (Extension newExtension : newExtensions) {
 			if (previousExtensions.contains(newExtension)) {
@@ -85,7 +88,10 @@ class RoomService {
 	}
 
 	private void closeVotingIfNeeded(Room room) {
-		final Set<RoomMember> voters = room.getMembers().stream().filter(rm -> rm.getRole() == RoomMember.Role.VOTER).collect(Collectors.toSet());
+		final Set<RoomMember> voters = room.getMembers()
+				.stream()
+				.filter(rm -> rm.getRole() == RoomMember.Role.VOTER)
+				.collect(Collectors.toSet());
 		// No need to close the vote if no voters remain
 		if (!voters.isEmpty() && voters.stream().allMatch(roomMember -> roomMember.getVote() != null)) {
 			room.setVotingState(Room.VotingState.CLOSED);

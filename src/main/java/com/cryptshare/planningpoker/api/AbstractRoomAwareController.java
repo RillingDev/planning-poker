@@ -15,7 +15,6 @@ public abstract class AbstractRoomAwareController {
 		this.roomRepository = roomRepository;
 	}
 
-
 	/**
 	 * Resolves room for this name, throwing if not found.
 	 */

@@ -47,7 +47,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 	@PatchMapping(value = "/api/rooms/{room-name}/members/{member-username}")
 	@ResponseBody
 	public void editMember(@PathVariable("room-name") String roomName, @PathVariable("member-username") String memberUsername,
-						   @RequestParam("action") EditAction action, @AuthenticationPrincipal OidcUser user) {
+			@RequestParam("action") EditAction action, @AuthenticationPrincipal OidcUser user) {
 		final Room room = requireRoom(roomName);
 		final RoomMember actingMember = requireActingUserMember(room, user.getName());
 
@@ -81,9 +81,7 @@ class RoomMemberController extends AbstractRoomAwareController {
 	}
 
 	enum EditAction {
-		SET_VOTER,
-		SET_OBSERVER,
-		KICK
+		SET_VOTER, SET_OBSERVER, KICK
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No member with this username was found.")

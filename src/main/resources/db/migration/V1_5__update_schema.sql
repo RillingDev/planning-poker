@@ -1,28 +1,28 @@
-UPDATE CARD c
-SET c.CARD_DESCRIPTION = 'Extremely small effort.'
-WHERE c.CARD_NAME = 'XS'
-  AND c.CARD_SET_ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
-UPDATE CARD c
-SET c.CARD_DESCRIPTION = 'Small effort.'
-WHERE c.CARD_NAME = 'S'
-  AND c.CARD_SET_ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
-UPDATE CARD c
-SET c.CARD_DESCRIPTION = 'Medium effort.'
-WHERE c.CARD_NAME = 'M'
-  AND c.CARD_SET_ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
-UPDATE CARD c
-SET c.CARD_DESCRIPTION = 'Large effort.'
-WHERE c.CARD_NAME = 'L'
-  AND c.CARD_SET_ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
-UPDATE CARD c
-SET c.CARD_DESCRIPTION = 'Extremely large effort.'
-WHERE c.CARD_NAME = 'XL'
-  AND c.CARD_SET_ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
-UPDATE CARD c
-SET c.CARD_DESCRIPTION = 'Extremely, extremely large effort.'
-WHERE c.CARD_NAME = 'XXL'
-  AND c.CARD_SET_ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
-UPDATE CARD c
-SET c.CARD_DESCRIPTION = 'Uncertain.'
-WHERE c.CARD_NAME = '?'
-  AND c.CARD_SET_ID = '149b39a9-2868-4ae6-ac2f-018347892f49';
+UPDATE card c
+SET c.card_description = 'Extremely small effort.'
+WHERE c.card_name = 'XS'
+  AND c.card_set_id = '149b39a9-2868-4ae6-ac2f-018347892f49';
+UPDATE card c
+SET c.card_description = 'Small effort.'
+WHERE c.card_name = 'S'
+  AND c.card_set_id = '149b39a9-2868-4ae6-ac2f-018347892f49';
+UPDATE card c
+SET c.card_description = 'Medium effort.'
+WHERE c.card_name = 'M'
+  AND c.card_set_id = '149b39a9-2868-4ae6-ac2f-018347892f49';
+UPDATE card c
+SET c.card_description = 'Large effort.'
+WHERE c.card_name = 'L'
+  AND c.card_set_id = '149b39a9-2868-4ae6-ac2f-018347892f49';
+UPDATE card c
+SET c.card_description = 'Extremely large effort.'
+WHERE c.card_name = 'XL'
+  AND c.card_set_id = '149b39a9-2868-4ae6-ac2f-018347892f49';
+UPDATE card c
+SET c.card_description = 'Extremely, extremely large effort.'
+WHERE c.card_name = 'XXL'
+  AND c.card_set_id = '149b39a9-2868-4ae6-ac2f-018347892f49';
+UPDATE card c
+SET c.card_description = 'Uncertain.'
+WHERE c.card_name = '?'
+  AND c.card_set_id = '149b39a9-2868-4ae6-ac2f-018347892f49';

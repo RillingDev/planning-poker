@@ -4,7 +4,6 @@ import com.cryptshare.planningpoker.data.Card;
 import com.cryptshare.planningpoker.data.CardSet;
 import com.cryptshare.planningpoker.data.Room;
 import com.cryptshare.planningpoker.data.RoomMember;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -42,9 +41,10 @@ public class SummaryService {
 
 		// Keep only members with votes that have values to it.
 		// Subsequent IDE warnings regarding null-pointers are not valid due to this.
-		final List< Card> votesWithValues = room.getMembers()
+		final List<Card> votesWithValues = room.getMembers()
 				.stream()
-				.map(RoomMember::getVote).filter(Objects::nonNull)
+				.map(RoomMember::getVote)
+				.filter(Objects::nonNull)
 				.filter(vote -> vote.getValue() != null)
 				.sorted(PREFERRED_SUMMARY_COMPARATOR) // Sort to prefer basic numeric when calculating highest/lowest in case of value being the same.
 				.toList();

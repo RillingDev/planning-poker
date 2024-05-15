@@ -55,7 +55,7 @@ class AhaController extends AbstractRoomAwareController {
 
 	@PatchMapping(value = "/api/rooms/{room-name}/extensions/aha", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void editRoomConfig(@PathVariable("room-name") String roomName, @AuthenticationPrincipal OidcUser user,
-							   @RequestBody AhaRoomConfigJson changes) {
+			@RequestBody AhaRoomConfigJson changes) {
 		final Room room = requireRoom(roomName);
 		requireActingUserMember(room, user.getName());
 

@@ -21,11 +21,11 @@ public record VoteSummaryJson(@JsonProperty("average") @Nullable Double average,
 				voteSummary.lowest() != null ? VoteExtremeJson.convert(voteSummary.lowest()) : null);
 	}
 
-	record VoteExtremeJson(@JsonProperty("card") CardJson card,
-						   @JsonProperty("members") List<RoomMemberJson> members) {
+	record VoteExtremeJson(@JsonProperty("card") CardJson card, @JsonProperty("members") List<RoomMemberJson> members) {
 
 		static VoteExtremeJson convert(SummaryService.VoteExtreme voteExtreme) {
-			return new VoteExtremeJson(CardJson.convert(voteExtreme.card()),
+			return new VoteExtremeJson(
+					CardJson.convert(voteExtreme.card()),
 					voteExtreme.members().stream().sorted(RoomMember.ALPHABETIC_COMPARATOR).map(RoomMemberJson::convertToBasic).toList());
 		}
 	}
