@@ -16,7 +16,7 @@ CREATE TABLE oauth2_authorized_client
 	PRIMARY KEY (client_registration_id, principal_name)
 );
 
-/* Stricter than the default schema, as we require unique usernames across different providers.*/
+/* Stricter than the default schema, as we require unique usernames across different providers. */
 ALTER TABLE oauth2_authorized_client
 	ADD CONSTRAINT uq_principal_name UNIQUE (principal_name);
 
@@ -35,11 +35,11 @@ CREATE TABLE card_set
 
 CREATE TABLE card
 (
-	id               UUID         NOT NULL PRIMARY KEY,
-	card_set_id      UUID         NOT NULL REFERENCES card_set ON DELETE CASCADE,
-	card_name        VARCHAR(100) NOT NULL,
-	card_value       DOUBLE PRECISION,
-	card_description CLOB(2000)   NOT NULL,
+	id               UUID             NOT NULL PRIMARY KEY,
+	card_set_id      UUID             NOT NULL REFERENCES card_set ON DELETE CASCADE,
+	card_name        VARCHAR(100)     NOT NULL,
+	card_value       DOUBLE PRECISION NULL,
+	card_description CLOB(2000)       NOT NULL,
 	CONSTRAINT uq_card_set_card_name
 		UNIQUE (card_set_id, card_name)
 );
@@ -55,7 +55,7 @@ CREATE TABLE room
 (
 	id           UUID                    NOT NULL PRIMARY KEY,
 	card_set_id  UUID                    NOT NULL REFERENCES card_set,
-	room_name    VARCHAR(250)            NOT NULL UNIQUE,
+	room_name    VARCHAR(100)            NOT NULL UNIQUE,
 	topic        CLOB(5000)              NOT NULL,
 	voting_state ENUM ('OPEN', 'CLOSED') NOT NULL
 );
@@ -71,52 +71,36 @@ CREATE TABLE room_extension_config
 
 CREATE TABLE room_extension_config_attribute
 (
-	room_extension_config_id UUID         NOT NULL REFERENCES room_extension_config ON DELETE CASCADE,
-	attribute_key            VARCHAR(100) NOT NULL,
-	attribute_value          VARCHAR      NOT NULL,
+	room_extension_config_id UUID          NOT NULL REFERENCES room_extension_config ON DELETE CASCADE,
+	attribute_key            VARCHAR(100)  NOT NULL,
+	attribute_value          VARCHAR(1000) NOT NULL,
 	PRIMARY KEY (room_extension_config_id, attribute_key)
 );
 
 CREATE TABLE room_member
 (
-	-- TODO: replace?
 	id        UUID                       NOT NULL PRIMARY KEY,
 	room_id   UUID                       NOT NULL REFERENCES room ON DELETE CASCADE,
-	username  VARCHAR(250)               NOT NULL REFERENCES oauth2_authorized_client (principal_name) ON DELETE CASCADE,
+	username  VARCHAR(200)               NOT NULL REFERENCES oauth2_authorized_client (principal_name) ON DELETE CASCADE,
 	user_role ENUM ('VOTER', 'OBSERVER') NOT NULL,
+	vote_id   UUID                       NULL REFERENCES card ON DELETE SET NULL,
 	CONSTRAINT uq_room_member
-		UNIQUE (room_id, username)
-
-);
-
-CREATE TABLE vote
-(
-	room_member_id UUID NOT NULL PRIMARY KEY REFERENCES room_member ON DELETE CASCADE,
-	card_id        UUID NOT NULL REFERENCES card ON DELETE CASCADE,
-	-- TODO: flip?
-	-- Check that vote card is from the card set of the members room
-	CONSTRAINT ck_vote_card_set
+		UNIQUE (room_id, username),
+	-- Check that voted card is from the card set of the members room
+	CONSTRAINT ck_room_member_vote_card_set
 		CHECK (
-			(
-				SELECT r.card_set_id
-				FROM room_member ru
-						 LEFT OUTER JOIN room r ON r.id = ru.room_id
-				WHERE ru.id = vote.room_member_id
-				) = (
-				SELECT cs.id
-				FROM card c
-						 LEFT OUTER JOIN card_set cs ON c.card_set_id = cs.id
-				WHERE c.id = vote.card_id
-				)
+			vote_id IS NULL OR (
+								   SELECT r.card_set_id
+								   FROM room r
+								   WHERE r.id = room_id
+								   ) = (
+								   SELECT c.card_set_id
+								   FROM card c
+								   WHERE c.id = vote_id
+								   )
 			),
-	CONSTRAINT ck_vote_room_member_role
-		CHECK (
-			(
-				SELECT ru.user_role
-				FROM room_member ru
-				WHERE ru.id = vote.room_member_id
-				) <> 'OBSERVER'
-			)
+	-- Check that observers may not vote
+	CONSTRAINT ck_room_member_vote_role CHECK (vote_id IS NULL OR user_role <> 'OBSERVER')
 );
 
 /*

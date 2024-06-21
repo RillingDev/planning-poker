@@ -29,11 +29,8 @@ public class RoomMember extends BaseEntity {
 	@Column(name = "user_role", nullable = false)
 	private Role role;
 
-	// FIXME: in rare cases (data race?) adding a vote violates the pkey of the vote entry (probably because an identical was created before)
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinTable(name = "vote", joinColumns = {
-			@JoinColumn(name = "room_member_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
-			@JoinColumn(name = "card_id", referencedColumnName = "id", nullable = false) })
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "vote_id")
 	@Nullable
 	private Card vote;
 
