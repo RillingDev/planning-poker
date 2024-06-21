@@ -84,7 +84,7 @@
 				<version>3.3.0</version>
 				<executions>
 					<execution>
-						<id>vite:validate</id>
+						<id>vite:lint</id>
 						<phase>validate</phase>
 						<goals>
 							<goal>exec</goal>
@@ -93,7 +93,7 @@
 							<executable>npm</executable>
 							<arguments>
 								<argument>run</argument>
-								<argument>validate</argument>
+								<argument>lint</argument>
 							</arguments>
 						</configuration>
 					</execution>
