@@ -29,7 +29,7 @@ public class RoomMember extends BaseEntity {
 	@Column(name = "user_role", nullable = false)
 	private Role role;
 
-	@OneToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "vote_id")
 	@Nullable
 	private Card vote;
