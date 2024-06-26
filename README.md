@@ -59,10 +59,12 @@ Then export the certificate and its key, and make them available for Vite (`vite
 ### Development Mode
 
 Start the run config `backend:dev` and `frontend:dev` and go to <https://localhost:8443>.
+Note that you may want to create a copy of `backend:dev` configured with an OIDC provider.
 
 ### Build for Production
 
 Start the IntelliJ run configuration `package`. This will create an executable JAR file in `./target`.
+You can then also use the `Dockerfile` to build a container image.
 
 ### Architecture
 

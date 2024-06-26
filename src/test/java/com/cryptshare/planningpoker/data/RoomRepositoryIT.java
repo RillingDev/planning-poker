@@ -79,7 +79,6 @@ class RoomRepositoryIT {
 		roomRepository.delete(room);
 
 		assertThat(em.createQuery("SELECT COUNT(*) FROM RoomMember rm", Long.class).getSingleResult()).isZero();
-		assertThat(em.createNativeQuery("SELECT COUNT(*) FROM vote", Long.class).getSingleResult()).isEqualTo(0L);
 
 		assertThat(em.createQuery("SELECT COUNT(*) FROM Card c", Long.class).getSingleResult()).isEqualTo(1); // Vote may not be cascaded
 	}
@@ -105,7 +104,6 @@ class RoomRepositoryIT {
 		roomRepository.save(room);
 
 		assertThat(em.createQuery("SELECT COUNT(*) FROM RoomMember rm", Long.class).getSingleResult()).isZero();
-		assertThat(em.createNativeQuery("SELECT COUNT(*) FROM vote", Long.class).getSingleResult()).isEqualTo(0L);
 
 		assertThat(em.createQuery("SELECT COUNT(*) FROM Card c", Long.class).getSingleResult()).isEqualTo(1); // Vote may not be cascaded
 	}

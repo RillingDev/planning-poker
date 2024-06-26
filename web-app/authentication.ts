@@ -1,6 +1,6 @@
 import { User } from "./model.ts";
 
-// The following functions can be used to access authentication details which are inserted into the HTML via thymeleaf.
+// The following functions can be used to access authentication details which are inserted into the HTML via Thymeleaf.
 
 export function getCsrfHeaders() {
   const csrfTokenHeaderName = document
