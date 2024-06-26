@@ -26,7 +26,7 @@ export async function createContextState(): Promise<AppContextState> {
 
   return {
     cardSets,
-    // In the long run, this could also be used directly, without the context
+    // TODO: This could also be used directly where needed, without the context
     user: getUser(),
     enabledExtensions: getEnabledExtensions(enabledExtensionKeys),
   };

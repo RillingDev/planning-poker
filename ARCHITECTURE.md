@@ -51,9 +51,3 @@ Extensions SHOULD be as isolated as possible from the main application.
 
 The Aha! extension works almost entirely in then frontend. It uses OAuth2 to authenticate and work with the Aha! REST API.
 The backend server just serves the configuration details.
-
-## Guidelines
-
-### Frontend
-
-- For trivial components (buttons, cards), raw HTML should be preferred over React components, to keep complexity low.
