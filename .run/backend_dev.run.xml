@@ -2,7 +2,7 @@
   <configuration default="false" name="backend:dev" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ACTIVE_PROFILES" value="development" />
     <module name="planning-poker" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="com.cryptshare.planningpoker.PlanningpokerApplication" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="dev.rilling.planningpoker.PlanningpokerApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

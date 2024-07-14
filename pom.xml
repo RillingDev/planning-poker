@@ -8,7 +8,7 @@
 		<version>3.3.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.cryptshare</groupId>
+	<groupId>dev.rilling</groupId>
 	<artifactId>planning-poker</artifactId>
 	<version>${revision}</version>
 	<name>planning-poker</name>
