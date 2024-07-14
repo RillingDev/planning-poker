@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, MockedObject, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createMockRoom } from "../../test/dataFactory.ts";
 import { ahaExtension } from "./AhaExtension.ts";
 import { AhaRoomButton } from "./AhaRoomButton.tsx";
@@ -9,9 +9,9 @@ import type { AhaClient } from "./api";
 vi.mock("./AhaExtension");
 
 describe("AhaRoomButton", () => {
-  let ahaClient: MockedObject<AhaClient>;
+  let ahaClient: AhaClient;
   beforeEach(async () => {
-    ahaClient = vi.mocked(await ahaExtension.getClient());
+    ahaClient = await ahaExtension.getClient();
   });
 
   it("shows button", () => {
@@ -45,7 +45,7 @@ describe("AhaRoomButton", () => {
   });
 
   it("validates that a matching idea exists", async () => {
-    ahaClient.getIdea.mockResolvedValue(null);
+    vi.mocked(ahaClient.getIdea).mockResolvedValue(null);
 
     render(<AhaRoomButton room={createMockRoom({})} onChange={vi.fn()} />);
 

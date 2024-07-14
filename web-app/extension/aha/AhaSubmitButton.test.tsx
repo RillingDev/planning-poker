@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, MockedObject, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearVotes,
   editExtensionRoomConfig,
@@ -23,9 +23,9 @@ vi.mock("../../api");
 vi.mock("./utils");
 
 describe("AhaSubmissionModal", () => {
-  let ahaClient: MockedObject<AhaClient>;
+  let ahaClient: AhaClient;
   beforeEach(async () => {
-    ahaClient = vi.mocked(await ahaExtension.getClient());
+    ahaClient = await ahaExtension.getClient();
   });
 
   it("shows button", () => {
