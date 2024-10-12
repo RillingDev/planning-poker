@@ -28,11 +28,11 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.14.2",
-    "@types/react": "^18.3.3",
+    "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^4.3.2",
     "@vitest/coverage-v8": "^2.0.2",
     "eslint": "^8.57.0",
     "eslint-plugin-jest-dom": "^5.4.0",
@@ -44,8 +44,8 @@
     "eslint-plugin-testing-library": "^6.2.2",
     "jsdom": "^25.0.0",
     "prettier": "^3.3.1",
-    "typescript": "~5.5.4",
-    "vite": "^5.3.1",
+    "typescript": "~5.5.3",
+    "vite": "^5.4.8",
     "vitest": "^2.0.2"
   }
 }
