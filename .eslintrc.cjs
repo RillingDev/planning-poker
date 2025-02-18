@@ -13,19 +13,17 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
   ],
-  ignorePatterns: [".local", ".eslintrc.cjs"],
+  ignorePatterns: [".local", "target"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
-    project: ["./tsconfig.json", "./tsconfig.node.json"],
+    project: ["./tsconfig.app.json", "./tsconfig.node.json"],
     tsconfigRootDir: __dirname,
   },
   settings: { react: { version: "detect" } },
-  plugins: ["prettier", "react-refresh"],
+  plugins: ["react-refresh"],
   rules: {
-    "prettier/prettier": "warn",
-
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
