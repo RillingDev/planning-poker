@@ -97,7 +97,7 @@ export class AuthenticatingAhaClient implements AhaClient {
         let windowUrl: string;
         try {
           windowUrl = newWindow.location.host;
-        } catch (e) {
+        } catch {
           // Access denied, because not the same origin (yet).
           return;
         }

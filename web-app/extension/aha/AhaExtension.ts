@@ -26,7 +26,7 @@ export class AhaExtension implements Extension {
   }
 
   static extractIdeaId(val: string): string | null {
-    const matchArray = val.match(IDEA_PATTERN);
+    const matchArray = IDEA_PATTERN.exec(val);
     return matchArray?.[1] ?? null;
   }
 }
